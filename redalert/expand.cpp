@@ -263,27 +263,26 @@ public:
     {
         return ((EObjectClass*)ListClass::Current_Item());
     }
+	virtual int Add_Item(char const* text)
+	{
+		return (ListClass::Add_Item(text));
+	};
+	virtual int Add_Item(int text)
+	{
+		return (ListClass::Add_Item(text));
+	};
+	virtual char const* Current_Item(void) const
+	{
+		return (ListClass::Current_Item());
+	};
+	virtual char const* Get_Item(int index) const
+	{
+		return (ListClass::Get_Item(index));
+	};
 
 protected:
     virtual void Draw_Entry(int index, int x, int y, int width, int selected);
 
-private:
-    virtual int Add_Item(char const* text)
-    {
-        return (ListClass::Add_Item(text));
-    };
-    virtual int Add_Item(int text)
-    {
-        return (ListClass::Add_Item(text));
-    };
-    virtual char const* Current_Item(void) const
-    {
-        return (ListClass::Current_Item());
-    };
-    virtual char const* Get_Item(int index) const
-    {
-        return (ListClass::Get_Item(index));
-    };
 };
 
 /***********************************************************************************************
@@ -334,98 +333,51 @@ void EListClass::Draw_Entry(int index, int x, int y, int width, int selected)
     Conquer_Clip_Text_Print(buffer, x + 100, y, scheme, TBLACK, flags & ~(TPF_CENTER), width, Tabs);
 }
 
-#ifdef FIXIT_VERSION_3
-bool Expansion_Dialog(bool bCounterstrike) //	If not bCounterstrike, then this was called for Aftermath.
-#else
 bool Expansion_Dialog(void)
-#endif
 {
     GadgetClass* buttons = NULL;
+	bool showCS = true;
+	bool showAM = true;
+	bool showFan = true;
 
-    TextButtonClass ok(200, TXT_OK, TPF_BUTTON, OPTION_X + 40, OPTION_Y + OPTION_HEIGHT - 50);
-    TextButtonClass cancel(201, TXT_CANCEL, TPF_BUTTON, OPTION_X + OPTION_WIDTH - 85, OPTION_Y + OPTION_HEIGHT - 50);
+	TextButtonClass showCSBut(203, TXT_WOL_CS_MISSIONS, TPF_BUTTON, OPTION_X + 35, OPTION_Y + 20);
+	TextButtonClass showAMBut(204, TXT_WOL_AM_MISSIONS, TPF_BUTTON, OPTION_X + 250, OPTION_Y + 20);
+	TextButtonClass showFanBut(205, TXT_NEW_MISSIONS, TPF_BUTTON, OPTION_X + 430, OPTION_Y + 20);
+
+	showCSBut.IsToggleType = true;
+	showAMBut.IsToggleType = true;
+	showFanBut.IsToggleType = true;
+
+	showCSBut.IsOn = ShowCSMissions;
+	showAMBut.IsOn = ShowAMMissions;
+	showFanBut.IsOn = ShowNewMissions;
+
+	bool oldShowCSButOn = showCSBut.IsOn;
+	bool oldShowAMButOn = showAMBut.IsOn;
+	bool oldShowFanButOn = showFanBut.IsOn;
+
+    TextButtonClass ok(200, TXT_OK, TPF_BUTTON, OPTION_X + 40, OPTION_Y + OPTION_HEIGHT - 40);
+    TextButtonClass cancel(201, TXT_CANCEL, TPF_BUTTON, OPTION_X + OPTION_WIDTH - 85, OPTION_Y + OPTION_HEIGHT - 40);
 
     EListClass list(202,
                     OPTION_X + 35,
-                    OPTION_Y + 30,
+                    OPTION_Y + 40,
                     OPTION_WIDTH - 70,
                     OPTION_HEIGHT - 85,
                     TPF_BUTTON,
                     MFCD::Retrieve("BTN-UP.SHP"),
                     MFCD::Retrieve("BTN-DN.SHP"));
 
+
     buttons = &ok;
+
+	showFanBut.Add(*buttons);
+	showAMBut.Add(*buttons);
+	showCSBut.Add(*buttons);
+
     cancel.Add(*buttons);
     list.Add(*buttons);
 
-    /*
-    **	Add in all the expansion scenarios.
-    */
-    CCFileClass file;
-    char buffer[128], buffer2[128];
-    INIClass ini;
-
-    for (int index = 20; index < (36 + 18); index++) {
-        strcpy(buffer, ExpandNames[index - 20]);
-        strcpy(buffer2, ExpandNames[index - 20]);
-
-        if (buffer[0] == NULL)
-            break;
-
-        strcat(buffer, ".INI");
-        strcat(buffer2, ".INI");
-        Scen.Set_Scenario_Name(buffer);
-        Scen.Scenario = index;
-        file.Set_Name(buffer);
-
-        bool bOk;
-        if (index < 36) {
-            bOk = bCounterstrike;
-        } else {
-            bOk = !bCounterstrike;
-        }
-
-        if (bOk && file.Is_Available()) {
-            EObjectClass* obj = new EObjectClass;
-            switch (buffer[2]) {
-
-            case 'G':
-            case 'g':
-                ini.Clear();
-                ini.Load(file);
-                ini.Get_String("Basic", "Name", "x", buffer, sizeof(buffer));
-#if defined(GERMAN) || defined(FRENCH)
-                strcpy(obj->Name, XlatNames[index - ARRAYOFFSET]);
-#else
-                strcpy(obj->Name, buffer);
-#endif
-                strcpy(obj->FullName, buffer2);
-                obj->House = HOUSE_GOOD;
-                obj->Scenario = index;
-                list.Add_Object(obj);
-                break;
-
-            case 'U':
-            case 'u':
-                ini.Clear();
-                ini.Load(file);
-                ini.Get_String("Basic", "Name", "x", buffer, sizeof(buffer));
-#if defined(GERMAN) || defined(FRENCH)
-                strcpy(obj->Name, XlatNames[index - ARRAYOFFSET]);
-#else
-                strcpy(obj->Name, buffer);
-#endif
-                strcpy(obj->FullName, buffer2);
-                obj->House = HOUSE_BAD;
-                obj->Scenario = index;
-                list.Add_Object(obj);
-                break;
-
-            default:
-                break;
-            }
-        }
-    }
 
     Set_Logic_Page(SeenBuff);
     bool recalc = true;
@@ -434,6 +386,116 @@ bool Expansion_Dialog(void)
     bool okval = true;
 
     while (process) {
+
+		//if(showAMBut.IsPressed || showCSBut.IsPressed || showFanBut.IsPressed) {
+
+		if (recalc) {
+			recalc = false;
+			display = true;
+
+			char buffer3[256];
+			bool restoreSelected = false;
+
+			// save current selected list item if any before emptying list
+			if (list.Current_Item() != NULL) {
+				strcpy_s(buffer3, 256, list.Current_Item());
+				restoreSelected = true;
+			}
+
+			while (list.Count() > 0) {
+				list.Remove_Item(0);
+			}
+
+
+			/*
+			**	Add in all the expansion scenarios.
+			*/
+			CCFileClass file;
+			char buffer[128], buffer2[128];
+			INIClass ini;
+
+			for (int index = 20; index < (36 + 18); index++) {
+				strcpy(buffer, ExpandNames[index - 20]);
+				strcpy(buffer2, ExpandNames[index - 20]);
+
+				if (buffer[0] == NULL)
+					break;
+
+				strcat(buffer, ".INI");
+				strcat(buffer2, ".INI");
+				Scen.Set_Scenario_Name(buffer);
+				Scen.Scenario = index;
+				file.Set_Name(buffer);
+
+				bool bOk = false;
+				if ((index < 36) && showCSBut.IsOn) {
+					bOk = true;
+				}
+				else if (showAMBut.IsOn) {
+					bOk = true;
+				}
+
+				if (bOk && file.Is_Available()) {
+					EObjectClass* obj = new EObjectClass;
+					switch (buffer[2]) {
+
+					case 'G':
+					case 'g':
+						ini.Clear();
+						ini.Load(file);
+						ini.Get_String("Basic", "Name", "x", buffer, sizeof(buffer));
+#if defined(GERMAN) || defined(FRENCH)
+						strcpy(obj->Name, XlatNames[index - ARRAYOFFSET]);
+#else
+						strcpy(obj->Name, buffer);
+#endif
+						strcpy(obj->FullName, buffer2);
+						obj->House = HOUSE_GOOD;
+						obj->Scenario = index;
+						list.Add_Object(obj);
+						break;
+
+					case 'U':
+					case 'u':
+						ini.Clear();
+						ini.Load(file);
+						ini.Get_String("Basic", "Name", "x", buffer, sizeof(buffer));
+#if defined(GERMAN) || defined(FRENCH)
+						strcpy(obj->Name, XlatNames[index - ARRAYOFFSET]);
+#else
+						strcpy(obj->Name, buffer);
+#endif
+						strcpy(obj->FullName, buffer2);
+						obj->House = HOUSE_BAD;
+						obj->Scenario = index;
+						list.Add_Object(obj);
+						break;
+
+					default:
+						break;
+					}
+				}
+			}
+			if (restoreSelected) {
+				list.Set_Selected_Index(buffer3);
+
+			}
+		}
+
+
+
+		if (showAMBut.IsOn != oldShowAMButOn) {
+			oldShowAMButOn = showAMBut.IsOn;
+			recalc = true;
+		}
+		if (showCSBut.IsOn != oldShowCSButOn) {
+			oldShowCSButOn = showCSBut.IsOn;
+			recalc = true;
+		}
+		if (showFanBut.IsOn != oldShowFanButOn) {
+			oldShowFanButOn = showFanBut.IsOn;
+			recalc = true;
+		}
 
         /*
         ** If we have just received input focus again after running in the background then
@@ -458,18 +520,13 @@ bool Expansion_Dialog(void)
             CCPalette.Set();
 
             Dialog_Box(OPTION_X, OPTION_Y, OPTION_WIDTH, OPTION_HEIGHT);
-#ifdef FIXIT_VERSION_3
-            if (bCounterstrike) {
-                Draw_Caption(TXT_WOL_CS_MISSIONS, OPTION_X, OPTION_Y, OPTION_WIDTH);
-            } else {
-                Draw_Caption(TXT_WOL_AM_MISSIONS, OPTION_X, OPTION_Y, OPTION_WIDTH);
-            }
-#else
-            Draw_Caption(TXT_NEW_MISSIONS, OPTION_X, OPTION_Y, OPTION_WIDTH);
-#endif
+
+            //Draw_Caption(TXT_NEW_MISSIONS, OPTION_X, OPTION_Y, OPTION_WIDTH);
+
             buttons->Draw_All();
             Show_Mouse();
         }
+
 
         KeyNumType input = buttons->Input();
         switch (input) {
@@ -499,6 +556,7 @@ bool Expansion_Dialog(void)
             break;
         }
 
+		
         Frame_Limiter();
     }
 
@@ -508,6 +566,21 @@ bool Expansion_Dialog(void)
     for (int index = 0; index < list.Count(); index++) {
         delete list.Get_Object(index);
     }
+
+	FileClass *config_file = new CCFileClass(CONFIG_FILE_NAME);
+	if (config_file->Is_Available()) {
+		INIClass ini;
+		ini.Load(*config_file);
+
+		ShowAMMissions = oldShowAMButOn;
+		ShowCSMissions = oldShowCSButOn;
+		ShowNewMissions = oldShowFanButOn;
+
+		ini.Put_Bool("Options", "ShowAMMissions", oldShowAMButOn);
+		ini.Put_Bool("Options", "ShowCSMissions", oldShowCSButOn);
+		ini.Put_Bool("Options", "ShowNewMissions", oldShowFanButOn);
+		ini.Save(*config_file);
+	}
 
     return (okval);
 }

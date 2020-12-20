@@ -875,6 +875,9 @@ void Read_Setup_Options(RawFileClass* config_file)
         OutputWidth = ini.Get_Int("Options", "OutputWidth", ScreenWidth);
 		OutputHeight = ini.Get_Int("Options", "OutputHeight", ScreenHeight);
 		
+		ShowAMMissions = ini.Get_Bool("Options", "ShowAMMissions", true);
+		ShowCSMissions = ini.Get_Bool("Options", "ShowCSMissions", true);
+		ShowNewMissions = ini.Get_Bool("Options", "ShowNewMissions", true);
 
         /*
         ** See if an alternative socket number has been specified

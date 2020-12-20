@@ -132,9 +132,8 @@ extern int WOL_Main();
 extern WolapiObject* pWolapi;
 #endif
 
-#ifdef FIXIT_VERSION_3
-bool Expansion_Dialog(bool bCounterstrike);
-#endif
+bool Expansion_Dialog();
+
 
 extern bool Is_Mission_Counterstrike(char* file_name);
 
@@ -709,7 +708,7 @@ bool Select_Game(bool fade)
                         selection = SEL_NONE;
                         break;
                     }
-                    if (!Expansion_Dialog(true)) {
+                    if (!Expansion_Dialog()) {
                         selection = SEL_NONE;
                         break;
                     }
@@ -718,7 +717,7 @@ bool Select_Game(bool fade)
                         selection = SEL_NONE;
                         break;
                     }
-                    if (!Expansion_Dialog(false)) {
+                    if (!Expansion_Dialog()) {
                         selection = SEL_NONE;
                         break;
                     }
