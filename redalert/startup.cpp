@@ -878,6 +878,8 @@ void Read_Setup_Options(RawFileClass* config_file)
 		ShowAMMissions = ini.Get_Bool("Options", "ShowAMMissions", true);
 		ShowCSMissions = ini.Get_Bool("Options", "ShowCSMissions", true);
 		ShowNewMissions = ini.Get_Bool("Options", "ShowNewMissions", true);
+		ShowCampaignMissions = ini.Get_Bool("Options", "ShowCampaignMissions", true);
+		
 
         /*
         ** See if an alternative socket number has been specified

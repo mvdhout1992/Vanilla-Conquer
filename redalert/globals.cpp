@@ -185,6 +185,7 @@ bool Show640x480BlackBars = false;
 bool ShowAMMissions = true;
 bool ShowCSMissions = true;
 bool ShowNewMissions = true;
+bool ShowCampaignMissions = true;
 
 GraphicBufferClass ModeXBuff;
 bool InMovie = false; // Are we currently playing a VQ movie?

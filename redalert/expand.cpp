@@ -343,18 +343,22 @@ bool Expansion_Dialog(void)
 	TextButtonClass showCSBut(203, TXT_WOL_CS_MISSIONS, TPF_BUTTON, OPTION_X + 35, OPTION_Y + 20);
 	TextButtonClass showAMBut(204, TXT_WOL_AM_MISSIONS, TPF_BUTTON, OPTION_X + 250, OPTION_Y + 20);
 	TextButtonClass showFanBut(205, TXT_NEW_MISSIONS, TPF_BUTTON, OPTION_X + 430, OPTION_Y + 20);
+	TextButtonClass showCampaignBut(206, "Campaign", TPF_BUTTON, OPTION_X + 600, OPTION_Y + 20);
 
 	showCSBut.IsToggleType = true;
 	showAMBut.IsToggleType = true;
 	showFanBut.IsToggleType = true;
+	showCampaignBut.IsToggleType = true;
 
 	showCSBut.IsOn = ShowCSMissions;
 	showAMBut.IsOn = ShowAMMissions;
 	showFanBut.IsOn = ShowNewMissions;
+	showCampaignBut.IsOn = ShowCampaignMissions;
 
 	bool oldShowCSButOn = showCSBut.IsOn;
 	bool oldShowAMButOn = showAMBut.IsOn;
 	bool oldShowFanButOn = showFanBut.IsOn;
+	bool oldShowCampaignButOn = showCampaignBut.IsOn;
 
     TextButtonClass ok(200, TXT_OK, TPF_BUTTON, OPTION_X + 40, OPTION_Y + OPTION_HEIGHT - 40);
     TextButtonClass cancel(201, TXT_CANCEL, TPF_BUTTON, OPTION_X + OPTION_WIDTH - 85, OPTION_Y + OPTION_HEIGHT - 40);
@@ -374,6 +378,7 @@ bool Expansion_Dialog(void)
 	showFanBut.Add(*buttons);
 	showAMBut.Add(*buttons);
 	showCSBut.Add(*buttons);
+	showCampaignBut.Add(*buttons);
 
     cancel.Add(*buttons);
     list.Add(*buttons);
@@ -431,7 +436,7 @@ bool Expansion_Dialog(void)
 				if ((index < 36) && showCSBut.IsOn) {
 					bOk = true;
 				}
-				else if (showAMBut.IsOn) {
+				else if ((index >= 36) && showAMBut.IsOn) {
 					bOk = true;
 				}
 
@@ -496,6 +501,12 @@ bool Expansion_Dialog(void)
 			oldShowFanButOn = showFanBut.IsOn;
 			recalc = true;
 		}
+
+		if (showCampaignBut.IsOn != oldShowCampaignButOn) {
+			oldShowCampaignButOn = showCampaignBut.IsOn;
+			recalc = true;
+		}
+
 
         /*
         ** If we have just received input focus again after running in the background then
@@ -575,10 +586,12 @@ bool Expansion_Dialog(void)
 		ShowAMMissions = oldShowAMButOn;
 		ShowCSMissions = oldShowCSButOn;
 		ShowNewMissions = oldShowFanButOn;
+		ShowCampaignMissions = oldShowCampaignButOn;
 
 		ini.Put_Bool("Options", "ShowAMMissions", oldShowAMButOn);
 		ini.Put_Bool("Options", "ShowCSMissions", oldShowCSButOn);
 		ini.Put_Bool("Options", "ShowNewMissions", oldShowFanButOn);
+		ini.Put_Bool("Options", "ShowCampaignMissions", oldShowCampaignButOn);
 		ini.Save(*config_file);
 	}
 

@@ -145,6 +145,7 @@ extern GraphicBufferClass ModeXBuff;
 extern bool ShowAMMissions;
 extern bool ShowCSMissions;
 extern bool ShowNewMissions;
+extern bool ShowCampaignMissions;
 
 /*
 **	Dynamic global variables (these change or are initialized at run time).
