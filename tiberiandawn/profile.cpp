@@ -224,7 +224,9 @@ char* WWGetPrivateProfileString(char const* section,
     */
     if (retbuffer) {
         if (def) {
-            strncpy(retbuffer, def, retlen);
+            if (retbuffer != def) {
+                strncpy(retbuffer, def, retlen);
+            }
         }
         retbuffer[retlen - 1] = '\0';
         orig_retbuf = retbuffer;
@@ -613,10 +615,11 @@ bool WWWritePrivateProfileString(char const* section, char const* entry, char co
         eol = strcspn(offset, "\n");
 
         /*
-        **	Erase the entry by strcpy'ing the entire INI file over this entry
+        **	Erase the entry by memmoving the entire INI file over this entry
         */
         if (eol) {
-            strcpy(offset, offset + eol + 1);
+            int len = strlen(offset + eol + 1);
+            memmove(offset, offset + eol + 1, len + 1); // include null in move
         }
     } else {
 

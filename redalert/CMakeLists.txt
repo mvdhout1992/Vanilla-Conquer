@@ -33,7 +33,6 @@ set(REDALERT_SRC
     credits.cpp
     crew.cpp
     debug.cpp
-    descdlg.cpp
     dial8.cpp
     dialog.cpp
     dibfile.cpp
@@ -69,7 +68,6 @@ set(REDALERT_SRC
     iconset.cpp
     idata.cpp
     infantry.cpp
-    inicode.cpp
     init.cpp
     intro.cpp
     iomap.cpp
