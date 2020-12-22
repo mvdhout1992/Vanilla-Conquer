@@ -274,6 +274,7 @@ const char* XlatNames[] = {
 struct EObjectClass
 {
     HousesType House;
+	bool ShowPlayerHouse;
     int Scenario;
     char Name[128];
     char FullName[128];
@@ -347,16 +348,22 @@ protected:
  *=============================================================================================*/
 void EListClass::Draw_Entry(int index, int x, int y, int width, int selected)
 {
-    char buffer[128];
-    RemapControlType* scheme = GadgetClass::Get_Color_Scheme();
+	char buffer[128];
+	RemapControlType* scheme = GadgetClass::Get_Color_Scheme();
 
-    int text = TXT_NONE;
-    if (Get_Object(index)->House == HOUSE_GOOD) {
-        text = TXT_ALLIES;
-    } else {
-        text = TXT_SOVIET;
-    }
-    sprintf(buffer, "%s: %s", Text_String(text), Get_Object(index)->Name);
+	int text = TXT_NONE;
+	if (Get_Object(index)->House == HOUSE_GOOD) {
+		text = TXT_ALLIES;
+	}
+	else {
+		text = TXT_SOVIET;
+	}
+	if (Get_Object(index)->ShowPlayerHouse) {
+		sprintf(buffer, "%s: %s", Text_String(text), Get_Object(index)->Name);
+	}
+	else {
+		sprintf(buffer, "%s", Get_Object(index)->Name);
+	}
 
     TextPrintType flags = TextFlags;
 
@@ -477,9 +484,13 @@ bool Expansion_Dialog(bool &forceOneTimeOnly)
 			INIClass ini;
 
 			int start = 20;
-			if (showCampaignBut.IsOn || showFanBut.IsOn) {
+			if (showCampaignBut.IsOn ) {
 				start = 0;
 			}
+			else if (showFanBut.IsOn) {
+				start = 1;
+			}
+
 			int limit = (36 + 18);
 			if (showFanBut.IsOn) {
 				limit = 999;
@@ -499,6 +510,10 @@ bool Expansion_Dialog(bool &forceOneTimeOnly)
 				{
 					strcpy(buffer, CampaignNames[index]);
 					strcpy(buffer2, CampaignNames[index]);
+				}
+				else if (showFanBut.IsOn) {
+					sprintf(buffer, "cmu%02dea", index);
+					sprintf(buffer2, "cmu%02dea", index);
 				}
 
 				if (buffer[0] == NULL)
@@ -526,43 +541,39 @@ bool Expansion_Dialog(bool &forceOneTimeOnly)
 						forceOneTimeOnly = true;
 					}
 					EObjectClass* obj = new EObjectClass;
+					ini.Clear();
+					ini.Load(file);
+					ini.Get_String("Basic", "Name", "x", buffer, sizeof(buffer));
+#if defined(GERMAN) || defined(FRENCH)
+					strcpy(obj->Name, XlatNames[index - ARRAYOFFSET]);
+#else
+					strcpy(obj->Name, buffer);
+#endif
+					strcpy(obj->FullName, buffer2);
+
+					obj->Scenario = index;
+					obj->ShowPlayerHouse = false;
+					
+
 					switch (buffer[2]) {
 
 					case 'G':
 					case 'g':
-						ini.Clear();
-						ini.Load(file);
-						ini.Get_String("Basic", "Name", "x", buffer, sizeof(buffer));
-#if defined(GERMAN) || defined(FRENCH)
-						strcpy(obj->Name, XlatNames[index - ARRAYOFFSET]);
-#else
-						strcpy(obj->Name, buffer);
-#endif
-						strcpy(obj->FullName, buffer2);
 						obj->House = HOUSE_GOOD;
-						obj->Scenario = index;
-						list.Add_Object(obj);
+						obj->ShowPlayerHouse = true;
+
 						break;
 
 					case 'U':
 					case 'u':
-						ini.Clear();
-						ini.Load(file);
-						ini.Get_String("Basic", "Name", "x", buffer, sizeof(buffer));
-#if defined(GERMAN) || defined(FRENCH)
-						strcpy(obj->Name, XlatNames[index - ARRAYOFFSET]);
-#else
-						strcpy(obj->Name, buffer);
-#endif
-						strcpy(obj->FullName, buffer2);
-						obj->House = HOUSE_BAD;
-						obj->Scenario = index;
-						list.Add_Object(obj);
+						obj->House = HOUSE_GOOD;
+						obj->ShowPlayerHouse = true;
 						break;
 
 					default:
 						break;
 					}
+					list.Add_Object(obj);
 				}
 			}
 			if (restoreSelected) {
