@@ -132,7 +132,7 @@ extern int WOL_Main();
 extern WolapiObject* pWolapi;
 #endif
 
-bool Expansion_Dialog();
+bool Expansion_Dialog(bool &ForceOneTimeOnly);
 
 
 extern bool Is_Mission_Counterstrike(char* file_name);
@@ -505,6 +505,7 @@ bool Select_Game(bool fade)
     int selection;           // the default selection
     bool process = true;     // false = break out of while loop
     bool display = true;
+	bool ForceOneTimeOnly = false;
 
 #ifdef DONGLE
     /* These where added by ColinM for the dongle checking */
@@ -701,6 +702,7 @@ bool Select_Game(bool fade)
                 Scen.CarryOverMoney = 0;
                 IsTanyaDead = false;
                 SaveTanya = false;
+				ForceOneTimeOnly = false;
 
 #ifdef FIXIT_VERSION_3
                 if (selection == SEL_NEW_SCENARIO_CS) {
@@ -708,7 +710,7 @@ bool Select_Game(bool fade)
                         selection = SEL_NONE;
                         break;
                     }
-                    if (!Expansion_Dialog()) {
+                    if (!Expansion_Dialog(ForceOneTimeOnly)) {
                         selection = SEL_NONE;
                         break;
                     }
@@ -717,7 +719,7 @@ bool Select_Game(bool fade)
                         selection = SEL_NONE;
                         break;
                     }
-                    if (!Expansion_Dialog()) {
+                    if (!Expansion_Dialog(ForceOneTimeOnly)) {
                         selection = SEL_NONE;
                         break;
                     }
@@ -1203,7 +1205,7 @@ bool Select_Game(bool fade)
         }
         Show_Mouse();
         // Mono_Printf("About to call Start Scenario with %s\n", Scen.ScenarioName);
-        if (!Start_Scenario(Scen.ScenarioName)) {
+        if (!Start_Scenario(Scen.ScenarioName, true, ForceOneTimeOnly)) {
             return (false);
         }
         if (Special.IsFromInstall)
@@ -3635,7 +3637,7 @@ bool Read_Spawner_Game_Options_And_Launch_Match()
 		Load_Game(SaveGameName);
 	}
 	else {
-		Start_Scenario(Scen.ScenarioName, 1);
+		Start_Scenario(Scen.ScenarioName);
 	}
 
 	Session.Create_Connections();

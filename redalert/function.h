@@ -561,7 +561,7 @@ void Nod_Ending(void);
 **	EXPAND.CPP
 */
 bool Expansion_Present(void);
-bool Expansion_Dialog(void);
+bool Expansion_Dialog(bool &ForceOneTimeOnly);
 bool Expansion_CS_Present(void);
 #ifdef FIXIT_CSII //	checked - ajw 9/28/98
 bool Expansion_AM_Present(void);
@@ -578,8 +578,8 @@ int Optimize_Moves(PathType* path, int (*callback)(CELL, FacingType), int thresh
 /*
 **	INI.CPP
 */
-void Write_Scenario_INI(char* root);
-bool Read_Scenario_INI(char* root, bool fresh = true);
+void Write_Scenario_INI(char* root, bool ForceOneTimeOnly = false);
+bool Read_Scenario_INI(char* root, bool fresh = true, bool ForceOneTimeOnly = false);
 int Scan_Place_Object(ObjectClass* obj, CELL cell);
 void Assign_Houses(void);
 
@@ -787,8 +787,8 @@ void Disect_Scenario_Name(char const* name,
                           ScenarioVarType& var);
 void Post_Load_Game(int load_net);
 bool End_Game(void);
-bool Read_Scenario(char* root);
-bool Start_Scenario(char* root, bool briefing = true);
+bool Read_Scenario(char* root, bool ForceOneTimeOnly);
+bool Start_Scenario(char* root, bool briefing = true, bool ForceOneTimeOnly = false);
 void Set_Scenario_Difficulty(int difficulty);
 HousesType Select_House(void);
 void Clear_Scenario(void);

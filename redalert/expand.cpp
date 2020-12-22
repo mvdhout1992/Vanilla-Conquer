@@ -115,23 +115,62 @@ const char* ExpandNames[] = {"SCG20EA", "SCG21EA", "SCG22EA", "SCG23EA", "SCG24E
 #endif
                              NULL};
 
-const char* TestNames2[] = {"SCG01EA",
-                            "SCG02EA",
-                            "SCG03EA",
-                            "SCG04EA",
-                            "SCG05EA",
-                            "SCG06EA",
-                            "SCG07EA",
-                            "SCG08EA",
-                            "SCU01EA",
-                            "SCU02EA",
-                            "SCU03EA",
-                            "SCU04EA",
-                            "SCU05EA",
-                            "SCU06EA",
-                            "SCU07EA",
-                            "SCU08EA",
-                            "SCU09EA",
+const char* CampaignNames[] = {"SCG01EA", //0
+                            "SCG02EA", //1
+                            "SCG03EA", //2
+							"SCG03EB", //3
+
+                            "SCG04EA", //4
+                            "SCG05EA", //5
+							"SCG05EB", //6
+							"SCG05EC", //7
+
+                            "SCG06EA", //8
+							"SCG06EB", //9
+
+                            "SCG07EA", //10
+                            "SCG08EA", //11
+							"SCG08EB", //12
+
+							"SCG09EA", //13
+							"SCG09EB", //14
+
+							"SCG10EA", //15
+							"SCG10EB", //16
+
+							"SCG11EA", //17
+							"SCG11EB", //18
+
+							"SCG12EA", //19
+							"SCG13EA", //20
+							"SCG14EA", //21
+
+                            "SCU01EA", //22
+                            "SCU02EA", //23
+							"SCU02EB", //24
+
+                            "SCU03EA", //25
+                            "SCU04EA", //26
+							"SCU04EB", //27
+
+                            "SCU05EA", //28
+                            "SCU06EA", //29
+							"SCU06EB", //30
+
+                            "SCU07EA", //31
+                            "SCU08EA", //32
+							"SCU08EB", //33
+
+                            "SCU09EA", //34
+							"SCU10EA", //35
+							"SCU11EA", //36
+							"SCU11EB", //37
+
+							"SCU12EA", //38
+							"SCU13EA", // 39
+							"SCU13EB", // 40
+
+							"SCU14EA", // 41
                             NULL};
 
 #ifdef GERMAN
@@ -333,12 +372,31 @@ void EListClass::Draw_Entry(int index, int x, int y, int width, int selected)
     Conquer_Clip_Text_Print(buffer, x + 100, y, scheme, TBLACK, flags & ~(TPF_CENTER), width, Tabs);
 }
 
-bool Expansion_Dialog(void)
+void Update_Mission_Category_Tabs_On_Off_Status(TextButtonClass *CSButton, TextButtonClass *AMButton, TextButtonClass *FanButton, TextButtonClass *CampaignButton,
+	bool CSon, bool AMon, bool FanOn, bool CampaignOn) {
+	// Check bool args to see if only one tab is turned on, if none or multiple are on then force Counterstrike tab only on
+	int count = 0;
+	count += (int)CSon + (int)AMon + (int)FanOn + (int)CampaignOn;
+	if (count != 1) {
+		CSon = true;
+		AMon = FanOn = CampaignOn = false;
+	}
+	CSButton->IsOn = CSon;
+	AMButton->IsOn = AMon;
+	FanButton->IsOn = FanOn;
+	CampaignButton->IsOn = CampaignOn;
+}
+
+void Set_Show_Mission_Global_Variables(bool CSon, bool AMon, bool FanOn, bool CampaignOn) {
+	ShowCSMissions = CSon;
+	ShowAMMissions = AMon;
+	ShowNewMissions = FanOn;
+	ShowCampaignMissions = CampaignOn;
+}
+
+bool Expansion_Dialog(bool &forceOneTimeOnly)
 {
     GadgetClass* buttons = NULL;
-	bool showCS = true;
-	bool showAM = true;
-	bool showFan = true;
 
 	TextButtonClass showCSBut(203, TXT_WOL_CS_MISSIONS, TPF_BUTTON, OPTION_X + 35, OPTION_Y + 20);
 	TextButtonClass showAMBut(204, TXT_WOL_AM_MISSIONS, TPF_BUTTON, OPTION_X + 250, OPTION_Y + 20);
@@ -355,10 +413,6 @@ bool Expansion_Dialog(void)
 	showFanBut.IsOn = ShowNewMissions;
 	showCampaignBut.IsOn = ShowCampaignMissions;
 
-	bool oldShowCSButOn = showCSBut.IsOn;
-	bool oldShowAMButOn = showAMBut.IsOn;
-	bool oldShowFanButOn = showFanBut.IsOn;
-	bool oldShowCampaignButOn = showCampaignBut.IsOn;
 
     TextButtonClass ok(200, TXT_OK, TPF_BUTTON, OPTION_X + 40, OPTION_Y + OPTION_HEIGHT - 40);
     TextButtonClass cancel(201, TXT_CANCEL, TPF_BUTTON, OPTION_X + OPTION_WIDTH - 85, OPTION_Y + OPTION_HEIGHT - 40);
@@ -412,6 +466,9 @@ bool Expansion_Dialog(void)
 			}
 
 
+			Update_Mission_Category_Tabs_On_Off_Status(&showCSBut, &showAMBut, &showFanBut, &showCampaignBut,
+				ShowCSMissions, ShowAMMissions, ShowNewMissions, ShowCampaignMissions);
+
 			/*
 			**	Add in all the expansion scenarios.
 			*/
@@ -419,9 +476,30 @@ bool Expansion_Dialog(void)
 			char buffer[128], buffer2[128];
 			INIClass ini;
 
-			for (int index = 20; index < (36 + 18); index++) {
-				strcpy(buffer, ExpandNames[index - 20]);
-				strcpy(buffer2, ExpandNames[index - 20]);
+			int start = 20;
+			if (showCampaignBut.IsOn || showFanBut.IsOn) {
+				start = 0;
+			}
+			int limit = (36 + 18);
+			if (showFanBut.IsOn) {
+				limit = 999;
+			}
+			else if (showCampaignBut.IsOn)
+			{
+				limit = 41;
+			}
+
+			for (int index = start; index < limit; index++) {
+
+				if (showAMBut.IsOn || showCSBut.IsOn) {
+					strcpy(buffer, ExpandNames[index - 20]);
+					strcpy(buffer2, ExpandNames[index - 20]);
+				}
+				else if (showCampaignBut.IsOn)
+				{
+					strcpy(buffer, CampaignNames[index]);
+					strcpy(buffer2, CampaignNames[index]);
+				}
 
 				if (buffer[0] == NULL)
 					break;
@@ -439,8 +517,14 @@ bool Expansion_Dialog(void)
 				else if ((index >= 36) && showAMBut.IsOn) {
 					bOk = true;
 				}
+				else if (showCampaignBut.IsOn || showFanBut.IsOn) {
+					bOk = true;
+				}
 
 				if (bOk && file.Is_Available()) {
+					if (ShowCampaignMissions) {
+						forceOneTimeOnly = true;
+					}
 					EObjectClass* obj = new EObjectClass;
 					switch (buffer[2]) {
 
@@ -489,21 +573,27 @@ bool Expansion_Dialog(void)
 
 
 
-		if (showAMBut.IsOn != oldShowAMButOn) {
-			oldShowAMButOn = showAMBut.IsOn;
+		//if (showAMBut.IsOn != ShowAMMissions) {
+		if (showAMBut.IsPressed) {
+			Set_Show_Mission_Global_Variables(false, true, false, false);
+			//ShowAMMissions = showAMBut.IsOn;
 			recalc = true;
 		}
-		if (showCSBut.IsOn != oldShowCSButOn) {
-			oldShowCSButOn = showCSBut.IsOn;
+		//if (showCSBut.IsOn != ShowCSMissions) {
+		if (showCSBut.IsPressed) {
+			Set_Show_Mission_Global_Variables(true, false, false, false);
+			//ShowCSMissions = showCSBut.IsOn;
 			recalc = true;
 		}
-		if (showFanBut.IsOn != oldShowFanButOn) {
-			oldShowFanButOn = showFanBut.IsOn;
+		//if (showFanBut.IsOn != ShowNewMissions) {
+		if (showFanBut.IsPressed) {
+			Set_Show_Mission_Global_Variables(false, false, true, false);
 			recalc = true;
 		}
 
-		if (showCampaignBut.IsOn != oldShowCampaignButOn) {
-			oldShowCampaignButOn = showCampaignBut.IsOn;
+		//if (showCampaignBut.IsOn != ShowCampaignMissions) {
+		if (showCampaignBut.IsPressed) {
+			Set_Show_Mission_Global_Variables(false, false, false, true);
 			recalc = true;
 		}
 
@@ -583,15 +673,10 @@ bool Expansion_Dialog(void)
 		INIClass ini;
 		ini.Load(*config_file);
 
-		ShowAMMissions = oldShowAMButOn;
-		ShowCSMissions = oldShowCSButOn;
-		ShowNewMissions = oldShowFanButOn;
-		ShowCampaignMissions = oldShowCampaignButOn;
-
-		ini.Put_Bool("Options", "ShowAMMissions", oldShowAMButOn);
-		ini.Put_Bool("Options", "ShowCSMissions", oldShowCSButOn);
-		ini.Put_Bool("Options", "ShowNewMissions", oldShowFanButOn);
-		ini.Put_Bool("Options", "ShowCampaignMissions", oldShowCampaignButOn);
+		ini.Put_Bool("Options", "ShowAMMissions", ShowAMMissions);
+		ini.Put_Bool("Options", "ShowCSMissions", ShowCSMissions);
+		ini.Put_Bool("Options", "ShowNewMissions", ShowNewMissions);
+		ini.Put_Bool("Options", "ShowCampaignMissions", ShowCampaignMissions);
 		ini.Save(*config_file);
 	}
 

@@ -307,16 +307,17 @@ bool ScenarioClass::Set_Global_To(int global, bool value)
  * HISTORY:                                                                                    *
  *   07/04/1995 JLB : Created.                                                                 *
  *=============================================================================================*/
-bool Start_Scenario(char* name, bool briefing)
+bool Start_Scenario(char* name, bool briefing, bool ForceOneTimeOnly)
 {
     if (Session.Type != GAME_NORMAL) {
         briefing = false;
     }
 
+
     // BG	Theme.Queue_Song(THEME_QUIET);
     Theme.Stop();
     IsTanyaDead = SaveTanya;
-    if (!Read_Scenario(name)) {
+    if (!Read_Scenario(name, ForceOneTimeOnly)) {
         return (false);
     }
 
@@ -465,12 +466,12 @@ void Set_Scenario_Difficulty(int difficulty)
  *   07/22/1991     : Created.                                                                 *
  *   02/03/1992 JLB : Uses house identification.                                               *
  *=============================================================================================*/
-bool Read_Scenario(char* name)
+bool Read_Scenario(char* name, bool ForceOneTimeOnly)
 {
     BStart(BENCH_SCENARIO);
     Clear_Scenario();
     ScenarioInit++;
-    if (Read_Scenario_INI(name)) {
+    if (Read_Scenario_INI(name, true, ForceOneTimeOnly)) {
 #ifdef FIXIT_CSII //	ajw - Added runtime check for Aftermath to skirmish mode case.
         bool readini = false;
         switch (Session.Type) {
@@ -2013,7 +2014,7 @@ void ScenarioClass::Set_Scenario_Name(char const* name)
  * HISTORY:                                                                                    *
  *   10/07/1992 JLB : Created.  V.Grippi added CS check 2/5/97 *
  *=============================================================================================*/
-bool Read_Scenario_INI(char* fname, bool)
+bool Read_Scenario_INI(char* fname, bool, bool ForceOneTimeOnly)
 {
     //	char fname[_MAX_FNAME+_MAX_EXT];			// full INI filename
 
@@ -2308,7 +2309,10 @@ bool Read_Scenario_INI(char* fname, bool)
     Scen.CarryOverCap = ini.Get_Int(BASIC, "CarryOverCap", Scen.CarryOverCap);
     Scen.IsNoSpyPlane = ini.Get_Bool(BASIC, "NoSpyPlane", Scen.IsNoSpyPlane);
     Scen.IsSkipScore = ini.Get_Bool(BASIC, "SkipScore", Scen.IsSkipScore);
-    Scen.IsOneTimeOnly = ini.Get_Bool(BASIC, "OneTimeOnly", Scen.IsOneTimeOnly);
+	Scen.IsOneTimeOnly = ini.Get_Bool(BASIC, "OneTimeOnly", Scen.IsOneTimeOnly);
+	if (ForceOneTimeOnly) {
+		Scen.IsOneTimeOnly = true;
+	}
     Scen.IsNoMapSel = ini.Get_Bool(BASIC, "SkipMapSelect", Scen.IsNoMapSel);
     Scen.IsTruckCrate = ini.Get_Bool(BASIC, "TruckCrate", Scen.IsTruckCrate);
     Scen.IsMoneyTiberium = ini.Get_Bool(BASIC, "FillSilos", Scen.IsMoneyTiberium);
