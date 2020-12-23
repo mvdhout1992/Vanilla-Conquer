@@ -519,7 +519,6 @@ int Main_Menu(unsigned long)
     enum
     {
         BUTTON_EXPAND = 100, //	(CS)
-        BUTTON_EXPAND_AM,
         BUTTON_START,
         BUTTON_LOAD,
         BUTTON_MULTI,
@@ -568,43 +567,14 @@ int Main_Menu(unsigned long)
     */
     ControlClass* commands = NULL; // the button list
 
-#ifdef FIXIT_VERSION_3
-    int ystep = 14 * RESFACTOR;
-    if (bExpansionCS) {
-        if (bExpansionAM)
-            ystep = 12 * RESFACTOR;
-        else
-            ystep = 13 * RESFACTOR;
-    } else if (bExpansionAM)
-        ystep = 13 * RESFACTOR;
-
-    TextButtonClass expandbtnCS(
-        BUTTON_EXPAND, TXT_WOL_CS_MISSIONS, TPF_BUTTON, d_start_x, starty, d_start_w, d_start_h);
-    if (bExpansionCS)
-        starty += ystep;
-    TextButtonClass expandbtnAM(
-        BUTTON_EXPAND_AM, TXT_WOL_AM_MISSIONS, TPF_BUTTON, d_start_x, starty, d_start_w, d_start_h);
-    if (bExpansionAM)
-        starty += ystep;
-#else
     int ystep = 12 * RESFACTOR;
-    if (expansions)
-        ystep = 10 * RESFACTOR;
 
     TextButtonClass expandbtn(BUTTON_EXPAND, TXT_NEW_MISSIONS, TPF_BUTTON, d_start_x, starty, d_start_w, d_start_h);
-    if (expansions)
-        starty += ystep;
-#endif
+	starty += ystep;
+
 
     TextButtonClass startbtn(BUTTON_START, TXT_START_NEW_GAME, TPF_BUTTON, d_start_x, starty, d_start_w, d_start_h);
     starty += ystep;
-#ifndef FIXIT_VERSION_3
-#ifndef INTERNET_OFF // Denzil 5/1/98 - no internet play
-    TextButtonClass internetbutton(
-        BUTTON_INTERNET, TXT_INTERNET, TPF_BUTTON, d_internet_x, starty, d_internet_w, d_internet_h);
-    starty += ystep;
-#endif // INTERNET_OFF
-#endif
 
     TextButtonClass loadbtn(BUTTON_LOAD, TXT_LOAD_MISSION, TPF_BUTTON, d_load_x, starty, d_load_w, d_load_h);
     starty += ystep;
@@ -633,22 +603,7 @@ int Main_Menu(unsigned long)
     **	Create the list
     */
     commands = &startbtn;
-#ifdef FIXIT_VERSION_3
-    if (bExpansionCS)
-        expandbtnCS.Add_Tail(*commands);
-    if (bExpansionAM)
-        expandbtnAM.Add_Tail(*commands);
-#else
-    if (expansions) {
-        expandbtn.Add_Tail(*commands);
-    }
-#ifndef INTERNET_OFF // Denzil 5/1/98 - No internet play
-    internetbutton.Add_Tail(*commands);
-#endif               // INTERNET_OFF
-#endif               // FIXIT_VERSION_3
-    //#if defined(MPEGMOVIE) // Denzil 6/26/98 Video settings
-    //	moviebutton.Add_Tail(*commands);
-    //#endif
+	expandbtn.Add_Tail(*commands);
     loadbtn.Add_Tail(*commands);
     multibtn.Add_Tail(*commands);
     introbtn.Add_Tail(*commands);
@@ -657,31 +612,16 @@ int Main_Menu(unsigned long)
     /*
     **	Fill array of button ptrs
     */
-#ifdef FIXIT_VERSION_3
-    curbutton = bExpansionCS ? 0 : (bExpansionAM ? 1 : 2);
 
-    buttons[0] = &expandbtnCS;
-    buttons[1] = &expandbtnAM;
-    buttons[2] = &startbtn;
-    buttons[3] = &loadbtn;
-    buttons[4] = &multibtn;
-    buttons[5] = &introbtn;
-    buttons[6] = &exitbtn;
-#else
-    if (expansions) {
-        curbutton = 0;
-    } else {
-        curbutton = 1;
-    }
+    curbutton = 0;
+
 
     buttons[0] = &expandbtn;
     buttons[1] = &startbtn;
-    buttons[2] = &internetbutton;
-    buttons[3] = &loadbtn;
-    buttons[4] = &multibtn;
-    buttons[5] = &introbtn;
-    buttons[6] = &exitbtn;
-#endif
+    buttons[2] = &loadbtn;
+    buttons[3] = &multibtn;
+    buttons[4] = &introbtn;
+    buttons[5] = &exitbtn;
 
     buttons[curbutton]->Turn_On();
 
@@ -811,13 +751,6 @@ int Main_Menu(unsigned long)
             retval = (input & 0x7FFF) - BUTTON_EXPAND;
             process = false;
             break;
-
-#ifdef FIXIT_VERSION_3
-        case (BUTTON_EXPAND_AM | KN_BUTTON):
-            retval = (input & 0x7FFF) - BUTTON_EXPAND;
-            process = false;
-            break;
-#endif
 
         case (BUTTON_START | KN_BUTTON):
             retval = (input & 0x7FFF) - BUTTON_EXPAND;

@@ -183,7 +183,7 @@ const char* BonusNames[] = { "SCA01EA", //0 ant 1
 								"SCG05EB_DEMO", //5 demo allied mission 5b
 								"SCU01EA_DEMO", //6 demo soviet mission 1?
 						
-								"LOSTMISSION", //7 Recreation of lost mission from early trailers, by Chad1233 and tomsons26
+								"LOSTMISSION_BETA", //7 Recreation of lost mission from early trailers, by Chad1233 and tomsons26
 											   // from v0.9c beta files
 
 								
@@ -344,9 +344,17 @@ const char* XlatNames[] = {
 #define OPTION_X ((640 - OPTION_WIDTH) / 2)
 #define OPTION_Y (400 - OPTION_HEIGHT) / 2
 
+enum MissionSpecialEnum {
+	SPECIAL_NONE,
+	SPECIAL_ANT,
+	SPECIAL_DEMO,
+	SPECIAL_BETA_V09C,
+};
+
 struct EObjectClass
 {
     HousesType House;
+	MissionSpecialEnum MissionSpecial;
 	bool ShowPlayerHouse;
     int Scenario;
     char Name[128];
@@ -421,7 +429,7 @@ protected:
  *=============================================================================================*/
 void EListClass::Draw_Entry(int index, int x, int y, int width, int selected)
 {
-	char buffer[128];
+	char buffer[256], buffer2[256];
 	RemapControlType* scheme = GadgetClass::Get_Color_Scheme();
 
 	int text = TXT_NONE;
@@ -431,11 +439,29 @@ void EListClass::Draw_Entry(int index, int x, int y, int width, int selected)
 	else {
 		text = TXT_SOVIET;
 	}
+
+	buffer[0] = '\0';
+
+	switch (Get_Object(index)->MissionSpecial)
+	{
+		case SPECIAL_ANT:
+			strcpy(buffer, "(Ant) ");
+			break;
+		case SPECIAL_DEMO:
+			strcpy(buffer, "(Demo) ");
+			break;
+		case SPECIAL_BETA_V09C:
+			strcpy(buffer, "(Beta v0.9c) ");
+			break;
+		default:
+			break;
+	}
+
 	if (Get_Object(index)->ShowPlayerHouse) {
-		sprintf(buffer, "%s: %s", Text_String(text), Get_Object(index)->Name);
+		sprintf(buffer2, "%s%s: %s", buffer, Text_String(text), Get_Object(index)->Name);
 	}
 	else {
-		sprintf(buffer, "%s", Get_Object(index)->Name);
+		sprintf(buffer2, "%s%s", buffer, Get_Object(index)->Name);
 	}
 
     TextPrintType flags = TextFlags;
@@ -449,7 +475,7 @@ void EListClass::Draw_Entry(int index, int x, int y, int width, int selected)
         }
     }
 
-    Conquer_Clip_Text_Print(buffer, x + 100, y, scheme, TBLACK, flags & ~(TPF_CENTER), width, Tabs);
+    Conquer_Clip_Text_Print(buffer2, x + 100, y, scheme, TBLACK, flags & ~(TPF_CENTER), width, Tabs);
 }
 
 // One tab can be active at a time
@@ -471,7 +497,6 @@ void Update_Mission_Category_Tabs_On_Off_Status(TextButtonClass *CSButton, TextB
 	BonusButton->IsOn = tab ==  TAB_BONUS_MISSIONS ? true : false;
 }
 
-
 bool Expansion_Dialog(bool &forceOneTimeOnly)
 {
     GadgetClass* buttons = NULL;
@@ -488,7 +513,6 @@ bool Expansion_Dialog(bool &forceOneTimeOnly)
 	showCampaignBut.IsToggleType = true;
 	showBonusBut.IsToggleType = true;
 
-
     TextButtonClass ok(200, TXT_OK, TPF_BUTTON, OPTION_X + 40, OPTION_Y + OPTION_HEIGHT - 40);
     TextButtonClass cancel(201, TXT_CANCEL, TPF_BUTTON, OPTION_X + OPTION_WIDTH - 85, OPTION_Y + OPTION_HEIGHT - 40);
 
@@ -501,7 +525,6 @@ bool Expansion_Dialog(bool &forceOneTimeOnly)
                     MFCD::Retrieve("BTN-UP.SHP"),
                     MFCD::Retrieve("BTN-DN.SHP"));
 
-
     buttons = &ok;
 
 	showFanBut.Add(*buttons);
@@ -513,7 +536,6 @@ bool Expansion_Dialog(bool &forceOneTimeOnly)
     cancel.Add(*buttons);
     list.Add(*buttons);
 
-
     Set_Logic_Page(SeenBuff);
     bool recalc = true;
     bool display = true;
@@ -522,20 +544,9 @@ bool Expansion_Dialog(bool &forceOneTimeOnly)
 
     while (process) {
 
-		//if(showAMBut.IsPressed || showCSBut.IsPressed || showFanBut.IsPressed) {
-
 		if (recalc) {
 			recalc = false;
 			display = true;
-
-			char buffer3[256];
-			bool restoreSelected = false;
-
-			// save current selected list item if any before emptying list
-			if (list.Current_Item() != NULL) {
-				strcpy_s(buffer3, 256, list.Current_Item());
-				restoreSelected = true;
-			}
 
 			while (list.Count() > 0) {
 				list.Remove_Item(0);
@@ -553,7 +564,7 @@ bool Expansion_Dialog(bool &forceOneTimeOnly)
 			INIClass ini;
 
 			int start = 20;
-			if (showCampaignBut.IsOn  || showBonusBut.IsOn) {
+			if (showCampaignBut.IsOn || showBonusBut.IsOn) {
 				start = 0;
 			}
 			else if (showFanBut.IsOn) {
@@ -622,77 +633,76 @@ bool Expansion_Dialog(bool &forceOneTimeOnly)
 					ini.Clear();
 					ini.Load(file);
 					ini.Get_String("Basic", "Name", "x", buffer, sizeof(buffer));
-#if defined(GERMAN) || defined(FRENCH)
+			#if defined(GERMAN) || defined(FRENCH)
 					strcpy(obj->Name, XlatNames[index - ARRAYOFFSET]);
-#else
+			#else
 					strcpy(obj->Name, buffer);
-#endif
+			#endif
 					strcpy(obj->FullName, buffer2);
 
 					obj->Scenario = index;
 					obj->ShowPlayerHouse = false;
-					
 
-					switch (buffer[2]) {
-
-					case 'G':
-					case 'g':
-					case 'A':
-					case 'a':
-						obj->House = HOUSE_GOOD;
-						obj->ShowPlayerHouse = true;
-
-						break;
-
-					case 'U':
-					case 'u':
-						obj->House = HOUSE_GOOD;
-						obj->ShowPlayerHouse = true;
-						break;
-
-					default:
-						break;
+					obj->MissionSpecial = SPECIAL_NONE;
+					if (strstr(obj->FullName, "_DEMO")) {
+						obj->MissionSpecial = SPECIAL_DEMO;
 					}
+					if (strstr(obj->FullName, "_BETA")) {
+						obj->MissionSpecial = SPECIAL_BETA_V09C;
+					}
+					
+					switch (buffer2[2]) {
+						case 'G':
+						case 'g':
+
+							obj->House = HOUSE_GOOD;
+							obj->ShowPlayerHouse = true;
+							break;
+
+						case 'A':
+						case 'a':
+							obj->House = HOUSE_GOOD;
+							obj->MissionSpecial = SPECIAL_ANT;
+							break;
+
+						case 'U':
+						case 'u':
+							obj->House = HOUSE_BAD;
+							obj->ShowPlayerHouse = true;
+							break;
+
+						default:
+							break;
+						}					
 					list.Add_Object(obj);
 				}
 			}
-			if (restoreSelected) {
-				list.Set_Selected_Index(buffer3);
-
-			}
 		}
 
-
-
-		//if (showAMBut.IsOn != ShowAMMissions) {
 		if (showAMBut.IsPressed) {
 			MissionsDialogTabIndex = (int)TAB_AFTERMATH_MISSIONS;
-			//ShowAMMissions = showAMBut.IsOn;
 			recalc = true;
 		}
-		//if (showCSBut.IsOn != ShowCSMissions) {
+
 		if (showCSBut.IsPressed) {
 			MissionsDialogTabIndex = (int)TAB_COUNTERSTRIKE_MISSIONS;
-			//ShowCSMissions = showCSBut.IsOn;
 			recalc = true;
 		}
-		//if (showFanBut.IsOn != ShowNewMissions) {
+
 		if (showFanBut.IsPressed) {
 			MissionsDialogTabIndex = (int)TAB_CUSTOM_MISSIONS;
 			recalc = true;
 		}
 
-		//if (showCampaignBut.IsOn != ShowCampaignMissions) {
 		if (showCampaignBut.IsPressed) {
 			MissionsDialogTabIndex = (int)TAB_CAMPAIGN_MISSIONS;
 			recalc = true;
 		}
-		//if (showCampaignBut.IsOn != ShowCampaignMissions) {
+
 		if (showBonusBut.IsPressed) {
 			MissionsDialogTabIndex = (int)TAB_BONUS_MISSIONS;
 			recalc = true;
 		}
-
 
         /*
         ** If we have just received input focus again after running in the background then
@@ -764,6 +774,8 @@ bool Expansion_Dialog(bool &forceOneTimeOnly)
         delete list.Get_Object(index);
     }
 
+	// Write selected tab index to config file
+	// TODO move this to a new function for saving config data on game exit
 	FileClass *config_file = new CCFileClass(CONFIG_FILE_NAME);
 	if (config_file->Is_Available()) {
 		INIClass ini;

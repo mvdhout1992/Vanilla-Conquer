@@ -468,8 +468,7 @@ bool Select_Game(bool fade)
     enum
     {
         SEL_TIMEOUT = -1,     // main menu timeout--go into attract mode
-        SEL_NEW_SCENARIO_CS,  // Expansion scenario to play.
-        SEL_NEW_SCENARIO_AM,  // Expansion scenario to play.
+        SEL_NEW_MISSIONS,  // Expansion scenario to play.
         SEL_START_NEW_GAME,   // start a new game
         SEL_LOAD_MISSION,     // load a saved game
         SEL_MULTIPLAYER_GAME, // play modem/null-modem/network game
@@ -693,38 +692,14 @@ bool Select_Game(bool fade)
                 /*
                 **	Pick an expansion scenario.
                 */
-#ifdef FIXIT_VERSION_3
-            case SEL_NEW_SCENARIO_CS:
-            case SEL_NEW_SCENARIO_AM:
-#else  //	FIXIT_VERSION_3
-            case SEL_NEW_SCENARIO:
-#endif //	FIXIT_VERSION_3
+
+            case SEL_NEW_MISSIONS:
                 Scen.CarryOverMoney = 0;
                 IsTanyaDead = false;
                 SaveTanya = false;
 				ForceOneTimeOnly = false;
 
-#ifdef FIXIT_VERSION_3
-                if (selection == SEL_NEW_SCENARIO_CS) {
-                    if (!Force_CD_Available(2)) {
-                        selection = SEL_NONE;
-                        break;
-                    }
-                    if (!Expansion_Dialog(ForceOneTimeOnly)) {
-                        selection = SEL_NONE;
-                        break;
-                    }
-                } else {
-                    if (!Force_CD_Available(3)) {
-                        selection = SEL_NONE;
-                        break;
-                    }
-                    if (!Expansion_Dialog(ForceOneTimeOnly)) {
-                        selection = SEL_NONE;
-                        break;
-                    }
-                }
-#else             //	FIXIT_VERSION_3
+
 #ifdef FIXIT_CSII //	checked - ajw 9/28/98
                 if (cs) {
                     cdcheck = 2;
@@ -744,11 +719,10 @@ bool Select_Game(bool fade)
                     return (false);
                 }
 #endif
-                if (!Expansion_Dialog()) {
+                if (!Expansion_Dialog(ForceOneTimeOnly)) {
                     selection = SEL_NONE;
                     break;
                 }
-#endif //	FIXIT_VERSION_3
 
 #ifdef FIXIT_DIFFICULTY
 #ifdef FIXIT_CSII //	checked - ajw 9/28/98
