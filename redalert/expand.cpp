@@ -116,8 +116,8 @@ const char* ExpandNames[] = {"SCG20EA", "SCG21EA", "SCG22EA", "SCG23EA", "SCG24E
                              NULL};
 
 const char* CampaignNames[] = {"SCG01EA", //0
-                            "SCG02EA", //1
-                            "SCG03EA", //2
+							"SCG02EA", //1
+							"SCG03EA", //2
 							"SCG03EB", //3
 
                             "SCG04EA", //4
@@ -172,6 +172,79 @@ const char* CampaignNames[] = {"SCG01EA", //0
 
 							"SCU14EA", // 41
                             NULL};
+
+// ant, demo and v0.9c beta
+const char* BonusMissions[] = { "SCA01EA", //0 ant 1
+								"SCA02EA", //1 ant 2
+								"SCA03EA", //2 ant 3
+								"SCA04EA", //3 ant 4
+								
+								"SCG02EA_DEMO", //4 demo allied mission 2
+								"SCG05EB_DEMO", //5 demo allied mission 5b
+								"SCU01EA_DEMO", //6 demo soviet mission 1?
+						
+								"LOSTMISSION", //7 Recreation of lost mission from early trailers, by Chad1233 and tomsons26
+											   // from v0.9c beta files
+
+								
+							"SCG01EA_BETA", //8
+							"SCG02EA_BETA", //9
+							"SCG03EA_BETA", //10
+							"SCG03EB_BETA", //11
+
+							"SCG04EA_BETA", //12
+							"SCG05EA_BETA", //13
+							"SCG05EB_BETA", //14
+							"SCG05EC_BETA", //15
+
+							"SCG06EA_BETA", //16
+							"SCG06EB_BETA", //17
+
+							"SCG07EA_BETA", //18
+							"SCG08EA_BETA", //19
+							"SCG08EB_BETA", //20
+							"SCG08WA_BETA",
+
+							"SCG09EA_BETA", //21
+							"SCG09EB_BETA", //22
+
+							"SCG10EA_BETA", //23
+							"SCG10EB_BETA", //24
+
+							"SCG11EA_BETA", //25
+							"SCG11EB_BETA", //26
+
+							"SCG12EA_BETA", //27
+							"SCG13EA_BETA", //28
+							"SCG14EA_BETA", //29
+
+							"SCU01EA_BETA", //30
+							"SCU02EA_BETA", //31
+							"SCU02EB_BETA", //32
+
+							"SCU03EA_BETA", //33
+							"SCU04EA_BETA", //34
+							"SCU04EB_BETA", //35
+
+							"SCU05EA_BETA", //36
+							"SCU06EA_BETA", //37
+							"SCU06EB_BETA", //38
+
+							"SCU07EA_BETA", //39
+							"SCU08EA_BETA", //40
+							"SCU08EB_BETA", //41
+
+							"SCU09EA_BETA", //42
+							"SCU10EA_BETA", //43
+							"SCU11EA_BETA", //44
+							"SCU11EB_BETA", //45
+
+							"SCU12EA_BETA", //46
+							"SCU13EA_BETA", // 47
+							"SCU13EB_BETA", // 48
+
+							"SCU14EA", // 49
+								NULL };
 
 #ifdef GERMAN
 const char* XlatNames[] = {"Zusammenstoss",
