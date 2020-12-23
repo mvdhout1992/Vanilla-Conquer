@@ -174,7 +174,7 @@ const char* CampaignNames[] = {"SCG01EA", //0
                             NULL};
 
 // ant, demo and v0.9c beta
-const char* BonusMissions[] = { "SCA01EA", //0 ant 1
+const char* BonusNames[] = { "SCA01EA", //0 ant 1
 								"SCA02EA", //1 ant 2
 								"SCA03EA", //2 ant 3
 								"SCA04EA", //3 ant 4
@@ -452,46 +452,41 @@ void EListClass::Draw_Entry(int index, int x, int y, int width, int selected)
     Conquer_Clip_Text_Print(buffer, x + 100, y, scheme, TBLACK, flags & ~(TPF_CENTER), width, Tabs);
 }
 
+// One tab can be active at a time
+enum MissionDialogTabsEnum
+{
+	TAB_COUNTERSTRIKE_MISSIONS,
+	TAB_AFTERMATH_MISSIONS,
+	TAB_CAMPAIGN_MISSIONS,
+	TAB_BONUS_MISSIONS,
+	TAB_CUSTOM_MISSIONS
+};
+
 void Update_Mission_Category_Tabs_On_Off_Status(TextButtonClass *CSButton, TextButtonClass *AMButton, TextButtonClass *FanButton, TextButtonClass *CampaignButton,
-	bool CSon, bool AMon, bool FanOn, bool CampaignOn) {
-	// Check bool args to see if only one tab is turned on, if none or multiple are on then force Counterstrike tab only on
-	int count = 0;
-	count += (int)CSon + (int)AMon + (int)FanOn + (int)CampaignOn;
-	if (count != 1) {
-		CSon = true;
-		AMon = FanOn = CampaignOn = false;
-	}
-	CSButton->IsOn = CSon;
-	AMButton->IsOn = AMon;
-	FanButton->IsOn = FanOn;
-	CampaignButton->IsOn = CampaignOn;
+	TextButtonClass *BonusButton, MissionDialogTabsEnum tab) {
+	CSButton->IsOn = tab == TAB_COUNTERSTRIKE_MISSIONS ? true : false;
+	AMButton->IsOn = tab ==  TAB_AFTERMATH_MISSIONS ? true : false;
+	FanButton->IsOn = tab ==  TAB_CUSTOM_MISSIONS ? true : false;
+	CampaignButton->IsOn = tab ==  TAB_CAMPAIGN_MISSIONS ? true : false;
+	BonusButton->IsOn = tab ==  TAB_BONUS_MISSIONS ? true : false;
 }
 
-void Set_Show_Mission_Global_Variables(bool CSon, bool AMon, bool FanOn, bool CampaignOn) {
-	ShowCSMissions = CSon;
-	ShowAMMissions = AMon;
-	ShowNewMissions = FanOn;
-	ShowCampaignMissions = CampaignOn;
-}
 
 bool Expansion_Dialog(bool &forceOneTimeOnly)
 {
     GadgetClass* buttons = NULL;
 
-	TextButtonClass showCSBut(203, TXT_WOL_CS_MISSIONS, TPF_BUTTON, OPTION_X + 35, OPTION_Y + 20);
-	TextButtonClass showAMBut(204, TXT_WOL_AM_MISSIONS, TPF_BUTTON, OPTION_X + 250, OPTION_Y + 20);
-	TextButtonClass showFanBut(205, TXT_NEW_MISSIONS, TPF_BUTTON, OPTION_X + 430, OPTION_Y + 20);
-	TextButtonClass showCampaignBut(206, "Campaign", TPF_BUTTON, OPTION_X + 600, OPTION_Y + 20);
+	TextButtonClass showCSBut(203, "Counterstrike", TPF_BUTTON, OPTION_X + 35, OPTION_Y + 20);
+	TextButtonClass showAMBut(204, "Aftermath", TPF_BUTTON, OPTION_X + 135, OPTION_Y + 20);
+	TextButtonClass showFanBut(205, "Custom", TPF_BUTTON, OPTION_X + 235, OPTION_Y + 20);
+	TextButtonClass showCampaignBut(206, "Campaign", TPF_BUTTON, OPTION_X + 335, OPTION_Y + 20);
+	TextButtonClass showBonusBut(206, "Bonus", TPF_BUTTON, OPTION_X + 435, OPTION_Y + 20);
 
 	showCSBut.IsToggleType = true;
 	showAMBut.IsToggleType = true;
 	showFanBut.IsToggleType = true;
 	showCampaignBut.IsToggleType = true;
-
-	showCSBut.IsOn = ShowCSMissions;
-	showAMBut.IsOn = ShowAMMissions;
-	showFanBut.IsOn = ShowNewMissions;
-	showCampaignBut.IsOn = ShowCampaignMissions;
+	showBonusBut.IsToggleType = true;
 
 
     TextButtonClass ok(200, TXT_OK, TPF_BUTTON, OPTION_X + 40, OPTION_Y + OPTION_HEIGHT - 40);
@@ -513,6 +508,7 @@ bool Expansion_Dialog(bool &forceOneTimeOnly)
 	showAMBut.Add(*buttons);
 	showCSBut.Add(*buttons);
 	showCampaignBut.Add(*buttons);
+	showBonusBut.Add(*buttons);
 
     cancel.Add(*buttons);
     list.Add(*buttons);
@@ -547,7 +543,7 @@ bool Expansion_Dialog(bool &forceOneTimeOnly)
 
 
 			Update_Mission_Category_Tabs_On_Off_Status(&showCSBut, &showAMBut, &showFanBut, &showCampaignBut,
-				ShowCSMissions, ShowAMMissions, ShowNewMissions, ShowCampaignMissions);
+				&showBonusBut, (MissionDialogTabsEnum)MissionsDialogTabIndex);
 
 			/*
 			**	Add in all the expansion scenarios.
@@ -557,7 +553,7 @@ bool Expansion_Dialog(bool &forceOneTimeOnly)
 			INIClass ini;
 
 			int start = 20;
-			if (showCampaignBut.IsOn ) {
+			if (showCampaignBut.IsOn  || showBonusBut.IsOn) {
 				start = 0;
 			}
 			else if (showFanBut.IsOn) {
@@ -572,6 +568,9 @@ bool Expansion_Dialog(bool &forceOneTimeOnly)
 			{
 				limit = 41;
 			}
+			else if (showBonusBut.IsOn) {
+				limit = 49;
+			}
 
 			for (int index = start; index < limit; index++) {
 
@@ -584,6 +583,12 @@ bool Expansion_Dialog(bool &forceOneTimeOnly)
 					strcpy(buffer, CampaignNames[index]);
 					strcpy(buffer2, CampaignNames[index]);
 				}
+				else if (showBonusBut.IsOn)
+				{
+					strcpy(buffer, BonusNames[index]);
+					strcpy(buffer2, BonusNames[index]);
+				}
+
 				else if (showFanBut.IsOn) {
 					sprintf(buffer, "cmu%02dea", index);
 					sprintf(buffer2, "cmu%02dea", index);
@@ -605,12 +610,12 @@ bool Expansion_Dialog(bool &forceOneTimeOnly)
 				else if ((index >= 36) && showAMBut.IsOn) {
 					bOk = true;
 				}
-				else if (showCampaignBut.IsOn || showFanBut.IsOn) {
+				else if (showCampaignBut.IsOn || showFanBut.IsOn || showBonusBut.IsOn) {
 					bOk = true;
 				}
 
 				if (bOk && file.Is_Available()) {
-					if (ShowCampaignMissions) {
+					if (showCampaignBut.IsOn || showBonusBut.IsOn) {
 						forceOneTimeOnly = true;
 					}
 					EObjectClass* obj = new EObjectClass;
@@ -632,6 +637,8 @@ bool Expansion_Dialog(bool &forceOneTimeOnly)
 
 					case 'G':
 					case 'g':
+					case 'A':
+					case 'a':
 						obj->House = HOUSE_GOOD;
 						obj->ShowPlayerHouse = true;
 
@@ -659,25 +666,30 @@ bool Expansion_Dialog(bool &forceOneTimeOnly)
 
 		//if (showAMBut.IsOn != ShowAMMissions) {
 		if (showAMBut.IsPressed) {
-			Set_Show_Mission_Global_Variables(false, true, false, false);
+			MissionsDialogTabIndex = (int)TAB_AFTERMATH_MISSIONS;
 			//ShowAMMissions = showAMBut.IsOn;
 			recalc = true;
 		}
 		//if (showCSBut.IsOn != ShowCSMissions) {
 		if (showCSBut.IsPressed) {
-			Set_Show_Mission_Global_Variables(true, false, false, false);
+			MissionsDialogTabIndex = (int)TAB_COUNTERSTRIKE_MISSIONS;
 			//ShowCSMissions = showCSBut.IsOn;
 			recalc = true;
 		}
 		//if (showFanBut.IsOn != ShowNewMissions) {
 		if (showFanBut.IsPressed) {
-			Set_Show_Mission_Global_Variables(false, false, true, false);
+			MissionsDialogTabIndex = (int)TAB_CUSTOM_MISSIONS;
 			recalc = true;
 		}
 
 		//if (showCampaignBut.IsOn != ShowCampaignMissions) {
 		if (showCampaignBut.IsPressed) {
-			Set_Show_Mission_Global_Variables(false, false, false, true);
+			MissionsDialogTabIndex = (int)TAB_CAMPAIGN_MISSIONS;
+			recalc = true;
+		}
+		//if (showCampaignBut.IsOn != ShowCampaignMissions) {
+		if (showBonusBut.IsPressed) {
+			MissionsDialogTabIndex = (int)TAB_BONUS_MISSIONS;
 			recalc = true;
 		}
 
@@ -756,11 +768,7 @@ bool Expansion_Dialog(bool &forceOneTimeOnly)
 	if (config_file->Is_Available()) {
 		INIClass ini;
 		ini.Load(*config_file);
-
-		ini.Put_Bool("Options", "ShowAMMissions", ShowAMMissions);
-		ini.Put_Bool("Options", "ShowCSMissions", ShowCSMissions);
-		ini.Put_Bool("Options", "ShowNewMissions", ShowNewMissions);
-		ini.Put_Bool("Options", "ShowCampaignMissions", ShowCampaignMissions);
+		ini.Put_Int("Options", "MissionsDialogTabIndex", MissionsDialogTabIndex);
 		ini.Save(*config_file);
 	}
 

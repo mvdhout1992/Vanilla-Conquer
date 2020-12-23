@@ -182,10 +182,7 @@ int OutputWidth = GBUFF_INIT_WIDTH;
 int OutputHeight = GBUFF_INIT_HEIGHT;
 bool Show640x480BlackBars = false;
 
-bool ShowAMMissions = true;
-bool ShowCSMissions = true;
-bool ShowNewMissions = true;
-bool ShowCampaignMissions = true;
+int MissionsDialogTabIndex = 0;
 
 GraphicBufferClass ModeXBuff;
 bool InMovie = false; // Are we currently playing a VQ movie?
