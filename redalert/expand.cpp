@@ -465,6 +465,7 @@ bool Expansion_Dialog(void)
 			}
 			else {
 				Draw_Caption(TXT_WOL_AM_MISSIONS, OPTION_X + HIRES_ADJ_W, OPTION_Y + HIRES_ADJ_H, OPTION_WIDTH);
+			}
 #else
 			Draw_Caption(TXT_NEW_MISSIONS, OPTION_X, OPTION_Y, OPTION_WIDTH);
 #endif
@@ -511,5 +512,4 @@ bool Expansion_Dialog(void)
 	}
 
 	return (okval);
-	}
 }
