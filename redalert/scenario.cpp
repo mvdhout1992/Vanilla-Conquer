@@ -3195,7 +3195,7 @@ static void Create_Units(bool official)
 		**	Get a pointer to this house; if there is none, go to the next house
 		*/
 		HouseClass* hptr = HouseClass::As_Pointer(house);
-		if (hptr == NULL || hptr->IsSpectator) {
+		if (hptr == NULL) {
 			continue;
 		}
 
