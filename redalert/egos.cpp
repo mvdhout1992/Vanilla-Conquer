@@ -41,6 +41,7 @@ class EgoClass;
 
 #include "function.h"
 #include "common/mssleep.h"
+#include "common/framelimit.h"
 
 /*
 ** List of Ego Class instances
@@ -423,6 +424,13 @@ void Show_Who_Was_Responsible(void)
     static int speed = 3;
 
     /*
+    ** Demo did not have this feature and is missing background images.
+    */
+    if (Is_Demo()) {
+        return;
+    }
+
+    /*
     ** Read in the credits file to be displayed
     **
     ** Lines of text in CREDITS.TXT are treated as follows....
@@ -797,6 +805,7 @@ void Show_Who_Was_Responsible(void)
         ** Stop calling Theme.AI after a while so a different song doesnt start playing
         */
         Call_Back();
+        Frame_Limiter();
         //		if (frame <1000 ){
         //			Theme.AI();
         //		}else{
@@ -880,6 +889,7 @@ void Show_Who_Was_Responsible(void)
             Slide_Show(slide_number, picture_frame);
 
             Call_Back();
+            Frame_Limiter();
             //			Sound_Callback();		//Theme.AI();
 
             /*

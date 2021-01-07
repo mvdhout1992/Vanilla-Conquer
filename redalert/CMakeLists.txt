@@ -83,10 +83,6 @@ set(REDALERT_SRC
     list.cpp
     loaddlg.cpp
     logic.cpp
-    lzo1x_c.cpp
-    lzo1x_d.cpp
-    lzopipe.cpp
-    lzostraw.cpp
     map.cpp
     mapeddlg.cpp
     mapedit.cpp
@@ -100,7 +96,6 @@ set(REDALERT_SRC
     monoc.cpp
     mouse.cpp
     mplayer.cpp
-    mpu.cpp
     msgbox.cpp
     msglist.cpp
     netdlg.cpp
@@ -134,7 +129,6 @@ set(REDALERT_SRC
     smudge.cpp
     sounddlg.cpp
     special.cpp
-    stamp.asm
     startup.cpp
     statbtn.cpp
     stats.cpp
