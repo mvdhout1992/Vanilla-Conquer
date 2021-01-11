@@ -506,6 +506,8 @@ bool Select_Game(bool fade)
     /*
     **	[Re]set any globals that need it, in preparation for a new scenario
     */
+    Session.Record = true;
+
     GameActive = true;
     DoList.Init();
 #ifdef MIRROR_QUEUE
@@ -1027,7 +1029,7 @@ bool Select_Game(bool fade)
             /*
             **	Play a VQ
             */
-            case SEL_INTRO:
+            case SEL_TIMEOUT:
                 Theme.Fade_Out();
                 if (Debug_Flag) {
                     Play_Intro(Debug_Flag);
@@ -1062,9 +1064,10 @@ bool Select_Game(bool fade)
             case SEL_FAME:
                 break;
 
-            case SEL_TIMEOUT:
-                if (Session.Attract && Session.RecordFile.Is_Available()) {
+            case SEL_INTRO:
+                if (Session.RecordFile.Is_Available()) {
                     Session.Play = true;
+                    Session.Record = false;
                     if (Session.RecordFile.Open(READ)) {
                         Load_Recording_Values(Session.RecordFile);
                         process = false;
@@ -1930,7 +1933,7 @@ void Init_Random(void)
     ** in the connection dialogs.  For single-player games, AND if we're not playing
     ** back a recording, init the Seed to a random value.
     */
-    if (Session.Type == GAME_NORMAL || Session.Type == GAME_SKIRMISH && !Session.Play) {
+    if ((Session.Type == GAME_NORMAL || Session.Type == GAME_SKIRMISH) && !Session.Play) {
 
         /*
         ** Set the optional user-specified seed

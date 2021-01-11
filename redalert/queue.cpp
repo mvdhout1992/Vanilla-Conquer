@@ -3432,9 +3432,9 @@ static void Queue_Record(void)
     //------------------------------------------------------------------------
     //	Save the # of events, then all events.
     //------------------------------------------------------------------------
-    Session.RecordFile.Write(&j, sizeof(j));
+    //Session.RecordFile.Write(&j, sizeof(j));
     for (i = 0; i < DoList.Count; i++) {
-        if (Frame == DoList[i].Frame && !DoList[i].IsExecuted) {
+        if (Frame == DoList[i].Frame &&  !DoList[i].IsExecuted) {
             Session.RecordFile.Write(&DoList[i], sizeof(EventClass));
             j--;
         }
@@ -3476,6 +3476,12 @@ static void Queue_Playback(void)
     int key;
     int testframe;
 
+    /* Get record file position for reading, on frame 0 the record file has been read
+       by Load_Recording_Value() and from there on starts the list of events */
+    if (Frame == 0) {
+        Session.RecordFileCurrentReadPos = ftell(Session.RecordFile.Get_File_Handle());
+    }
+
     //------------------------------------------------------------------------
     //	If the user hits ESC, stop the playback
     //------------------------------------------------------------------------
@@ -3501,83 +3507,62 @@ static void Queue_Playback(void)
     //------------------------------------------------------------------------
     //	Compute the Game's CRC
     //------------------------------------------------------------------------
-    Compute_Game_CRC();
-    CRC[Frame & 0x001f] = GameCRC;
+    //Compute_Game_CRC();
+    //CRC[Frame & 0x001f] = GameCRC;
 
     //------------------------------------------------------------------------
     // If we've reached the CRC print frame, do so & exit
     //------------------------------------------------------------------------
-    if (Frame >= Session.TrapPrintCRC) {
+    /*if (Frame >= Session.TrapPrintCRC) {
         Print_CRCs(NULL);
         Prog_End("Queue_Playback reached CRC print frame", true);
         Emergency_Exit(0);
-    }
+    }*/
 
     //------------------------------------------------------------------------
     //	Don't read anything the first time through (since the Queue_AI_Network
     //	routine didn't write anything the first time through); do this after the
     //	CRC is computed, since we'll still need a CRC for Frame 0.
     //------------------------------------------------------------------------
-    if (Frame == 0 && Session.Type != GAME_NORMAL) {
+    /*if (Frame == 0 && Session.Type != GAME_NORMAL) {
         return;
-    }
+    } */
 
     //------------------------------------------------------------------------
     // Only process every 'FrameSendRate' frames
     //------------------------------------------------------------------------
-    testframe = ((Frame + (Session.FrameSendRate - 1)) / Session.FrameSendRate) * Session.FrameSendRate;
+   /* testframe = ((Frame + (Session.FrameSendRate - 1)) / Session.FrameSendRate) * Session.FrameSendRate;
     if ((Session.Type != GAME_NORMAL && Session.Type != GAME_SKIRMISH)
         && Session.CommProtocol == COMM_PROTOCOL_MULTI_E_COMP) {
         if (Frame != testframe) {
             return;
         }
-    }
+    } */
 
     //------------------------------------------------------------------------
     //	Read the DoList from disk
     //------------------------------------------------------------------------
     ok = 1;
-    if (Session.RecordFile.Read(&numevents, sizeof(numevents)) == sizeof(numevents)) {
-        for (i = 0; i < numevents; i++) {
-            if (Session.RecordFile.Read(&event, sizeof(EventClass)) == sizeof(EventClass)) {
-                event.IsExecuted = 0;
-                DoList.Add(event);
-#ifdef MIRROR_QUEUE
-                MirrorList.Add(event);
-#endif
-            } else {
-                ok = 0;
-                break;
-            }
-        }
-    } else {
-        ok = 0;
-    }
 
+    Session.RecordFile.Seek(Session.RecordFileCurrentReadPos, SEEK_SET);
+    Session.RecordFile.Read(&event, sizeof(EventClass));
+    while (Frame == event.Frame) {
+        Session.RecordFileCurrentReadPos += sizeof(EventClass);
+        event.Execute();
+        event.IsExecuted = true;
+#ifdef MIRROR_QUEUE
+        MirrorList.Add(event);
+#endif
+        if (Session.RecordFileCurrentReadPos + sizeof(EventClass) <= Session.RecordFile.Size()) {
+            Session.RecordFile.Read(&event, sizeof(EventClass));
+        } else {
+            break;
+        }
+    }
     if (!ok) {
         GameActive = 0;
         return;
     }
-
-    //------------------------------------------------------------------------
-    // Execute the DoList; if an error occurs, bail out.
-    //------------------------------------------------------------------------
-    if (Session.Type == GAME_NORMAL) {
-        max_houses = 1;
-        base_house = PlayerPtr->Class->House;
-    } else {
-        max_houses = Session.MaxPlayers;
-        base_house = HOUSE_MULTI1;
-    }
-    if (!Execute_DoList(max_houses, base_house, NULL, NULL, NULL, NULL, NULL)) {
-        GameActive = 0;
-        return;
-    }
-
-    //------------------------------------------------------------------------
-    //	Clean out the DoList
-    //------------------------------------------------------------------------
-    Clean_DoList(NULL);
 
 } /* end of Queue_Playback */
 

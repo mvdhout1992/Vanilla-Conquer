@@ -974,8 +974,8 @@ bool SidebarClass::Activate(int control)
 
     bool old = IsSidebarActive;
 
-    if (Session.Play)
-        return (old);
+    //if (Session.Play)
+    //    return (old);
 
     /*
     **	Determine the new state of the sidebar.

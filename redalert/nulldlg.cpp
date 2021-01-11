@@ -432,9 +432,9 @@ int Com_Scenario_Dialog(bool skirmish)
     if (Session.Options.AIPlayers > 7) {
         Session.Options.AIPlayers = 7;
     }
-    Session.Options.AIPlayers = max(Session.Options.AIPlayers, 1);
+    Session.Options.AIPlayers = max(Session.Options.AIPlayers, 0);
 
-    aiplayersgauge.Set_Value(Session.Options.AIPlayers - 1);
+    aiplayersgauge.Set_Value(0);
 
     /*........................................................................
     Init other scenario parameters

@@ -653,6 +653,7 @@ public:
     // For Recording & Playing back a file
     //.....................................................................
     CCFileClass RecordFile;
+    int RecordFileCurrentReadPos;
     unsigned Record : 1;
     unsigned Play : 1;
     unsigned Attract : 1;

@@ -82,6 +82,8 @@ RandomClass::RandomClass(unsigned seed)
  * HISTORY:                                                                                    *
  *   02/27/1996 JLB : Created.                                                                 *
  *=============================================================================================*/
+
+
 int RandomClass::operator()(void)
 {
 #ifdef RANDOM_COUNT

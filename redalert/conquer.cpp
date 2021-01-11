@@ -1842,7 +1842,7 @@ bool Main_Loop()
     ** Save map's position & selected objects, if we're recording the game.
     */
     if (Session.Record || Session.Play) {
-        Do_Record_Playback();
+        //Do_Record_Playback();
     }
 
 #ifndef SORTDRAW

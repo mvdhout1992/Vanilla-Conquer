@@ -340,7 +340,7 @@ long FAR PASCAL Windows_Procedure(HWND hwnd, UINT message, UINT wParam, LONG lPa
 }
 #endif
 
-#if 0
+#if 1
 HANDLE DebugFile = INVALID_HANDLE_VALUE;
 #endif
 
@@ -360,7 +360,7 @@ HANDLE DebugFile = INVALID_HANDLE_VALUE;
  *=============================================================================================*/
 void WWDebugString(const char* string)
 {
-#if (0)
+#if (1)
     char outstr[256];
 
     sprintf(outstr, "%s", string);

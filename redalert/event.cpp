@@ -464,8 +464,21 @@ void EventClass::Execute(void)
     bool formation = false;
     //	RTTIType rt;
 
+    char buf[512];
+    sprintf(buf, "(%d) Executing %s ID:%d Frame:%d\n\n ", ::Frame, EventNames[Type], ID, Frame);
+    WWDebugString(buf);
+    char buf2[512];
+    sprintf(buf2, "Seed=%d", Scen.RandomNumber.Seed);
+    WWDebugString(buf2);
+
+    if (Type == ANIMATION) {
+        char buf3[512];
+        sprintf(buf3, "Anim: what=%d where=%d owner=%d visible=%d\n\n", (Data.Anim.What, Data.Anim.Where, Data.Anim.Owner, Data.Anim, Data.Anim.Visible));
+        WWDebugString(buf3);
+    }
+
     if (Debug_Print_Events) {
-        printf("(%d) Executing %s ID:%d Frame:%d ", ::Frame, EventNames[Type], ID, Frame);
+        printf("(%d) Executing %s ID:%d Frame:%d\n\n ", ::Frame, EventNames[Type], ID, Frame);
     }
 
     switch (Type) {
