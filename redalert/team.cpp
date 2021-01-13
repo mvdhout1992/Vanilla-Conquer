@@ -1678,8 +1678,7 @@ void TeamClass::Coordinate_Attack(void)
                     unit->Assign_Target(Target);
                 } else {
 #ifdef FIXIT_CSII //	checked - ajw 9/28/98
-                    if (mission->Mission == TMISSION_SPY && unit->What_Am_I() == RTTI_UNIT
-                        && *(UnitClass*)unit == UNIT_CHRONOTANK) {
+                    if (mission->Mission == TMISSION_SPY && unit->What_Am_I() != RTTI_INFANTRY) {
                         UnitClass* tank = (UnitClass*)unit;
                         tank->Teleport_To(::As_Cell(Target));
                         tank->MoebiusCountDown = ChronoTankDuration * TICKS_PER_MINUTE;
