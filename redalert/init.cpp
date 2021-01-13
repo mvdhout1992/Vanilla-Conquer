@@ -2027,6 +2027,7 @@ static void Init_Color_Remaps(void)
         ColorRemaps[pcolor].Box = HidPage.Get_Pixel(4, pcolor);
     }
 
+#ifdef REMASTER_BUILD
     /* 12/9/2019 SKY - Swap Blue and Grey color remaps */
     {
         RemapControlType temp;
@@ -2034,6 +2035,7 @@ static void Init_Color_Remaps(void)
         memcpy(&ColorRemaps[PCOLOR_BLUE], &ColorRemaps[PCOLOR_GREY], sizeof(RemapControlType));
         memcpy(&ColorRemaps[PCOLOR_GREY], &temp, sizeof(RemapControlType));
     }
+#endif
 
     /*
     ** Now do the special dim grey scheme
