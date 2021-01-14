@@ -2998,11 +2998,11 @@ void BuildingTypeClass::One_Time(void)
                   {STRUCT_FAKEWEAP, BSTATE_ACTIVE, 0, 1, 0},
                   {STRUCT_FAKEWEAP, BSTATE_IDLE, 0, 1, 0},
                   {STRUCT_IRON_CURTAIN, BSTATE_ACTIVE, 0, 11, 3},
-#ifdef REMASTER_BUILD
                   {STRUCT_TESLA, BSTATE_ACTIVE, 0, 10, 2},
+#ifdef REMASTER_BUILD
                   {STRUCT_AIRSTRIP, BSTATE_IDLE, 0, 8, 3}};
 #else
-                  {STRUCT_TESLA, BSTATE_ACTIVE, 0, 10, 2}};
+                  };
 #endif
 
     for (int sindex = STRUCT_FIRST; sindex < STRUCT_COUNT; sindex++) {
