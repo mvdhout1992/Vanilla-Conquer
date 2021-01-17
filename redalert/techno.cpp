@@ -5075,6 +5075,7 @@ bool TechnoClass::Evaluate_Object(ThreatType method,
         */
         InfantryType infantry = INFANTRY_E1;
         if (House->ActLike == HOUSE_NEUTRAL) {
+            DLOG();
             infantry = Random_Pick(INFANTRY_C1, INFANTRY_C9);
         } else {
             if (Techno_Type_Class()->PrimaryWeapon == NULL && Percent_Chance(15)) {

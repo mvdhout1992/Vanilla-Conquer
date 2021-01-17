@@ -1777,6 +1777,7 @@ int CellClass::Reduce_Wall(int damage)
             if (damage == -1 || damage >= wall.DamagePoints) {
                 destroyed = true;
             } else {
+                DLOG_LINE();
                 destroyed = Random_Pick(0, wall.DamagePoints) < damage;
             }
 
@@ -1941,6 +1942,7 @@ COORDINATE CellClass::Closest_Free_Spot(COORDINATE coord, bool any) const
     */
     unsigned char* sequence;
     if (spot_index == 0) {
+        DLOG_LINE();
         sequence = &_alternate[Random_Pick(0, 3)][0];
     } else {
         sequence = &_sequence[spot_index][0];
@@ -2138,6 +2140,7 @@ long CellClass::Tiberium_Adjust(bool pregame)
                 case OVERLAY_GOLD3:
                 case OVERLAY_GOLD4:
                     value = Rule.GoldValue;
+                    DLOG_LINE();
                     Overlay = Random_Pick(OVERLAY_GOLD1, OVERLAY_GOLD4);
                     break;
 
@@ -2147,6 +2150,7 @@ long CellClass::Tiberium_Adjust(bool pregame)
                 case OVERLAY_GEMS4:
                     gems = true;
                     value = Rule.GemValue * 4;
+                    DLOG_LINE2();
                     Overlay = Random_Pick(OVERLAY_GEMS1, OVERLAY_GEMS4);
                     break;
 
@@ -2243,6 +2247,7 @@ bool CellClass::Goodie_Check(FootClass* object)
 
             if (Overlay == OVERLAY_WATER_CRATE) {
                 // Mono_Printf("%d-%s.\n", __LINE__, __FILE__);
+                DLOG_LINE();
                 powerup = Rule.WaterCrate;
             }
 
@@ -2344,6 +2349,7 @@ bool CellClass::Goodie_Check(FootClass* object)
                     if (minutes > 100)
                         minutes = 100;
                     if (Random_Pick(0, 100 - (int)minutes) == 0) {
+                        DLOG_LINE();
                         for (i = 0; i < (Session.Players.Count() + Session.Options.AIPlayers); i++) {
                             ucount = 0;
                             HouseClass* hptr = Houses.Ptr(i + HOUSE_MULTI1);
@@ -2370,6 +2376,7 @@ bool CellClass::Goodie_Check(FootClass* object)
                             }
                         }
                         if (Random_Pick(0, minunits) == minunits) {
+                            DLOG_LINE();
                             found = true;
                         }
                     }
@@ -2462,6 +2469,7 @@ bool CellClass::Goodie_Check(FootClass* object)
             if (force_money > 0) {
                 object->House->Refund_Money(force_money);
             } else {
+                DLOG_LINE();
                 object->House->Refund_Money(Random_Pick(CrateData[powerup], CrateData[powerup] + 900));
             }
             break;
@@ -2530,6 +2538,7 @@ bool CellClass::Goodie_Check(FootClass* object)
             while (utp == NULL) {
 #ifdef FIXIT_ANTS
 #ifdef FIXIT_CSII //	checked - ajw 9/28/98
+                DLOG_LINE();
                 UnitType utype = Random_Pick(UNIT_FIRST, (UnitType)(UNIT_RA_COUNT - 1 - 3));
 #else
                 UnitType utype = Random_Pick(UNIT_FIRST, (UnitType)(UNIT_COUNT - 1 - 3));
@@ -2582,6 +2591,7 @@ bool CellClass::Goodie_Check(FootClass* object)
                                               INFANTRY_E2,
                                               INFANTRY_E3,
                                               INFANTRY_RENOVATOR};
+                DLOG_LINE();
                 if (!InfantryTypeClass::As_Reference(_inf[Random_Pick(0, ARRAY_SIZE(_inf) - 1)])
                          .Create_And_Place(Cell_Number(), object->Owner())) {
                     if (index == 0) {
@@ -2642,6 +2652,7 @@ bool CellClass::Goodie_Check(FootClass* object)
                 object->Take_Damage(d, 0, WARHEAD_HE, 0, true);
             }
             for (int index = 0; index < 5; index++) {
+                DLOG_LINE();
                 COORDINATE frag_coord = Coord_Scatter(Cell_Coord(), Random_Pick(0, 0x0200));
                 new AnimClass(ANIM_FBALL1, frag_coord);
                 damage = CrateData[powerup];
@@ -3177,11 +3188,13 @@ bool CellClass::Spread_Tiberium(bool forced)
         if (!Can_Tiberium_Spread())
             return (false);
     }
+    DLOG_LINE();
     FacingType offset = Random_Pick(FACING_N, FACING_NW);
     for (FacingType index = FACING_N; index < FACING_COUNT; index++) {
         CellClass* newcell = Adjacent_Cell(index + offset);
 
         if (newcell != NULL && newcell->Can_Tiberium_Germinate()) {
+            DLOG_LINE();
             new OverlayClass(Random_Pick(OVERLAY_GOLD1, OVERLAY_GOLD4), newcell->Cell_Number());
             newcell->OverlayData = 0;
             return (true);

@@ -1557,6 +1557,7 @@ ResultType BuildingClass::Take_Damage(int& damage, int distance, WarheadType war
                     **	building can do.
                     */
                     if (!PrimaryFacing.Is_Rotating()) {
+                        DLOG_LINE();
                         PrimaryFacing.Set_Desired(Random_Pick(DIR_N, DIR_MAX));
                     }
                 }
@@ -1766,7 +1767,7 @@ void BuildingClass::Drop_Debris(TARGET source)
         */
         if (!House->IsToDie && count > 0) {
             InfantryClass* i = NULL;
-
+            DLOG_LINE();
             if (Random_Pick(0, odds) == 1) {
                 i = NULL;
                 InfantryType typ = Crew_Type();
@@ -1777,6 +1778,7 @@ void BuildingClass::Drop_Debris(TARGET source)
                         i->IsTechnician = true;
                     ScenarioInit++;
                     if (i->Unlimbo(Cell_Coord(newcell), DIR_N)) {
+                        DLOG_LINE();
                         count--;
                         i->Strength = Random_Pick(5, (int)i->Class->MaxStrength);
                         i->Scatter(0, true);
@@ -1803,7 +1805,7 @@ void BuildingClass::Drop_Debris(TARGET source)
         **	rivers, clifs, or water cells.
         */
         if (cellptr->Is_Clear_To_Move(SPEED_TRACK, true, true)) {
-
+            DLOG_LINE();
             /*
             **	Possibly add some smoke rising from the ashes of the building.
             */
@@ -1974,6 +1976,7 @@ void BuildingClass::Init(void)
  *=============================================================================================*/
 int BuildingClass::Exit_Object(TechnoClass* base)
 {
+    DLOG();
     assert(Buildings.ID(this) == ID);
     assert(IsActive);
 
@@ -2013,8 +2016,10 @@ int BuildingClass::Exit_Object(TechnoClass* base)
             AircraftClass* air = (AircraftClass*)base;
 
             if (Cell_X(Coord_Cell(Center_Coord())) - Map.MapCellX < Map.MapCellWidth / 2) {
+                DLOG_LINE();
                 cell = XY_Cell(Map.MapCellX - 1, Random_Pick(0, Map.MapCellHeight - 1) + Map.MapCellY);
             } else {
+                DLOG_LINE();
                 cell = XY_Cell(Map.MapCellX + Map.MapCellWidth, Random_Pick(0, Map.MapCellHeight - 1) + Map.MapCellY);
             }
             ScenarioInit++;
@@ -3611,9 +3616,11 @@ int BuildingClass::Mission_Guard(void)
         if (*this == STRUCT_REPAIR) {
             return (MissionControl[Mission].Normal_Delay() + Random_Pick(0, 2));
         } else {
+            DLOG_LINE();
             return (MissionControl[Mission].Normal_Delay() * 3 + Random_Pick(0, 2));
         }
     }
+    DLOG_LINE();
     return (MissionControl[Mission].AA_Delay() + Random_Pick(0, 2));
 }
 
@@ -4032,6 +4039,7 @@ int BuildingClass::Mission_Attack(void)
         default:
             break;
         }
+        DLOG_LINE();
         return (MissionControl[Mission].AA_Delay() + Random_Pick(0, 2));
     }
 
@@ -4098,6 +4106,7 @@ int BuildingClass::Mission_Attack(void)
  *=============================================================================================*/
 int BuildingClass::Mission_Harvest(void)
 {
+    DLOG_HARVEST();
     assert(Buildings.ID(this) == ID);
     assert(IsActive);
 
@@ -4849,6 +4858,7 @@ void const* BuildingClass::Remap_Table(void)
  *=============================================================================================*/
 int BuildingClass::Mission_Unload(void)
 {
+    DLOG();
     assert(Buildings.ID(this) == ID);
     assert(IsActive);
 
@@ -4963,6 +4973,7 @@ int BuildingClass::Mission_Unload(void)
         default:
             break;
         }
+        DLOG_LINE();
         return (MissionControl[Mission].Normal_Delay() + Random_Pick(0, 2));
     }
 
@@ -5809,6 +5820,7 @@ void BuildingClass::Repair_AI(void)
                         Repair(1);
 
                         if (!House->IsHuman) {
+                            DLOG_LINE();
                             House->RepairTimer = Random_Pick((int)(House->RepairDelay * (TICKS_PER_MINUTE / 4)),
                                                              (int)(House->RepairDelay * TICKS_PER_MINUTE * 2));
                         }
@@ -5818,6 +5830,7 @@ void BuildingClass::Repair_AI(void)
                 if ((Session.Type != GAME_NORMAL || IsAllowedToSell) && IsTickedOff
                     && House->Control.TechLevel >= Rule.IQSellBack && Random_Pick(0, 50) < House->Control.TechLevel
                     && !Trigger.Is_Valid() && *this != STRUCT_CONST && Health_Ratio() < Rule.ConditionRed) {
+                    DLOG_LINE();
                     Sell_Back(1);
                 }
             }

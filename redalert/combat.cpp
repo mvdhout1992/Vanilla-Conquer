@@ -270,6 +270,7 @@ void Explosion_Damage(COORDINATE coord, int strength, TechnoClass* source, Warhe
         || cellptr->TType == TEMPLATE_BRIDGE_2B || cellptr->TType == TEMPLATE_BRIDGE_3A
         || cellptr->TType == TEMPLATE_BRIDGE_3B) {
 
+        DLOG_LINE();
         if (((warhead == WARHEAD_AP || warhead == WARHEAD_HE) && Random_Pick(1, Rule.BridgeStrength) < strength)) {
             Map.Destroy_Bridge_At(cell);
         }
@@ -430,6 +431,7 @@ void Wide_Area_Damage(COORDINATE coord, LEPTON radius, int rawdamage, TechnoClas
             int damage = rawdamage * Inverse(fixed(cell_radius, dist_from_center));
             Explosion_Damage(Cell_Coord(tcell), damage, source, warhead);
             if (warhead == WARHEAD_FIRE && damage > 100) {
+                DLOG_LINE();
                 new SmudgeClass(Random_Pick(SMUDGE_SCORCH1, SMUDGE_SCORCH6), Cell_Coord(tcell));
             }
         }

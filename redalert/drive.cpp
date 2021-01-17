@@ -192,15 +192,18 @@ void DriveClass::Scatter(COORDINATE threat, bool forced, bool nokidding)
     if ((What_Am_I() != RTTI_UNIT || !((UnitClass*)this)->IsDumping)
         && (!Target_Legal(NavCom) || (nokidding && !IsRotating))) {
         if (!Target_Legal(TarCom) || forced || Random_Pick(1, 4) == 1) {
+            DLOG_LINE();
             FacingType toface;
             FacingType newface;
             CELL newcell;
 
             if (threat != 0) {
                 toface = Dir_Facing(Direction8(threat, Coord));
+                DLOG_LINE();
                 toface = toface + FacingType(Random_Pick(0, 2) - 1);
             } else {
                 toface = Dir_Facing(PrimaryFacing.Current());
+                DLOG_LINE();
                 toface = toface + FacingType(Random_Pick(0, 2) - 1);
             }
 

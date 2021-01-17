@@ -434,7 +434,7 @@ int Com_Scenario_Dialog(bool skirmish)
     }
     Session.Options.AIPlayers = max(Session.Options.AIPlayers, 0);
 
-    aiplayersgauge.Set_Value(0);
+    aiplayersgauge.Set_Value(1);
 
     /*........................................................................
     Init other scenario parameters

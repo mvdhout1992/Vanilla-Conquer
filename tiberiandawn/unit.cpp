@@ -2684,6 +2684,7 @@ int UnitClass::Mission_Unload(void)
  *=============================================================================================*/
 int UnitClass::Mission_Harvest(void)
 {
+    return 0;
     Validate();
     enum
     {

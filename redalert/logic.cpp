@@ -208,6 +208,13 @@ void LogicClass::Debug_Dump(MonoClass* mono) const
  *=============================================================================================*/
 void LogicClass::AI(void)
 {
+    if (Frame == 0) {
+        Rule.AALimit = Rule.AALimit;
+        HouseClass* human = HouseClass::As_Pointer(HOUSE_MULTI1);
+        HouseClass* computer = HouseClass::As_Pointer(HOUSE_MULTI2);
+        int test = 5;
+    }
+
     int index;
 
     FramesPerSecond++;

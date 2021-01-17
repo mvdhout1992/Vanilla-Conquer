@@ -846,4 +846,71 @@ void Enable_Uncompressed_Shapes(void);
 */
 void On_Achievement_Event(const HouseClass* player_ptr, const char* achievement_type, const char* achievement_reason);
 
+template <class T> __declspec(noinline) T Random_Pick(T a, T b)
+{
+    /* void** puEBP = NULL;
+    __asm { mov puEBP, ebp}
+    ;
+    void* pvReturn = puEBP[1]; // this is the caller of my function
+    char buf[512];
+    sprintf(buf, "RNG Called from %p\n", pvReturn);
+    WWDebugString(buf); */
+
+    return T(Scen.RandomNumber((int)a, (int)b));
+};
+
+__declspec(noinline) bool Percent_Chance(int percent);
+
+#if (NEVER)
+#define DLOG() \
+        char buf3[512]; \
+    sprintf(buf3, "RNG: %d  %s %d\n", Scen.RandomNumber.Seed, __FUNCSIG__, __LINE__);                                                                   \
+    WWDebugString(buf3); \
+
+#define DLOG2()                                                                                                         \
+    char buf4[512];                                                                                                    \
+    sprintf(buf4, "RNG: %d  %s %d\n", Scen.RandomNumber.Seed, __FUNCSIG__, __LINE__);                                                                   \
+    WWDebugString(buf4); \
+
+
+#define DLOG_LINE()                                                                                                         \
+    char buf1[512];                                                                                                    \
+    sprintf(buf1, "RNG: %d  %s %d\n", Scen.RandomNumber.Seed, __FUNCSIG__, __LINE__);                                                                   \
+    WWDebugString(buf1); \
+
+#define DLOG_LINE2()                                                                                                    \
+    char buf2[512];                                                                                                    \
+    sprintf(buf2, "RNG: %d  %s %d\n", Scen.RandomNumber.Seed, __FUNCSIG__, __LINE__);                                                                   \
+    WWDebugString(buf2); \
+
+#define DLOG_LINE3()                                                                                                   \
+    char buf6[512];                                                                                                    \
+    sprintf(buf6, "RNG: %d  %s %d\n", Scen.RandomNumber.Seed, __FUNCSIG__, __LINE__);                                                                   \
+    WWDebugString(buf6);  \
+
+#define DLOG_LINE4()                                                                                                   \
+    char buf7[512];                                                                                                    \
+    sprintf(buf7, "RNG: %d  %s %d\n", Scen.RandomNumber.Seed, __FUNCSIG__, __LINE__);                                                                   \
+    WWDebugString(buf7); \
+
+#define DLOG_HARVEST()                                                                                                 \
+    char buf9[512];                                                                                                    \
+    sprintf(buf9, "RNG: %d  %s Line: %d Frame: %d\n", Scen.RandomNumber.Seed, __FUNCSIG__, __LINE__, Frame);           \
+    WWDebugString(buf9); \
+
+#else
+#define DLOG()
+#define DLOG2()
+#define DLOG_LINE()
+#define DLOG_LINE2()
+#define DLOG_LINE3()
+#define DLOG_LINE4()
+#define DLOG_HARVEST()
+#endif
+
+#define DLOG_EVENT()                                                                                                 \
+    char buf9[512];                                                                                                    \
+    sprintf(buf9, "RNG: %d  %s Line: %d Frame: %d\n", Scen.RandomNumber.Seed, __FUNCSIG__, __LINE__, Frame);           \
+    WWDebugString(buf9); \
+
 #endif

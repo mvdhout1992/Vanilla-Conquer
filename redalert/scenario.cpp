@@ -1906,6 +1906,7 @@ void ScenarioClass::Set_Scenario_Name(int scenario, ScenarioPlayerType player, S
         if (i == SCEN_VAR_FIRST) {
             c_var = 'X'; // indicates an error
         } else {
+            DLOG();
             c_var = 'A' + Random_Pick(0, i - 1);
             //			ScenVar = (ScenarioVarType)i;
         }
@@ -2844,6 +2845,7 @@ void Assign_Houses(void)
         // Pick a color for this house; keep looping until we find one.
         //.....................................................................
         while (1) {
+            DLOG();
             color = Random_Pick(0, 7);
             if (color_used[color] == false) {
                 break;
@@ -3145,6 +3147,7 @@ static void Create_Units(bool official)
     //	int deficiency = (Session.Players.Count() + Session.Options.AIPlayers) - num_waypts;
     if (deficiency > 0) {
         for (int index = 0; index < deficiency; index++) {
+            DLOG();
             CELL trycell = XY_Cell(Map.MapCellX + Random_Pick(0, Map.MapCellWidth - 1),
                                    Map.MapCellY + Random_Pick(0, Map.MapCellHeight - 1));
 
@@ -3180,6 +3183,7 @@ static void Create_Units(bool official)
         if (!UseGlyphXStartLocations) {
 #endif
             if (numtaken == 0) {
+                DLOG();
                 int pick = Random_Pick(0, num_waypts - 1);
                 centroid = waypts[pick];
                 hptr->StartLocationOverride = pick;
@@ -3459,6 +3463,7 @@ int Scan_Place_Object(ObjectClass* obj, CELL cell)
         /*
         **	Pick a random starting direction
         */
+        DLOG();
         rot = Random_Pick(FACING_N, FACING_NW);
 
         /*
@@ -3560,6 +3565,7 @@ static CELL Clip_Scatter(CELL cell, int maxdist)
     /*
     **	Adjust the x-coordinate
     */
+    DLOG();
     xdist = Random_Pick(0, maxdist);
     if (Percent_Chance(50)) {
         x += xdist;
@@ -3576,6 +3582,7 @@ static CELL Clip_Scatter(CELL cell, int maxdist)
     /*
     **	Adjust the y-coordinate
     */
+    DLOG2();
     ydist = Random_Pick(0, maxdist);
     if (Percent_Chance(50)) {
         y += ydist;

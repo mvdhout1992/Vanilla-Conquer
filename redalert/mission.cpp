@@ -325,6 +325,7 @@ void MissionClass::AI(void)
             break;
 
         case MISSION_HARVEST:
+            DLOG_HARVEST();
             Timer = Mission_Harvest();
             break;
 

@@ -610,6 +610,8 @@ void MonoClass::Printf(int text, ...)
  *=============================================================================================*/
 void MonoClass::Print(char const* ptr)
 {
+    return; 
+
     int startcol = X;
     char const* text;
     CellType cell;

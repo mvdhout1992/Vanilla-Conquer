@@ -1127,6 +1127,7 @@ bool UnitTypeClass::Create_And_Place(CELL cell, HousesType house) const
 {
     UnitClass* unit = new UnitClass(Type, house);
     if (unit != NULL) {
+        DLOG();
         return (unit->Unlimbo(Cell_Coord(cell), Random_Pick(DIR_N, DIR_MAX)));
     }
     return (false);

@@ -1359,10 +1359,12 @@ void MapClass::Logic(void)
                 **	Either replace an existing recorded cell value or add the new cell value to
                 **	the list.
                 */
+                DLOG();
                 if (Random_Pick(0, TiberiumGrowthExcess) <= TiberiumGrowthCount) {
                     if (TiberiumGrowthCount < sizeof(TiberiumGrowth) / sizeof(TiberiumGrowth[0])) {
                         TiberiumGrowth[TiberiumGrowthCount++] = cell;
                     } else {
+                        DLOG();
                         TiberiumGrowth[Random_Pick(0, TiberiumGrowthCount - 1)] = cell;
                     }
                 }
@@ -1377,10 +1379,12 @@ void MapClass::Logic(void)
                 **	Either replace an existing recorded cell value or add the new cell value to
                 **	the list.
                 */
+                DLOG();
                 if (Random_Pick(0, TiberiumSpreadExcess) <= TiberiumSpreadCount) {
                     if (TiberiumSpreadCount < ARRAY_SIZE(TiberiumSpread)) {
                         TiberiumSpread[TiberiumSpreadCount++] = cell;
-                    } else {
+                    } else {                    
+                        DLOG();
                         TiberiumSpread[Random_Pick(0, TiberiumSpreadCount - 1)] = cell;
                     }
                 }
@@ -2504,7 +2508,9 @@ int MapClass::Intact_Bridge_Count(void) const
  *=============================================================================================*/
 CELL MapClass::Pick_Random_Location(void) const
 {
+    DLOG();
     int x = Map.MapCellX + Random_Pick(0, Map.MapCellWidth - 1);
+    DLOG2();
     int y = Map.MapCellY + Random_Pick(0, Map.MapCellHeight - 1);
 
     return (XY_Cell(x, y));

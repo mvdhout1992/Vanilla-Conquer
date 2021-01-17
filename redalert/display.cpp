@@ -2680,24 +2680,28 @@ CELL DisplayClass::Calculated_Cell(SourceType dir,
         case SOURCE_NORTH:
             horz = true;
             y = -1;
+            DLOG_LINE();
             x = Random_Pick(0, MapCellWidth - 1);
             break;
 
         case SOURCE_SOUTH:
             horz = true;
             y = MapCellHeight;
+            DLOG_LINE2();
             x = Random_Pick(0, MapCellWidth - 1);
             break;
 
         case SOURCE_EAST:
             vert = true;
             x = MapCellWidth;
+            DLOG_LINE3();
             y = Random_Pick(0, MapCellHeight - 1);
             break;
 
         case SOURCE_WEST:
             vert = true;
             x = -1;
+            DLOG_LINE4();
             y = Random_Pick(0, MapCellHeight - 1);
             break;
         }

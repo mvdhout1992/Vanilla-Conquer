@@ -1892,6 +1892,7 @@ bool InfantryClass::Random_Animate(void)
     assert(IsActive);
 
     if (Is_Ready_To_Random_Animate()) {
+        DLOG_LINE();
         IdleTimer = Random_Pick(Rule.RandomAnimateTime * (TICKS_PER_MINUTE / 2),
                                 Rule.RandomAnimateTime * (TICKS_PER_MINUTE * 2));
 
@@ -1903,7 +1904,7 @@ bool InfantryClass::Random_Animate(void)
             Scatter(NULL, true);
             return (true);
         }
-
+        DLOG_LINE2();
         switch (Random_Pick(0, 10)) {
         case 0:
             if (Class->IsDog) {
@@ -1933,6 +1934,7 @@ bool InfantryClass::Random_Animate(void)
 
         case 6:
             Mark(MARK_CHANGE_REDRAW);
+            DLOG_LINE3();
             PrimaryFacing.Set(Facing_Dir(Random_Pick(FACING_N, FACING_NW)));
             Mark(MARK_CHANGE_REDRAW);
             break;
@@ -1940,6 +1942,7 @@ bool InfantryClass::Random_Animate(void)
         case 7:
             Do_Action(DO_IDLE2);
             Mark(MARK_CHANGE_REDRAW);
+            DLOG_LINE4();
             PrimaryFacing.Set(Facing_Dir(Random_Pick(FACING_N, FACING_NW)));
             Mark(MARK_CHANGE_REDRAW);
             if (!Is_Selected_By_Player() && IsOwnedByPlayer && *this == INFANTRY_TANYA && Sim_Random_Pick(0, 2) == 0) {
@@ -1952,6 +1955,7 @@ bool InfantryClass::Random_Animate(void)
         */
         case 8:
             Mark(MARK_CHANGE_REDRAW);
+            DLOG2();
             PrimaryFacing.Set(Facing_Dir(Random_Pick(FACING_N, FACING_NW)));
             Mark(MARK_CHANGE_REDRAW);
             if (!House->IsHuman && Class->IsFraidyCat) {
@@ -1962,6 +1966,7 @@ bool InfantryClass::Random_Animate(void)
         case 9:
         case 10:
             Mark(MARK_CHANGE_REDRAW);
+            DLOG();
             PrimaryFacing.Set(Facing_Dir(Random_Pick(FACING_N, FACING_NW)));
             Mark(MARK_CHANGE_REDRAW);
         }
@@ -2038,6 +2043,7 @@ void InfantryClass::Scatter(COORDINATE threat, bool forced, bool nokidding)
 
         if (threat) {
             toface = Dir_Facing(Direction8(threat, Coord));
+            DLOG();
             toface = toface + FacingType(Random_Pick(0, 4) - 2);
         } else {
             COORDINATE coord = Coord_Fraction(Center_Coord());
@@ -2047,6 +2053,7 @@ void InfantryClass::Scatter(COORDINATE threat, bool forced, bool nokidding)
             } else {
                 toface = Dir_Facing(PrimaryFacing.Current());
             }
+            DLOG();
             toface = toface + FacingType(Random_Pick(0, 4) - 2);
         }
 
@@ -2134,6 +2141,7 @@ bool InfantryClass::Do_Action(DoType todo, bool force)
     }
 
     if (*this == INFANTRY_SPY && todo >= DO_GESTURE1) {
+        DLOG();
         todo = (DoType)(DO_IDLE1 + Random_Pick(0, 1));
     }
 
@@ -4304,6 +4312,7 @@ void const* InfantryClass::Get_Image_Data(void) const
  *=============================================================================================*/
 bool InfantryClass::Is_Ready_To_Random_Animate(void) const
 {
+    return false;
     /*
     **	See if the base classes (more rudimentary checking) determines that idle animations
     **	cannot occur. If they cannot, then return with the failure code.

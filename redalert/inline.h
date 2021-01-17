@@ -902,51 +902,7 @@ inline char const* Text_String(int string)
     return (Extract_String(DebugStrings, string - 1000));
 }
 
-/***********************************************************************************************
- * Random_Pick -- Pick a random number in a specified range.                                   *
- *                                                                                             *
- *    This routine is used to pick a game influencing random number between (inclusive) the    *
- *    range specified.                                                                         *
- *                                                                                             *
- * INPUT:   a  -- Low limit of range to pick from.                                             *
- *                                                                                             *
- *          b  -- High limit of range to pick from.                                            *
- *                                                                                             *
- * OUTPUT:  Returns with a random number picked between (inclusive) the range of values        *
- *          specified.                                                                         *
- *                                                                                             *
- * WARNINGS:   none                                                                            *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   09/30/1996 JLB : Created.                                                                 *
- *=============================================================================================*/
-template <class T> inline T Random_Pick(T a, T b)
-{
-    return T(Scen.RandomNumber((int)a, (int)b));
-};
 
-/***********************************************************************************************
- * Percent_Chance -- Calculate a percentage chance event.                                      *
- *                                                                                             *
- *    This will calculate a percentage chance and return with 'true' as likely as the          *
- *    chance value would occur (or less) on a random pick from 1 to 100. Thus a                *
- *    Percent_Chance(50) would return 'true' 50 percent of the time. Percent_Chance(25) would  *
- *    return 'true' 25% of the time, etc.                                                      *
- *                                                                                             *
- * INPUT:   percent  -- The percent value to calculate the chance upon.                        *
- *                                                                                             *
- * OUTPUT:  Returns with 'true' in the same percentage as the percentage number supplied.      *
- *                                                                                             *
- * WARNINGS:   This affects the game syncronization random number generator and should be used *
- *             for those events that could affect the game engine.                             *
- *                                                                                             *
- * HISTORY:                                                                                    *
- *   08/26/1996 JLB : Created.                                                                 *
- *=============================================================================================*/
-inline bool Percent_Chance(int percent)
-{
-    return (Scen.RandomNumber(0, 99) < percent);
-}
 
 /***********************************************************************************************
  * Sim_Random_Pick -- Picks a random number that will not affect the game.                     *

@@ -403,6 +403,7 @@ COORDINATE Coord_Scatter(COORDINATE coord, unsigned distance, bool lock)
 {
     COORDINATE newcoord;
 
+    DLOG_LINE();
     newcoord = Coord_Move(coord, Random_Pick(DIR_N, DIR_MAX), distance);
 
     if (newcoord & HIGH_COORD_MASK)

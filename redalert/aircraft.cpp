@@ -906,6 +906,7 @@ int AircraftClass::Mission_Hunt(void)
             return (1);
         }
     }
+    DLOG_LINE();
     return (MissionControl[Mission].Normal_Delay() + Random_Pick(0, 2));
 }
 
@@ -1300,6 +1301,7 @@ int AircraftClass::Mission_Unload(void)
             break;
         }
     }
+    DLOG_LINE();
     return (MissionControl[Mission].Normal_Delay() + Random_Pick(0, 2));
 }
 
@@ -1453,6 +1455,7 @@ int AircraftClass::Mission_Retreat(void)
     default:
         break;
     }
+    DLOG_LINE();
     return (MissionControl[Mission].Normal_Delay() + Random_Pick(0, 2));
 }
 

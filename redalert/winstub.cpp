@@ -361,22 +361,14 @@ HANDLE DebugFile = INVALID_HANDLE_VALUE;
 void WWDebugString(const char* string)
 {
 #if (1)
-    char outstr[256];
+    char outstr[512];
 
     sprintf(outstr, "%s", string);
 
     DWORD actual;
-    if (DebugFile == INVALID_HANDLE_VALUE) {
-        DebugFile = CreateFile("debug.txt", GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
-    } else {
-        DebugFile = CreateFile("debug.txt", GENERIC_WRITE, 0, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
-    }
-
-    if (DebugFile != INVALID_HANDLE_VALUE) {
-        SetFilePointer(DebugFile, 0, NULL, FILE_END);
-        WriteFile(DebugFile, outstr, strlen(outstr) + 1, &actual, NULL);
-        CloseHandle(DebugFile);
-    }
+    FILE* f = fopen("debug.txt", "a+");
+    fputs(outstr, f);
+    fclose(f);
 
     OutputDebugString(string);
 #else //(0)

@@ -470,6 +470,10 @@ int SessionClass::Save(CCFileClass& file)
 {
     int i;
 
+    file.Write(&CommProtocol, sizeof(CommProtocol));
+    file.Write(&MaxAhead, sizeof(MaxAhead));
+    file.Write(&FrameSendRate, sizeof(FrameSendRate));
+    file.Write(&DesiredFrameRate, sizeof(DesiredFrameRate));
     file.Write(&Type, sizeof(Type));
     file.Write(&CommProtocol, sizeof(CommProtocol));
     file.Write(&FrameSendRate, sizeof(FrameSendRate));
@@ -518,6 +522,10 @@ int SessionClass::Load(CCFileClass& file)
     int i;
     NodeNameType* node;
 
+    file.Read(&CommProtocol, sizeof(CommProtocol));
+    file.Read(&MaxAhead, sizeof(MaxAhead));
+    file.Read(&FrameSendRate, sizeof(FrameSendRate));
+    file.Read(&DesiredFrameRate, sizeof(DesiredFrameRate));
     file.Read(&Type, sizeof(Type));
     file.Read(&CommProtocol, sizeof(CommProtocol));
     file.Read(&FrameSendRate, sizeof(FrameSendRate));

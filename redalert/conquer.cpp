@@ -216,7 +216,7 @@ void Main_Game(int argc, char* argv[])
         ** Only show the mouse if we're not playing back a recording.
         */
         if (Session.Play) {
-            Hide_Mouse();
+            //Hide_Mouse();
             TeamEvent = 0;
             TeamNumber = 0;
             FormationEvent = 0;
@@ -4864,3 +4864,20 @@ bool Force_Scenario_Available(const char* szName)
     return true;
 }
 #endif
+
+
+__declspec(noinline) bool Percent_Chance(int percent)
+{
+   /*  void** puEBP = NULL;
+    __asm { mov puEBP, ebp}
+    ;
+    void* pvReturn = puEBP[1]; // this is the caller of my function
+    void* pvRetur2 = puEBP[2];
+    void* pvRetur3 = puEBP[3];
+    void* pvRetur4 = puEBP[0];
+    char buf[512];
+    sprintf(buf, "RNG Called from %p\n", pvReturn);
+    WWDebugString(buf); */
+
+    return (Scen.RandomNumber(0, 99) < percent);
+}

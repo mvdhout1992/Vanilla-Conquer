@@ -508,6 +508,7 @@ int FootClass::Mission_Move(void)
         && (!Team.Is_Valid() || !Team->Class->IsSuicide)) {
         Target_Something_Nearby(THREAT_RANGE);
     }
+    DLOG_LINE();
     return (MissionControl[Mission].Normal_Delay() + Random_Pick(0, 2));
 }
 
@@ -546,6 +547,7 @@ int FootClass::Mission_Capture(void)
             Scatter(0, true);
         }
     }
+    DLOG_LINE();
     return (MissionControl[Mission].Normal_Delay() + Random_Pick(0, 2));
 }
 
@@ -573,6 +575,7 @@ int FootClass::Mission_Attack(void)
     } else {
         Enter_Idle_Mode();
     }
+    DLOG_LINE();
     return (MissionControl[Mission].Normal_Delay() + Random_Pick(0, 2));
 }
 
@@ -648,6 +651,7 @@ int FootClass::Mission_Guard(void)
         }
     }
 
+    DLOG_LINE();
     return ((Arm != 0) ? (int)Arm : (dtime + Random_Pick(0, 2)));
 }
 
@@ -718,6 +722,7 @@ int FootClass::Mission_Hunt(void)
             }
         }
     }
+    DLOG_LINE();
     return (MissionControl[Mission].Normal_Delay() + Random_Pick(0, 2));
 }
 
@@ -1015,6 +1020,7 @@ int FootClass::Mission_Guard_Area(void)
 
     if (What_Am_I() == RTTI_UNIT && ((UnitClass*)this)->Class->IsToHarvest) {
         Assign_Mission(MISSION_HARVEST);
+        DLOG_HARVEST();
         return (1 + Random_Pick(1, 10));
     }
 
@@ -1078,6 +1084,7 @@ int FootClass::Mission_Guard_Area(void)
     if (What_Am_I() == RTTI_AIRCRAFT) {
         dtime *= 2;
     }
+    DLOG_LINE();
     return (dtime + Random_Pick(1, 5));
 }
 
@@ -1809,7 +1816,7 @@ int FootClass::Mission_Enter(void)
             }
         }
     }
-
+    DLOG_LINE();
     return (MissionControl[Mission].Normal_Delay() + Random_Pick(0, 2));
 }
 
@@ -2658,6 +2665,6 @@ int FootClass::Mission_Retreat(void)
         }
         break;
     }
-
+    DLOG_LINE();
     return (MissionControl[Mission].Normal_Delay() + Random_Pick(0, 2));
 }

@@ -462,6 +462,7 @@ bool Do_Reinforcements(TeamTypeClass const* teamtype)
     while (newcell > 0 && object != NULL) {
         DirType desiredfacing = Facing_Dir(eface);
         if (object->What_Am_I() == RTTI_AIRCRAFT) {
+            DLOG();
             desiredfacing = Random_Pick(DIR_N, DIR_MAX);
         }
 

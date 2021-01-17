@@ -884,6 +884,7 @@ RadioMessageType UnitClass::Receive_Message(RadioClass* from, RadioMessageType m
             TechnoClass* contact = Contact_With_Whom();
             if (contact->What_Am_I() == RTTI_BUILDING && *((BuildingClass*)contact) == STRUCT_REFINERY) {
                 // Slight hack; set a target so the harvest mission knows to skip to finding home state
+                DLOG_HARVEST();
                 Assign_Mission(MISSION_HARVEST);
                 TarCom = As_Target();
                 return (RADIO_ROGER);
@@ -1069,6 +1070,7 @@ ResultType UnitClass::Take_Damage(int& damage, int distance, WarheadType warhead
                 }
                 if (i != NULL) {
                     if (i->Unlimbo(Coord, DIR_N)) {
+                        DLOG();
                         i->Strength = Random_Pick(5, (int)i->Class->MaxStrength / 2);
                         i->Scatter(0, true);
                         if (!House->IsHuman) {
@@ -2315,7 +2317,7 @@ bool UnitClass::Goto_Tiberium(int rad)
                     int corner[2];
                     int corners[4][2] = {{x, -radius}, {x, +radius}, {-radius, x}, {+radius, x}};
                     for (int i = 0; i < 3; i++) {
-                        int j = i + rand() / (RAND_MAX / (4 - i) + 1);
+                        int j = i + Random_Pick(0, RAND_MAX) / (RAND_MAX / (4 - i) + 1);
                         memcpy(&corner, &corners[j], sizeof(corner));
                         memcpy(&corners[j], &corners[i], sizeof(corner));
                         memcpy(&corners[i], corner, sizeof(corner));
@@ -2377,6 +2379,7 @@ bool UnitClass::Goto_Tiberium(int rad)
  *=============================================================================================*/
 bool UnitClass::Harvesting(void)
 {
+    DLOG_HARVEST();
     assert(Units.ID(this) == ID);
     assert(IsActive);
 
@@ -2863,6 +2866,7 @@ int UnitClass::Mission_Unload(void)
     default:
         break;
     }
+    DLOG();
     return (MissionControl[Mission].Normal_Delay() + Random_Pick(0, 2));
 }
 
@@ -2886,6 +2890,7 @@ int UnitClass::Mission_Unload(void)
  *=============================================================================================*/
 int UnitClass::Mission_Harvest(void)
 {
+    DLOG_HARVEST();
     assert(Units.ID(this) == ID);
     assert(IsActive);
 
@@ -3062,6 +3067,7 @@ int UnitClass::Mission_Harvest(void)
         Assign_Mission(MISSION_GUARD);
         break;
     }
+    DLOG_LINE();
     return (MissionControl[Mission].Normal_Delay() + Random_Pick(0, 2));
 }
 
@@ -3122,6 +3128,7 @@ int UnitClass::Mission_Hunt(void)
 
         return (DriveClass::Mission_Hunt());
     }
+    DLOG();
     return (MissionControl[Mission].Normal_Delay() + Random_Pick(0, 2));
 }
 
@@ -3811,6 +3818,7 @@ int UnitClass::Mission_Guard(void)
         Assign_Mission(MISSION_UNLOAD);
         return (MissionControl[Mission].Normal_Delay() + Random_Pick(0, 2));
     }
+    DLOG();
     return (DriveClass::Mission_Guard());
 }
 

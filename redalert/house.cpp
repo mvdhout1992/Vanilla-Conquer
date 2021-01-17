@@ -742,6 +742,7 @@ HouseClass::HouseClass(HousesType house)
     /*
     **	Set the time of the first AI attack.
     */
+    DLOG_LINE();
     Attack = Rule.AttackDelay * Random_Pick(TICKS_PER_MINUTE / 2, TICKS_PER_MINUTE * 2);
 
     Init_Unit_Trackers();
@@ -1044,6 +1045,7 @@ void HouseClass::AI(void)
         /*
         **	Adjusted to reduce maximum number of teams created.
         */
+        DLOG_LINE();
         int maxteams = Random_Pick(2, (int)(((Control.TechLevel - 1) / 3) + 1));
         for (int index = 0; index < maxteams; index++) {
             TeamTypeClass const* ttype = Suggested_New_Team(true);
@@ -1053,6 +1055,7 @@ void HouseClass::AI(void)
                 ScenarioInit--;
             }
         }
+        DLOG_LINE2();
         AlertTime = Rule.AutocreateTime * Random_Pick(TICKS_PER_MINUTE / 2, TICKS_PER_MINUTE * 2);
         //		int mintime = Rule.AutocreateTime * (TICKS_PER_MINUTE/2);
         //		int maxtime = Rule.AutocreateTime * (TICKS_PER_MINUTE*2);
@@ -2525,6 +2528,7 @@ void HouseClass::Adjust_Threat(int region, int threat)
  *=============================================================================================*/
 ProdFailType HouseClass::Begin_Production(RTTIType type, int id)
 {
+    DLOG();
     assert(Houses.ID(this) == ID);
     int result = true;
     bool initial_start = false;
@@ -2654,6 +2658,7 @@ ProdFailType HouseClass::Suspend_Production(RTTIType type)
  *=============================================================================================*/
 ProdFailType HouseClass::Abandon_Production(RTTIType type)
 {
+    DLOG();
     assert(Houses.ID(this) == ID);
 
     FactoryClass* fptr = Fetch_Factory(type);
@@ -3096,7 +3101,9 @@ bool HouseClass::Place_Special_Blast(SpecialWeaponType id, CELL cell)
         if (tech && tech->IsActive && (tech->What_Am_I() != RTTI_UNIT || *(UnitClass*)tech != UNIT_CHRONOTANK))
 #endif
             if (!ChronalVortex.Is_Active() && Percent_Chance(Rule.VortexChance * 100)) {
+                DLOG_LINE();
                 int x = Random_Pick(0, Map.MapCellWidth - 1);
+                DLOG_LINE2();
                 int y = Random_Pick(0, Map.MapCellHeight - 1);
                 ChronalVortex.Appear(Cell_Coord(XY_Cell(Map.MapCellX + x, Map.MapCellY + y)));
 
@@ -4267,6 +4274,7 @@ void HouseClass::Blowup_All(void)
                 // damage = iptr->Strength; // Original
                 damage = 0x7fff; // Copied from TD
 
+                DLOG_LINE();
                 warhead = Random_Pick(WARHEAD_SA, WARHEAD_FIRE);
                 iptr->Take_Damage(damage, 0, warhead, NULL, true);
 
@@ -4690,6 +4698,7 @@ COORDINATE HouseClass::Find_Build_Location(BuildingClass* building) const
     **	Now that each zone has been given a desirability rating, find the zone
     **	with the greatest value and try to place the building in that zone.
     */
+    DLOG_LINE();
     ZoneType zone = Random_Pick(ZONE_FIRST, ZONE_WEST);
     int largest = 0;
     for (z = ZONE_FIRST; z < ZONE_COUNT; z++) {
@@ -4708,6 +4717,7 @@ COORDINATE HouseClass::Find_Build_Location(BuildingClass* building) const
     **	Could not build in preferred zone, so try building in any zone.
     */
     static ZoneType _zones[] = {ZONE_CORE, ZONE_NORTH, ZONE_SOUTH, ZONE_EAST, ZONE_WEST};
+    DLOG_LINE2();
     int start = Random_Pick(0, ARRAY_SIZE(_zones) - 1);
     for (int zz = 0; zz < ARRAY_SIZE(_zones); zz++) {
         ZoneType tryzone = _zones[(zz + start) % ARRAY_SIZE(_zones)];
@@ -5160,7 +5170,7 @@ int HouseClass::Expert_AI(void)
             }
         }
     }
-
+    DLOG_LINE();
     return (TICKS_PER_SECOND * 5 + Random_Pick(1, TICKS_PER_SECOND / 2));
 }
 
@@ -5334,6 +5344,7 @@ UrgencyType HouseClass::Check_Raise_Power(void) const
 
 bool HouseClass::AI_Attack(UrgencyType)
 {
+    DLOG();
     assert(Houses.ID(this) == ID);
 
     bool shuffle = !((Frame > TICKS_PER_MINUTE && !CurBuildings) || Percent_Chance(33));
@@ -5384,6 +5395,7 @@ bool HouseClass::AI_Attack(UrgencyType)
             }
         }
     }
+    DLOG2();
     Attack = Rule.AttackInterval * Random_Pick(TICKS_PER_MINUTE / 2, TICKS_PER_MINUTE * 2);
     return (true);
 }
@@ -6073,6 +6085,7 @@ int HouseClass::AI_Unit(void)
     if (IQ >= Rule.IQHarvester && !IsTiberiumShort && !IsHuman && BQuantity[STRUCT_REFINERY] > UQuantity[UNIT_HARVESTER]
         && Difficulty != DIFF_HARD) {
         if (UnitTypeClass::As_Reference(UNIT_HARVESTER).Level <= (unsigned)Control.TechLevel) {
+            DLOG_HARVEST();
             BuildUnit = UNIT_HARVESTER;
             return (TICKS_PER_SECOND);
         }
@@ -6157,6 +6170,7 @@ int HouseClass::AI_Unit(void)
         **	The unit type to build is now known. Fetch a pointer to the techno type class.
         */
         if (bestcount) {
+            DLOG();
             BuildUnit = bestlist[Random_Pick(0, bestcount - 1)];
         }
     }
@@ -6181,6 +6195,7 @@ int HouseClass::AI_Unit(void)
         }
 
         if (total > 0) {
+            DLOG();
             int choice = Random_Pick(0, total - 1);
             for (index = UNIT_FIRST; index < UNIT_COUNT; index++) {
                 if (choice < counter[index]) {
@@ -6295,6 +6310,7 @@ int HouseClass::AI_Vessel(void)
         **	The unit type to build is now known. Fetch a pointer to the techno type class.
         */
         if (bestcount) {
+            DLOG();
             BuildVessel = bestlist[Random_Pick(0, bestcount - 1)];
         }
     }
@@ -6415,6 +6431,7 @@ int HouseClass::AI_Infantry(void)
         **	The infantry type to build is now known. Fetch a pointer to the techno type class.
         */
         if (bestcount) {
+            DLOG();
             int pick = Random_Pick(0, bestcount - 1);
             BuildInfantry = bestlist[pick];
         }
@@ -6501,6 +6518,7 @@ int HouseClass::AI_Infantry(void)
         **	infantry object that matches the number picked is then selected to be built.
         */
         if (count > 0) {
+            DLOG();
             int pick = Random_Pick(0, total - 1);
             for (int index = 0; index < count; index++) {
                 if (pick < typetrack[index].Value) {
@@ -6588,6 +6606,7 @@ int HouseClass::AI_Aircraft(void)
  *=============================================================================================*/
 void HouseClass::Production_Begun(TechnoClass const* product)
 {
+    DLOG();
     assert(Houses.ID(this) == ID);
 
     if (product != NULL) {
@@ -7154,6 +7173,7 @@ CELL HouseClass::Zone_Cell(ZoneType zone) const
  *=============================================================================================*/
 CELL HouseClass::Where_To_Go(FootClass const* object) const
 {
+    DLOG();
     assert(Houses.ID(this) == ID);
     assert(object != NULL);
 
@@ -7161,6 +7181,7 @@ CELL HouseClass::Where_To_Go(FootClass const* object) const
     if (object->Anti_Air() + object->Anti_Armor() + object->Anti_Infantry() == 0) {
         zone = ZONE_CORE;
     } else {
+        DLOG();
         zone = Random_Pick(ZONE_NORTH, ZONE_WEST);
     }
 
@@ -8003,6 +8024,7 @@ CELL HouseClass::Random_Cell_In_Zone(ZoneType zone) const
     int maxdist = 0;
     switch (zone) {
     case ZONE_CORE:
+        DLOG_LINE();
         coord = Coord_Scatter(Center, Random_Pick(0, Radius), true);
         break;
 
@@ -8010,6 +8032,7 @@ CELL HouseClass::Random_Cell_In_Zone(ZoneType zone) const
         maxdist = min(Radius * 3, (Coord_Y(Center) - Cell_To_Lepton(Map.MapCellY)) - CELL_LEPTON_H);
         if (maxdist < 0)
             break;
+        DLOG_LINE2();
         coord = Coord_Move(Center,
                            (DirType)(Random_Pick(DIR_N, DIR_E) - ((DirType)32)),
                            Random_Pick(min(Radius * 2, maxdist), min(Radius * 3, maxdist)));
@@ -8019,6 +8042,7 @@ CELL HouseClass::Random_Cell_In_Zone(ZoneType zone) const
         maxdist = min(Radius * 3, (Cell_To_Lepton(Map.MapCellX + Map.MapCellWidth) - Coord_X(Center)) - CELL_LEPTON_W);
         if (maxdist < 0)
             break;
+        DLOG_LINE3();
         coord = Coord_Move(
             Center, Random_Pick(DIR_NE, DIR_SE), Random_Pick(min(Radius * 2, maxdist), min(Radius * 3, maxdist)));
         break;
@@ -8027,6 +8051,7 @@ CELL HouseClass::Random_Cell_In_Zone(ZoneType zone) const
         maxdist = min(Radius * 3, (Cell_To_Lepton(Map.MapCellY + Map.MapCellHeight) - Coord_Y(Center)) - CELL_LEPTON_H);
         if (maxdist < 0)
             break;
+        DLOG_LINE4();
         coord = Coord_Move(
             Center, Random_Pick(DIR_SE, DIR_SW), Random_Pick(min(Radius * 2, maxdist), min(Radius * 3, maxdist)));
         break;
@@ -8035,6 +8060,7 @@ CELL HouseClass::Random_Cell_In_Zone(ZoneType zone) const
         maxdist = min(Radius * 3, (Coord_X(Center) - Cell_To_Lepton(Map.MapCellX)) - CELL_LEPTON_W);
         if (maxdist < 0)
             break;
+        DLOG2();
         coord = Coord_Move(
             Center, Random_Pick(DIR_SW, DIR_NW), Random_Pick(min(Radius * 2, maxdist), min(Radius * 3, maxdist)));
         break;

@@ -479,6 +479,7 @@ TeamTypeClass const* TeamTypeClass::Suggested_New_Team(HouseClass* house, long, 
     }
 
     if (choicecount > 0) {
+        DLOG();
         return (choices[Random_Pick(0, choicecount - 1)]);
     }
     return (NULL);
