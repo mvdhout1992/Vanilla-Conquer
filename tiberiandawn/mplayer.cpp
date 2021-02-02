@@ -44,6 +44,8 @@
 #include "common/irandom.h"
 #include "common/tcpip.h"
 #include "common/ini.h"
+#include "common/framelimit.h"
+#include "common/ini.h"
 
 static void Garble_Message(char* buf);
 
@@ -69,11 +71,12 @@ void Show_Internet_Connection_Progress(void);
  *=============================================================================================*/
 GameType Select_MPlayer_Game(void)
 {
-    // PG_TO_FIX
+#ifdef REMASTER_BUILD // PG_TO_FIX
     return GAME_NORMAL;
-#if (0)
+#else
+    static const char TXT_SKIRMISH[] = "Skirmish";
     int factor = (SeenBuff.Get_Width() == 320) ? 1 : 2;
-    bool ipx_avail = FALSE;
+    bool ipx_avail = false;
     int number_of_buttons;
     /*........................................................................
     Dialog & button dimensions
@@ -116,7 +119,7 @@ GameType Select_MPlayer_Game(void)
     ........................................................................*/
     enum
     {
-        BUTTON_MODEMSERIAL = 100,
+        BUTTON_SKIRMISH = 100,
 #if (0)
         BUTTON_INTERNET,
 #endif //(0)
@@ -160,13 +163,13 @@ GameType Select_MPlayer_Game(void)
         ipx_avail = true;
     }
 
-    TextButtonClass modemserialbtn(BUTTON_MODEMSERIAL,
-                                   TXT_MODEM_SERIAL,
-                                   TPF_CENTER | TPF_6PT_GRAD | TPF_USE_GRAD_PAL | TPF_NOSHADOW,
-                                   d_modemserial_x,
-                                   d_modemserial_y,
-                                   d_modemserial_w,
-                                   d_modemserial_h);
+    TextButtonClass skirmishbtn(BUTTON_SKIRMISH,
+                                TXT_SKIRMISH,
+                                TPF_CENTER | TPF_6PT_GRAD | TPF_USE_GRAD_PAL | TPF_NOSHADOW,
+                                d_modemserial_x,
+                                d_modemserial_y,
+                                d_modemserial_w,
+                                d_modemserial_h);
 #if (0)
     TextButtonClass internetbtn(BUTTON_INTERNET,
                                 TXT_INTERNET,
@@ -200,7 +203,7 @@ GameType Select_MPlayer_Game(void)
     /*
     ............................ Create the list .............................
     */
-    commands = &modemserialbtn;
+    commands = &skirmishbtn;
 #if (0)
     internetbtn.Add_Tail(*commands);
 #endif //(0)
@@ -213,21 +216,22 @@ GameType Select_MPlayer_Game(void)
     ......................... Fill array of button ptrs ......................
     */
     curbutton = 0;
-    buttons[0] = &modemserialbtn;
+    buttons[0] = &skirmishbtn;
 #if (0)
     buttons[1] = &internetbtn;
 #endif //(0)
+
     if (ipx_avail) {
         buttons[1] = &ipxbtn;
         buttons[2] = &cancelbtn;
     } else {
+        --number_of_buttons;
         buttons[1] = &cancelbtn;
-        number_of_buttons--;
     }
 
     buttons[curbutton]->Turn_On();
 
-    Keyboard::Clear();
+    Keyboard->Clear();
 
     Fancy_Text_Print(TXT_NONE, 0, 0, CC_GREEN, TBLACK, TPF_CENTER | TPF_6PT_GRAD | TPF_USE_GRAD_PAL | TPF_NOSHADOW);
 
@@ -287,8 +291,8 @@ GameType Select_MPlayer_Game(void)
         ............................ Process input ............................
         */
         switch (input) {
-        case (BUTTON_MODEMSERIAL | KN_BUTTON):
-            selection = BUTTON_MODEMSERIAL;
+        case (BUTTON_SKIRMISH | KN_BUTTON):
+            selection = BUTTON_SKIRMISH;
             pressed = true;
             break;
 
@@ -331,9 +335,11 @@ GameType Select_MPlayer_Game(void)
             break;
 
         case KN_RETURN:
-            selection = curbutton + BUTTON_MODEMSERIAL;
-            if (!ipx_avail)
-                selection--;
+            selection = curbutton + BUTTON_SKIRMISH;
+            if (!ipx_avail && selection > BUTTON_SKIRMISH) {
+                ++selection;
+            }
+
             pressed = true;
             break;
 
@@ -347,26 +353,28 @@ GameType Select_MPlayer_Game(void)
             //
             buttons[curbutton]->Turn_Off();
             buttons[curbutton]->Flag_To_Redraw();
-            curbutton = selection - BUTTON_MODEMSERIAL;
+            curbutton = selection - BUTTON_SKIRMISH;
+            if (!ipx_avail && curbutton > 1) {
+                --curbutton;
+            }
             buttons[curbutton]->Turn_On();
             //			buttons[curbutton]->Flag_To_Redraw();
             buttons[curbutton]->IsPressed = true;
             buttons[curbutton]->Draw_Me(true);
 
             switch (selection) {
-            case (BUTTON_MODEMSERIAL):
-
-                //
-                // Pop up the modem/serial/com port dialog
-                //
-                retval = Select_Serial_Dialog();
-
-                if (retval != GAME_NORMAL) {
+            case (BUTTON_SKIRMISH):
+                GameToPlay = GAME_SKIRMISH;
+                Read_MultiPlayer_Settings();
+                if (Com_Scenario_Dialog()) {
+                    retval = GAME_SKIRMISH;
                     process = false;
                 } else {
                     buttons[curbutton]->IsPressed = false;
+                    GameToPlay = GAME_NORMAL;
                     display = REDRAW_ALL;
                 }
+
                 break;
 
 #if (0)
@@ -484,6 +492,8 @@ GameType Select_MPlayer_Game(void)
 
             pressed = false;
         }
+
+        Frame_Limiter();
     }
     return (retval);
 #endif
@@ -506,307 +516,30 @@ GameType Select_MPlayer_Game(void)
  *=============================================================================================*/
 void Read_MultiPlayer_Settings(void)
 {
-// PG_TO_FIX
-#if (0)
-    char* buffer;           // INI staging buffer pointer.
-    char* tbuffer;          // Accumulation buffer of trigger IDs.
-    int len;                // Length of data in buffer.
-    char* tokenptr;         // ptr to token
-    PhoneEntryClass* phone; // a phone book entry
-    char* entry;            // a phone book entry
-    char buf[128];          // buffer for parsing INI entry
-    int i;
+#ifndef REMASTER_BUILD
+    char buf[128]; // buffer for parsing INI entry
     CELL cell;
 
-    /*------------------------------------------------------------------------
-    Fetch working pointer to the INI staging buffer. Make sure that the buffer
-    is cleared out before proceeding.  (Don't use the HidPage for this, since
-    the HidPage may be needed for various uncompressions during the INI
-    parsing.)
-    ------------------------------------------------------------------------*/
-    buffer = (char*)_ShapeBuffer;
-    memset(buffer, '\0', _ShapeBufferSize);
+    //	Create filename and read the file.
+    INIClass ini;
+    CDFileClass file(CONFIG_FILE_NAME);
+    if (ini.Load(file)) {
 
-    /*------------------------------------------------------------------------
-    Clear the initstring entries
-    ------------------------------------------------------------------------*/
-    for (i = 0; i < InitStrings.Count(); i++) {
-        delete[] InitStrings[i];
-    }
-    InitStrings.Clear();
+        //	Get the player's last-used Handle
+        ini.Get_String("MultiPlayer", "Handle", "Noname", MPlayerName, sizeof(MPlayerName));
 
-    /*------------------------------------------------------------------------
-    Clear the dialing entries
-    ------------------------------------------------------------------------*/
-    for (i = 0; i < PhoneBook.Count(); i++) {
-        delete PhoneBook[i];
-    }
-    PhoneBook.Clear();
+        //	Get the player's last-used Color
+        MPlayerPrefColor = (PlayerColorType)ini.Get_Int("MultiPlayer", "Color", 0);
 
-    /*------------------------------------------------------------------------
-    Create filename and read the file.
-    ------------------------------------------------------------------------*/
-    CCFileClass file("CONQUER.INI");
-    if (!file.Is_Available()) {
-        return;
-    } else {
-        file.Read(buffer, _ShapeBufferSize - 1);
-    }
-    file.Close();
+        MPlayerHouse = (HousesType)ini.Get_Int("MultiPlayer", "Side", HOUSE_GOOD);
 
-    if (!Special.IsFromWChat) {
-        /*------------------------------------------------------------------------
-        Get the player's last-used Handle
-        ------------------------------------------------------------------------*/
-        WWGetPrivateProfileString("MultiPlayer", "Handle", "Noname", MPlayerName, sizeof(MPlayerName), buffer);
+        TrapCheckHeap = ini.Get_Int("MultiPlayer", "CheckHeap", 0);
 
-        /*------------------------------------------------------------------------
-        Get the player's last-used Color
-        ------------------------------------------------------------------------*/
-        MPlayerPrefColor = WWGetPrivateProfileInt("MultiPlayer", "Color", 0, buffer);
-        MPlayerHouse = (HousesType)WWGetPrivateProfileInt("MultiPlayer", "Side", HOUSE_GOOD, buffer);
-        CurPhoneIdx = WWGetPrivateProfileInt("MultiPlayer", "PhoneIndex", -1, buffer);
-    } else {
-        CurPhoneIdx = -1;
-    }
+        //	Read special recording playback values, to help find sync bugs
+        TrapFrame = ini.Get_Int("SyncBug", "Frame", 0x7fffffff);
 
-#if 1
-    TrapCheckHeap = WWGetPrivateProfileInt("MultiPlayer", "CheckHeap", 0, buffer);
-#endif
+        ini.Get_String("SyncBug", "Type", "NONE", buf, 80);
 
-    /*------------------------------------------------------------------------
-    Read in default serial settings
-    ------------------------------------------------------------------------*/
-    WWGetPrivateProfileString(
-        "SerialDefaults", "ModemName", "NoName", SerialDefaults.ModemName, MODEM_NAME_MAX, buffer);
-    if (!strcmp(SerialDefaults.ModemName, "NoName")) {
-        SerialDefaults.ModemName[0] = 0;
-    }
-    WWGetPrivateProfileString("SerialDefaults", "Port", "0", buf, 5, buffer);
-    sscanf(buf, "%x", &SerialDefaults.Port);
-    SerialDefaults.IRQ = WWGetPrivateProfileInt("SerialDefaults", "IRQ", -1, buffer);
-    SerialDefaults.Baud = WWGetPrivateProfileInt("SerialDefaults", "Baud", -1, buffer);
-    SerialDefaults.Init = WWGetPrivateProfileInt("SerialDefaults", "Init", 0, buffer);
-    SerialDefaults.Compression = WWGetPrivateProfileInt("SerialDefaults", "Compression", 0, buffer);
-    SerialDefaults.ErrorCorrection = WWGetPrivateProfileInt("SerialDefaults", "ErrorCorrection", 0, buffer);
-    SerialDefaults.HardwareFlowControl = WWGetPrivateProfileInt("SerialDefaults", "HardwareFlowControl", 1, buffer);
-    WWGetPrivateProfileString("SerialDefaults", "DialMethod", "T", buf, 2, buffer);
-
-    // find dial method
-
-    for (i = 0; i < DIAL_METHODS; i++) {
-        if (!strcmpi(buf, DialMethodCheck[i])) {
-            SerialDefaults.DialMethod = (DialMethodType)i;
-            break;
-        }
-    }
-
-    // if method not found set to touch tone
-
-    if (i == DIAL_METHODS) {
-        SerialDefaults.DialMethod = DIAL_TOUCH_TONE;
-    }
-
-    SerialDefaults.InitStringIndex = WWGetPrivateProfileInt("SerialDefaults", "InitStringIndex", 0, buffer);
-
-    SerialDefaults.CallWaitStringIndex =
-        WWGetPrivateProfileInt("SerialDefaults", "CallWaitStringIndex", CALL_WAIT_CUSTOM, buffer);
-
-    WWGetPrivateProfileString(
-        "SerialDefaults", "CallWaitString", "", SerialDefaults.CallWaitString, CWAITSTRBUF_MAX, buffer);
-
-    if (SerialDefaults.IRQ == 0 || SerialDefaults.Baud == 0) {
-
-        SerialDefaults.Port = 0;
-        SerialDefaults.IRQ = -1;
-        SerialDefaults.Baud = -1;
-    }
-
-    /*------------------------------------------------------------------------
-    Set 'tbuffer' to point past the actual INI data
-    ------------------------------------------------------------------------*/
-    len = strlen(buffer) + 2;
-    tbuffer = buffer + len;
-
-    /*------------------------------------------------------------------------
-    Read all Base-Scenario names into 'tbuffer'
-    ------------------------------------------------------------------------*/
-    WWGetPrivateProfileString("InitStrings", NULL, NULL, tbuffer, ShapeBufferSize - len, buffer);
-
-    /*------------------------------------------------------------------------
-    Read in & store each entry
-    ------------------------------------------------------------------------*/
-    while (*tbuffer != '\0') {
-        entry = new char[INITSTRBUF_MAX];
-
-        entry[0] = 0;
-
-        WWGetPrivateProfileString("InitStrings", tbuffer, NULL, entry, INITSTRBUF_MAX, buffer);
-
-        strupr(entry);
-
-        InitStrings.Add(entry);
-
-        tbuffer += strlen(tbuffer) + 1;
-    }
-
-    // if no entries then have at least one
-
-    if (tbuffer == (buffer + len)) {
-        entry = new char[INITSTRBUF_MAX];
-        strcpy(entry, "ATZ");
-        InitStrings.Add(entry);
-        SerialDefaults.InitStringIndex = 0;
-    } else {
-        len = strlen(buffer) + 2;
-    }
-
-    /*------------------------------------------------------------------------
-    Repeat the process for the phonebook
-    ------------------------------------------------------------------------*/
-    tbuffer = buffer + len;
-
-    /*------------------------------------------------------------------------
-    Read in all phone book listings.
-    Format: Name=PhoneNum,Port,IRQ,Baud,InitString
-    ------------------------------------------------------------------------*/
-
-    /*........................................................................
-    Read the entry names in
-    ........................................................................*/
-    WWGetPrivateProfileString("PhoneBook", NULL, NULL, tbuffer, ShapeBufferSize - len, buffer);
-
-    while (*tbuffer != '\0') {
-        /*.....................................................................
-        Create a new phone book entry
-        .....................................................................*/
-        phone = new PhoneEntryClass();
-
-        /*.....................................................................
-        Read the entire entry in
-        .....................................................................*/
-        WWGetPrivateProfileString("PhoneBook", tbuffer, NULL, buf, 128, buffer);
-
-        /*.....................................................................
-        Extract name, phone # & serial port settings
-        .....................................................................*/
-        tokenptr = strtok(buf, "|");
-        if (tokenptr) {
-            strcpy(phone->Name, tokenptr);
-            strupr(phone->Name);
-        } else {
-            phone->Name[0] = 0;
-        }
-
-        tokenptr = strtok(NULL, "|");
-        if (tokenptr) {
-            strcpy(phone->Number, tokenptr);
-            strupr(phone->Number);
-        } else {
-            phone->Number[0] = 0;
-        }
-
-        tokenptr = strtok(NULL, "|");
-        if (tokenptr) {
-            sscanf(tokenptr, "%x", &phone->Settings.Port);
-        } else {
-            phone->Settings.Port = 0;
-        }
-
-        tokenptr = strtok(NULL, "|");
-        if (tokenptr) {
-            phone->Settings.IRQ = atoi(tokenptr);
-        } else {
-            phone->Settings.IRQ = -1;
-        }
-
-        tokenptr = strtok(NULL, "|");
-        if (tokenptr) {
-            phone->Settings.Baud = atoi(tokenptr);
-        } else {
-            phone->Settings.Baud = -1;
-        }
-
-        tokenptr = strtok(NULL, "|");
-        if (tokenptr) {
-            phone->Settings.Compression = atoi(tokenptr);
-        } else {
-            phone->Settings.Compression = 0;
-        }
-
-        tokenptr = strtok(NULL, "|");
-        if (tokenptr) {
-            phone->Settings.ErrorCorrection = atoi(tokenptr);
-        } else {
-            phone->Settings.ErrorCorrection = 0;
-        }
-
-        tokenptr = strtok(NULL, "|");
-        if (tokenptr) {
-            phone->Settings.HardwareFlowControl = atoi(tokenptr);
-        } else {
-            phone->Settings.HardwareFlowControl = 1;
-        }
-
-        tokenptr = strtok(NULL, "|");
-        if (tokenptr) {
-            strcpy(buf, tokenptr);
-
-            // find dial method
-
-            for (i = 0; i < DIAL_METHODS; i++) {
-                if (!strcmpi(buf, DialMethodCheck[i])) {
-                    phone->Settings.DialMethod = (DialMethodType)i;
-                    break;
-                }
-            }
-
-            // if method not found set to touch tone
-
-            if (i == DIAL_METHODS) {
-                phone->Settings.DialMethod = DIAL_TOUCH_TONE;
-            }
-        } else {
-            phone->Settings.DialMethod = DIAL_TOUCH_TONE;
-        }
-
-        tokenptr = strtok(NULL, "|");
-        if (tokenptr) {
-            phone->Settings.InitStringIndex = atoi(tokenptr);
-        } else {
-            phone->Settings.InitStringIndex = 0;
-        }
-
-        tokenptr = strtok(NULL, "|");
-        if (tokenptr) {
-            phone->Settings.CallWaitStringIndex = atoi(tokenptr);
-        } else {
-            phone->Settings.CallWaitStringIndex = CALL_WAIT_CUSTOM;
-        }
-
-        tokenptr = strtok(NULL, "|");
-        if (tokenptr) {
-            strcpy(phone->Settings.CallWaitString, tokenptr);
-        } else {
-            phone->Settings.CallWaitString[0] = 0;
-        }
-
-        /*.....................................................................
-        Add it to our list
-        .....................................................................*/
-        PhoneBook.Add(phone);
-
-        tbuffer += strlen(tbuffer) + 1;
-    }
-
-    /*------------------------------------------------------------------------
-    Read special recording playback values, to help find sync bugs
-    ------------------------------------------------------------------------*/
-    if (PlaybackGame) {
-        TrapFrame = WWGetPrivateProfileInt("SyncBug", "Frame", 0x7fffffff, buffer);
-
-        TrapObjType = (RTTIType)WWGetPrivateProfileInt("SyncBug", "Type", RTTI_NONE, buffer);
-        WWGetPrivateProfileString("SyncBug", "Type", "NONE", buf, 80, buffer);
         if (!stricmp(buf, "AIRCRAFT"))
             TrapObjType = RTTI_AIRCRAFT;
         else if (!stricmp(buf, "ANIM"))
@@ -823,13 +556,13 @@ void Read_MultiPlayer_Settings(void)
             TrapObjType = RTTI_NONE;
         }
 
-        WWGetPrivateProfileString("SyncBug", "Coord", "0", buf, 80, buffer);
+        ini.Get_String("SyncBug", "Coord", "0", buf, 80);
         sscanf(buf, "%x", &TrapCoord);
 
-        WWGetPrivateProfileString("SyncBug", "this", "0", buf, 80, buffer);
-        sscanf(buf, "%x", &TrapThis);
+        ini.Get_String("SyncBug", "this", "0", buf, 80);
+        sscanf(buf, "%p", &TrapThis);
 
-        WWGetPrivateProfileString("SyncBug", "Cell", "0", buf, 80, buffer);
+        ini.Get_String("SyncBug", "Cell", "0", buf, 80);
         cell = atoi(buf);
         if (cell) {
             TrapCell = &(Map[cell]);
@@ -855,106 +588,19 @@ void Read_MultiPlayer_Settings(void)
  *=============================================================================================*/
 void Write_MultiPlayer_Settings(void)
 {
-// PG_TO_FIX
-#if (0)
-    char* buffer; // INI staging buffer pointer.
-    CCFileClass file;
-    int i;
-    char entrytext[4];
-    char buf[128]; // buffer for parsing INI entry
+#ifndef REMASTER_BUILD
+    INIClass ini;
+    CDFileClass file(CONFIG_FILE_NAME);
+    if (ini.Load(file)) {
 
-    /*------------------------------------------------------------------------
-    Get a working pointer to the INI staging buffer. Make sure that the buffer
-    starts cleared out of any data.
-    ------------------------------------------------------------------------*/
-    buffer = (char*)_ShapeBuffer;
-    memset(buffer, '\0', _ShapeBufferSize);
+        //	Save the player's last-used Handle & Color
+        ini.Put_Int("MultiPlayer", "Color", (int)MPlayerPrefColor);
+        ini.Put_Int("MultiPlayer", "Side", MPlayerHouse);
+        ini.Put_String("MultiPlayer", "Handle", MPlayerName);
 
-    file.Set_Name("CONQUER.INI");
-    if (file.Is_Available()) {
-        file.Open(READ);
-        file.Read(buffer, _ShapeBufferSize - 1);
-        file.Close();
+        //	Write the INI data out to a file.
+        ini.Save(file);
     }
-
-    /*------------------------------------------------------------------------
-    Save the player's last-used Handle & Color
-    ------------------------------------------------------------------------*/
-    WWWritePrivateProfileInt("MultiPlayer", "PhoneIndex", CurPhoneIdx, buffer);
-    WWWritePrivateProfileInt("MultiPlayer", "Color", MPlayerPrefColor, buffer);
-    WWWritePrivateProfileInt("MultiPlayer", "Side", MPlayerHouse, buffer);
-    WWWritePrivateProfileString("MultiPlayer", "Handle", MPlayerName, buffer);
-
-    /*------------------------------------------------------------------------
-    Clear all existing SerialDefault entries.
-    ------------------------------------------------------------------------*/
-    WWWritePrivateProfileString("SerialDefaults", NULL, NULL, buffer);
-
-    /*------------------------------------------------------------------------
-    Save default serial settings in opposite order you want to see them
-    ------------------------------------------------------------------------*/
-    WWWritePrivateProfileString("SerialDefaults", "CallWaitString", SerialDefaults.CallWaitString, buffer);
-    WWWritePrivateProfileInt("SerialDefaults", "CallWaitStringIndex", SerialDefaults.CallWaitStringIndex, buffer);
-    WWWritePrivateProfileInt("SerialDefaults", "InitStringIndex", SerialDefaults.InitStringIndex, buffer);
-    WWWritePrivateProfileInt("SerialDefaults", "Init", SerialDefaults.Init, buffer);
-    WWWritePrivateProfileString("SerialDefaults", "DialMethod", DialMethodCheck[SerialDefaults.DialMethod], buffer);
-    WWWritePrivateProfileInt("SerialDefaults", "Baud", SerialDefaults.Baud, buffer);
-    WWWritePrivateProfileInt("SerialDefaults", "IRQ", SerialDefaults.IRQ, buffer);
-    sprintf(buf, "%x", SerialDefaults.Port);
-    WWWritePrivateProfileString("SerialDefaults", "Port", buf, buffer);
-    WWWritePrivateProfileString("SerialDefaults", "ModemName", SerialDefaults.ModemName, buffer);
-    WWWritePrivateProfileInt("SerialDefaults", "Compression", SerialDefaults.Compression, buffer);
-    WWWritePrivateProfileInt("SerialDefaults", "ErrorCorrection", SerialDefaults.ErrorCorrection, buffer);
-    WWWritePrivateProfileInt("SerialDefaults", "HardwareFlowControl", SerialDefaults.HardwareFlowControl, buffer);
-
-    /*------------------------------------------------------------------------
-    Clear all existing InitString entries.
-    ------------------------------------------------------------------------*/
-    WWWritePrivateProfileString("InitStrings", NULL, NULL, buffer);
-
-    /*------------------------------------------------------------------------
-    Save all InitString entries.  In descending order so they come out in
-    ascending order.
-    ------------------------------------------------------------------------*/
-    for (i = (InitStrings.Count() - 1); i >= 0; i--) {
-        sprintf(buf, "%03d", i);
-        WWWritePrivateProfileString("InitStrings", buf, InitStrings[i], buffer);
-    }
-
-    /*------------------------------------------------------------------------
-    Clear all existing Phone Book entries.
-    ------------------------------------------------------------------------*/
-    WWWritePrivateProfileString("PhoneBook", NULL, NULL, buffer);
-
-    /*------------------------------------------------------------------------
-    Save all Phone Book entries.
-    Format: Entry=Name,PhoneNum,Port,IRQ,Baud,InitString
-    ------------------------------------------------------------------------*/
-    for (i = (PhoneBook.Count() - 1); i >= 0; i--) {
-        sprintf(buf,
-                "%s|%s|%x|%d|%d|%d|%d|%d|%s|%d|%d|%s",
-                PhoneBook[i]->Name,
-                PhoneBook[i]->Number,
-                PhoneBook[i]->Settings.Port,
-                PhoneBook[i]->Settings.IRQ,
-                PhoneBook[i]->Settings.Baud,
-                PhoneBook[i]->Settings.Compression,
-                PhoneBook[i]->Settings.ErrorCorrection,
-                PhoneBook[i]->Settings.HardwareFlowControl,
-                DialMethodCheck[PhoneBook[i]->Settings.DialMethod],
-                PhoneBook[i]->Settings.InitStringIndex,
-                PhoneBook[i]->Settings.CallWaitStringIndex,
-                PhoneBook[i]->Settings.CallWaitString);
-        sprintf(entrytext, "%03d", i);
-        WWWritePrivateProfileString("PhoneBook", entrytext, buf, buffer);
-    }
-
-    /*------------------------------------------------------------------------
-    Write the INI data out to a file.
-    ------------------------------------------------------------------------*/
-    file.Open(WRITE);
-    file.Write(buffer, strlen(buffer));
-    file.Close();
 #endif
 }
 

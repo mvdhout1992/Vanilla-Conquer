@@ -36,6 +36,7 @@
 
 #include "function.h"
 #include "confdlg.h"
+#include "common/framelimit.h"
 
 bool ConfirmationClass::Process(int text)
 {
@@ -138,7 +139,7 @@ bool ConfirmationClass::Process(char const* string)
         /*
         **	Invoke game callback.
         */
-        if (GameToPlay == GAME_NORMAL) {
+        if (GameToPlay == GAME_NORMAL || GameToPlay == GAME_SKIRMISH) {
             Call_Back();
         } else {
             if (Main_Loop()) {
@@ -252,6 +253,8 @@ bool ConfirmationClass::Process(char const* string)
 
             pressed = false;
         }
+
+        Frame_Limiter();
     }
     return (result);
 }

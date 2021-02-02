@@ -269,6 +269,7 @@ void DisplayClass::Init_Clear(void)
     /*
     ** Clear any object being placed
     */
+    HoverObject = 0;
     PendingObjectPtr = 0;
     PendingObject = 0;
     PendingHouse = HOUSE_NONE;

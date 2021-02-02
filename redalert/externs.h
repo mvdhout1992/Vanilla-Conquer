@@ -48,6 +48,13 @@
 #include "logic.h"
 #include "base.h"
 #include "scenario.h"
+#include "theme.h"
+#include "queue.h"
+#include "event.h"
+#include "rules.h"
+#include "ipxmgr.h"
+#include "session.h"
+
 class CarryoverClass;
 
 #ifdef REMASTER_BUILD
@@ -427,9 +434,10 @@ void Do_Vortex(int x, int y, int frame);
 extern int ReadyToQuit;          // Are we about to exit cleanly
 extern bool InDebugger;          // Are we being run from a debugger
 void Memory_Error_Handler(void); // Memory error handler function
-void WWDebugString(const char* string);
+#include "common/debugstring.h"
+#define WWDebugString(x) DBG_LOG(x)
 #ifndef REMASTER_BUILD
-#define GlyphX_Debug_Print(x) WWDebugString(x)
+#define GlyphX_Debug_Print(x) DBG_LOG(x)
 #endif
 
 /*************************************************************

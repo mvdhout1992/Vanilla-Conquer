@@ -405,7 +405,6 @@ short const* Coord_Spillage_List(COORDINATE coord, int maxsize);
 /*
 **	DEBUG.CPP
 */
-void Log_Event(char const* text, ...);
 void Debug_Key(unsigned input);
 void Self_Regulate(void);
 
@@ -1057,10 +1056,12 @@ void WWDOS_Shutdown(void);
 
 #endif
 
+#ifdef REMASTER_BUILD
 /*
 ** Debug output. ST - 6/27/2019 10:00PM
 */
 void GlyphX_Debug_Print(const char* debug_text);
+#endif
 
 /*
 ** Achievement event. ST - 11/11/2019 11:39AM
