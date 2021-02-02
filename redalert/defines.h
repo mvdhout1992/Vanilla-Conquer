@@ -54,12 +54,6 @@
 //#define	PLAYTEST_VERSION
 #define RELEASE_VERSION
 
-/**********************************************************************
-** ColinM
-** Set this to enable dongle protection
-*/
-//#define DONGLE
-
 // Enable 640x400 VQ movie capability in WIN32 mode
 #define MOVIE640
 
@@ -2507,6 +2501,11 @@ typedef enum FormationType : unsigned char
     FORMATION_COUNT,
     FORMATION_FIRST = 0
 } FormationType;
+
+/*
+** When a unit is not in formation this magic value is used.
+*/
+#define INVALID_FORMATION 0x80000000
 
 /****************************************************************************
 **	Selected units have a special selected unit box around them. These are the

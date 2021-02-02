@@ -280,7 +280,7 @@ int LoadOptionsClass::Process(void)
         /*
         ** Invoke game callback.
         */
-        if (GameToPlay == GAME_NORMAL) {
+        if (GameToPlay == GAME_NORMAL || GameToPlay == GAME_SKIRMISH) {
             Call_Back();
         } else {
             if (Main_Loop()) {
@@ -398,6 +398,13 @@ int LoadOptionsClass::Process(void)
                 if (!Load_Game(game_num)) {
                     WWMessageBox().Process(TXT_ERROR_LOADING_GAME);
                 } else {
+                    /*
+                    ** Fix unit selection issues on load, mirrors remaster code in CNC_Save_Load.
+                    */
+                    if (PlayerPtr) {
+                        CurrentObject.Set_Active_Context(PlayerPtr->Class->House);
+                    }
+
                     Hide_Mouse();
                     VisiblePage.Clear();
                     Set_Palette(GamePalette);

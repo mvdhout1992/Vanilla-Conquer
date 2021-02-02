@@ -57,6 +57,8 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "function.h"
+#include "language.h"
+#include "msgbox.h"
 #include "loaddlg.h"
 
 #ifdef NETWORKING
@@ -67,19 +69,15 @@
 
 #include <time.h>
 
-#ifdef DONGLE
-#include "cbn_.h"
-#endif
-
 #ifdef MPEGMOVIE // Denzil 6/25/98
 #include "mpgset.h"
 #endif
 
+#include "ramfile.h"
 #include "common/vqaconfig.h"
+#include "intro.h"
 
 RemapControlType SidebarScheme;
-
-//#include "WolDebug.h"
 
 #ifdef CHEAT_KEYS
 extern bool bNoMovies;
@@ -476,15 +474,6 @@ bool Select_Game(bool fade)
     bool process = true;     // false = break out of while loop
     bool display = true;
 
-#ifdef DONGLE
-    /* These where added by ColinM for the dongle checking */
-    short iRet = 0;
-    unsigned short iPortNr = 1; /* automatic port scan enabled */
-    unsigned char cSCodeSER[] = "\x41\x42";
-    unsigned long ulIdRet = 0;
-    unsigned char cBoxName[] = "\x00\x00";
-#endif
-
 #ifdef FIXIT_CSII //	checked - ajw 9/28/98
     int cdcheck = 0;
     bool cs = Is_Counterstrike_Installed();
@@ -532,21 +521,6 @@ bool Select_Game(bool fade)
 #if (TIMING_FIX)
     NewMaxAheadFrame1 = 0;
     NewMaxAheadFrame2 = 0;
-#endif
-
-/* ColinM added to check for dongle */
-#ifdef DONGLE
-    iRet = CbN_BoxReady(iPortNr, cBoxName);
-    if (cBoxName[0] != 0xc5 && cBoxName[0] != 0xc9) {
-        WWMessageBox().Process("Please ensure dongle is attached. Run the dongle batch file too.", TXT_OK);
-        Emergency_Exit(EXIT_FAILURE);
-    }
-
-    iRet = CbN_ReadSER(iPortNr, cSCodeSER, &ulIdRet);
-    if (ulIdRet != 0xa0095) {
-        WWMessageBox().Process("Please ensure dongle is attached. Run the dongle batch file too.", TXT_OK);
-        Emergency_Exit(EXIT_FAILURE);
-    }
 #endif
 
     /*
@@ -2172,8 +2146,9 @@ static void Init_Expansion_Files(void)
     const char* path = ".\\";
     char search_path[_MAX_PATH];
     char scan_path[_MAX_PATH];
+    Find_File_Data* ffd;
+    bool found;
 
-#ifdef _WIN32
     for (int p = 0; p < 100; p++) {
 
         strcpy(search_path, path);
@@ -2184,27 +2159,27 @@ static void Init_Expansion_Files(void)
         strcpy(scan_path, search_path);
         strcat(scan_path, "SC*.MIX");
 
-        WIN32_FIND_DATA find_data;
-        memset(&find_data, 0, sizeof(find_data));
-        HANDLE file_handle = FindFirstFile(scan_path, &find_data);
-        if (file_handle != INVALID_HANDLE_VALUE) {
-            do {
-                char* ptr = strdup(find_data.cFileName);
-                new MFCD(ptr, &FastKey);
-            } while (FindNextFile(file_handle, &find_data));
-            FindClose(file_handle);
+        found = Find_First(scan_path, 0, &ffd);
+        while (found) {
+            char* ptr = strdup(ffd->GetName());
+            new MFCD(ptr, &FastKey);
+            found = Find_Next(ffd);
+        }
+        if (ffd) {
+            Find_Close(ffd);
         }
 
-        memset(&find_data, 0, sizeof(find_data));
         strcpy(scan_path, search_path);
         strcat(scan_path, "Ss*.MIX");
-        file_handle = FindFirstFile(scan_path, &find_data);
-        if (file_handle != INVALID_HANDLE_VALUE) {
-            do {
-                char* ptr = strdup(find_data.cFileName);
-                new MFCD(ptr, &FastKey);
-            } while (FindNextFile(file_handle, &find_data));
-            FindClose(file_handle);
+
+        found = Find_First(scan_path, 0, &ffd);
+        while (found) {
+            char* ptr = strdup(ffd->GetName());
+            new MFCD(ptr, &FastKey);
+            found = Find_Next(ffd);
+        }
+        if (ffd) {
+            Find_Close(ffd);
         }
 
         path = CDFileClass::Get_Search_Path(p);
@@ -2213,29 +2188,6 @@ static void Init_Expansion_Files(void)
             break;
         }
     }
-#endif
-
-#if (0)
-    /*
-    **	Before all else, cache any additional mixfiles.
-    */
-    struct find_t ff; // for _dos_findfirst
-    if (!_dos_findfirst("SC*.MIX", _A_NORMAL, &ff)) {
-        char* ptr;
-        do {
-            ptr = strdup(ff.name);
-            new MFCD(ptr, &FastKey);
-            MFCD::Cache(ptr);
-        } while (!_dos_findnext(&ff));
-    }
-    if (!_dos_findfirst("SS*.MIX", _A_NORMAL, &ff)) {
-        char* ptr;
-        do {
-            ptr = strdup(ff.name);
-            new MFCD(ptr, &FastKey);
-        } while (!_dos_findnext(&ff));
-    }
-#endif
 }
 
 /***********************************************************************************************

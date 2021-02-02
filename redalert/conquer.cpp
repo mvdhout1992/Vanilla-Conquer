@@ -66,6 +66,10 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "function.h"
+#include "msgbox.h"
+#include "keyframe.h"
+#include "language.h"
+
 #ifdef _WIN32
 #ifdef WINSOCK_IPX
 #include "wsproto.h"
@@ -80,6 +84,8 @@ TcpipManagerClass Winsock;
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+
+#include "interpal.h"
 #include "vortex.h"
 #include "common/framelimit.h"
 #include "common/vqatask.h"
@@ -884,7 +890,7 @@ void Toggle_Formation(void)
             team = obj->Group;
             if (team != -1) {
                 TeamFormDataStruct& team_form_data = TeamFormData[obj->Owner()];
-                setform = obj->XFormOffset == (int)0x80000000;
+                setform = obj->XFormOffset == INVALID_FORMATION;
                 team_form_data.TeamSpeed[team] = SPEED_WHEEL;
                 team_form_data.TeamMaxSpeed[team] = MPH_LIGHT_SPEED;
                 break;
@@ -898,7 +904,7 @@ void Toggle_Formation(void)
                 team = obj->Group;
                 if (team != -1) {
                     TeamFormDataStruct& team_form_data = TeamFormData[obj->Owner()];
-                    setform = obj->XFormOffset == (int)0x80000000;
+                    setform = obj->XFormOffset == INVALID_FORMATION;
                     team_form_data.TeamSpeed[team] = SPEED_WHEEL;
                     team_form_data.TeamMaxSpeed[team] = MPH_LIGHT_SPEED;
                     break;
@@ -914,7 +920,7 @@ void Toggle_Formation(void)
                 team = obj->Group;
                 if (team != -1) {
                     TeamFormDataStruct& team_form_data = TeamFormData[obj->Owner()];
-                    setform = obj->XFormOffset == 0x80000000UL;
+                    setform = obj->XFormOffset == INVALID_FORMATION;
                     team_form_data.TeamSpeed[team] = SPEED_WHEEL;
                     team_form_data.TeamMaxSpeed[team] = MPH_LIGHT_SPEED;
                     break;
@@ -949,7 +955,7 @@ void Toggle_Formation(void)
                     team_form_data.TeamSpeed[team] = obj->Class->Speed;
                 }
             } else {
-                obj->XFormOffset = obj->YFormOffset = (int)0x80000000;
+                obj->XFormOffset = obj->YFormOffset = INVALID_FORMATION;
             }
         }
     }
@@ -974,7 +980,7 @@ void Toggle_Formation(void)
                     team_form_data.TeamMaxSpeed[team] = obj->Class->MaxSpeed;
                 }
             } else {
-                obj->XFormOffset = obj->YFormOffset = (int)0x80000000;
+                obj->XFormOffset = obj->YFormOffset = INVALID_FORMATION;
             }
         }
     }
@@ -999,7 +1005,7 @@ void Toggle_Formation(void)
                     team_form_data.TeamMaxSpeed[team] = obj->Class->MaxSpeed;
                 }
             } else {
-                obj->XFormOffset = obj->YFormOffset = 0x80000000UL;
+                obj->XFormOffset = obj->YFormOffset = INVALID_FORMATION;
             }
         }
     }
@@ -1681,6 +1687,11 @@ FacingType KN_To_Facing(int input)
  *=============================================================================================*/
 static void Sync_Delay(void)
 {
+    /*
+    ** Slow down with frame limiter first.
+    */
+    Frame_Limiter();
+
     /*
     **	Accumulate the number of 'spare' ticks that are frittered away here.
     */
@@ -3641,7 +3652,7 @@ void Handle_Team(int team, int action)
                 ** offsets, and they'll be formationed.
                 */
 #if (1)
-                obj->XFormOffset = obj->YFormOffset = (int)0x80000000;
+                obj->XFormOffset = obj->YFormOffset = INVALID_FORMATION;
 #else
 #if (1)
                 // Old always-north formation stuff
@@ -3668,7 +3679,7 @@ void Handle_Team(int team, int action)
                     obj->Group = team;
                 if (obj->Group == team && obj->Is_Selected_By_Player()) {
 #if (1)
-                    obj->XFormOffset = obj->YFormOffset = (int)0x80000000;
+                    obj->XFormOffset = obj->YFormOffset = INVALID_FORMATION;
 #else
 #if (1)
                     // Old always-north formation stuff
@@ -3831,8 +3842,12 @@ typedef enum
 
 static void Reinit_Secondary_Mixfiles()
 {
+    static bool in_progress = false;
+
     // Only reinitialised if the main mix file has been initialised once already.
-    if (MainMix != nullptr) {
+    if (MainMix != nullptr && !in_progress) {
+        in_progress = true;
+
         delete MoviesMix;
         delete Movies2Mix;
         delete GeneralMix;
@@ -3854,6 +3869,8 @@ static void Reinit_Secondary_Mixfiles()
         }
         GeneralMix = new MFCD("GENERAL.MIX", &FastKey);
         ScoreMix = new MFCD("SCORES.MIX", &FastKey);
+
+        in_progress = false;
     }
 }
 

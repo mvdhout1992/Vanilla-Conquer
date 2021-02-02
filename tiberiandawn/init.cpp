@@ -317,6 +317,8 @@ bool Init_Game(int, char*[])
     const char* path = ".\\";
     char search_path[_MAX_PATH];
     char scan_path[_MAX_PATH];
+    Find_File_Data* ffd;
+    bool found;
 
     for (int p = 0; p < 100; p++) {
 
@@ -325,35 +327,31 @@ bool Init_Game(int, char*[])
             strcat(search_path, "\\");
         }
 
-#ifdef _WIN32
         strcpy(scan_path, search_path);
         strcat(scan_path, "SC*.MIX");
-
-        WIN32_FIND_DATA find_data;
-        memset(&find_data, 0, sizeof(find_data));
-        HANDLE file_handle = FindFirstFileA(scan_path, &find_data);
-        if (file_handle != INVALID_HANDLE_VALUE) {
-            do {
-                char* ptr = strdup(find_data.cFileName);
-                new MFCD(ptr);
-                MFCD::Cache(ptr);
-            } while (FindNextFileA(file_handle, &find_data));
-            FindClose(file_handle);
+        found = Find_First(scan_path, 0, &ffd);
+        while (found) {
+            char* ptr = strdup(ffd->GetName());
+            new MFCD(ptr);
+            MFCD::Cache(ptr);
+            found = Find_Next(ffd);
+        }
+        if (ffd) {
+            Find_Close(ffd);
         }
 
-        memset(&find_data, 0, sizeof(find_data));
         strcpy(scan_path, search_path);
         strcat(scan_path, "SS*.MIX");
-        file_handle = FindFirstFileA(scan_path, &find_data);
-        if (file_handle != INVALID_HANDLE_VALUE) {
-            do {
-                char* ptr = strdup(find_data.cFileName);
-                new MFCD(ptr);
-                MFCD::Cache(ptr);
-            } while (FindNextFileA(file_handle, &find_data));
-            FindClose(file_handle);
+        found = Find_First(scan_path, 0, &ffd);
+        while (found) {
+            char* ptr = strdup(ffd->GetName());
+            new MFCD(ptr);
+            MFCD::Cache(ptr);
+            found = Find_Next(ffd);
         }
-#endif
+        if (ffd) {
+            Find_Close(ffd);
+        }
 
         path = CDFileClass::Get_Search_Path(p);
 
@@ -361,27 +359,6 @@ bool Init_Game(int, char*[])
             break;
         }
     }
-
-#if (0)
-    struct find_t ff; // for _dos_findfirst
-    if (!_dos_findfirst("SC*.MIX", _A_NORMAL, &ff)) {
-        char* ptr;
-        do {
-            ptr = strdup(ff.name);
-            new MFCD(ptr);
-            MFCD::Cache(ptr);
-            //			free(ptr);
-        } while (!_dos_findnext(&ff));
-    }
-    if (!_dos_findfirst("SS*.MIX", _A_NORMAL, &ff)) {
-        char* ptr;
-        do {
-            ptr = strdup(ff.name);
-            new MFCD(ptr);
-            //			free(ptr);
-        } while (!_dos_findnext(&ff));
-    }
-#endif
 #endif // DEMO
 
     CCDebugString("C&C95 - About to register GENERAL.MIX\n");
@@ -1097,6 +1074,17 @@ bool Select_Game(bool fade)
                     }
                     break;
 
+                case GAME_SKIRMISH:
+#ifndef REMASTER_BUILD
+                    if (!Com_Scenario_Dialog()) {
+                        GameToPlay = Select_MPlayer_Game();
+                        if (GameToPlay == GAME_NORMAL) { // user hit Cancel
+                            display = true;
+                            selection = SEL_NONE;
+                        }
+                    }
+#endif
+                    break;
                 case GAME_NULL_MODEM:
                 case GAME_MODEM:
 #if (0)
@@ -1154,6 +1142,13 @@ bool Select_Game(bool fade)
                     ScenDir = SCEN_DIR_EAST;
                     process = false;
                     Options.ScoreVolume = 0;
+                    break;
+
+                case GAME_SKIRMISH:
+                    Theme.Fade_Out();
+                    ScenPlayer = SCEN_PLAYER_MPLAYER;
+                    ScenDir = SCEN_DIR_EAST;
+                    process = false;
                     break;
 
                 /*

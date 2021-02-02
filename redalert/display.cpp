@@ -87,6 +87,7 @@
 
 #include "function.h"
 #include "vortex.h"
+#include "xpipe.h"
 #include "common/fading.h"
 
 /*
@@ -3938,7 +3939,7 @@ void DisplayClass::Mouse_Left_Release(CELL cell, int x, int y, ObjectClass* obje
                         **	formation offset, then it can't be a formation move.
                         */
                         FootClass const* foot = (FootClass*)tobject;
-                        if (foot->Group != group || foot->XFormOffset == 0x80000000) {
+                        if (foot->Group != group || foot->XFormOffset == INVALID_FORMATION) {
                             FormMove = false;
                             break;
                         }
@@ -5007,7 +5008,7 @@ static ActionType _priority_actions[] =
 
 static int get_action_priority(ActionType action)
 {
-    for (int i = 0; i < ARRAY_LENGTH(_priority_actions); ++i) {
+    for (int i = 0; i < ARRAY_SIZE(_priority_actions); ++i) {
         if (_priority_actions[i] == action) {
             return i;
         }

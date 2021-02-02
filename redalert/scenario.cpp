@@ -60,6 +60,10 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "function.h"
+#include "msgbox.h"
+#include "textbtn.h"
+#include "factory.h"
+#include "carry.h"
 #include "common/tcpip.h"
 #include "common/framelimit.h"
 
@@ -3282,18 +3286,17 @@ static void Create_Units(bool official)
         } else {
 
             /*
-            **	If bases are OFF, set 'scaleval' to 1 & create a Mobile HQ for
+            **	If bases are OFF, set 'scaleval' to 1 & create a Truck for
             **	capture-the-flag mode.
             */
             scaleval = 1;
-#ifdef TOFIX
+
             if (Special.IsCaptureTheFlag) {
                 obj = new UnitClass(UNIT_TRUCK, house);
                 obj->Unlimbo(Cell_Coord(centroid), DIR_N);
                 hptr->FlagHome = 0; // turn house's flag off
                 hptr->FlagLocation = 0;
             }
-#endif
         }
 
         /*

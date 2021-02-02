@@ -98,6 +98,7 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "function.h"
+#include "keyframe.h"
 #include "common/miscasm.h"
 
 extern void Logic_Switch_Player_Context(ObjectClass* object);
@@ -1115,6 +1116,13 @@ ResultType UnitClass::Take_Damage(int& damage, int distance, WarheadType warhead
             if (cell != 0) {
                 new OverlayClass(OVERLAY_WOOD_CRATE, cell);
             }
+        }
+
+        /*
+        **	When the truck blows up, the entire side blows up if no bases capture the flag mode.
+        */
+        if (*this == UNIT_TRUCK && !Session.Options.Bases && Special.IsCaptureTheFlag) {
+            House->Flag_To_Die();
         }
 
         if (*this == UNIT_MCV) {

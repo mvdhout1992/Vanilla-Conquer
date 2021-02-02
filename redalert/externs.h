@@ -39,16 +39,23 @@
 
 #ifdef SCENARIO_EDITOR
 #include "mapedit.h"
+#else
+#include "mouse.h"
 #endif
-#include "techno.h"
-#include "type.h"
-#include "building.h"
-#include "unit.h"
-#include "credits.h"
 #include "goptions.h"
-#include "options.h"
-#include "infantry.h"
+#include "vortex.h"
 #include "common/vqaconfig.h"
+#include "logic.h"
+#include "base.h"
+#include "scenario.h"
+#include "theme.h"
+#include "queue.h"
+#include "event.h"
+#include "rules.h"
+#include "ipxmgr.h"
+#include "session.h"
+
+class CarryoverClass;
 
 #ifdef REMASTER_BUILD
 #define GBUFF_INIT_WIDTH     3072
@@ -427,9 +434,10 @@ void Do_Vortex(int x, int y, int frame);
 extern int ReadyToQuit;          // Are we about to exit cleanly
 extern bool InDebugger;          // Are we being run from a debugger
 void Memory_Error_Handler(void); // Memory error handler function
-void WWDebugString(const char* string);
+#include "common/debugstring.h"
+#define WWDebugString(x) DBG_LOG(x)
 #ifndef REMASTER_BUILD
-#define GlyphX_Debug_Print(x) WWDebugString(x)
+#define GlyphX_Debug_Print(x) DBG_LOG(x)
 #endif
 
 /*************************************************************
@@ -473,6 +481,11 @@ extern MCIMovie* MciMovie;
 #endif
 
 #include "mpgset.h"
+#include "remapcontrol.h" // for RemapControlType
+#include "windef.h"       // for HWND
+#include <minwindef.h>    // for HANDLE
+class HouseClass;
+class WWKeyboardClass;
 extern MPGSettings* MpgSettings;
 #endif
 

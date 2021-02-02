@@ -368,10 +368,7 @@ bool Read_Scenario_Ini(char* root, bool fresh)
 
         PlayerPtr = HouseClass::As_Pointer(ini.Get_HousesType("Basic", "Player", HOUSE_GOOD));
         PlayerPtr->IsHuman = true;
-#ifndef REMASTER_BUILD
-        // This is needed to fix the object selection issues. OmniBlade - 09/07/2020
-        CurrentObject.Set_Active_Context(PlayerPtr->Class->House);
-#endif
+
         int carryover;
         if (CarryOverCap != -1) {
             carryover = MIN((int)Fixed_To_Cardinal(CarryOverMoney, CarryOverPercent), CarryOverCap);
@@ -407,6 +404,11 @@ bool Read_Scenario_Ini(char* root, bool fresh)
         Assign_Houses();
 #endif
     }
+
+#ifndef REMASTER_BUILD
+    // This is needed to fix the object selection issues. OmniBlade - 09/07/2020
+    CurrentObject.Set_Active_Context(PlayerPtr->Class->House);
+#endif
 
     /*
     **	Attempt to read the map's binary image file; if fails, read the
@@ -621,6 +623,21 @@ bool Read_Scenario_Ini(char* root, bool fresh)
                 Map.Place_Random_Crate();
             }
         }
+
+#ifndef REMASTER_BUILD
+        /*
+        ** All this was originally done within Compute_Start_Pos.
+        */
+        long start_x = 0;
+        long start_y = 0;
+        Map.Compute_Start_Pos(start_x, start_y);
+        for (int i = 0; i < ARRAY_SIZE(Views); ++i) {
+            Views[i] = XY_Cell(start_x, start_y);
+        }
+        Waypoint[27] = XY_Cell(start_x, start_y);
+        COORDINATE pos = Cell_Coord(XY_Cell(start_x, start_y));
+        Map.Set_Tactical_Position(pos);
+#endif
     }
 
     Call_Back();
@@ -1168,7 +1185,7 @@ static void Assign_Houses(void)
     bool house_used[MAX_PLAYERS]; // true = this house is in use
     bool color_used[16]; // true = this color is in use. We have more than 6 color options now, so bumped this to 16. ST
                          // - 6/19/2019 5:18PM
-    int i, j;
+    int i;
     PlayerColorType color;
     HousesType house2;
     HouseClass* housep2;
@@ -1187,12 +1204,10 @@ static void Assign_Houses(void)
     **	For each player, randomly pick a house
     */
     for (i = 0; i < MPlayerCount; i++) {
-        j = Random_Pick(0, MPlayerMax - 1);
-
         /*
         **	If this house was already selected, decrement 'i' & keep looping.
         */
-        if (house_used[j]) {
+        if (house_used[i]) {
             i--;
             continue;
         }
@@ -1201,7 +1216,7 @@ static void Assign_Houses(void)
         **	Set the house, preferred house (GDI/NOD), color, and actual house;
         **	get a pointer to the house instance
         */
-        house = (HousesType)(j + (int)HOUSE_MULTI1);
+        house = (HousesType)(i + (int)HOUSE_MULTI1);
         pref_house = MPlayerID_To_HousesType(MPlayerID[i]);
         color = MPlayerID_To_ColorIndex(MPlayerID[i]);
         housep = HouseClass::As_Pointer(house);
@@ -1210,7 +1225,7 @@ static void Assign_Houses(void)
         /*
         **	Mark this house & color as used
         */
-        house_used[j] = true;
+        house_used[i] = true;
         color_used[color] = true;
 
         /*
@@ -1234,7 +1249,7 @@ static void Assign_Houses(void)
     /*
     **	For all houses not assigned to a player, set them up for computer use
     */
-    for (i = 0; i < MPlayerMax; i++) {
+    for (i = MPlayerCount; i < MPlayerCount + MPlayerGhosts; i++) {
         if (house_used[i] == false) {
 
             /*
@@ -1272,19 +1287,16 @@ static void Assign_Houses(void)
         }
     }
 
-    /*
-    **	Now make all computer-owned houses allies of each other.
-    */
-    for (house = HOUSE_MULTI1; house < (HOUSE_MULTI1 + MPlayerMax); house++) {
-        housep = HouseClass::As_Pointer(house);
-        if (housep->IsHuman)
-            continue;
+    for (int i = 0; i < MAX_PLAYERS; i++) {
 
-        for (house2 = HOUSE_MULTI1; house2 < (HOUSE_MULTI1 + MPlayerMax); house2++) {
-            housep2 = HouseClass::As_Pointer(house2);
-            if (housep2->IsHuman)
-                continue;
-            housep->Make_Ally(house2);
+        if (house_used[i]) {
+            continue;
+        }
+
+        house = (HousesType)(i + (int)HOUSE_MULTI1);
+        housep = HouseClass::As_Pointer(house);
+        if (housep) {
+            housep->Clobber_All();
         }
     }
 }
@@ -1319,7 +1331,9 @@ static void Remove_AI_Players(void)
     }
 }
 
+#ifdef REMASTER_BUILD
 #define USE_GLYPHX_START_LOCATIONS 1
+#endif
 
 /***********************************************************************************************
  * Create_Units -- Creates infantry & units, for non-base multiplayer                          *
@@ -1430,14 +1444,14 @@ static void Create_Units(void)
     int tot_infantry;                                 // total # infantry to create
 
     CELL waypts[26];
-    //	CELL sorted_waypts[26];
+    CELL sorted_waypts[26];
     int num_waypts;
 
     HousesType h;     // house loop counter
     HouseClass* hptr; // ptr to house being processed
 
     CELL centroid; // centroid of this house's stuff
-                   //	int try_count;			// # times we've tried to select a centroid
+    int try_count; // # times we've tried to select a centroid
     CELL centerpt; // centroid for a category of objects, as a CELL
 
     int u_limit;      // last allowable index of units for this BuildLevel
@@ -1527,7 +1541,7 @@ static void Create_Units(void)
     Now sort the 'waypts' array
     ........................................................................*/
 #ifndef USE_GLYPHX_START_LOCATIONS
-    // Sort_Cells (waypts, num_waypts, sorted_waypts);
+    Sort_Cells(waypts, num_waypts, sorted_waypts);
 #endif
 
     /*------------------------------------------------------------------------

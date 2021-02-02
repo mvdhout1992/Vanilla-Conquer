@@ -405,7 +405,6 @@ short const* Coord_Spillage_List(COORDINATE coord, int maxsize);
 /*
 **	DEBUG.CPP
 */
-void Log_Event(char const* text, ...);
 void Debug_Key(unsigned input);
 void Self_Regulate(void);
 
@@ -501,7 +500,7 @@ void Load_Recording_Values(void);
 */
 void* Small_Icon(void const* iconptr, int iconnum);
 void Set_Window(int window, int x, int y, int w, int h);
-long Load_Uncompress(FileClass& file, BuffType& uncomp_buff, BuffType& dest_buff, void* reserved_data);
+long Load_Uncompress(FileClass& file, BufferClass& uncomp_buff, BufferClass& dest_buff, void* reserved_data);
 long Translucent_Table_Size(int count);
 void* Build_Translucent_Table(void const* palette, TLucentType const* control, int count, void* buffer);
 void* Conquer_Build_Translucent_Table(void const* palette, TLucentType const* control, int count, void* buffer);
@@ -1057,10 +1056,12 @@ void WWDOS_Shutdown(void);
 
 #endif
 
+#ifdef REMASTER_BUILD
 /*
 ** Debug output. ST - 6/27/2019 10:00PM
 */
 void GlyphX_Debug_Print(const char* debug_text);
+#endif
 
 /*
 ** Achievement event. ST - 11/11/2019 11:39AM

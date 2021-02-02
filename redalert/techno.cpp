@@ -131,6 +131,7 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "function.h"
+#include "utracker.h"
 
 /***************************************************************************
 **	Cloaking control values.
@@ -2618,13 +2619,14 @@ bool TechnoClass::Evaluate_Object(ThreatType method,
             **	is a good time do so, then begin cloaking.
             */
             if (Cloak == UNCLOAKED) {
-#ifdef PREDATOR
-                // Changed for multiplayer so we can visually see the different players in the original renderer. ST -
-                // 3/13/2019 5:40PM
-                // if (IsOwnedByPlayer) Mark(MARK_CHANGE);
-                if (Is_Owned_By_Player())
-                    Mark(MARK_CHANGE);
-#endif
+                if (What_Am_I() != RTTI_VESSEL) { // Update predator effect if not vessel
+                    // Changed for multiplayer so we can visually see the different players in the original renderer. ST -
+                    // 3/13/2019 5:40PM
+                    // if (IsOwnedByPlayer) Mark(MARK_CHANGE);
+                    if (Is_Owned_By_Player())
+                        Mark(MARK_CHANGE);
+                }
+
                 CloakingDevice.Graphic_Logic();
                 if (Is_Ready_To_Cloak()) {
                     if (Health_Ratio() > Rule.ConditionRed) {
@@ -2712,14 +2714,14 @@ bool TechnoClass::Evaluate_Object(ThreatType method,
                 **	player. This ensures that the shimmering effect will animate.
                 */
                 case CLOAKED:
-#ifdef PREDATOR
-                    // if (IsOwnedByPlayer) {
-                    // Changed for multiplayer so we can visually see the different players in the original renderer. ST
-                    // - 3/13/2019 5:40PM
-                    if (Is_Owned_By_Player()) {
-                        Mark(MARK_CHANGE);
+                    if (What_Am_I() != RTTI_VESSEL) { // Updated for predator cloak.
+                        // if (IsOwnedByPlayer) {
+                        // Changed for multiplayer so we can visually see the different players in the original renderer. ST
+                        // - 3/13/2019 5:40PM
+                        if (Is_Owned_By_Player()) {
+                            Mark(MARK_CHANGE);
+                        }
                     }
-#endif
                     break;
                 }
             }
@@ -4594,21 +4596,71 @@ bool TechnoClass::Evaluate_Object(ThreatType method,
                 remap = DisplayClass::FadingRed;
             }
 
-#ifdef PREDATOR
-            if (visual != VISUAL_HIDDEN && visual != VISUAL_RIPPLE) {
-                if (visual == VISUAL_SHADOWY) {
-                    CC_Draw_Shape(shapefile,
+            if (What_Am_I() != RTTI_VESSEL) { // Use predator cloak effect from TD if not a vessel.
+                // Server still needs to "render" hidden objects to the virtual window, so objects get created properly - SKY
+                if ((visual == VISUAL_HIDDEN) && (window == WINDOW_VIRTUAL)) {
+                    visual = VISUAL_SHADOWY;
+                }
+
+                if (visual != VISUAL_HIDDEN && visual != VISUAL_RIPPLE) {
+                    if (visual == VISUAL_SHADOWY) {
+                        CC_Draw_Shape(this,
+                                      shapefile,
+                                      shapenum,
+                                      x,
+                                      y,
+                                      window,
+                                      SHAPE_CENTER | SHAPE_WIN_REL | SHAPE_FADING | SHAPE_PREDATOR,
+                                      NULL,
+                                      Map.FadingShade,
+                                      rotation,
+                                      scale);
+                    } else {
+                        CC_Draw_Shape(this,
+                                      shapefile,
+                                      shapenum,
+                                      x,
+                                      y,
+                                      window,
+                                      SHAPE_CENTER | SHAPE_WIN_REL | SHAPE_FADING | SHAPE_GHOST,
+                                      remap,
+                                      shadow,
+                                      rotation,
+                                      scale);
+                    }
+                    if (visual == VISUAL_DARKEN) {
+                        CC_Draw_Shape(this,
+                                      shapefile,
+                                      shapenum,
+                                      x,
+                                      y,
+                                      window,
+                                      SHAPE_PREDATOR | SHAPE_CENTER | SHAPE_WIN_REL | SHAPE_FADING,
+                                      remap,
+                                      Map.FadingShade,
+                                      rotation,
+                                      scale);
+                    }
+                }
+                if (visual != VISUAL_NORMAL && visual != VISUAL_HIDDEN) {
+                    CC_Draw_Shape(this,
+                                  shapefile,
                                   shapenum,
                                   x,
                                   y,
                                   window,
-                                  SHAPE_CENTER | SHAPE_WIN_REL | SHAPE_FADING | SHAPE_PREDATOR,
+                                  SHAPE_PREDATOR | SHAPE_CENTER | SHAPE_WIN_REL,
                                   NULL,
-                                  Map.FadingShade,
+                                  NULL,
                                   rotation,
                                   scale);
-                } else {
-                    CC_Draw_Shape(shapefile,
+                }
+            } else {
+                switch (visual) {
+                case VISUAL_NORMAL:
+                    // Add 'this' parameter to call new shape draw intercept. ST - 5/22/2019
+                    CC_Draw_Shape(this,
+                                  shapefile,
                                   shapenum,
                                   x,
                                   y,
@@ -4618,100 +4670,59 @@ bool TechnoClass::Evaluate_Object(ThreatType method,
                                   shadow,
                                   rotation,
                                   scale);
-                }
-                if (visual == VISUAL_DARKEN) {
-                    CC_Draw_Shape(shapefile,
+                    break;
+
+                case VISUAL_INDISTINCT:
+                case VISUAL_DARKEN:
+                    // Add 'this' parameter to call new shape draw intercept. ST - 5/22/2019
+                    CC_Draw_Shape(this,
+                                  shapefile,
                                   shapenum,
                                   x,
                                   y,
                                   window,
-                                  SHAPE_PREDATOR | SHAPE_CENTER | SHAPE_WIN_REL | SHAPE_FADING,
+                                  SHAPE_FADING | SHAPE_CENTER | SHAPE_WIN_REL,
                                   remap,
                                   Map.FadingShade,
                                   rotation,
                                   scale);
+                    break;
+
+                case VISUAL_SHADOWY:
+                case VISUAL_RIPPLE:
+                    // Add 'this' parameter to call new shape draw intercept. ST - 5/22/2019
+                    CC_Draw_Shape(this,
+                                  shapefile,
+                                  shapenum,
+                                  x,
+                                  y,
+                                  window,
+                                  SHAPE_PREDATOR | SHAPE_FADING | SHAPE_CENTER | SHAPE_WIN_REL,
+                                  NULL,
+                                  Map.FadingShade,
+                                  rotation,
+                                  scale);
+                    break;
+
+                case VISUAL_HIDDEN:
+                    // Server still needs to "render" hidden objects to the virtual window, so objects get created properly -
+                    // SKY
+                    if (window == WINDOW_VIRTUAL) {
+                        CC_Draw_Shape(this,
+                                      shapefile,
+                                      shapenum,
+                                      x,
+                                      y,
+                                      window,
+                                      SHAPE_PREDATOR | SHAPE_FADING | SHAPE_CENTER | SHAPE_WIN_REL,
+                                      NULL,
+                                      Map.FadingShade,
+                                      rotation,
+                                      scale);
+                    }
+                    break;
                 }
             }
-            if (visual != VISUAL_NORMAL && visual != VISUAL_HIDDEN) {
-                CC_Draw_Shape(shapefile,
-                              shapenum,
-                              x,
-                              y,
-                              window,
-                              SHAPE_PREDATOR | SHAPE_CENTER | SHAPE_WIN_REL,
-                              NULL,
-                              NULL,
-                              rotation,
-                              scale);
-            }
-#else
-        switch (visual) {
-        case VISUAL_NORMAL:
-            // Add 'this' parameter to call new shape draw intercept. ST - 5/22/2019
-            CC_Draw_Shape(this,
-                          shapefile,
-                          shapenum,
-                          x,
-                          y,
-                          window,
-                          SHAPE_CENTER | SHAPE_WIN_REL | SHAPE_FADING | SHAPE_GHOST,
-                          remap,
-                          shadow,
-                          rotation,
-                          scale);
-            break;
-
-        case VISUAL_INDISTINCT:
-        case VISUAL_DARKEN:
-            // Add 'this' parameter to call new shape draw intercept. ST - 5/22/2019
-            CC_Draw_Shape(this,
-                          shapefile,
-                          shapenum,
-                          x,
-                          y,
-                          window,
-                          SHAPE_FADING | SHAPE_CENTER | SHAPE_WIN_REL,
-                          remap,
-                          Map.FadingShade,
-                          rotation,
-                          scale);
-            break;
-
-        case VISUAL_SHADOWY:
-        case VISUAL_RIPPLE:
-            // Add 'this' parameter to call new shape draw intercept. ST - 5/22/2019
-            CC_Draw_Shape(this,
-                          shapefile,
-                          shapenum,
-                          x,
-                          y,
-                          window,
-                          SHAPE_PREDATOR | SHAPE_FADING | SHAPE_CENTER | SHAPE_WIN_REL,
-                          NULL,
-                          Map.FadingShade,
-                          rotation,
-                          scale);
-            break;
-
-        case VISUAL_HIDDEN:
-            // Server still needs to "render" hidden objects to the virtual window, so objects get created properly -
-            // SKY
-            if (window == WINDOW_VIRTUAL) {
-                CC_Draw_Shape(this,
-                              shapefile,
-                              shapenum,
-                              x,
-                              y,
-                              window,
-                              SHAPE_PREDATOR | SHAPE_FADING | SHAPE_CENTER | SHAPE_WIN_REL,
-                              NULL,
-                              Map.FadingShade,
-                              rotation,
-                              scale);
-            }
-            break;
-        }
-#endif
         }
 
         Enable_Uncompressed_Shapes();
@@ -4814,21 +4825,76 @@ bool TechnoClass::Evaluate_Object(ThreatType method,
                 remap = DisplayClass::FadingRed;
             }
 
-#ifdef PREDATOR
-            if (visual != VISUAL_HIDDEN && visual != VISUAL_RIPPLE) {
-                if (visual == VISUAL_SHADOWY) {
-                    CC_Draw_Shape(shapefile,
+            if (What_Am_I() != RTTI_VESSEL) {
+                // Server still needs to "render" hidden objects to the virtual window, so objects get created properly - SKY
+                if ((visual == VISUAL_HIDDEN) && (window == WINDOW_VIRTUAL)) {
+                    visual = VISUAL_SHADOWY;
+                }
+
+                if (visual != VISUAL_HIDDEN && visual != VISUAL_RIPPLE) {
+                    if (visual == VISUAL_SHADOWY) {
+                        CC_Draw_Shape(this,
+                                      shape_name,
+                                      shapefile,
+                                      shapenum,
+                                      x,
+                                      y,
+                                      window,
+                                      SHAPE_CENTER | SHAPE_WIN_REL | SHAPE_FADING | SHAPE_PREDATOR,
+                                      NULL,
+                                      Map.FadingShade,
+                                      rotation,
+                                      scale);
+                    } else {
+                        CC_Draw_Shape(this,
+                                      shape_name,
+                                      shapefile,
+                                      shapenum,
+                                      x,
+                                      y,
+                                      window,
+                                      SHAPE_CENTER | SHAPE_WIN_REL | SHAPE_FADING | SHAPE_GHOST,
+                                      remap,
+                                      shadow,
+                                      rotation,
+                                      scale);
+                    }
+                    if (visual == VISUAL_DARKEN) {
+                        CC_Draw_Shape(this,
+                                      shape_name,
+                                      shapefile,
+                                      shapenum,
+                                      x,
+                                      y,
+                                      window,
+                                      SHAPE_PREDATOR | SHAPE_CENTER | SHAPE_WIN_REL | SHAPE_FADING,
+                                      remap,
+                                      Map.FadingShade,
+                                      rotation,
+                                      scale);
+                    }
+                }
+                if (visual != VISUAL_NORMAL && visual != VISUAL_HIDDEN) {
+                    CC_Draw_Shape(this,
+                                  shape_name,
+                                  shapefile,
                                   shapenum,
                                   x,
                                   y,
                                   window,
-                                  SHAPE_CENTER | SHAPE_WIN_REL | SHAPE_FADING | SHAPE_PREDATOR,
+                                  SHAPE_PREDATOR | SHAPE_CENTER | SHAPE_WIN_REL,
                                   NULL,
-                                  Map.FadingShade,
+                                  NULL,
                                   rotation,
                                   scale);
-                } else {
-                    CC_Draw_Shape(shapefile,
+                }
+            } else {
+                switch (visual) {
+                case VISUAL_NORMAL:
+                    // Add 'this' parameter to call new shape draw intercept. ST - 5/22/2019
+                    CC_Draw_Shape(this,
+                                  shape_name,
+                                  shapefile,
                                   shapenum,
                                   x,
                                   y,
@@ -4838,104 +4904,62 @@ bool TechnoClass::Evaluate_Object(ThreatType method,
                                   shadow,
                                   rotation,
                                   scale);
-                }
-                if (visual == VISUAL_DARKEN) {
-                    CC_Draw_Shape(shapefile,
+                    break;
+
+                case VISUAL_INDISTINCT:
+                case VISUAL_DARKEN:
+                    // Add 'this' parameter to call new shape draw intercept. ST - 5/22/2019
+                    CC_Draw_Shape(this,
+                                  shape_name,
+                                  shapefile,
                                   shapenum,
                                   x,
                                   y,
                                   window,
-                                  SHAPE_PREDATOR | SHAPE_CENTER | SHAPE_WIN_REL | SHAPE_FADING,
+                                  SHAPE_FADING | SHAPE_CENTER | SHAPE_WIN_REL,
                                   remap,
                                   Map.FadingShade,
                                   rotation,
                                   scale);
+                    break;
+
+                case VISUAL_SHADOWY:
+                case VISUAL_RIPPLE:
+                    // Add 'this' parameter to call new shape draw intercept. ST - 5/22/2019
+                    CC_Draw_Shape(this,
+                                  shape_name,
+                                  shapefile,
+                                  shapenum,
+                                  x,
+                                  y,
+                                  window,
+                                  SHAPE_PREDATOR | SHAPE_FADING | SHAPE_CENTER | SHAPE_WIN_REL,
+                                  NULL,
+                                  Map.FadingShade,
+                                  rotation,
+                                  scale);
+                    break;
+
+                case VISUAL_HIDDEN:
+                    // Server still needs to "render" hidden objects to the virtual window, so objects get created properly -
+                    // SKY
+                    if (window == WINDOW_VIRTUAL) {
+                        CC_Draw_Shape(this,
+                                      shape_name,
+                                      shapefile,
+                                      shapenum,
+                                      x,
+                                      y,
+                                      window,
+                                      SHAPE_PREDATOR | SHAPE_FADING | SHAPE_CENTER | SHAPE_WIN_REL,
+                                      NULL,
+                                      Map.FadingShade,
+                                      rotation,
+                                      scale);
+                    }
+                    break;
                 }
             }
-            if (visual != VISUAL_NORMAL && visual != VISUAL_HIDDEN) {
-                CC_Draw_Shape(shapefile,
-                              shapenum,
-                              x,
-                              y,
-                              window,
-                              SHAPE_PREDATOR | SHAPE_CENTER | SHAPE_WIN_REL,
-                              NULL,
-                              NULL,
-                              rotation,
-                              scale);
-            }
-#else
-        switch (visual) {
-        case VISUAL_NORMAL:
-            // Add 'this' parameter to call new shape draw intercept. ST - 5/22/2019
-            CC_Draw_Shape(this,
-                          shape_name,
-                          shapefile,
-                          shapenum,
-                          x,
-                          y,
-                          window,
-                          SHAPE_CENTER | SHAPE_WIN_REL | SHAPE_FADING | SHAPE_GHOST,
-                          remap,
-                          shadow,
-                          rotation,
-                          scale);
-            break;
-
-        case VISUAL_INDISTINCT:
-        case VISUAL_DARKEN:
-            // Add 'this' parameter to call new shape draw intercept. ST - 5/22/2019
-            CC_Draw_Shape(this,
-                          shape_name,
-                          shapefile,
-                          shapenum,
-                          x,
-                          y,
-                          window,
-                          SHAPE_FADING | SHAPE_CENTER | SHAPE_WIN_REL,
-                          remap,
-                          Map.FadingShade,
-                          rotation,
-                          scale);
-            break;
-
-        case VISUAL_SHADOWY:
-        case VISUAL_RIPPLE:
-            // Add 'this' parameter to call new shape draw intercept. ST - 5/22/2019
-            CC_Draw_Shape(this,
-                          shape_name,
-                          shapefile,
-                          shapenum,
-                          x,
-                          y,
-                          window,
-                          SHAPE_PREDATOR | SHAPE_FADING | SHAPE_CENTER | SHAPE_WIN_REL,
-                          NULL,
-                          Map.FadingShade,
-                          rotation,
-                          scale);
-            break;
-
-        case VISUAL_HIDDEN:
-            // Server still needs to "render" hidden objects to the virtual window, so objects get created properly -
-            // SKY
-            if (window == WINDOW_VIRTUAL) {
-                CC_Draw_Shape(this,
-                              shape_name,
-                              shapefile,
-                              shapenum,
-                              x,
-                              y,
-                              window,
-                              SHAPE_PREDATOR | SHAPE_FADING | SHAPE_CENTER | SHAPE_WIN_REL,
-                              NULL,
-                              Map.FadingShade,
-                              rotation,
-                              scale);
-            }
-            break;
-        }
-#endif
         }
     }
 
@@ -6219,7 +6243,7 @@ bool TechnoClass::Evaluate_Object(ThreatType method,
             ** If this unit is part of a formation, draw an 'F' after the group
             ** number.
             */
-            if (((FootClass*)this)->XFormOffset != 0x80000000UL) {
+            if (((FootClass*)this)->XFormOffset != INVALID_FORMATION) {
                 CC_Draw_Shape(Class_Of().PipShapes, PIP_LETTERF, x + 8, y + yval, window, SHAPE_CENTER | SHAPE_WIN_REL);
             }
         }

@@ -13,59 +13,98 @@
 // GNU General Public License along with permitted additional restrictions
 // with this program. If not, see https://github.com/electronicarts/CnC_Remastered_Collection
 
-/* $Header:   F:\projects\c&c\vcs\code\crew.h_v   2.18   16 Oct 1995 16:47:56   JOE_BOSTIC  $ */
+/* $Header: /CounterStrike/DROP.H 1     3/03/97 10:24a Joe_bostic $ */
 /***********************************************************************************************
  ***              C O N F I D E N T I A L  ---  W E S T W O O D  S T U D I O S               ***
  ***********************************************************************************************
  *                                                                                             *
  *                 Project Name : Command & Conquer                                            *
  *                                                                                             *
- *                    File Name : CREW.H                                                       *
+ *                    File Name : DROP.H                                                       *
  *                                                                                             *
  *                   Programmer : Joe L. Bostic                                                *
  *                                                                                             *
- *                   Start Date : April 23, 1994                                               *
+ *                   Start Date : 07/05/96                                                     *
  *                                                                                             *
- *                  Last Update : April 23, 1994   [JLB]                                       *
+ *                  Last Update : July 5, 1996 [JLB]                                           *
  *                                                                                             *
  *---------------------------------------------------------------------------------------------*
  * Functions:                                                                                  *
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-#ifndef CREW_H
-#define CREW_H
+#ifndef DROP_H
+#define DROP_H
 
-/****************************************************************************
-**	This class handles the basic crew logic. This includes hero tracking,
-**	crew bail-out, and attached object logic.
-*/
-class CrewClass
+#include "list.h"
+#include "edit.h"
+#include "common/keyframe.h"
+
+class DropListClass : public EditClass
 {
 public:
-    /*
-    **	This keeps track of the number of "kills" the unit as accumulated.
-    **	When it reaches a certain point, the unit improves.
-    */
-    unsigned short Kills;
+    DropListClass(int id,
+                  char* text,
+                  int max_len,
+                  TextPrintType flags,
+                  int x,
+                  int y,
+                  int w,
+                  int h,
+                  void const* up,
+                  void const* down);
+    virtual ~DropListClass(void){};
 
-    /*
-    **	Constructors, Destructors, and overloaded operators.
-    */
-    CrewClass(void)
+    virtual DropListClass& Add(LinkClass& object);
+    virtual DropListClass& Add_Tail(LinkClass& object);
+    virtual DropListClass& Add_Head(LinkClass& object);
+    virtual DropListClass* Remove(void);
+    virtual void Zap(void);
+
+    virtual int Add_Item(char const* text);
+    virtual char const* Current_Item(void);
+    virtual int Current_Index(void);
+    virtual void Set_Selected_Index(int index);
+    virtual void Set_Selected_Index(char const* text);
+    virtual void Peer_To_Peer(unsigned flags, KeyNumType&, ControlClass& whom);
+    virtual void Clear_Focus(void);
+    virtual int Count(void) const
     {
-        Kills = 0;
+        return (List.Count());
     };
-    CrewClass(NoInitClass const&)
+    virtual char const* Get_Item(int index) const
     {
-    }
-
-    int Made_A_Kill(void)
-    {
-        Kills++;
-        return (Kills);
+        return (List.Get_Item(index));
     };
 
-private:
+    virtual void Flag_To_Redraw(void);
+
+    void Expand(void);
+    void Collapse(void);
+
+    virtual void Set_Position(int x, int y);
+
+    DropListClass& operator=(DropListClass const& list);
+    DropListClass(DropListClass const& list);
+
+    /*
+    **	Indicates whether the list box has dropped down or not.
+    */
+    unsigned IsDropped : 1;
+
+    /*
+    **	Height of list box when it is expanded.
+    */
+    int ListHeight;
+
+    /*
+    **	Drop down button.
+    */
+    ShapeButtonClass DropButton;
+
+    /*
+    **	List object when it is expanded.
+    */
+    ListClass List;
 };
 
 #endif

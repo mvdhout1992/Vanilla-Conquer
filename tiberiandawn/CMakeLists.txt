@@ -24,13 +24,13 @@ set(TIBDAWN_SRC
     const.cpp
     coord.cpp
     credits.cpp
-    crew.cpp
     debug.cpp
     dial8.cpp
     dialog.cpp
     display.cpp
     door.cpp
     drive.cpp
+    drop.cpp
     edit.cpp
     ending.cpp
     event.cpp

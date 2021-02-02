@@ -38,12 +38,16 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 #include "function.h"
+#include "edit.h"
+#include "list.h"
+#include "textbtn.h"
 #include "common/framelimit.h"
 
 #define OPTION_WIDTH  236 * 2
 #define OPTION_HEIGHT 162 * 2
 #define OPTION_X      ((640 - OPTION_WIDTH) / 2)
 #define OPTION_Y      (400 - OPTION_HEIGHT) / 2
+#define BUTTON_FLAG   0x8000
 
 /***********************************************************************************************
  * SpecialClass::Init -- Initialize the special class of options.                              *

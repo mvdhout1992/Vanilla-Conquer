@@ -35,8 +35,9 @@
 #ifndef GSCREEN_H
 #define GSCREEN_H
 
-#include "function.h"
 #include "cell.h"
+
+class GadgetClass;
 
 class GScreenClass
 {
