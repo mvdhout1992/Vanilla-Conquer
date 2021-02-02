@@ -92,6 +92,8 @@ public:
     short CursorShapeSave[256]; // For save/load
     bool ProximityCheck;        // Is proximity check ok?
 
+    ObjectClass* HoverObject;
+
     /*
     ** This holds the building type that is about to be placed upon the map.
     **	It is only valid during the building placement state. The PendingLegal

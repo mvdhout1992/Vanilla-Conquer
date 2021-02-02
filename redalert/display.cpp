@@ -3071,6 +3071,11 @@ int DisplayClass::TacticalClass::Action(unsigned flags, KeyNumType& key)
     bool shadow;
     ObjectClass* object = 0;
     ActionType action = ACTION_NONE; // Action possible with currently selected object.
+    
+    ObjectClass* PrevHover = Map.HoverObject;
+    if (PrevHover) {
+        PrevHover->Mark();
+    }
 
     /*
     **	Set some working variables that depend on the mouse position. For the press
@@ -3114,6 +3119,7 @@ int DisplayClass::TacticalClass::Action(unsigned flags, KeyNumType& key)
             if (object != NULL && object->Is_Techno() && ((TechnoClass*)object)->Is_Cloaked(PlayerPtr, true)) {
                 object = NULL;
             }
+            Map.HoverObject = object;
         }
 
         /*
