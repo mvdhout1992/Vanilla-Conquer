@@ -60,6 +60,7 @@
 #include "language.h"
 #include "msgbox.h"
 #include "loaddlg.h"
+#include "replaydlg.h"
 
 #ifdef NETWORKING
 #include "wsproto.h"
@@ -823,7 +824,8 @@ bool Select_Game(bool fade)
             **	Load a saved game.
             */
             case SEL_LOAD_MISSION:
-                if (LoadOptionsClass(LoadOptionsClass::LOAD).Process()) {
+                if (LoadReplayClass().Process())
+                    {
                     Theme.Queue_Song(THEME_FIRST);
                     process = false;
                     gameloaded = true;
