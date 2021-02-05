@@ -169,10 +169,10 @@ SessionClass::SessionClass(void)
     LastMessage[0] = 0;
     WWChat = 0;
 
-    RecordFile.Set_Name("RECORD.BIN"); // always uses this name
-    Record = 0;                        // set via command line
-    Play = 0;                          // set via command line
-    Attract = 0;                       // set via command line
+    RecordFile.Set_Name("RECORD.BIN"); 
+    Record = 0;                        // Replay recording
+    Play = 0;                          // Replay playback
+    Attract = 0;                       // Attract mode
 
     IsBridge = 0;
     NetStealth = 0;

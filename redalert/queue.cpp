@@ -307,6 +307,12 @@ bool Queue_Mission(TargetClass whom,
  *=========================================================================*/
 bool Queue_Options(void)
 {
+    // if in record playback allow opening the options menu
+    // bypassing the event queue that is read from replay file
+    if (Session.Play) {
+        SpecialDialog = SDLG_OPTIONS;
+    }
+
     if (!OutList.Add(EventClass(EventClass::OPTIONS))) {
         return (false);
     } else {

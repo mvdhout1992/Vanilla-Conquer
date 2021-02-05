@@ -975,7 +975,7 @@ bool SidebarClass::Activate(int control)
 
     bool old = IsSidebarActive;
 
-    if (Session.Play)
+    if (Session.Attract)
         return (old);
 
     /*

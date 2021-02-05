@@ -221,7 +221,7 @@ void Main_Game(int argc, char* argv[])
         /*
         ** Only show the mouse if we're not playing back a recording.
         */
-        if (Session.Play) {
+        if (Session.Attract) {
             Hide_Mouse();
             TeamEvent = 0;
             TeamNumber = 0;
@@ -1828,7 +1828,7 @@ bool Main_Loop()
     /*
     **	Update the display, unless we're inside a dialog.
     */
-    if (!Session.Play) {
+    if (Session.Attract) {
         if (SpecialDialog == SDLG_NONE && GameInFocus) {
             WWMouse->Erase_Mouse(&HidPage, true);
             Map.Input(input, x, y);
