@@ -286,7 +286,7 @@ int LoadReplayClass::Process(void)
             */
             if (display) {
                 Dialog_Box(d_dialog_x, d_dialog_y, d_dialog_w, d_dialog_h);
-                Draw_Caption(caption, d_dialog_x, d_dialog_y, d_dialog_w);
+                Draw_Caption("Load Replay", d_dialog_x, d_dialog_y, d_dialog_w);
             }
 
             /*

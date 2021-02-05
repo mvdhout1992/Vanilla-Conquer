@@ -99,6 +99,7 @@ OptionsClass::OptionsClass(void)
     , Saturation(1, 2)
     , Contrast(1, 2)
     , AutoScroll(true)
+    , AutoSaveReplays(true)
     , IsScoreRepeat(false)
     , IsScoreShuffle(false)
     , IsPaletteScroll(true)
@@ -565,6 +566,7 @@ void OptionsClass::Load_Settings(void)
     */
     static char const* const OPTIONS = "Options";
     GameSpeed = ini.Get_Int(OPTIONS, "GameSpeed", GameSpeed);
+    AutoSaveReplays = ini.Get_Bool(OPTIONS, "AutoSaveReplays", AutoSaveReplays);
     ScrollRate = ini.Get_Int(OPTIONS, "ScrollRate", ScrollRate);
     Set_Brightness(ini.Get_Fixed(OPTIONS, "Brightness", Brightness));
     Set_Sound_Volume(ini.Get_Fixed(OPTIONS, "Volume", Volume), false);
@@ -721,6 +723,7 @@ void OptionsClass::Save_Settings(void)
     **	Save Options settings
     */
     static char const* const OPTIONS = "Options";
+    ini.Put_Bool(OPTIONS, "AutoSaveReplays", AutoSaveReplays);
     ini.Put_Int(OPTIONS, "GameSpeed", GameSpeed);
     ini.Put_Int(OPTIONS, "ScrollRate", ScrollRate);
     ini.Put_Fixed(OPTIONS, "Brightness", Brightness);

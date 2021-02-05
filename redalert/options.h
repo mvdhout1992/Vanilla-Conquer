@@ -79,6 +79,7 @@ public:
     */
     unsigned int GameSpeed;
 
+    bool AutoSaveReplays;
     int ScrollRate;    // Distance to scroll.
     fixed Volume;      // Volume for sound effects.
     fixed ScoreVolume; // Volume for scores.

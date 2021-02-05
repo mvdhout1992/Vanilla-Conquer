@@ -524,7 +524,7 @@ bool Select_Game(bool fade)
     NewMaxAheadFrame2 = 0;
 #endif
 
-    if (!Session.Play) {
+    if (!Session.Play && Options.AutoSaveReplays) {
         Session.Record = true;
         
         char buf[1024];
