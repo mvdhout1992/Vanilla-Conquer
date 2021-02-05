@@ -826,13 +826,7 @@ void EventClass::Execute(void)
     ** Give parting message while palette is fading to black.
     */
     case EXIT:
-        Theme.Queue_Song(THEME_NONE);
-        Stop_Speaking();
-        Speak(VOX_CONTROL_EXIT);
-        while (Is_Speaking()) {
-            Call_Back();
-        }
-        GameActive = false;
+        Exit_Session();
         break;
 
     /*

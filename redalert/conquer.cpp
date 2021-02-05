@@ -1828,7 +1828,7 @@ bool Main_Loop()
     /*
     **	Update the display, unless we're inside a dialog.
     */
-    if (Session.Attract) {
+    if (Session.Play) {
         if (SpecialDialog == SDLG_NONE && GameInFocus) {
             WWMouse->Erase_Mouse(&HidPage, true);
             Map.Input(input, x, y);

@@ -220,6 +220,17 @@ void Dump_Packet_Too_Late_Stuff(EventClass* event,
                                 unsigned short* their_recv);
 void Check_Mirror(void);
 
+void Exit_Session(void)
+{
+    Theme.Queue_Song(THEME_NONE);
+    Stop_Speaking();
+    Speak(VOX_CONTROL_EXIT);
+    while (Is_Speaking()) {
+        Call_Back();
+    }
+    GameActive = false;
+}
+
 /***************************************************************************
  * Queue_Mission -- Queue a mega mission event.                            *
  *                                                                         *
@@ -338,6 +349,11 @@ bool Queue_Options(void)
  *=========================================================================*/
 bool Queue_Exit(void)
 {
+    if (Session.Play) {
+        Exit_Session();
+        return true;
+    }
+
     if (!OutList.Add(EventClass(EventClass::EXIT))) {
         return (false);
     } else {

@@ -461,6 +461,7 @@ void itoh(int i, char* s);
 /*
 ** QUEUE.CPP
 */
+void Exit_Session(void);
 bool Queue_Target(TargetClass whom, TARGET target);
 bool Queue_Destination(TargetClass whom, TARGET target);
 bool Queue_Mission(TargetClass whom, MissionType mission);
