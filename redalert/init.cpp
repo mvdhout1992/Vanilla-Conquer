@@ -524,6 +524,19 @@ bool Select_Game(bool fade)
     NewMaxAheadFrame2 = 0;
 #endif
 
+    if (!Session.Play) {
+        Session.Record = true;
+        
+        char buf[1024];
+        memset(buf, 0x0, 1024);
+        time_t t;
+        time(&t);
+        struct tm* tm;
+        tm = localtime(&t);
+        sprintf(buf, "game-%d-%d-%-d-%d-%d-%d.replay", tm->tm_year+1900, tm->tm_mon+1, tm->tm_mday, tm->tm_hour, tm->tm_min, tm->tm_sec );
+        Session.RecordFile.Set_Name(buf);
+    }
+
     /*
     **	Init multiplayer game scores.  Let Wins accumulate; just init the current
     ** Kills for this game.  Kills of -1 means this player didn't play this round.
@@ -825,10 +838,16 @@ bool Select_Game(bool fade)
             */
             case SEL_LOAD_MISSION:
                 if (LoadReplayClass().Process())
-                    {
-                    Theme.Queue_Song(THEME_FIRST);
-                    process = false;
-                    gameloaded = true;
+                {
+                    Session.Play = true;
+                    if (Session.RecordFile.Open(READ)) {
+                        Load_Recording_Values(Session.RecordFile);
+                        process = false;
+                        Theme.Fade_Out();
+                    } else {
+                        Session.Play = false;
+                        selection = SEL_NONE;
+                    }
                 } else {
                     display = true;
                     selection = SEL_NONE;

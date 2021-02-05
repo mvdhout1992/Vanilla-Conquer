@@ -346,46 +346,12 @@ int LoadReplayClass::Process(void)
         case (BUTTON_LOAD | KN_BUTTON):
             game_idx = listbtn.Current_Index();
             game_num = Files[game_idx]->Num;
+            
             if (Files[game_idx]->Valid) {
-
-                /*
-                ** Start a timer before we load the game
-                */
-                CDTimerClass<SystemTimerClass> timer;
-                //					timer.Start();
-                timer = TICKS_PER_SECOND * 4;
-
-                WWMessageBox().Process(TXT_LOADING, TXT_NONE);
-                Theme.Fade_Out();
-                rc = Load_Game(game_num);
-
-                /*
-                ** Make sure the message says on the screen at least 1 second
-                */
-                while (timer > 0) {
-                    Call_Back();
-                }
-                Keyboard->Clear();
-
-                if (!rc) {
-                    WWMessageBox().Process(TXT_ERROR_LOADING_GAME);
-                } else {
-                    /*
-                    ** Fix unit selection issues on load, mirrors remaster code in CNC_Save_Load.
-                    */
-                    if (PlayerPtr) {
-                        CurrentObject.Set_Active_Context(PlayerPtr->Class->House);
-                    }
-                    Speak(VOX_LOAD1);
-                    while (Is_Speaking()) {
-                        Call_Back();
-                    }
-                    Hide_Mouse();
-                    SeenPage.Clear();
-                    GamePalette.Set();
-                    Show_Mouse();
-                    process = false;
-                }
+                Session.RecordFile.Set_Name(listbtn.Current_Item());
+                Session.Play = true;
+                Session.Record = false;
+                process = false;
             } else {
                 WWMessageBox().Process(TXT_OBSOLETE_SAVEGAME);
             }
@@ -507,16 +473,10 @@ void LoadReplayClass::Fill_List(ListClass* list)
 
             fdata->Descr[0] = '\0';
             
-            /*
             if (!ok) {
-                strcpy(fdata->Descr, Text_String(TXT_OLD_GAME));
-            } else {
-                if (house == HOUSE_USSR || house == HOUSE_UKRAINE) {
-                    sprintf(fdata->Descr, "(%s) ", Text_String(TXT_SOVIET));
-                } else {
-                    sprintf(fdata->Descr, "(%s) ", Text_String(TXT_ALLIES));
-                }
-            */
+               sprintf(fdata->Descr, "(%s) ", "Incompatible");
+            }
+
             strncat(fdata->Descr, ff->GetName(), (sizeof(fdata->Descr) - strlen(fdata->Descr)) - 1);
             fdata->Valid = ok;
             fdata->Scenario = 0;  //scenario;

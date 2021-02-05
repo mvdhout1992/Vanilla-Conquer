@@ -3543,7 +3543,7 @@ static void Queue_Playback(void)
     ok = 1;
     if (Session.RecordFile.Read(&numevents, sizeof(numevents)) == sizeof(numevents)) {
         for (i = 0; i < numevents; i++) {
-            if (Session.RecordFile.Read(&event, sizeof(EventClass)) == sizeof(EventClass)) {
+            if (Session.RecordFile.Read(&event, sizeof(EventClass)) == sizeof(EventClass) && event.Frame <= Frame) {
                 event.IsExecuted = 0;
                 DoList.Add(event);
 #ifdef MIRROR_QUEUE
