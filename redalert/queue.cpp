@@ -3502,8 +3502,11 @@ static void Queue_Playback(void)
     //------------------------------------------------------------------------
     //	Compute the Game's CRC
     //------------------------------------------------------------------------
-    Compute_Game_CRC();
-    CRC[Frame & 0x001f] = GameCRC;
+
+    // Disabled, causes RNG desync as Compute_Game_CRC() calls the RNG and changes
+    // its state, this per frame CRC code is a C&C1 netcode leftover from the looks of it
+    //Compute_Game_CRC();
+    //CRC[Frame & 0x001f] = GameCRC;
 
     //------------------------------------------------------------------------
     // If we've reached the CRC print frame, do so & exit

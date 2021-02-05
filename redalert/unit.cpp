@@ -2323,7 +2323,7 @@ bool UnitClass::Goto_Tiberium(int rad)
                     int corner[2];
                     int corners[4][2] = {{x, -radius}, {x, +radius}, {-radius, x}, {+radius, x}};
                     for (int i = 0; i < 3; i++) {
-                        int j = i + rand() / (RAND_MAX / (4 - i) + 1);
+                        int j = i + Scen.RandomNumber(0, 0x7fff) / (0x7fff / (4 - i) + 1);
                         memcpy(&corner, &corners[j], sizeof(corner));
                         memcpy(&corners[j], &corners[i], sizeof(corner));
                         memcpy(&corners[i], corner, sizeof(corner));
