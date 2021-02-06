@@ -94,6 +94,7 @@ public:
     };
     virtual int ID(T const* ptr); // Pointer based identification.
     virtual int ID(T const& ptr); // Value based identification.
+    virtual void  Reset_Vector_Post_Load();
 
 protected:
     /*
@@ -126,6 +127,7 @@ template <class T> class DynamicVectorClass : public VectorClass<T>
 {
 public:
     DynamicVectorClass(unsigned size = 0, T const* array = 0);
+    DynamicVectorClass(NoInitClass const& x) : VectorClass(x) {};
 
     // Change maximum size of vector.
     virtual int Resize(unsigned newsize, T const* array = 0);
@@ -834,6 +836,12 @@ template <class T> int VectorClass<T>::operator==(VectorClass<T> const& vector) 
         return (true);
     }
     return (false);
+}
+
+template <class T> inline void VectorClass<T>::Reset_Vector_Post_Load(void)
+{
+    Vector = 0;
+    Clear();
 }
 
 /***********************************************************************************************

@@ -173,9 +173,6 @@ ScenarioClass::ScenarioClass(void)
 #endif
     FadeTimer(0)
 {
-    for (int index = 0; index < ARRAY_SIZE(Waypoint); index++) {
-        Waypoint[index] = -1;
-    }
     strcpy(Description, "");
     strcpy(ScenarioName, "");
     strcpy(BriefingText, "");
@@ -245,6 +242,53 @@ void ScenarioClass::Do_Fade_AI(void)
     }
 }
 
+bool ScenarioClass::Load(Straw& file)
+{
+    Waypoints.Clear();
+
+    file.Get(this, sizeof(*this));
+    
+    // don't uncomment, Scen.RandomNumber will resset (needs NoInitClass constructor)
+    //new (this) ScenarioClass(NoInitClass());
+    
+    new (&Waypoints) DynamicVectorClass<CELL>(NoInitClass());
+    Waypoints.Reset_Vector_Post_Load();
+
+    int wps = 0;
+    file.Get(&wps, sizeof(wps));
+
+    for (int index = 0; index < wps; index++) {
+        CELL wp;
+        file.Get(&wp, sizeof(wp));
+        Scen.Waypoints.Add(wp);
+
+        char buf[256];
+        sprintf(buf, "Load Waypoint[%d]=%d", index, Scen.Waypoints[index]);
+        WWDebugString(buf);
+    } 
+
+    return true;
+}
+
+bool ScenarioClass::Save(Pipe& file) const
+{
+    file.Put(&Scen, sizeof(Scen));
+
+    int count = Scen.Waypoints.Count();
+    file.Put(&count, sizeof(count));
+
+    for (int index = 0; index < Scen.Waypoints.Count(); index++) {
+        char buf[256];
+        sprintf(buf, "Save Waypoint[%d]=%d", index, Scen.Waypoints[index]);
+        WWDebugString(buf);
+
+        CELL wp = Scen.Waypoints[index];
+        file.Put(&wp, sizeof(wp));
+    }
+
+    return true;
+}
+
 /***********************************************************************************************
  * ScenarioClass::Set_Global_To -- Set scenario global to value specified.                     *
  *                                                                                             *
@@ -292,6 +336,7 @@ bool ScenarioClass::Set_Global_To(int global, bool value)
     }
     return (false);
 }
+
 
 /***********************************************************************************************
  * Start_Scenario -- Starts the scenario.                                                      *
@@ -599,9 +644,9 @@ void Fill_In_Data(void)
     if (!Debug_Map && !Options.ToggleSidebar) {
         Map.SidebarClass::Activate(1);
         //		if (Session.Type == GAME_NORMAL) {
-        Scen.Views[0] = Scen.Views[1] = Scen.Views[2] = Scen.Views[3] = Scen.Waypoint[WAYPT_HOME];
+        Scen.Views[0] = Scen.Views[1] = Scen.Views[2] = Scen.Views[3] = Scen.Waypoints[WAYPT_HOME];
         Map.Set_Tactical_Position(
-            Cell_Coord((Scen.Waypoint[WAYPT_HOME] - (MAP_CELL_W * 4 * RESFACTOR)) - (5 * RESFACTOR)));
+            Cell_Coord((Scen.Waypoints[WAYPT_HOME] - (MAP_CELL_W * 4 * RESFACTOR)) - (5 * RESFACTOR)));
         //		}
     }
 
@@ -746,6 +791,7 @@ void Post_Load_Game(int load_multi)
  *   03/21/1992 JLB : Changed buffer allocations, so changes memset code.                      *
  *   07/13/1995 JLB : End count down moved here.                                               *
  *=============================================================================================*/
+
 void Clear_Scenario(void)
 {
     // TCTCTC -- possibly just use in-place new of scenario object?
@@ -821,10 +867,7 @@ void Clear_Scenario(void)
     Base.Init();
 
     CurrentObject.Clear_All();
-
-    for (int index = 0; index < WAYPT_COUNT; index++) {
-        Scen.Waypoint[index] = -1;
-    }
+    Scen.Waypoints.Delete_All();
 
 #ifdef FIXIT_VERSION_3 //	For endgame auto-sonar pulse.
     bAutoSonarPulse = false;
@@ -2540,10 +2583,10 @@ bool Read_Scenario_INI(char* fname, bool)
     }
 
     if (_stricmp(Scen.ScenarioName, "scu46ea.ini") == 0) {
-        Scen.Waypoint[20] = 9915;
-        Scen.Waypoint[21] = 9919;
-        Map[Scen.Waypoint[20]].IsWaypoint = 1;
-        Map[Scen.Waypoint[21]].IsWaypoint = 1;
+        Scen.Waypoints[20] = 9915;
+        Scen.Waypoints[21] = 9919;
+        Map[Scen.Waypoints[20]].IsWaypoint = 1;
+        Map[Scen.Waypoints[21]].IsWaypoint = 1;
 
         TeamTypeClass* rnf1_team = TeamTypeClass::From_Name("rnf1");
         assert(rnf1_team != NULL);
@@ -2615,7 +2658,7 @@ bool Read_Scenario_INI(char* fname, bool)
         for (int i = 0; i < ARRAY_SIZE(Scen.Views); ++i) {
             Scen.Views[i] = XY_Cell(start_x, start_y);
         }
-        Scen.Waypoint[98] = XY_Cell(start_x, start_y);
+        Scen.Waypoints[WAYPT_HOME] = XY_Cell(start_x, start_y);
         COORDINATE pos = Cell_Coord(XY_Cell(start_x, start_y));
         Map.Set_Tactical_Position(pos);
         Map.Center_Map(pos);
@@ -3131,8 +3174,8 @@ static void Create_Units(bool official)
 
     for (int waycount = 0; waycount < 26; waycount++) {
         //	for (int waycount = 0; waycount < max(4, Session.Players.Count()+Session.Options.AIPlayers); waycount++) {
-        if (Scen.Waypoint[waycount] != -1) {
-            waypts[num_waypts] = Scen.Waypoint[waycount];
+        if (Scen.Waypoints[waycount] != -1) {
+            waypts[num_waypts] = Scen.Waypoints[waycount];
             taken[num_waypts] = false;
             num_waypts++;
 

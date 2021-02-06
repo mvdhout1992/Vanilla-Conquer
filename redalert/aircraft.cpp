@@ -1185,9 +1185,9 @@ int AircraftClass::Mission_Unload(void)
 
                     FootClass* foot = Attached_Object();
                     if (foot != NULL && foot->Team && foot->Team->Class->Origin != -1) {
-                        Assign_Destination(::As_Target(Scen.Waypoint[foot->Team->Class->Origin]));
+                        Assign_Destination(::As_Target(Scen.Waypoints[foot->Team->Class->Origin]));
                     } else {
-                        Assign_Destination(New_LZ(::As_Target(Scen.Waypoint[WAYPT_REINF])));
+                        Assign_Destination(New_LZ(::As_Target(Scen.Waypoints[WAYPT_REINF])));
                         if (Team.Is_Valid()) {
                             Team->Assign_Mission_Target(NavCom);
                         }

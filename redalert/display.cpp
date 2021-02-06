@@ -2624,7 +2624,7 @@ CELL DisplayClass::Calculated_Cell(SourceType dir,
     */
     CELL trycell = -1;
     if (waypoint != -1) {
-        trycell = Scen.Waypoint[waypoint];
+        trycell = Scen.Waypoints[waypoint];
     }
     if (trycell == -1) {
         trycell = cell;
@@ -4754,16 +4754,26 @@ void DisplayClass::Read_INI(CCINIClass& ini)
     VesselTypeClass::Init(Scen.Theater);
     SmudgeTypeClass::Init(Scen.Theater);
 
-    /*
-    **	Read the Waypoint entries.
-    */
-    for (int i = 0; i < WAYPT_COUNT; i++) {
+    int highest = 0;
+
+    for (int i = 0; i < ini.Entry_Count("Waypoints"); i++) {
+        highest = max(highest, atoi(ini.Get_Entry("Waypoints", i)));
+    }
+
+    //Scen.Waypoints.Resize(highest+1);
+
+    for (int i = 0; i < highest+1; i++) {
+        Scen.Waypoints.Add(0);
         char buf[20];
         sprintf(buf, "%d", i);
-        Scen.Waypoint[i] = ini.Get_Int("Waypoints", buf, -1);
+        Scen.Waypoints[i] = ini.Get_Int("Waypoints", buf, -1);
 
-        if (Scen.Waypoint[i] != -1) {
-            (*this)[Scen.Waypoint[i]].IsWaypoint = 1;
+        if (Scen.Waypoints[i] != -1) {
+            char buf[256];
+           sprintf(buf, "READ Waypoint[%d]=%d", i, Scen.Waypoints[i]);
+           WWDebugString(buf);
+
+            (*this)[Scen.Waypoints[i]].IsWaypoint = 1;
         }
     }
 
@@ -4771,12 +4781,12 @@ void DisplayClass::Read_INI(CCINIClass& ini)
     **	Set the starting position (do this after Init(), which clears the cells'
     **	IsWaypoint flags).
     */
-    if (Scen.Waypoint[WAYPT_HOME] == -1) {
-        Scen.Waypoint[WAYPT_HOME] = XY_Cell(MapCellX + 5 * RESFACTOR, MapCellY + 4 * RESFACTOR);
+    if (Scen.Waypoints[WAYPT_HOME] == -1) {
+        Scen.Waypoints[WAYPT_HOME] = XY_Cell(MapCellX + 5 * RESFACTOR, MapCellY + 4 * RESFACTOR);
     }
 
-    Scen.Views[0] = Scen.Views[1] = Scen.Views[2] = Scen.Views[3] = Scen.Waypoint[WAYPT_HOME];
-    Set_Tactical_Position(Cell_Coord((Scen.Waypoint[WAYPT_HOME] - (MAP_CELL_W * 4 * RESFACTOR)) - (5 * RESFACTOR)));
+    Scen.Views[0] = Scen.Views[1] = Scen.Views[2] = Scen.Views[3] = Scen.Waypoints[WAYPT_HOME];
+    Set_Tactical_Position(Cell_Coord((Scen.Waypoints[WAYPT_HOME] - (MAP_CELL_W * 4 * RESFACTOR)) - (5 * RESFACTOR)));
 
     /*
     **	Loop through all CellTrigger entries.
@@ -4846,10 +4856,10 @@ void DisplayClass::Write_INI(CCINIClass& ini)
     */
     static char const* const WAYNAME = "Waypoints";
     ini.Clear(WAYNAME);
-    for (int i = 0; i < WAYPT_COUNT; i++) {
-        if (Scen.Waypoint[i] != -1) {
+    for (int i = 0; i < Scen.Waypoints.Count(); i++) {
+        if (Scen.Waypoints[i] != -1) {
             sprintf(entry, "%d", i);
-            ini.Put_Int(WAYNAME, entry, Scen.Waypoint[i]);
+            ini.Put_Int(WAYNAME, entry, Scen.Waypoints[i]);
         }
     }
 

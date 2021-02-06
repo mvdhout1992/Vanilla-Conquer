@@ -432,7 +432,7 @@ bool TActionClass::operator()(HousesType house, ObjectClass* object, int id, CEL
     */
     case TACTION_REVEAL_SOME:
         if (!PlayerPtr->IsVisionary) {
-            Map.Sight_From(Scen.Waypoint[Data.Value], Rule.GapShroudRadius, PlayerPtr, false);
+            Map.Sight_From(Scen.Waypoints[Data.Value], Rule.GapShroudRadius, PlayerPtr, false);
         }
         break;
 
@@ -442,7 +442,7 @@ bool TActionClass::operator()(HousesType house, ObjectClass* object, int id, CEL
     */
     case TACTION_REVEAL_ZONE:
         if (!PlayerPtr->IsVisionary) {
-            int zone = Map[Scen.Waypoint[Data.Value]].Zones[MZONE_CRUSHER];
+            int zone = Map[Scen.Waypoints[Data.Value]].Zones[MZONE_CRUSHER];
 
             for (CELL cell = 0; cell < MAP_CELL_TOTAL; cell++) {
                 if (Map[cell].Zones[MZONE_CRUSHER] == zone) {
@@ -600,7 +600,7 @@ bool TActionClass::operator()(HousesType house, ObjectClass* object, int id, CEL
     **	Place a smoke marker at the waypoint specified.
     */
     case TACTION_DZ:
-        new AnimClass(ANIM_LZ_SMOKE, Cell_Coord(Scen.Waypoint[Data.Value]));
+        new AnimClass(ANIM_LZ_SMOKE, Cell_Coord(Scen.Waypoints[Data.Value]));
         break;
 
     /*

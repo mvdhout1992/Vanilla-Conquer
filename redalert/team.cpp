@@ -366,7 +366,7 @@ TeamClass::TeamClass(TeamTypeClass const* type, HouseClass* owner)
 
     memset(Quantity, 0, sizeof(Quantity));
     if (Class->Origin != -1) {
-        Zone = ::As_Target(Scen.Waypoint[Class->Origin]);
+        Zone = ::As_Target(Scen.Waypoints[Class->Origin]);
     }
     Class->Number++;
 
@@ -718,9 +718,9 @@ void TeamClass::AI(void)
                 break;
 
             case TMISSION_MOVE:
-                if ((unsigned)mission->Data.Value < WAYPT_COUNT && Member != NULL) {
+                if ((unsigned)mission->Data.Value < Scen.Waypoints.Count() && Member != NULL) {
                     FootClass* leader = Fetch_A_Leader();
-                    CELL movecell = Scen.Waypoint[mission->Data.Value];
+                    CELL movecell = Scen.Waypoints[mission->Data.Value];
                     if (!Is_Leaving_Map()) {
                         if (leader->Can_Enter_Cell(movecell) != MOVE_OK) {
                             movecell = Map.Nearby_Location(movecell, leader->Techno_Type_Class()->Speed);
@@ -734,8 +734,8 @@ void TeamClass::AI(void)
             case TMISSION_ATT_WAYPT:
             case TMISSION_PATROL:
             case TMISSION_SPY:
-                if ((unsigned)mission->Data.Value < WAYPT_COUNT) {
-                    Assign_Mission_Target(::As_Target(Scen.Waypoint[mission->Data.Value]));
+                if ((unsigned)mission->Data.Value < Scen.Waypoints.Count()) {
+                    Assign_Mission_Target(::As_Target(Scen.Waypoints[mission->Data.Value]));
                 }
                 break;
 
@@ -1183,7 +1183,7 @@ int TeamClass::Recruit(int typeindex)
     COORDINATE center = As_Coord(Zone);
 
     if (Class->Origin != -1) {
-        center = Cell_Coord(Scen.Waypoint[Class->Origin]);
+        center = Cell_Coord(Scen.Waypoints[Class->Origin]);
     }
 
     int added = 0; // Total number added to team.
@@ -2377,7 +2377,7 @@ bool TeamClass::Is_Leaving_Map(void) const
     if (IsMoving && CurrentMission >= 0) {
         TeamMissionClass const* mission = &Class->MissionList[CurrentMission];
 
-        if (mission->Mission == TMISSION_MOVE && !Map.In_Radar(Scen.Waypoint[mission->Data.Value])) {
+        if (mission->Mission == TMISSION_MOVE && !Map.In_Radar(Scen.Waypoints[mission->Data.Value])) {
             return (true);
         }
     }
@@ -2918,8 +2918,8 @@ int TeamClass::TMission_Patrol(void)
     */
     if (!Target_Legal(Target)) {
         TeamMissionClass const* mission = &Class->MissionList[CurrentMission];
-        if ((unsigned)mission->Data.Value < WAYPT_COUNT) {
-            Assign_Mission_Target(::As_Target(Scen.Waypoint[mission->Data.Value]));
+        if ((unsigned)mission->Data.Value < Scen.Waypoints.Count()) {
+            Assign_Mission_Target(::As_Target(Scen.Waypoints[mission->Data.Value]));
         }
     }
 

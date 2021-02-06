@@ -2874,10 +2874,10 @@ bool HouseClass::Place_Special_Blast(SpecialWeaponType id, CELL cell)
                     ttype->IsTransient = true;
                     ttype->IsPrebuilt = false;
                     ttype->IsReinforcable = false;
-                    ttype->Origin = WAYPT_SPECIAL;
+                    ttype->Origin = 100; // Reads waypoint 100 WayPointSpecial
                     ttype->MissionCount = 1;
                     ttype->MissionList[0].Mission = TMISSION_ATT_WAYPT;
-                    ttype->MissionList[0].Data.Value = WAYPT_SPECIAL;
+                    ttype->MissionList[0].Data.Value = Scen.Waypoints[WAYPT_SPECIAL];
                     ttype->ClassCount = 2;
                     ttype->Members[0].Quantity = AircraftTypeClass::As_Reference(AIRCRAFT_BADGER).Max_Passengers();
                     ttype->Members[0].Class = &InfantryTypeClass::As_Reference(INFANTRY_E1);
@@ -2888,7 +2888,7 @@ bool HouseClass::Place_Special_Blast(SpecialWeaponType id, CELL cell)
 
             if (ttype != NULL) {
                 ttype->House = Class->House;
-                Scen.Waypoint[WAYPT_SPECIAL] = Map.Nearby_Location(cell, SPEED_FOOT);
+                Scen.Waypoints[WAYPT_SPECIAL] = Map.Nearby_Location(cell, SPEED_FOOT);
                 Do_Reinforcements(ttype);
             }
 

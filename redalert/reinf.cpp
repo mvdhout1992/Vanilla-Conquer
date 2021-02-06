@@ -412,7 +412,7 @@ bool Do_Reinforcements(TeamTypeClass const* teamtype)
         /*
         **	Search for an object that these infantry can pop out of.
         */
-        TechnoClass* candidate = _Who_Can_Pop_Out_Of(Scen.Waypoint[teamtype->Origin]);
+        TechnoClass* candidate = _Who_Can_Pop_Out_Of(Scen.Waypoints[teamtype->Origin]);
 
         if (candidate != NULL) {
             return (_Pop_Group_Out_Of_Object(object, candidate));
@@ -445,7 +445,7 @@ bool Do_Reinforcements(TeamTypeClass const* teamtype)
     if (teamtype->Origin != -1 && object->What_Am_I() == RTTI_UNIT
         && (*((UnitClass*)object) == UNIT_ANT1 || *((UnitClass*)object) == UNIT_ANT2
             || *((UnitClass*)object) == UNIT_ANT3)) {
-        CELL newcell = Scen.Waypoint[teamtype->Origin];
+        CELL newcell = Scen.Waypoints[teamtype->Origin];
         if (newcell != -1) {
             if (Map[newcell].TType == TEMPLATE_HILL01) {
                 cell = newcell;
@@ -591,7 +591,7 @@ bool Create_Special_Reinforcement(HouseClass* house,
             team->MissionCount = 1;
             if (mission == TMISSION_NONE) {
                 team->MissionList[0].Mission = TMISSION_UNLOAD;
-                team->MissionList[0].Data.Value = WAYPT_REINF;
+                team->MissionList[0].Data.Value = Scen.Waypoints[WAYPT_REINF];
             } else {
                 team->MissionList[0].Mission = mission;
                 team->MissionList[0].Data.Value = argument;

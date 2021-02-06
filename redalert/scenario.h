@@ -46,6 +46,7 @@ class ScenarioClass
 public:
     // Constructor.
     ScenarioClass(void);
+    ScenarioClass(NoInitClass const& x) {};
     void Set_Scenario_Name(int scenario,
                            ScenarioPlayerType player,
                            ScenarioDirType dir = SCEN_DIR_NONE,
@@ -55,6 +56,8 @@ public:
     bool Set_Global_To(int global, bool value);
     void Do_BW_Fade(void);
     void Do_Fade_AI(void);
+    bool Load(Straw& file);
+    bool Save(Pipe& file) const;
 
     /*
     **	This is the source of the random numbers used in the game. This controls
@@ -82,7 +85,6 @@ public:
     ** it; the only way to find which waypoint it is, is to scan this array.  This
     ** shouldn't be needed often; usually, you know the waypoint & you want the CELL.
     */
-    CELL Waypoint[WAYPT_COUNT];
 
     /*
     **	This holds the system wide mission countdown timer. Time based missions
@@ -316,6 +318,8 @@ public:
     ** percentage of the Options.Get_Saturation() to fade towards.
     */
     CDTimerClass<FrameTimerClass> FadeTimer;
+
+    DynamicVectorClass<CELL> Waypoints;
 
 #ifdef FIXIT_VERSION_3 //	For endgame auto-sonar pulse.
     //	Timer to set the period for checking if an auto-sonar pulse should be performed.

@@ -3522,7 +3522,6 @@ typedef enum WaypointEnum : unsigned char
     WAYPT_HOME = 98, // Home-cell for this scenario
     WAYPT_REINF,     // cell where reinforcements arrive
     WAYPT_SPECIAL,   // Used by special airdrop reinforcements.
-    WAYPT_COUNT
 } WaypointType;
 
 /****************************************************************************

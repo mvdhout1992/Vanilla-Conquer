@@ -106,7 +106,7 @@ static void Put_All(Pipe& pipe, int save_net)
     /*
     **	Save the scenario global information.
     */
-    pipe.Put(&Scen, sizeof(Scen));
+    Scen.Save(pipe);
 
     /*
     **	Save the map.  The map must be saved first, since it saves the Theater.
@@ -630,7 +630,7 @@ bool Load_Game(const char* file_name)
     /*
     **	Load the scenario global information.
     */
-    straw.Get(&Scen, sizeof(Scen));
+    Scen.Load(straw);
 
     /*
     **	Fixup the Sessionclass scenario info so we can work out which
