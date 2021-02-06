@@ -312,7 +312,7 @@ int LoadReplayClass::Process(void)
         ** cleared by the input processing routine.
         */
             firsttime = false;
-            editbtn.Set_Focus();
+           // editbtn.Set_Focus();
             editbtn.Flag_To_Redraw();
 
         /*

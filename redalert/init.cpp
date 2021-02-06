@@ -499,7 +499,8 @@ LoadMenuType Select_Load_Menu_Type(void)
     TextButtonClass loadgamebtn(
         BUTTON_LOAD_GAME, "Load Game", TPF_BUTTON, d_loadgame_x, d_loadgame_y, d_loadgame_w, d_loadgame_h);
 
-    TextButtonClass loadreplaybtn(BUTTON_LOAD_REPLAY, "Load Replay", TPF_BUTTON, d_loadreplay_x, d_loadreplay_y, d_loadreplay_w, d_loadreplay_h);
+    TextButtonClass loadreplaybtn(
+        BUTTON_LOAD_REPLAY, "Load Replay", TPF_BUTTON, d_loadreplay_x, d_loadreplay_y, d_loadreplay_w, d_loadreplay_h);
     TextButtonClass cancelbtn(BUTTON_CANCEL, TXT_CANCEL, TPF_BUTTON, d_cancel_x, d_cancel_y, d_cancel_w, d_cancel_h);
 
     //------------------------------------------------------------------------
@@ -520,8 +521,8 @@ LoadMenuType Select_Load_Menu_Type(void)
     //------------------------------------------------------------------------
     curbutton = 0;
     buttons[0] = &loadgamebtn;
-        buttons[1] = &loadreplaybtn;
-        buttons[2] = &cancelbtn;
+    buttons[1] = &loadreplaybtn;
+    buttons[2] = &cancelbtn;
     buttons[curbutton]->Turn_On();
 
     Keyboard->Clear();
@@ -1103,7 +1104,7 @@ bool Select_Game(bool fade)
 
                 LoadMenuType lmt = Select_Load_Menu_Type();
                 switch (lmt) {
-                case SELECT_LOAD_REPLAY:
+                case SELECT_LOAD_REPLAY: {
 
                     if (LoadReplayClass().Process()) {
 
@@ -1114,26 +1115,26 @@ bool Select_Game(bool fade)
                             Theme.Fade_Out();
                         } else {
                             Session.Play = false;
-                            selection = SEL_NONE;
                         }
-                        break;
                     }
+                    break;
+                }
+                case SELECT_LOAD_SAVEGAME: {
 
-                case SELECT_LOAD_SAVEGAME:
                     if (LoadOptionsClass(LoadOptionsClass::LOAD).Process()) {
                         Theme.Queue_Song(THEME_FIRST);
                         process = false;
                         gameloaded = true;
                     } else {
-                        display = true;
-                        selection = SEL_NONE;
+                        //display = true;
                     }
                     break;
-
-                case SELECT_CANCEL:
+                }
+                case SELECT_CANCEL: {
                     display = true;
                     selection = SEL_NONE;
                     break;
+                }
                 }
                 break;
             }
