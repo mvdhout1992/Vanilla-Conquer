@@ -1106,11 +1106,14 @@ bool Select_Game(bool fade)
                 switch (lmt) {
                 case SELECT_LOAD_REPLAY: {
 
-                    if (LoadReplayClass().Process()) {
-
-                        Session.Play = true;
+                    if (LoadReplayClass().Process()) {                      
                         if (Session.RecordFile.Open(READ)) {
+                            Session.Play = true;
+                            Session.Attract = false;
+                            Session.Record = false;
+
                             Load_Recording_Values(Session.RecordFile);
+
                             process = false;
                             Theme.Fade_Out();
                         } else {
@@ -1125,8 +1128,6 @@ bool Select_Game(bool fade)
                         Theme.Queue_Song(THEME_FIRST);
                         process = false;
                         gameloaded = true;
-                    } else {
-                        //display = true;
                     }
                     break;
                 }
