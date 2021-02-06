@@ -3533,31 +3533,31 @@ static void Queue_Playback(void)
     //------------------------------------------------------------------------
     // If we've reached the CRC print frame, do so & exit
     //------------------------------------------------------------------------
-    if (Frame >= Session.TrapPrintCRC) {
+    /*if (Frame >= Session.TrapPrintCRC) {
         Print_CRCs(NULL);
         Prog_End("Queue_Playback reached CRC print frame", true);
         Emergency_Exit(0);
-    }
+    }*/
 
     //------------------------------------------------------------------------
     //	Don't read anything the first time through (since the Queue_AI_Network
     //	routine didn't write anything the first time through); do this after the
     //	CRC is computed, since we'll still need a CRC for Frame 0.
     //------------------------------------------------------------------------
-    if (Frame == 0 && Session.Type != GAME_NORMAL) {
+    /*if (Frame == 0 && Session.Type != GAME_NORMAL) {
         return;
-    }
+    }*/
 
     //------------------------------------------------------------------------
     // Only process every 'FrameSendRate' frames
     //------------------------------------------------------------------------
-    testframe = ((Frame + (Session.FrameSendRate - 1)) / Session.FrameSendRate) * Session.FrameSendRate;
+    /*testframe = ((Frame + (Session.FrameSendRate - 1)) / Session.FrameSendRate) * Session.FrameSendRate;
     if ((Session.Type != GAME_NORMAL && Session.Type != GAME_SKIRMISH)
         && Session.CommProtocol == COMM_PROTOCOL_MULTI_E_COMP) {
         if (Frame != testframe) {
             return;
         }
-    }
+    } */
 
     //------------------------------------------------------------------------
     //	Read the DoList from disk
@@ -3565,7 +3565,7 @@ static void Queue_Playback(void)
     ok = 1;
     if (Session.RecordFile.Read(&numevents, sizeof(numevents)) == sizeof(numevents)) {
         for (i = 0; i < numevents; i++) {
-            if (Session.RecordFile.Read(&event, sizeof(EventClass)) == sizeof(EventClass) && event.Frame <= Frame) {
+            if (Session.RecordFile.Read(&event, sizeof(EventClass)) == sizeof(EventClass)) {
                 event.IsExecuted = 0;
                 DoList.Add(event);
 #ifdef MIRROR_QUEUE
