@@ -198,7 +198,7 @@ int LoadReplayClass::Process(void)
 
         btn_txt = TXT_LOAD_BUTTON;
         btn_id = BUTTON_LOAD;
-        caption = TXT_LOAD_MISSION;
+        // caption = TXT_LOAD_MISSION;
 
 
     TextButtonClass button(btn_id, btn_txt, TPF_BUTTON, d_button_x, d_button_y, d_button_w);

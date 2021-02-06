@@ -607,7 +607,7 @@ int Main_Menu(unsigned long)
 #endif // INTERNET_OFF
 #endif
 
-    TextButtonClass loadbtn(BUTTON_LOAD, TXT_LOAD_MISSION, TPF_BUTTON, d_load_x, starty, d_load_w, d_load_h);
+    TextButtonClass loadbtn(BUTTON_LOAD, "Load Game/Replay", TPF_BUTTON, d_load_x, starty, d_load_w, d_load_h);
     starty += ystep;
 
     TextButtonClass multibtn(BUTTON_MULTI, TXT_MULTIPLAYER_GAME, TPF_BUTTON, d_multi_x, starty, d_multi_w, d_multi_h);

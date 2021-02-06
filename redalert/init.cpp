@@ -163,6 +163,8 @@ static void Load_Prolog_Page(void)
  *   10/07/1992 JLB : Created.                                                                 *
  *=============================================================================================*/
 #include "sha.h"
+#include <redalert/textbtn.h>
+#include <common/framelimit.cpp>
 //#include    <locale.h>
 bool Init_Game(int, char*[])
 {
@@ -417,6 +419,260 @@ bool Init_Game(int, char*[])
     return (true);
 }
 
+enum LoadMenuType
+{
+    SELECT_LOAD_SAVEGAME,
+    SELECT_LOAD_REPLAY,
+    SELECT_CANCEL
+};
+
+LoadMenuType Select_Load_Menu_Type(void)
+{
+    //------------------------------------------------------------------------
+    //	Dialog & button dimensions
+    //------------------------------------------------------------------------
+    int d_dialog_w = 190 * RESFACTOR;
+    int d_dialog_h = 78 * RESFACTOR;
+    int d_dialog_y = 90 * RESFACTOR;
+    int d_dialog_x = (((320 * RESFACTOR) - d_dialog_w) / 2);
+    int d_dialog_cx = d_dialog_x + (d_dialog_w / 2);
+
+    int d_txt6_h = 7 * RESFACTOR;
+    int d_margin = 7 * RESFACTOR;
+
+    int d_loadgame_w = 80 * RESFACTOR;
+    int d_loadgame_h = 9 * RESFACTOR;
+    int d_loadgame_x = d_dialog_cx - d_loadgame_w / 2;
+    int d_loadgame_y = d_dialog_y + d_margin + d_txt6_h + d_margin;
+
+    int d_loadreplay_w = 80 * RESFACTOR;
+    int d_loadreplay_h = 9 * RESFACTOR;
+    int d_loadreplay_x = d_dialog_cx - d_loadreplay_w / 2;
+    int d_loadreplay_y = d_loadgame_y + d_loadgame_h + 2 * RESFACTOR;
+
+    int d_cancel_w = 60 * RESFACTOR;
+    int d_cancel_h = 9 * RESFACTOR;
+    int d_cancel_x = d_dialog_cx - d_cancel_w / 2;
+    int d_cancel_y = d_loadreplay_y + d_loadreplay_h + d_margin;
+
+    GraphicBufferClass seen_buff_save(VisiblePage.Get_Width(), VisiblePage.Get_Height(), (void*)NULL);
+
+    //------------------------------------------------------------------------
+    //	Button enumerations:
+    //------------------------------------------------------------------------
+    enum
+    {
+        BUTTON_LOAD_GAME = 100,
+        BUTTON_LOAD_REPLAY,
+        BUTTON_CANCEL,
+        NUM_OF_BUTTONS
+    };
+
+    //------------------------------------------------------------------------
+    //	Redraw values: in order from "top" to "bottom" layer of the dialog
+    //------------------------------------------------------------------------
+    typedef enum
+    {
+        REDRAW_NONE = 0,
+        REDRAW_BUTTONS,    // includes map interior & coord values
+        REDRAW_BACKGROUND, // includes box, map bord, key, coord labels, btns
+        REDRAW_ALL = REDRAW_BACKGROUND
+    } RedrawType;
+
+    //------------------------------------------------------------------------
+    //	Dialog variables:
+    //------------------------------------------------------------------------
+    KeyNumType input;                    // input from user
+    bool process;                        // loop while true
+    RedrawType display;                  // true = re-draw everything
+    LoadMenuType retval = SELECT_CANCEL; // return value
+    int selection;
+    bool pressed;
+    int curbutton;
+    TextButtonClass* buttons[NUM_OF_BUTTONS];
+
+    //------------------------------------------------------------------------
+    //	Buttons
+    //------------------------------------------------------------------------
+    ControlClass* commands = NULL; // the button list
+
+    TextButtonClass loadgamebtn(
+        BUTTON_LOAD_GAME, "Load Game", TPF_BUTTON, d_loadgame_x, d_loadgame_y, d_loadgame_w, d_loadgame_h);
+
+    TextButtonClass loadreplaybtn(BUTTON_LOAD_REPLAY, "Load Replay", TPF_BUTTON, d_loadreplay_x, d_loadreplay_y, d_loadreplay_w, d_loadreplay_h);
+    TextButtonClass cancelbtn(BUTTON_CANCEL, TXT_CANCEL, TPF_BUTTON, d_cancel_x, d_cancel_y, d_cancel_w, d_cancel_h);
+
+    //------------------------------------------------------------------------
+    //	Initialize
+    //------------------------------------------------------------------------
+    Set_Logic_Page(SeenBuff);
+    VisiblePage.Blit(seen_buff_save);
+    //------------------------------------------------------------------------
+    //	Create the list
+    //------------------------------------------------------------------------
+    commands = &loadgamebtn;
+    //skirmishbtn.Add_Tail(*commands);
+    loadreplaybtn.Add_Tail(*commands);
+    cancelbtn.Add_Tail(*commands);
+
+    //------------------------------------------------------------------------
+    //	Fill array of button ptrs
+    //------------------------------------------------------------------------
+    curbutton = 0;
+    buttons[0] = &loadgamebtn;
+        buttons[1] = &loadreplaybtn;
+        buttons[2] = &cancelbtn;
+    buttons[curbutton]->Turn_On();
+
+    Keyboard->Clear();
+
+    Fancy_Text_Print(TXT_NONE, 0, 0, GadgetClass::Get_Color_Scheme(), TBLACK, TPF_CENTER | TPF_TEXT);
+
+    //------------------------------------------------------------------------
+    //	Main Processing Loop
+    //------------------------------------------------------------------------
+    display = REDRAW_ALL;
+    process = true;
+    pressed = false;
+    while (process) {
+        /*
+        ** If we have just received input focus again after running in the background then
+        ** we need to redraw.
+        */
+        if (AllSurfaces.SurfacesRestored) {
+            AllSurfaces.SurfacesRestored = false;
+            seen_buff_save.Blit(VisiblePage);
+            display = REDRAW_ALL;
+        }
+
+        //.....................................................................
+        //	Invoke game callback
+        //.....................................................................
+        Call_Back();
+
+        //.....................................................................
+        //	Refresh display if needed
+        //.....................................................................
+        if (display) {
+            Hide_Mouse();
+            if (display >= REDRAW_BACKGROUND) {
+
+                //...............................................................
+                //	Refresh the backdrop
+                //...............................................................
+                Load_Title_Page(true);
+                CCPalette.Set();
+
+                //...............................................................
+                //	Draw the background
+                //...............................................................
+                Dialog_Box(d_dialog_x, d_dialog_y, d_dialog_w, d_dialog_h);
+                Draw_Caption("Load Game/Replay", d_dialog_x, d_dialog_y, d_dialog_w);
+            }
+
+            //..................................................................
+            //	Redraw buttons
+            //..................................................................
+            if (display >= REDRAW_BUTTONS) {
+                commands->Flag_List_To_Redraw();
+            }
+            Show_Mouse();
+            display = REDRAW_NONE;
+        }
+
+        //.....................................................................
+        //	Get user input
+        //.....................................................................
+        input = commands->Input();
+
+        //.....................................................................
+        //	Process input
+        //.....................................................................
+        switch (input) {
+        case (BUTTON_LOAD_GAME | KN_BUTTON):
+            selection = BUTTON_LOAD_GAME;
+            pressed = true;
+            break;
+
+        case (BUTTON_LOAD_REPLAY | KN_BUTTON):
+            selection = BUTTON_LOAD_REPLAY;
+            pressed = true;
+            break;
+
+        case (KN_ESC):
+        case (BUTTON_CANCEL | KN_BUTTON):
+            selection = BUTTON_CANCEL;
+            pressed = true;
+            break;
+
+        case KN_UP:
+            buttons[curbutton]->Turn_Off();
+            buttons[curbutton]->Flag_To_Redraw();
+            curbutton--;
+            if (curbutton < 0)
+                curbutton = (NUM_OF_BUTTONS - 1);
+            buttons[curbutton]->Turn_On();
+            buttons[curbutton]->Flag_To_Redraw();
+            break;
+
+        case KN_DOWN:
+            buttons[curbutton]->Turn_Off();
+            buttons[curbutton]->Flag_To_Redraw();
+            curbutton++;
+            if (curbutton > (NUM_OF_BUTTONS - 1))
+                curbutton = 0;
+            buttons[curbutton]->Turn_On();
+            buttons[curbutton]->Flag_To_Redraw();
+            break;
+
+        case KN_RETURN:
+            selection = curbutton + BUTTON_LOAD_GAME;
+            pressed = true;
+            break;
+
+        default:
+            break;
+        }
+
+        if (pressed) {
+
+            //..................................................................
+            // to make sure the selection is correct in case they used the mouse
+            //..................................................................
+            buttons[curbutton]->Turn_Off();
+            buttons[curbutton]->Flag_To_Redraw();
+            curbutton = selection - BUTTON_LOAD_GAME;
+            if (selection == BUTTON_CANCEL)
+                curbutton--;
+            buttons[curbutton]->Turn_On();
+            buttons[curbutton]->IsPressed = true;
+            buttons[curbutton]->Draw_Me(true);
+
+            switch (selection) {
+            case (BUTTON_LOAD_GAME):
+                retval = SELECT_LOAD_SAVEGAME;
+                process = false;
+                break;
+
+            case (BUTTON_LOAD_REPLAY):
+                retval = SELECT_LOAD_REPLAY;
+                process = false;
+                break;
+
+            case (BUTTON_CANCEL):
+                retval = SELECT_CANCEL;
+                process = false;
+                break;
+            }
+
+            pressed = false;
+        }
+
+        Frame_Limiter();
+    }
+    return (retval);
+}
+
 /***********************************************************************************************
  * Select_Game -- The game's main menu                                                         *
  *                                                                                             *
@@ -526,14 +782,21 @@ bool Select_Game(bool fade)
 
     if (!Session.Play && Options.AutoSaveReplays) {
         Session.Record = true;
-        
+
         char buf[1024];
         memset(buf, 0x0, 1024);
         time_t t;
         time(&t);
         struct tm* tm;
         tm = localtime(&t);
-        sprintf(buf, "game-%d-%d-%-d-%d-%d-%d.replay", tm->tm_year+1900, tm->tm_mon+1, tm->tm_mday, tm->tm_hour, tm->tm_min, tm->tm_sec );
+        sprintf(buf,
+                "game-%d-%d-%-d-%d-%d-%d.replay",
+                tm->tm_year + 1900,
+                tm->tm_mon + 1,
+                tm->tm_mday,
+                tm->tm_hour,
+                tm->tm_min,
+                tm->tm_sec);
         Session.RecordFile.Set_Name(buf);
     }
 
@@ -836,24 +1099,44 @@ bool Select_Game(bool fade)
             /*
             **	Load a saved game.
             */
-            case SEL_LOAD_MISSION:
-                if (LoadReplayClass().Process())
-                {
-                    Session.Play = true;
-                    if (Session.RecordFile.Open(READ)) {
-                        Load_Recording_Values(Session.RecordFile);
+            case SEL_LOAD_MISSION: {
+
+                LoadMenuType lmt = Select_Load_Menu_Type();
+                switch (lmt) {
+                case SELECT_LOAD_REPLAY:
+
+                    if (LoadReplayClass().Process()) {
+
+                        Session.Play = true;
+                        if (Session.RecordFile.Open(READ)) {
+                            Load_Recording_Values(Session.RecordFile);
+                            process = false;
+                            Theme.Fade_Out();
+                        } else {
+                            Session.Play = false;
+                            selection = SEL_NONE;
+                        }
+                        break;
+                    }
+
+                case SELECT_LOAD_SAVEGAME:
+                    if (LoadOptionsClass(LoadOptionsClass::LOAD).Process()) {
+                        Theme.Queue_Song(THEME_FIRST);
                         process = false;
-                        Theme.Fade_Out();
+                        gameloaded = true;
                     } else {
-                        Session.Play = false;
+                        display = true;
                         selection = SEL_NONE;
                     }
-                } else {
+                    break;
+
+                case SELECT_CANCEL:
                     display = true;
                     selection = SEL_NONE;
+                    break;
                 }
                 break;
-
+            }
             /*
             **	SEL_MULTIPLAYER_GAME: set 'Session.Type' to NULL-modem, modem, or
             **	network play.
