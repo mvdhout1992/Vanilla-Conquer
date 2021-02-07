@@ -1117,7 +1117,7 @@ void ChronalVortexClass::Setup_Remap_Tables(TheaterType theater)
                 Build_Fading_Table(GamePalette, &VortexRemapTables[i][0], 0, 240 - ((i * 256) / MAX_REMAP_SHADES));
             }
 
-            file.Write(VortexRemapTables, MAX_REMAP_SHADES * 256);
+           // file.Write(VortexRemapTables, MAX_REMAP_SHADES * 256);
         }
     }
 

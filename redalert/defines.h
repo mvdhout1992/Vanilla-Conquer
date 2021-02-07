@@ -430,7 +430,7 @@ typedef enum DiffType : unsigned char
 **	that the size specified is at least as large as the largest
 **	theater mixfile data block.
 */
-#define THEATER_BUFFER_SIZE 1100000L
+#define THEATER_BUFFER_SIZE 5500000L
 
 /**********************************************************************
 **	This is the size of the shape buffer. This buffer is used as a staging
@@ -2955,12 +2955,24 @@ inline TheaterType operator++(TheaterType& n)
 #define THEATERF_SNOW      (1 << THEATER_SNOW)
 #define THEATERF_INTERIOR  (1 << THEATER_INTERIOR)
 
-typedef struct
+class TheaterTypeClass
 {
+public:
     char Name[16];
     char Root[10];
     char Suffix[4];
-} TheaterDataType;
+
+    // Needed for DynamicVectorClass support
+    friend bool operator==(const TheaterTypeClass& lhs, const TheaterTypeClass& rhs)
+    {
+        return lhs == rhs;
+    }
+
+    friend bool operator!=(const TheaterTypeClass& lhs, const TheaterTypeClass& rhs)
+    {
+        return lhs != rhs;
+    }
+};
 
 /**********************************************************************
 **	Each building has a predetermined size. These are the size numbers.

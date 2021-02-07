@@ -1134,13 +1134,11 @@ void TemplateTypeClass::Init(TheaterType theater)
         TemplateTypeClass const& tplate = As_Reference(index);
 
         ((void const*&)tplate.ImageData) = NULL;
-        if (tplate.Theater & (1 << theater)) {
             _makepath(fullname, NULL, NULL, tplate.IniName, Theaters[theater].Suffix);
             ptr = MFCD::Retrieve(fullname);
             ((void const*&)tplate.ImageData) = ptr;
             ((unsigned char&)tplate.Width) = Get_IconSet_MapWidth(ptr);
             ((unsigned char&)tplate.Height) = Get_IconSet_MapHeight(ptr);
-        }
     }
 }
 

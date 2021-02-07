@@ -145,38 +145,44 @@ static void Load_Prolog_Page(void)
     Show_Mouse();
 }
 
-TheaterDataType const TheaterData[THEATER_COUNT] = {
+TheaterTypeClass TheatersData[THEATER_COUNT] = {
     {"TEMPERATE", "TEMPERAT", "TEM"},
     {"SNOW", "SNOW", "SNO"},
     {"INTERIOR", "INTERIOR", "INT"},
 };
 
 
-void INit_Theaters_Data()
+void Init_Theaters_Data()
 {
-    CCFileClass theaterfile("THEATER.INI");
+    CCFileClass theaterfile("THEATERS.INI");
     CCINIClass ini;
     if (ini.Load(theaterfile, false)) {
         int count = ini.Entry_Count("Theaters");
         for (int i = 0; i < count; i++) {
             char entrybuf[128];
-            TheaterDataType tdt;
+            TheaterTypeClass tdata;
 
             itoa(i, entrybuf, 10);
             std::string section = ini.Get_String("Theaters", entrybuf, "");
-            
-            ini.Get_String(section.c_str(), "Name", "ERROR", tdt.Name, sizeof(tdt.Name));
-            ini.Get_String(section.c_str(), "Root", "ERROR", tdt.Root, sizeof(tdt.Root));
-            ini.Get_String(section.c_str(), "Suffix", "ERROR", tdt.Suffix, sizeof(tdt.Suffix));
 
-            Theaters.Add(tdt);
+            ini.Get_String(section.c_str(), "Name", "", tdata.Name, sizeof(tdata.Name));
+            ini.Get_String(section.c_str(), "Root", "", tdata.Root, sizeof(tdata.Root));
+            ini.Get_String(section.c_str(), "Suffix", "", tdata.Suffix, sizeof(tdata.Suffix));
+
+            Theaters.Add(tdata);
         }
 
     } else {
         for (int i = 0; i < THEATER_COUNT; i++) {
-            Theaters.Add(TheaterData[i]);
+            TheaterTypeClass tdata;
+            strcpy(tdata.Name, TheatersData[i].Name);
+            strcpy(tdata.Root, TheatersData[i].Root);
+            strcpy(tdata.Suffix, TheatersData[i].Suffix);
+
+            Theaters.Add(tdata);
         }
     }
+}
 
 /***********************************************************************************************
  * Init_Game -- Main game initialization routine.                                              *
@@ -338,7 +344,7 @@ bool Init_Game(int, char*[])
     */
     Anim_Init();
 
-    Read_Theaters_Data();
+    Init_Theaters_Data();
 
 #ifdef MPEGMOVIE // Denzil 6/15/98
     if (Using_DVD()) {
