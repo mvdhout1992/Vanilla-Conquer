@@ -134,14 +134,6 @@ ScenarioClass::ScenarioClass(void)
     , ShroudTimer(TICKS_PER_MINUTE * Rule.ShroudRate)
     , Scenario(1)
     , Theater(THEATER_TEMPERATE)
-    , IntroMovie(VQ_NONE)
-    , BriefMovie(VQ_NONE)
-    , WinMovie(VQ_NONE)
-    , WinMovie2(VQ_NONE)
-    , WinMovie3(VQ_NONE)
-    , WinMovie4(VQ_NONE)
-    , LoseMovie(VQ_NONE)
-    , ActionMovie(VQ_NONE)
     , TransitTheme(THEME_NONE)
     , PlayerHouse(HOUSE_GREECE)
     , CarryOverPercent(0)
@@ -179,6 +171,16 @@ ScenarioClass::ScenarioClass(void)
     strcpy(Description, "");
     strcpy(ScenarioName, "");
     strcpy(BriefingText, "");
+
+    strcpy(IntroMovie, "");
+    strcpy(BriefMovie, "");
+    strcpy(WinMovie, "");
+    strcpy(WinMovie2, "");
+    strcpy(WinMovie3, "");
+    strcpy(WinMovie4, "");
+    strcpy(LoseMovie, "");
+    strcpy(ActionMovie, "");
+
     memset(GlobalFlags, '\0', sizeof(GlobalFlags));
     memset(Views, '\0', sizeof(Views));
 }
@@ -381,11 +383,10 @@ bool Start_Scenario(char* name, bool briefing)
         Display_Briefing_Text_GlyphX();
     }
 #else
-    char buffer[25];
-    if (Scen.BriefMovie != VQ_NONE) {
-        sprintf(buffer, "%s.VQA", VQName[Scen.BriefMovie]);
-    }
-    if (Session.Type == GAME_NORMAL && (Scen.BriefMovie == VQ_NONE || !CCFileClass(buffer).Is_Available())) {
+    char buffer[256+4];
+    sprintf(buffer, "%s.VQA", Scen.BriefMovie);
+
+    if (Session.Type == GAME_NORMAL && !CCFileClass(buffer).Is_Available()) {
         /*
         ** Make sure the mouse is visible before showing the restatement.
         */
@@ -755,14 +756,6 @@ void Clear_Scenario(void)
     Scen.MissionTimer.Stop();
     Scen.Timer = 0;
     Scen.ShroudTimer = 0;
-    Scen.IntroMovie = VQ_NONE;
-    Scen.BriefMovie = VQ_NONE;
-    Scen.WinMovie = VQ_NONE;
-    Scen.WinMovie2 = VQ_NONE;
-    Scen.WinMovie3 = VQ_NONE;
-    Scen.WinMovie4 = VQ_NONE;
-    Scen.LoseMovie = VQ_NONE;
-    Scen.ActionMovie = VQ_NONE;
     Scen.IsNoSpyPlane = false;
     Scen.IsTanyaEvac = false;
     Scen.IsEndOfGame = false;
@@ -777,6 +770,15 @@ void Clear_Scenario(void)
     Scen.CarryOverPercent = 0;
     Scen.TransitTheme = THEME_NONE;
     Scen.Percent = 0;
+
+    strcpy(Scen.IntroMovie, "");
+    strcpy(Scen.BriefMovie, "");
+    strcpy(Scen.WinMovie, "");
+    strcpy(Scen.WinMovie2, "");
+    strcpy(Scen.WinMovie3, "");
+    strcpy(Scen.WinMovie4, "");
+    strcpy(Scen.LoseMovie, "");
+    strcpy(Scen.ActionMovie, "");
 
     memset(Scen.GlobalFlags, 0, sizeof(Scen.GlobalFlags));
 
@@ -1355,12 +1357,10 @@ bool Restate_Mission(char const* name, int button1, int button2)
     if (name) {
 
         bool brief = true;
-        char buffer[25];
-        if (Scen.BriefMovie != VQ_NONE) {
-            sprintf(buffer, "%s.VQA", VQName[Scen.BriefMovie]);
-        }
+        char buffer[256+4];
+            sprintf(buffer, "%s.VQA", Scen.BriefMovie);
 
-        if (Scen.BriefMovie == VQ_NONE || !CCFileClass(buffer).Is_Available()) {
+        if (!CCFileClass(buffer).Is_Available()) {
             button2 = TXT_OK;
             button1 = TXT_NONE;
             brief = false;
@@ -2271,14 +2271,16 @@ bool Read_Scenario_INI(char* fname, bool)
     */
     const char* const BASIC = "Basic";
     ini.Get_String(BASIC, "Name", "<none>", Scen.Description, sizeof(Scen.Description));
-    Scen.IntroMovie = ini.Get_VQType(BASIC, "Intro", Scen.IntroMovie);
-    Scen.BriefMovie = ini.Get_VQType(BASIC, "Brief", Scen.BriefMovie);
-    Scen.WinMovie = ini.Get_VQType(BASIC, "Win", Scen.WinMovie);
-    Scen.WinMovie2 = ini.Get_VQType(BASIC, "Win2", Scen.WinMovie2);
-    Scen.WinMovie3 = ini.Get_VQType(BASIC, "Win3", Scen.WinMovie3);
-    Scen.WinMovie4 = ini.Get_VQType(BASIC, "Win4", Scen.WinMovie4);
-    Scen.LoseMovie = ini.Get_VQType(BASIC, "Lose", Scen.LoseMovie);
-    Scen.ActionMovie = ini.Get_VQType(BASIC, "Action", Scen.ActionMovie);
+
+    ini.Get_String(BASIC, "Intro", "<none>", Scen.IntroMovie, sizeof(Scen.IntroMovie));
+    ini.Get_String(BASIC, "Win", "<none>", Scen.WinMovie, sizeof(Scen.WinMovie));
+    ini.Get_String(BASIC, "Win2", "<none>", Scen.WinMovie2, sizeof(Scen.WinMovie2));
+    ini.Get_String(BASIC, "Wine3", "<none>", Scen.WinMovie3, sizeof(Scen.WinMovie3));
+    ini.Get_String(BASIC, "Win4", "<none>", Scen.WinMovie4, sizeof(Scen.WinMovie4));
+    ini.Get_String(BASIC, "Lose", "<none>", Scen.LoseMovie, sizeof(Scen.LoseMovie));
+    ini.Get_String(BASIC, "Action", "<none>", Scen.ActionMovie, sizeof(Scen.ActionMovie));
+    ini.Get_String(BASIC, "Brief", "<none>", Scen.BriefMovie, sizeof(Scen.BriefMovie));
+
     Scen.IsToCarryOver = ini.Get_Bool(BASIC, "ToCarryOver", Scen.IsToCarryOver);
     Scen.IsToInherit = ini.Get_Bool(BASIC, "ToInherit", Scen.IsToInherit);
     Scen.IsInheritTimer = ini.Get_Bool(BASIC, "TimerInherit", Scen.IsInheritTimer);
@@ -2677,11 +2679,16 @@ void Write_Scenario_INI(char* fname)
     static char const* const BASIC = "Basic";
     ini.Clear(BASIC);
     ini.Put_String(BASIC, "Name", Scen.Description);
-    ini.Put_VQType(BASIC, "Intro", Scen.IntroMovie);
-    ini.Put_VQType(BASIC, "Brief", Scen.BriefMovie);
-    ini.Put_VQType(BASIC, "Win", Scen.WinMovie);
-    ini.Put_VQType(BASIC, "Lose", Scen.LoseMovie);
-    ini.Put_VQType(BASIC, "Action", Scen.ActionMovie);
+
+    ini.Put_String(BASIC, "Intro", Scen.IntroMovie);
+    ini.Put_String(BASIC, "Brief", Scen.BriefMovie);
+    ini.Put_String(BASIC, "Win", Scen.WinMovie);
+    ini.Put_String(BASIC, "Win2", Scen.WinMovie2);
+    ini.Put_String(BASIC, "Win3", Scen.WinMovie3);
+    ini.Put_String(BASIC, "Win4", Scen.WinMovie4);
+    ini.Put_String(BASIC, "Lose", Scen.LoseMovie);
+    ini.Put_String(BASIC, "Action", Scen.ActionMovie);
+
     ini.Put_HousesType(BASIC, "Player", PlayerPtr->Class->House);
     ini.Put_ThemeType(BASIC, "Theme", Scen.TransitTheme);
     ini.Put_Fixed(BASIC, "CarryOverMoney", Scen.CarryOverPercent);

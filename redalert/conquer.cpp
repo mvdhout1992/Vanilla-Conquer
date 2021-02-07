@@ -2374,6 +2374,11 @@ extern void Play_Movie_GlyphX(const char* movie_name, ThemeType theme, bool imme
 
 void Play_Movie(char const* name, ThemeType theme, bool clrscrn, bool immediate)
 {
+    IsVQ640 = false;
+    if (stricmp(name, "ENGLISH") == 0) {
+            IsVQ640 = true;
+        }
+
 #ifdef REMASTER_BUILD
     if (strcmp(name, "x") == 0 || strcmp(name, "X") == 0) {
         return;
@@ -2544,14 +2549,9 @@ void Play_Movie(char const* name, ThemeType theme, bool clrscrn, bool immediate)
 
 void Play_Movie(VQType name, ThemeType theme, bool clrscrn, bool immediate)
 {
-    if (name != VQ_NONE) {
-        if (name == VQ_REDINTRO) {
-            IsVQ640 = true;
-        }
-        Play_Movie(VQName[name], theme, clrscrn, immediate);
-        IsVQ640 = false;
-    }
+    Play_Movie(VQName[name], theme, clrscrn, immediate);
 }
+
 
 // Denzil 5/18/98 - Mpeg movie playback
 #ifdef MPEGMOVIE

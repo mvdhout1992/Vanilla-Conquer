@@ -121,40 +121,40 @@ public:
     /*
     **	The filename of the introduction movie.
     */
-    VQType IntroMovie;
+    char IntroMovie[128];
 
     /*
     **	The filename of the briefing movie.
     */
-    VQType BriefMovie;
+    char BriefMovie[128];
 
     /*
     **	The filename of the movie to play if the scenario is won.
     */
-    VQType WinMovie;
+    char WinMovie[128];
     /*
     **	The filename of the movie to play if the scenario is won.
     */
-    VQType WinMovie2;
+    char WinMovie2[128];
     /*
     **	The filename of the movie to play if the scenario is won.
     */
-    VQType WinMovie3;
+    char WinMovie3[128];
     /*
     **	The filename of the movie to play if the scenario is won.
     */
-    VQType WinMovie4;
+    char WinMovie4[128];
 
     /*
     **	The filename of the movie to play if the scenario is lost.
     */
-    VQType LoseMovie;
+    char LoseMovie[128];
 
     /*
     **	The filename of the movie to play right after the briefing and
     **	just before the game.
     */
-    VQType ActionMovie;
+    char ActionMovie[128];
 
     /*
     **	This is the full text of the briefing. This text will be
