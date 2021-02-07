@@ -116,7 +116,7 @@ static void Put_All(Pipe& pipe, int save_net)
     Map.Save(pipe);
 
     if (!save_net)
-        Call_Back();
+    Call_Back();
 
     /*
     **	Save all game objects.  This code saves every object that's stored in a
@@ -177,6 +177,14 @@ static void Put_All(Pipe& pipe, int save_net)
     if (!save_net)
         Call_Back();
 
+    for (int i = HOUSE_FIRST; i < HOUSE_COUNT; i++) {
+        HouseClass* p = Houses.Ptr(i);
+        p->Base.Save(pipe);
+    }
+
+        if (!save_net)
+        Call_Back();
+
     /*
     **	Save the Logic & Map layers
     */
@@ -227,7 +235,7 @@ static void Put_All(Pipe& pipe, int save_net)
     /*
     **	Save the AI Base
     */
-    Base.Save(pipe);
+    //Base.Save(pipe);
     if (!save_net)
         Call_Back();
 
@@ -687,6 +695,11 @@ bool Load_Game(const char* file_name)
 
     Call_Back();
 
+    for (int i = HOUSE_FIRST; i < HOUSE_COUNT; i++) {
+        HouseClass* p = Houses.Ptr(i);
+        p->Base.Clear_Nodes();
+    }
+
     /*
     **	Load the object data.
     */
@@ -710,6 +723,13 @@ bool Load_Game(const char* file_name)
     Units.Load(straw);
     Factories.Load(straw);
     Vessels.Load(straw);
+
+    for (int i = HOUSE_FIRST; i < HOUSE_COUNT; i++) {
+        HouseClass* p = Houses.Ptr(i);
+        p->Base.Reset_Post_Load();
+        p->Base.Init();
+        p->Base.Load(straw);
+    }
 
     /*
     **	Load the Logic & Map Layers
@@ -759,7 +779,7 @@ bool Load_Game(const char* file_name)
     /*
     **	Load the AI Base
     */
-    Base.Load(straw);
+    //Base.Load(straw);
 
     /*
     **	Delete any carryover pseudo-saved game list.
@@ -1279,7 +1299,7 @@ void Code_All_Pointers(void)
     /*
     **	The Base.
     */
-    Base.Code_Pointers();
+    //Base.Code_Pointers();
 
     /*
     **	PlayerPtr.
@@ -1374,7 +1394,7 @@ void Decode_All_Pointers(void)
     /*
     **	The Base.
     */
-    Base.Decode_Pointers();
+    //Base.Decode_Pointers();
 
     /*
     **	PlayerPtr.

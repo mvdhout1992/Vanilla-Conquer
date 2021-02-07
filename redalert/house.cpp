@@ -5700,7 +5700,7 @@ int HouseClass::AI_Building(void)
     if (BuildStructure != STRUCT_NONE)
         return (TICKS_PER_SECOND);
 
-    if (Session.Type == GAME_NORMAL && Base.House == Class->House) {
+    if (Session.Type == GAME_NORMAL) {
         BaseNodeClass* node = Base.Next_Buildable();
         if (node) {
             BuildStructure = node->Type;
@@ -7462,6 +7462,8 @@ void HouseClass::Read_INI(CCINIClass& ini)
                 p->Make_Ally(h);
             }
         }
+
+        p->Base.Read_INI(ini, (HousesType)index);
     }
 }
 
@@ -7536,6 +7538,8 @@ void HouseClass::Write_INI(CCINIClass& ini)
             }
 
             ini.Put_Owners(name, "Allies", p->Control.Allies & ~((1 << p->Class->House) | (1 << HOUSE_NEUTRAL)));
+
+            p->Base.Write_INI(ini, i);
         }
     }
 }

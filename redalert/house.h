@@ -39,6 +39,7 @@
 #include "region.h"
 #include "credits.h"
 #include "super.h"
+#include "base.h"
 
 class FootClass;
 class BuildingClass;
@@ -646,6 +647,11 @@ public:
     InfantryType BuildInfantry;
     AircraftType BuildAircraft;
     VesselType BuildVessel;
+
+    /***************************************************************************
+    **	This is the list of BuildingTypes that the AI will (re)build in single player
+    */
+    BaseClass Base;
 
     /*---------------------------------------------------------------------
     **	Constructors, Destructors, and overloaded operators.

@@ -88,6 +88,7 @@ public:
     virtual int operator==(VectorClass<T> const&) const;      // Equality operator.
     virtual int Resize(unsigned newsize, T const* array = 0);
     virtual void Clear(void);
+    void Reset_Vector_Post_Load(void);
     unsigned Length(void) const
     {
         return VectorMax;
@@ -769,6 +770,11 @@ VectorClass<T>::VectorClass(VectorClass<T> const& vector)
     , IsAllocated(false)
 {
     *this = vector;
+}
+
+template <class T> void VectorClass<T>::Reset_Vector_Post_Load()
+{
+    Vector = 0;
 }
 
 /***********************************************************************************************

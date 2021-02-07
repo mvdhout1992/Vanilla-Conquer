@@ -818,7 +818,7 @@ void Clear_Scenario(void)
 
     FactoryClass::Init();
 
-    Base.Init();
+//    Base.Init();
 
     CurrentObject.Clear_All();
 
@@ -2392,7 +2392,7 @@ bool Read_Scenario_INI(char* fname, bool)
     /*
     **	Read in the AI's base information.
     */
-    Base.Read_INI(ini);
+//    Base.Read_INI(ini);
     Call_Back();
 
     /*

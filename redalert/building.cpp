@@ -1277,10 +1277,10 @@ ResultType BuildingClass::Take_Damage(int& damage, int distance, WarheadType war
             **	Add the building to the base prebuild list if allowed. This will force
             **	the computer to rebuild this structure if it can.
             */
-            if (IsToRebuild && Class->Level != -1 && Base.House == House->Class->House && Base.Get_Node(this) == 0) {
+            if (IsToRebuild && Class->Level != -1 && House->Base.Get_Node(this) == 0) {
                 //				if (IsToRebuild && Class->IsBuildable && Base.House == House->Class->House &&
                 //Base.Get_Node(this) == 0) {
-                Base.Nodes.Add(BaseNodeClass(Class->Type, Coord_Cell(Coord)));
+                House->Base.Nodes.Add(BaseNodeClass(Class->Type, Coord_Cell(Coord)));
             }
 
             /*
@@ -2179,7 +2179,7 @@ int BuildingClass::Exit_Object(TechnoClass* base)
             **	routine will return failure. The calling routine will probably abandon this
             **	building in preference to building another.
             */
-            BaseNodeClass* node = Base.Next_Buildable(((BuildingClass*)base)->Class->Type);
+            BaseNodeClass* node = House->Base.Next_Buildable(((BuildingClass*)base)->Class->Type);
             COORDINATE coord = 0;
             if (node) {
                 coord = Cell_Coord(node->Cell);

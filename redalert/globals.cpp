@@ -529,10 +529,6 @@ int MapTriggerID;
 DynamicVectorClass<TriggerClass*> LogicTriggers;
 int LogicTriggerID;
 
-/***************************************************************************
-**	This is the list of BuildingTypes that define the AI's base.
-*/
-BaseClass Base;
 
 /***************************************************************************
 **	This is the list of carry over objects. These objects are part of the

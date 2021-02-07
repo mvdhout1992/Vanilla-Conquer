@@ -140,13 +140,6 @@ bool BaseClass::Load(Straw& file)
         return (false);
     }
 
-    /*
-    ** Read in the House & the number of structures in the base
-    */
-    if (file.Get(&House, sizeof(House)) != sizeof(House)) {
-        return (false);
-    }
-
     if (file.Get(&num_struct, sizeof(num_struct)) != sizeof(num_struct)) {
         return (false);
     }
@@ -191,11 +184,6 @@ bool BaseClass::Save(Pipe& file) const
     */
     i = sizeof(*this);
     file.Put(&i, sizeof(i));
-
-    /*
-    ** Write the House & the number of structures in the base
-    */
-    file.Put(&House, sizeof(House));
 
     num_struct = Nodes.Count();
     file.Put(&num_struct, sizeof(num_struct));
@@ -408,6 +396,51 @@ BaseNodeClass* BaseClass::Next_Buildable(StructType type)
     return (NULL);
 }
 
+void BaseClass::Read_INI_Data(CCINIClass& ini, const char* section)
+{
+    char buf[128];
+    char uname[10];
+    BaseNodeClass node; // node to add to list
+
+    Mono_Clear_Screen();
+    /*
+    **	First, determine the house of the human player, and set the Base's house
+    **	accordingly.
+    */
+
+    /*
+    **	Read the number of buildings that will go into the base node list
+    */
+    int count = ini.Get_Int(section, "Count", 0);
+
+    /*
+    **	Read each entry in turn, in the same order they were written out.
+    */
+    for (int i = 0; i < count; i++) {
+
+        /*
+        ** Get an INI entry
+        */
+        sprintf(uname, "%03d", i);
+        ini.Get_String(section, uname, NULL, buf, sizeof(buf));
+
+        /*
+        ** Set the node's building type
+        */
+        node.Type = BuildingTypeClass::From_Name(strtok(buf, ","));
+
+        /*
+        ** Read & set the node's coordinate
+        */
+        node.Cell = atoi(strtok(NULL, ","));
+
+        /*
+        ** Add this node to the Base's list
+        */
+        Nodes.Add(node);
+    }
+}
+
 /***********************************************************************************************
  * BaseClass::Read_INI -- INI reading routine                                                  *
  *                                                                                             *
@@ -429,49 +462,49 @@ BaseNodeClass* BaseClass::Next_Buildable(StructType type)
  *   03/24/1995 BRR : Created.                                                                 *
  *   02/20/1996 JLB : Fixed to know what house to build base from.                             *
  *=============================================================================================*/
-void BaseClass::Read_INI(CCINIClass& ini)
+void BaseClass::Read_INI(CCINIClass& ini, HousesType house)
 {
     char buf[128];
     char uname[10];
     BaseNodeClass node; // node to add to list
+    const char* hname = HouseTypeClass::As_Reference(house).IniName;
 
-    Mono_Clear_Screen();
+    ini.Get_String("Base", "Player", "ERROR", buf, sizeof(buf));
+
+    int count = ini.Get_Int(hname, "Count", 0);
+
+    if (count > 0) {
+        BaseClass::Read_INI_Data(ini, hname);
+    }
+
+    else if (stricmp(buf, hname) == 0) {
+        BaseClass::Read_INI_Data(ini, "Base");
+    }
+}
+
+void BaseClass::Write_INI_Data(CCINIClass& ini, const char* section)
+{
+    // Clear the ini section
+    ini.Clear(section);
+
     /*
-    **	First, determine the house of the human player, and set the Base's house
-    **	accordingly.
-    */
-    House = ini.Get_HousesType(INI_Name(), "Player", PlayerPtr->Class->House);
-
-    /*
-    **	Read the number of buildings that will go into the base node list
-    */
-    int count = ini.Get_Int(INI_Name(), "Count", 0);
-
-    /*
-    **	Read each entry in turn, in the same order they were written out.
-    */
-    for (int i = 0; i < count; i++) {
-
-        /*
-        ** Get an INI entry
+        **	Save the # of buildings in the Nodes list.  This is essential because
+        **	they must be read in the same order they were created, so "000" must be
+        **	read first, etc.
         */
+    ini.Put_Int(section, "Count", Nodes.Count());
+
+    /*
+        **	Write each entry into the INI
+        */
+    for (int i = 0; i < Nodes.Count(); i++) {
+        char buf[128];
+        char uname[10];
+
         sprintf(uname, "%03d", i);
-        ini.Get_String(INI_Name(), uname, NULL, buf, sizeof(buf));
+        sprintf(buf, "%s,%d", BuildingTypeClass::As_Reference(Nodes[i].Type).IniName, Nodes[i].Cell);
 
-        /*
-        ** Set the node's building type
-        */
-        node.Type = BuildingTypeClass::From_Name(strtok(buf, ","));
-
-        /*
-        ** Read & set the node's coordinate
-        */
-        node.Cell = atoi(strtok(NULL, ","));
-
-        /*
-        ** Add this node to the Base's list
-        */
-        Nodes.Add(node);
+        ini.Put_String(section, uname, buf);
     }
 }
 
@@ -490,38 +523,16 @@ void BaseClass::Read_INI(CCINIClass& ini)
  * HISTORY:                                                                                    *
  *   07/30/1996 JLB : Created.                                                                 *
  *=============================================================================================*/
-void BaseClass::Write_INI(CCINIClass& ini)
+void BaseClass::Write_INI(CCINIClass& ini, HousesType house)
 {
-    /*
-    **	Clear out all existing base data from the ini file.
-    */
-    ini.Clear(INI_Name());
+    const char* hname = HouseTypeClass::As_Reference(house).IniName;
+    // Writes for both [Bases] & HouseName (e.g. [Greece])
+    // For legacy behavior support
 
-    if (House != HOUSE_NONE) {
+    Write_INI_Data(ini, "Base");
+    ini.Put_String("Base", "Player", hname);
 
-        /*
-        **	Write out the owner of this buildable list.
-        */
-        ini.Put_HousesType(INI_Name(), "Player", House);
-
-        /*
-        **	Save the # of buildings in the Nodes list.  This is essential because
-        **	they must be read in the same order they were created, so "000" must be
-        **	read first, etc.
-        */
-        ini.Put_Int(INI_Name(), "Count", Nodes.Count());
-
-        /*
-        **	Write each entry into the INI
-        */
-        for (int i = 0; i < Nodes.Count(); i++) {
-            char buf[128];
-            char uname[10];
-
-            sprintf(uname, "%03d", i);
-            sprintf(buf, "%s,%d", BuildingTypeClass::As_Reference(Nodes[i].Type).IniName, Nodes[i].Cell);
-
-            ini.Put_String(INI_Name(), uname, buf);
-        }
+    if (Nodes.Count() > 0) {
+        Write_INI_Data(ini, hname);
     }
 }

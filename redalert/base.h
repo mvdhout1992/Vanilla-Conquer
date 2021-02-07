@@ -73,19 +73,28 @@ public:
     */
     void Init(void)
     {
-        House = HOUSE_NONE;
+        Clear_Nodes();
+    }
+
+    void Clear_Nodes(void)
+    {
         Nodes.Clear();
+    }
+
+    void Reset_Post_Load(void)
+    {
+        Nodes.Reset_Vector_Post_Load();
     }
 
     /*
     ** The standard suite of load/save support routines
     */
-    void Read_INI(CCINIClass& ini);
-    void Write_INI(CCINIClass& ini);
-    static char* INI_Name(void)
-    {
-        return "Base";
-    }
+    void Read_INI_Data(CCINIClass& ini, const char* section);
+    void Write_INI_Data(CCINIClass& ini, const char* section);
+
+    void Read_INI(CCINIClass& ini, HousesType house);
+    void Write_INI(CCINIClass& ini, HousesType house);
+
     bool Load(Straw& file);
     bool Save(Pipe& file) const;
     virtual void Code_Pointers(void){};
@@ -131,7 +140,6 @@ public:
     /*
     ** This is the house this base belongs to.
     */
-    HousesType House;
 };
 
 #endif
