@@ -521,15 +521,6 @@ int const SnowColor[LAND_COUNT] = {
 
 GroundType Ground[LAND_COUNT];
 
-/***************************************************************************
-**	These are the names of the theaters.
-*/
-TheaterDataType const Theaters[THEATER_COUNT] = {
-    {"TEMPERATE", "TEMPERAT", "TEM"},
-    {"SNOW", "SNOW", "SNO"},
-    {"INTERIOR", "INTERIOR", "INT"},
-};
-
 unsigned char const RemapCiv2[256] = {
     0,   1,   2,   3,   4,   5,   6,   209, 8,   9,   10,  11,  12,  13,  12,  15,  // 0..15
     16,  17,  18,  19,  20,  21,  22,  23,  24,  25,  26,  27,  28,  29,  30,  31,  // 16..31

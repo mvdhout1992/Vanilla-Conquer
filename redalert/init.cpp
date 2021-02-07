@@ -145,6 +145,39 @@ static void Load_Prolog_Page(void)
     Show_Mouse();
 }
 
+TheaterDataType const TheaterData[THEATER_COUNT] = {
+    {"TEMPERATE", "TEMPERAT", "TEM"},
+    {"SNOW", "SNOW", "SNO"},
+    {"INTERIOR", "INTERIOR", "INT"},
+};
+
+
+void INit_Theaters_Data()
+{
+    CCFileClass theaterfile("THEATER.INI");
+    CCINIClass ini;
+    if (ini.Load(theaterfile, false)) {
+        int count = ini.Entry_Count("Theaters");
+        for (int i = 0; i < count; i++) {
+            char entrybuf[128];
+            TheaterDataType tdt;
+
+            itoa(i, entrybuf, 10);
+            std::string section = ini.Get_String("Theaters", entrybuf, "");
+            
+            ini.Get_String(section.c_str(), "Name", "ERROR", tdt.Name, sizeof(tdt.Name));
+            ini.Get_String(section.c_str(), "Root", "ERROR", tdt.Root, sizeof(tdt.Root));
+            ini.Get_String(section.c_str(), "Suffix", "ERROR", tdt.Suffix, sizeof(tdt.Suffix));
+
+            Theaters.Add(tdt);
+        }
+
+    } else {
+        for (int i = 0; i < THEATER_COUNT; i++) {
+            Theaters.Add(TheaterData[i]);
+        }
+    }
+
 /***********************************************************************************************
  * Init_Game -- Main game initialization routine.                                              *
  *                                                                                             *
@@ -304,6 +337,8 @@ bool Init_Game(int, char*[])
     **	Initialize the animation system.
     */
     Anim_Init();
+
+    Read_Theaters_Data();
 
 #ifdef MPEGMOVIE // Denzil 6/15/98
     if (Using_DVD()) {

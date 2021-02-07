@@ -378,7 +378,7 @@ extern unsigned long const EditorCodes[];
 extern char const* const SourceName[SOURCE_COUNT];
 extern int const GroundColor[LAND_COUNT];
 extern int const SnowColor[LAND_COUNT];
-extern TheaterDataType const Theaters[THEATER_COUNT];
+extern DynamicVectorClass<TheaterDataType> Theaters;
 extern unsigned char const Facing32[256];
 extern unsigned char const Facing16[256];
 extern signed char const Rotation16[256];

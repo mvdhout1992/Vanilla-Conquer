@@ -662,6 +662,8 @@ CDTimerClass<SystemTimerClass> CountDownTimer;
 NewConfigType NewConfig;
 TheaterType LastTheater = THEATER_NONE; // Lets us know when theater type changes.
 
+DynamicVectorClass<TheaterDataType> Theaters;
+
 /***************************************************************************
 **	This flag is for popping up dialogs that call the main loop.
 */
