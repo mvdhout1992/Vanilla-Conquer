@@ -63,6 +63,8 @@ extern bool DLLLoad(Straw& file);
 #endif
 #include <common/lcw.h>
 
+#define SAVE_GAME_MAX_SIZE (10 * 1024 * 1024) // 10 megabyte
+
 //#define	SAVE_BLOCK_SIZE	512
 #define SAVE_BLOCK_SIZE 4096
 //#define	SAVE_BLOCK_SIZE	1024
@@ -374,20 +376,16 @@ bool Save_Game(const char* file_name, const char* descr, bool quicksave)
     */
 
 
-    #define save_game_mem_size (10 * 1024 * 1024) // 10 megabyte
+
     CCFileClass file(file_name);
     file.Open(WRITE);
     //file.Cache(save_game_mem_size);
 
 
-   char* mem = (char*)malloc(save_game_mem_size);
-   memset(mem, 0x0, save_game_mem_size);
-   //RAMFileClass file(mem, save_game_mem_size);
-
     //FilePipe fpipe(&file);
 
-
-   BufferPipe fpipe(mem, save_game_mem_size);
+   Buffer buf(SAVE_GAME_MAX_SIZE);
+   BufferPipe fpipe(buf);
 
 #ifdef REMASTER_BUILD
     /*
@@ -436,7 +434,6 @@ bool Save_Game(const char* file_name, const char* descr, bool quicksave)
     Decode_All_Pointers();
 
     NowSavingGame = false; // TEMP MBL: Need to discuss better solution with Steve
-    free(mem);
     return (true);
 }
 
@@ -508,12 +505,12 @@ bool Save_Game(SaveGameType type)
     if (type == SAVEGAME_AUTO) {
         find_part = "SAVEGAME_AUTO.";
         maxcheck = 5;
-        description = "Quicksave ";
+        description = "Autosave ";
         filename = "SAVEGAME_AUTO.001"; // if not found
     } else if (type == SAVEGAME_QUICK) {
         find_part = "SAVEGAME_QUICK.";
         maxcheck = 3;
-        description = "Autosave ";
+        description = "Quicksave ";
         filename = "SAVEGAME_QUICK.001"; // if not found
     }
 
@@ -610,8 +607,12 @@ bool Load_Game(const char* file_name, bool quicksave)
     if (!file.Is_Available()) {
         return (false);
     }
+    
+    Buffer buf(SAVE_GAME_MAX_SIZE);
 
-    FileStraw straw(file);
+    file.Open(READ);
+    file.Read(buf.Get_Buffer(), file.Size());
+    BufferStraw straw(buf);
 
     if (!load_net)
         Call_Back();
