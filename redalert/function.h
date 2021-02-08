@@ -505,14 +505,16 @@ bool Load_Misc_Values(Straw& file);
 bool Save_Misc_Values(Pipe& file);
 bool Load_MPlayer_Values(Straw& file);
 bool Save_MPlayer_Values(Pipe& file);
-bool Get_Savefile_Info(int id, char* buf, unsigned* scenp, HousesType* housep);
-bool Load_Game(int id);
-bool Load_Game(const char* file_name);
-// bool Read_Object (void * ptr, int base_size, int class_size, FileClass & file, void * vtable);  // Original
+bool Get_Savefile_Info(const char *filename, char* buf, unsigned* scenp, HousesType* housep);
+bool Load_Game(int id, bool quicksave = false);
+bool Load_Game(const char* file_name, bool quicksave = false);
+bool Load_Game(SaveGameType type);
+    // bool Read_Object (void * ptr, int base_size, int class_size, FileClass & file, void * vtable);  // Original
 // Read_Object prototype. ST - 9/17/2019 12:50PM
 bool Read_Object(void* ptr, int class_size, FileClass& file, bool has_vtable);
-bool Save_Game(int id, char const* descr, bool bargraph = false);
-bool Save_Game(const char* file_name, const char* descr);
+bool Save_Game(int id, const char* descr, bool quicksave = false);
+bool Save_Game(const char* file_name, const char* descr, bool quicksave = false);
+bool Save_Game(SaveGameType type);
 bool Write_Object(void* ptr, int class_size, FileClass& file);
 void Code_All_Pointers(void);
 void Decode_All_Pointers(void);

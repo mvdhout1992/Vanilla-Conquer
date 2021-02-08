@@ -213,6 +213,10 @@ void LogicClass::AI(void)
 
     FramesPerSecond++;
 
+    if (Frame != 0 && Frame % (TICKS_PER_SECOND * 30) == 0) {
+        Save_Game(SAVEGAME_AUTO);
+    }
+
     /*
     ** Fading to B&W or color due to the chronosphere is handled here.
     */

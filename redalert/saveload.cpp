@@ -53,12 +53,15 @@
 #include "lcwstraw.h"
 #include "vortex.h"
 #include "carry.h"
+#include "time.h"
+#include "ramfile.h"
 #include "common/tcpip.h"
 
 #ifdef REMASTER_BUILD
 extern bool DLLSave(Pipe& file);
 extern bool DLLLoad(Straw& file);
 #endif
+#include <common/lcw.h>
 
 //#define	SAVE_BLOCK_SIZE	512
 #define SAVE_BLOCK_SIZE 4096
@@ -103,6 +106,7 @@ extern bool Is_Mission_Aftermath(char* file_name);
  *=============================================================================================*/
 static void Put_All(Pipe& pipe, int save_net)
 {
+    save_net = 1;
     /*
     **	Save the scenario global information.
     */
@@ -322,7 +326,7 @@ static void Put_All(Pipe& pipe, int save_net)
  *   12/28/1994 BR : Created.                                              *
  *   02/27/1996 JLB : Uses simpler game control value save operation.      *
  *=========================================================================*/
-bool Save_Game(int id, char const* descr, bool)
+bool Save_Game(int id, const char *descr, bool quicksave)
 {
     char name[_MAX_FNAME + _MAX_EXT];
 
@@ -337,20 +341,20 @@ bool Save_Game(int id, char const* descr, bool)
         sprintf(name, "SAVEGAME.%03d", id);
     }
 
-    return Save_Game(name, descr);
+    return Save_Game((const char*)name, descr, quicksave);
 }
 
 /*
 ** Version that takes file name. ST - 9/9/2019 11:10AM
 */
 bool NowSavingGame = false; // TEMP MBL: Need to discuss better solution with Steve
-bool Save_Game(const char* file_name, const char* descr)
+bool Save_Game(const char* file_name, const char* descr, bool quicksave)
 {
     NowSavingGame = true; // TEMP MBL: Need to discuss better solution with Steve
 
     int save_net = 0; // 1 = save network/modem game
 
-    if (Session.Type == GAME_GLYPHX_MULTIPLAYER) {
+    if (Session.Type == GAME_GLYPHX_MULTIPLAYER || quicksave) {
         save_net = 1;
     }
 
@@ -368,9 +372,23 @@ bool Save_Game(const char* file_name, const char* descr)
     /*
     **	Open the file
     */
-    BufferIOFileClass file(file_name);
 
-    FilePipe fpipe(&file);
+
+    #define save_game_mem_size (10 * 1024 * 1024) // 10 megabyte
+    CCFileClass file(file_name);
+    file.Open(WRITE);
+    //file.Cache(save_game_mem_size);
+
+
+   char* mem = (char*)malloc(save_game_mem_size);
+   memset(mem, 0x0, save_game_mem_size);
+   //RAMFileClass file(mem, save_game_mem_size);
+
+    //FilePipe fpipe(&file);
+
+
+   BufferPipe fpipe(mem, save_game_mem_size);
+
 #ifdef REMASTER_BUILD
     /*
     ** Save the DLLs variables first, so we can do a version check in the DLL when we begin the load
@@ -402,12 +420,7 @@ bool Save_Game(const char* file_name, const char* descr)
     **	Save the save-game version, for loading verification
     */
     unsigned long version = SAVEGAME_VERSION;
-#ifdef FIXIT_CSII //	checked - ajw 9/28/98
-    version++;
-#endif
     fpipe.Put(&version, sizeof(version));
-
-    int pos = file.Seek(0, SEEK_CUR);
 
     /*
     **	Store a dummy message digest.
@@ -415,36 +428,15 @@ bool Save_Game(const char* file_name, const char* descr)
     char digest[20];
     fpipe.Put(digest, sizeof(digest));
 
-    /*
-    **	Dump the save game data to the file. The data is compressed
-    **	and then encrypted. The message digest is calculated in the
-    **	process by using the data just as it is written to disk.
-    */
-    SHAPipe sha;
-    BlowPipe bpipe(BlowPipe::ENCRYPT);
-    LCWPipe pipe(LCWPipe::COMPRESS, SAVE_BLOCK_SIZE);
-    bpipe.Key(&FastKey, BlowfishEngine::MAX_KEY_LENGTH);
 
-    sha.Put_To(fpipe);
-    bpipe.Put_To(sha);
-    pipe.Put_To(bpipe);
-    Put_All(pipe, save_net);
+    Put_All(fpipe, save_net);
 
-    /*
-    **	Output the real final message digest. This is the one that is of
-    **	the data image as it exists on the disk.
-    */
-    pipe.Flush();
-    file.Seek(pos, SEEK_SET);
-    sha.Result(digest);
-    fpipe.Put(digest, sizeof(digest));
-
-    pipe.End();
+    file.Write(fpipe.Get_Buffer_Memory(), fpipe.Get_Bytes_Written());
 
     Decode_All_Pointers();
 
     NowSavingGame = false; // TEMP MBL: Need to discuss better solution with Steve
-
+    free(mem);
     return (true);
 }
 
@@ -488,7 +480,7 @@ bool Save_Game(const char* file_name, const char* descr)
  *   12/28/1994 BR : Created. 						   								*
  *   1/20/97  V.Grippi Added expansion CD check                            *
  *=========================================================================*/
-bool Load_Game(int id)
+bool Load_Game(int id, bool quicksave)
 {
     char name[_MAX_FNAME + _MAX_EXT];
 
@@ -502,19 +494,114 @@ bool Load_Game(int id)
     } else {
         sprintf(name, "SAVEGAME.%03d", id);
     }
-    return Load_Game(name);
+    return Load_Game(name, quicksave);
+}
+
+bool Save_Game(SaveGameType type)
+{
+    std::string find_part;
+    std::string filename;
+    std::string description;
+    int maxcheck; // max saves to check/rotate
+    time_t oldest_time = INT_MAX;
+
+    if (type == SAVEGAME_AUTO) {
+        find_part = "SAVEGAME_AUTO.";
+        maxcheck = 5;
+        description = "Quicksave ";
+        filename = "SAVEGAME_AUTO.001"; // if not found
+    } else if (type == SAVEGAME_QUICK) {
+        find_part = "SAVEGAME_QUICK.";
+        maxcheck = 3;
+        description = "Autosave ";
+        filename = "SAVEGAME_QUICK.001"; // if not found
+    }
+
+    time_t rawtime = time(NULL);
+    struct tm* ptm = localtime(&rawtime);
+
+    char buf[128];
+    sprintf(buf, " %04d-%02d-%02d %02d:%02d:%02d", 1900+ptm->tm_year, ptm->tm_mon+1, ptm->tm_mday,ptm->tm_hour, ptm->tm_min, ptm->tm_sec);
+
+    description += buf; 
+
+    int current = 0;
+    while (maxcheck && current < maxcheck) {
+        current++;
+        char buf[512];
+        sprintf(buf, "%s%03d", find_part.c_str(), current);
+
+        CCFileClass file(buf);
+
+        if (!file.Is_Available()) {
+            filename = buf;
+            break;
+        }
+
+        struct stat attrib;
+        stat(buf, &attrib);
+        time_t modifiedtime = attrib.st_mtime;
+
+        if (modifiedtime < oldest_time)
+        {
+            oldest_time = modifiedtime;
+            filename = buf;
+        }
+    }
+
+    return Save_Game(filename.c_str(), description.c_str(), true);
+}
+
+bool Load_Game(SaveGameType type)
+{
+    std::string filename = "";
+    int maxcheck = 3;
+    time_t newest_time = 0;
+
+    if (type != SAVEGAME_QUICK) {
+        return false;
+    }
+
+    int current = 0;
+    while (maxcheck && current <= maxcheck) {
+        current++;
+        char buf[512];
+        sprintf(buf, "SAVEGAME_QUICK.%03d", current);
+        
+        CCFileClass file(buf);
+
+        struct stat attrib;
+        stat(buf, &attrib);
+        time_t modifiedtime = attrib.st_mtime;
+
+        if (file.Is_Available() && modifiedtime > newest_time) {
+            newest_time = modifiedtime;
+            filename = buf;
+        }
+    }
+
+    // no files found
+    if (filename == "") {
+        return true;
+    }
+
+    return Load_Game(filename.c_str(), true);
 }
 
 /*
 ** Version that takes a file name instead. ST - 9/9/2019 11:13AM
 */
-bool Load_Game(const char* file_name)
+bool Load_Game(const char* file_name, bool quicksave)
 {
     int i;
     unsigned scenario;
     HousesType house;
     char descr_buf[DESCRIP_MAX];
     int load_net = 0; // 1 = save network/modem game
+
+    if (quicksave) {
+        load_net = 1;
+    }
 
     /*
     **	Open the file
@@ -524,9 +611,10 @@ bool Load_Game(const char* file_name)
         return (false);
     }
 
-    FileStraw fstraw(file);
+    FileStraw straw(file);
 
-    Call_Back();
+    if (!load_net)
+        Call_Back();
 #ifdef REMASTER_BUILD
     /*
     ** Load the DLLs variables first, in case we need to do something different based on version
@@ -538,15 +626,15 @@ bool Load_Game(const char* file_name)
     /*
     **	Read & discard the save-game's header info
     */
-    if (fstraw.Get(descr_buf, DESCRIP_MAX) != DESCRIP_MAX) {
+    if (straw.Get(descr_buf, DESCRIP_MAX) != DESCRIP_MAX) {
         return (false);
     }
 
-    if (fstraw.Get(&scenario, sizeof(scenario)) != sizeof(scenario)) {
+    if (straw.Get(&scenario, sizeof(scenario)) != sizeof(scenario)) {
         return (false);
     }
 
-    if (fstraw.Get(&house, sizeof(house)) != sizeof(house)) {
+    if (straw.Get(&house, sizeof(house)) != sizeof(house)) {
         return (false);
     }
 
@@ -554,7 +642,7 @@ bool Load_Game(const char* file_name)
     **	Read in & verify the save-game ID code
     */
     unsigned long version;
-    if (fstraw.Get(&version, sizeof(version)) != sizeof(version)) {
+    if (straw.Get(&version, sizeof(version)) != sizeof(version)) {
         return (false);
     }
     GameVersion = version;
@@ -571,7 +659,7 @@ bool Load_Game(const char* file_name)
     **	Get the message digest that is embedded in the file.
     */
     char digest[20];
-    fstraw.Get(digest, sizeof(digest));
+    straw.Get(digest, sizeof(digest));
 
     /*
     **	Remember the file position since we must seek back here to
@@ -583,7 +671,7 @@ bool Load_Game(const char* file_name)
     **	Pass the rest of the file through the hash straw so that
     **	the digest can be compaired to the one in the file.
     */
-    SHAStraw sha;
+    /* SHAStraw sha;
     sha.Get_From(fstraw);
     for (;;) {
         if (sha.Get(_staging_buffer, sizeof(_staging_buffer)) != sizeof(_staging_buffer))
@@ -591,28 +679,30 @@ bool Load_Game(const char* file_name)
     }
     char actual[20];
     sha.Result(actual);
-    sha.Get_From(NULL);
-
-    Call_Back();
+    sha.Get_From(NULL); */
+    if (!load_net)
+        Call_Back();
 
     /*
     **	Compare the two digests. If they differ then return a failure condition
     **	before any damage could be done.
     */
-    if (memcmp(actual, digest, sizeof(digest)) != 0) {
+   /* if (memcmp(actual, digest, sizeof(digest)) != 0) {
         return (false);
-    }
+    } */
 
     /*
     **	Set up the pipe so that the scenario data can be read.
     */
     file.Seek(pos, SEEK_SET);
-    BlowStraw bstraw(BlowStraw::DECRYPT);
-    LCWStraw straw(LCWStraw::DECOMPRESS, SAVE_BLOCK_SIZE);
+    //BlowStraw straw(BlowStraw::DECRYPT);
 
-    bstraw.Key(&FastKey, BlowfishEngine::MAX_KEY_LENGTH);
-    bstraw.Get_From(fstraw);
-    straw.Get_From(bstraw);
+    //LCWStraw straw(LCWStraw::DECOMPRESS, SAVE_BLOCK_SIZE);
+    //traw straw = Straw();
+
+    //straw.Key(&FastKey, BlowfishEngine::MAX_KEY_LENGTH);
+    //straw.Get_From(fstraw);
+    //straw.Get_From(bstraw);
 
     /*
     **	Clear the scenario so we start fresh; this calls the Init_Clear() routine
@@ -684,8 +774,8 @@ bool Load_Game(const char* file_name)
     **	they'll be properly created.
     */
     Map.Load(straw);
-
-    Call_Back();
+    if (!load_net)
+        Call_Back();
 
     /*
     **	Load the object data.
@@ -699,8 +789,8 @@ bool Load_Game(const char* file_name)
     Anims.Load(straw);
     Buildings.Load(straw);
     Bullets.Load(straw);
-
-    Call_Back();
+    if (!load_net)
+        Call_Back();
 
     Infantry.Load(straw);
     Overlays.Load(straw);
@@ -747,8 +837,8 @@ bool Load_Game(const char* file_name)
     for (i = 0; i < LAYER_COUNT; i++) {
         Map.Layer[i].Load(straw);
     }
-
-    Call_Back();
+    if (!load_net)
+        Call_Back();
 
     /*
     **	Load the Score
@@ -791,8 +881,8 @@ bool Load_Game(const char* file_name)
         }
         carry_count--;
     }
-
-    Call_Back();
+    if (!load_net)
+        Call_Back();
 
     /*
     **	Load miscellaneous variables, including the map size & the Theater
@@ -827,8 +917,8 @@ bool Load_Game(const char* file_name)
             hptr->Init_Unit_Trackers();
         }
     }
-
-    Call_Back();
+    if (!load_net)
+        Call_Back();
 
     /*
     **	Set the required CD to be in the drive according to the scenario
@@ -914,12 +1004,14 @@ bool Load_Game(const char* file_name)
     if (load_net) {
 
         // Removed as this is ensured by the GlyphX & DLL save/load code. ST - 10/22/2019 5:20PM
-        // if (!Reconcile_Players()) {	// (must do after Decode pointers)
-        //	return(false);
-        //}
+        #ifndef REMASTER_BUILD
+        if (!Reconcile_Players()) {	// (must do after Decode pointers)
+        	return(false);
+        }
+        #endif
 
         //!!!!!!!!!! put Fixup_Player_Units() here
-        Session.LoadGame = true;
+       // Session.LoadGame = true;
     }
 
     Map.Reload_Sidebar(); // re-load sidebar art.
@@ -1429,17 +1521,12 @@ void Decode_All_Pointers(void)
  * HISTORY:                                                                *
  *   01/12/1995 BR : Created.                                              *
  *=========================================================================*/
-bool Get_Savefile_Info(int id, char* buf, unsigned* scenp, HousesType* housep)
+bool Get_Savefile_Info(const char *filename, char* buf, unsigned* scenp, HousesType* housep)
 {
     char name[_MAX_FNAME + _MAX_EXT];
     unsigned long version;
     char descr_buf[DESCRIP_MAX];
-
-    /*
-    **	Generate the filename to load
-    */
-    sprintf(name, "SAVEGAME.%03d", id);
-    BufferIOFileClass file(name);
+    BufferIOFileClass file(filename);
 
     FileStraw straw(file);
 

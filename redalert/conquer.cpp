@@ -535,6 +535,23 @@ void Keyboard_Process(KeyNumType& input)
     if (input & WWKEY_CTRL_BIT)
         action = 2;
 
+
+    if (key != 0 && key == KN_F3) {
+        if (!Save_Game(SAVEGAME_QUICK)) {
+            WWMessageBox().Process("Error saving game!");
+            Prog_End();
+            exit(EXIT_SUCCESS);
+            }
+    }
+
+    if (key != 0 && key == KN_F4) {
+        if (!Load_Game(SAVEGAME_QUICK)) {
+            WWMessageBox().Process("Error loading game!");
+            Prog_End();
+            exit(EXIT_SUCCESS);
+        }
+    }
+
     /*
     **	If the "N" key is pressed, then select the next object.
     */

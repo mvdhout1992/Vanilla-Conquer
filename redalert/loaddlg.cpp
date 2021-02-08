@@ -400,7 +400,6 @@ int LoadOptionsClass::Process(void)
         */
         case (BUTTON_LOAD | KN_BUTTON):
             game_idx = listbtn.Current_Index();
-            game_num = Files[game_idx]->Num;
             if (Files[game_idx]->Valid) {
 
                 /*
@@ -412,7 +411,7 @@ int LoadOptionsClass::Process(void)
 
                 WWMessageBox().Process(TXT_LOADING, TXT_NONE);
                 Theme.Fade_Out();
-                rc = Load_Game(game_num);
+                rc = Load_Game(Files[game_idx]->Filename, false);
 
                 /*
                 ** Make sure the message says on the screen at least 1 second
@@ -466,8 +465,8 @@ int LoadOptionsClass::Process(void)
                 break;
             }
 
-            game_num = Files[game_idx]->Num;
-            if (!Save_Game(game_num, game_descr)) {
+           
+            if (!Save_Game(Files[game_idx]->Filename, game_descr)) {
                 WWMessageBox().Process(TXT_ERROR_SAVING_GAME);
             } else {
                 Speak(VOX_SAVE1);
@@ -497,10 +496,8 @@ int LoadOptionsClass::Process(void)
         */
         case (BUTTON_DELETE | KN_BUTTON):
             game_idx = listbtn.Current_Index();
-            game_num = Files[game_idx]->Num;
             if (WWMessageBox().Process(TXT_DELETE_FILE_QUERY, TXT_YES, TXT_NO) == 0) {
-                sprintf(fname, "SAVEGAME.%03d", game_num);
-                Delete_File(fname);
+                Delete_File(Files[game_idx]->Filename);
                 Clear_List(&listbtn);
                 Fill_List(&listbtn);
                 if (listbtn.Count() == 0) {
@@ -659,21 +656,20 @@ void LoadOptionsClass::Fill_List(ListClass* list)
     /*
     ** Find all savegame files
     */
-    bool rc = Find_First("SAVEGAME.*", 0, &ff);
-
+    bool rc = Find_First("SAVEGAME*", 0, &ff);
+    int highest_num = 0;
     while (rc) {
 
         if (stricmp(ff->GetName(), NET_SAVE_FILE_NAME) != 0) {
-
+            highest_num = max(highest_num, Num_From_Ext(ff->GetName()));
             /*
             ** Extract the game ID from the filename
             */
-            id = Num_From_Ext(ff->GetName());
 
             /*
             ** get the game's info; if success, add it to the list
             */
-            bool ok = Get_Savefile_Info(id, descr, &scenario, &house);
+            bool ok = Get_Savefile_Info(ff->GetName(), descr, &scenario, &house);
 
             fdata = new FileEntryClass;
 
@@ -691,8 +687,8 @@ void LoadOptionsClass::Fill_List(ListClass* list)
             fdata->Valid = ok;
             fdata->Scenario = scenario;
             fdata->House = house;
-            fdata->Num = id;
             fdata->DateTime = ff->GetTime();
+            strncpy(fdata->Filename, ff->GetName(), 80);
             Files.Add(fdata);
         }
 
@@ -713,20 +709,8 @@ void LoadOptionsClass::Fill_List(ListClass* list)
         ** in the list; if any number isn't found, use that number; otherwise,
         ** use 'N + 1'.
         */
-        int i = 0;
-        for (i = 0; i < Files.Count(); i++) {         // i = the # we're searching for
-            id = -1;                                  // mark as 'not found'
-            for (int j = 0; j < Files.Count(); j++) { // loop through all game ID's
-                if (Files[j]->Num == i) {             // if found, mark as found
-                    id = j;
-                    break;
-                }
-            }
-            if (id == -1)
-                break; // if ID not found, use this one
-        }
 
-        Files[0]->Num = i; // set the empty slot's ID
+        sprintf(Files[0]->Filename , "SAVEGAME.%03d", highest_num + 1); // set the empty slot's filename
     }
 
     /*

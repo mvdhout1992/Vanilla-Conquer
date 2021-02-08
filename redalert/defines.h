@@ -3585,6 +3585,15 @@ typedef enum OptionControlType : char
     OPTION_COUNT
 } OptionControlType;
 
+// Different type of savegames, used by Load_Game() and Save_Game()
+// to determine save game file to write read for quick & auto saves
+typedef enum SaveGameType
+{
+    SAVEGAME_NORMAL,
+    SAVEGAME_AUTO,
+    SAVEGAME_QUICK
+} SaveGameType;
+
 /****************************************************************************
 **	Used to store firing data for a unit.
 */

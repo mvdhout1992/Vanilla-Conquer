@@ -59,6 +59,16 @@ public:
     }
     virtual int Put(void const* source, int slen);
 
+    int Get_Bytes_Written()
+    {
+        return Index;
+    }
+
+    void* Get_Buffer_Memory()
+    {
+        return BufferPtr.Get_Buffer();
+    }
+
 private:
     Buffer BufferPtr;
     int Index;
