@@ -150,9 +150,6 @@ public:
             virtual int Action(unsigned flags, KeyNumType& key);
         };
 
-    private:
-        static int Cameo_Compare(const void* a1, const void* a2);
-
     public:
         StripClass(void)
         {
@@ -348,6 +345,9 @@ public:
         **	progress of construction.
         */
         static char ClockTranslucentTable[(1 + 1) * 256];
+
+private:
+        static int Cameo_Compare(BuildType* a1, BuildType* a2);
 
     } Column[COLUMNS];
 

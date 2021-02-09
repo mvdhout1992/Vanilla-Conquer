@@ -934,6 +934,7 @@ bool Load_Game(const char* file_name)
     /*
     **	Reset the rules values to their initial settings.
     */
+    Rule.Sort_Cameo_Orders(RuleINI);
     Rule.General(RuleINI);
     Rule.Recharge(RuleINI);
     Rule.AI(RuleINI);
@@ -944,6 +945,7 @@ bool Load_Game(const char* file_name)
     Rule.Objects(RuleINI);
     Rule.Difficulty(RuleINI);
 #ifdef FIXIT_CSII //	checked - ajw 9/28/98 - But does this incorporate *changes*? - NO.
+    Rule.Sort_Cameo_Orders(AftermathINI);
     Rule.General(AftermathINI);
     Rule.Recharge(AftermathINI);
     Rule.AI(AftermathINI);
@@ -959,6 +961,7 @@ bool Load_Game(const char* file_name)
     **	Override any rules values specified in this
     **	particular scenario file.
     */
+    Rule.Sort_Cameo_Orders(ini);
     Rule.General(ini);
     Rule.Recharge(ini);
     Rule.AI(ini);
@@ -999,6 +1002,7 @@ bool Load_Game(const char* file_name)
             CCINIClass mpini;
             CCFileClass mplayerIniFile("MPLAYER.INI");
             if (mpini.Load(mplayerIniFile, false)) {
+                Rule.Sort_Cameo_Orders(mpini);
                 Rule.General(mpini);
                 Rule.Recharge(mpini);
                 Rule.AI(mpini);

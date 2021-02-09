@@ -64,7 +64,7 @@
  * HISTORY:                                                                                    *
  *   07/28/1995 JLB : Created.                                                                 *
  *=============================================================================================*/
-SuperClass::SuperClass(int recharge, bool powered, VoxType charging, VoxType ready, VoxType impatient, VoxType suspend)
+SuperClass::SuperClass(int recharge, int cameo_order, bool powered, VoxType charging, VoxType ready, VoxType impatient, VoxType suspend)
     : IsPowered(powered)
     , IsPresent(false)
     , IsOneTime(false)
@@ -76,6 +76,7 @@ SuperClass::SuperClass(int recharge, bool powered, VoxType charging, VoxType rea
     , VoxImpatient(impatient)
     , VoxSuspend(suspend)
     , RechargeTime(recharge)
+    , CameoOrder(cameo_order)
 {
 }
 

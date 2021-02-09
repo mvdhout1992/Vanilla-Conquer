@@ -700,6 +700,7 @@ HouseClass::HouseClass(HousesType house)
     **	weapons must serve as a no-initialization constructor (save/load reasons).
     */
     new (&SuperWeapon[SPC_NUCLEAR_BOMB]) SuperClass(TICKS_PER_MINUTE * Rule.NukeTime,
+                                                    Rule.NukeCameoOrder,
                                                     true,
                                                     VOX_ABOMB_PREPPING,
                                                     VOX_ABOMB_READY,
@@ -708,25 +709,32 @@ HouseClass::HouseClass(HousesType house)
     new (&SuperWeapon[SPC_SONAR_PULSE]) SuperClass(
         TICKS_PER_MINUTE * Rule.SonarTime, false, VOX_NONE, VOX_SONAR_AVAILABLE, VOX_NOT_READY, VOX_NOT_READY);
     new (&SuperWeapon[SPC_CHRONOSPHERE]) SuperClass(TICKS_PER_MINUTE * Rule.ChronoTime,
+                                                    Rule.ChronoCameoOrder,
                                                     true,
                                                     VOX_CHRONO_CHARGING,
                                                     VOX_CHRONO_READY,
                                                     VOX_NOT_READY,
                                                     VOX_INSUFFICIENT_POWER);
     new (&SuperWeapon[SPC_PARA_BOMB])
-        SuperClass(TICKS_PER_MINUTE * Rule.ParaBombTime, false, VOX_NONE, VOX_NONE, VOX_NOT_READY, VOX_NOT_READY);
+        SuperClass(TICKS_PER_MINUTE * Rule.ParaBombTime, Rule.ParaBombCameoOrder, false, VOX_NONE, VOX_NONE, VOX_NOT_READY, VOX_NOT_READY);
     new (&SuperWeapon[SPC_PARA_INFANTRY])
-        SuperClass(TICKS_PER_MINUTE * Rule.ParaInfantryTime, false, VOX_NONE, VOX_NONE, VOX_NOT_READY, VOX_NOT_READY);
-    new (&SuperWeapon[SPC_SPY_MISSION])
-        SuperClass(TICKS_PER_MINUTE * Rule.SpyTime, false, VOX_NONE, VOX_SPY_PLANE, VOX_NOT_READY, VOX_NOT_READY);
+        SuperClass(TICKS_PER_MINUTE * Rule.ParaInfantryTime, Rule.ParaInfantryCameoOrder, false, VOX_NONE, VOX_NONE, VOX_NOT_READY, VOX_NOT_READY);
+    new (&SuperWeapon[SPC_SPY_MISSION]) SuperClass(TICKS_PER_MINUTE * Rule.SpyTime,
+                                                   Rule.SpyPlaneCameoOrder,
+                                                   false,
+                                                   VOX_NONE,
+                                                   VOX_SPY_PLANE,
+                                                   VOX_NOT_READY,
+                                                   VOX_NOT_READY);
     new (&SuperWeapon[SPC_IRON_CURTAIN]) SuperClass(TICKS_PER_MINUTE * Rule.IronCurtainTime,
+                                                    Rule.IronCurtainCameoOrder,
                                                     true,
                                                     VOX_IRON_CHARGING,
                                                     VOX_IRON_READY,
                                                     VOX_NOT_READY,
                                                     VOX_INSUFFICIENT_POWER);
     new (&SuperWeapon[SPC_GPS])
-        SuperClass(TICKS_PER_MINUTE * Rule.GPSTime, true, VOX_NONE, VOX_NONE, VOX_NOT_READY, VOX_INSUFFICIENT_POWER);
+        SuperClass(TICKS_PER_MINUTE * Rule.GPSTime, Rule.GPSCameoOrder, true, VOX_NONE, VOX_NONE, VOX_NOT_READY, VOX_INSUFFICIENT_POWER);
 
     memset(UnitsKilled, '\0', sizeof(UnitsKilled));
     memset(BuildingsKilled, '\0', sizeof(BuildingsKilled));
@@ -1423,7 +1431,7 @@ void HouseClass::AI(void)
                 }
             }
         }
-        Map.Sort_Cameo_Icons();
+        //Map.Sort_Cameo_Icons();
 #ifdef REMASTER_BUILD
         Recalculate_Placement_Distances();
 #endif

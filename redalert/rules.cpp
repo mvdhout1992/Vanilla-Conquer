@@ -266,7 +266,17 @@ RulesClass::RulesClass(void)
     , TiberiumShortScan(0x0600)
     , TiberiumLongScan(0x2000)
     , HealthBarDisplayMode(HB_SELECTED)
-    , ResourceBarDisplayMode(RB_SELECTED)
+    , ResourceBarDisplayMode(RB_SELECTED) 
+    , SortCameos(false)
+    , SonarCameoOrder(INT_MAX)
+    , ChronoCameoOrder(INT_MAX)
+    , ParaBombCameoOrder(INT_MAX)
+    , ParaInfantryCameoOrder(INT_MAX)
+    , ParaSaboteurCameoOrder(INT_MAX)
+    , SpyPlaneCameoOrder(INT_MAX)
+    , IronCurtainCameoOrder(INT_MAX)
+    , GPSCameoOrder(INT_MAX)
+    , NukeCameoOrder(INT_MAX)
 {
 #ifdef FIXIT_CSII //	checked - ajw 9/28/98
     NewUnitsEnabled = SecretUnitsEnabled = 0;
@@ -355,6 +365,65 @@ bool RulesClass::Process(CCINIClass& ini)
     BEnd(BENCH_RULES);
 
     return (true);
+}
+
+// Cameo sort orders
+bool RulesClass::Sort_Cameo_Orders(CCINIClass& ini)
+{
+    static char const* const SORTORDERS = "SortCameoOrders";
+
+    if (ini.Is_Present(SORTORDERS)) {
+        SortCameos = ini.Get_Bool(SORTORDERS, "SortCameos", false);
+        SonarCameoOrder = ini.Get_Int(SORTORDERS, "Sonar", INT_MAX);
+        ParaBombCameoOrder = ini.Get_Int(SORTORDERS, "ParaBomb", INT_MAX);
+        ChronoCameoOrder = ini.Get_Int(SORTORDERS, "Chrono", INT_MAX);
+        ParaInfantryCameoOrder = ini.Get_Int(SORTORDERS, "ParaInfantry", INT_MAX);
+        ParaSaboteurCameoOrder = ini.Get_Int(SORTORDERS, "ParaSaboteur", INT_MAX);
+        SpyPlaneCameoOrder = ini.Get_Int(SORTORDERS, "SpyPlane", INT_MAX);
+        IronCurtainCameoOrder = ini.Get_Int(SORTORDERS, "IronCurtain", INT_MAX);
+        GPSCameoOrder = ini.Get_Int(SORTORDERS, "GPS", INT_MAX);
+        NukeCameoOrder = ini.Get_Int(SORTORDERS, "Nuke", INT_MAX);
+
+        int entries = ini.Entry_Count(SORTORDERS);
+        for (int i = 0; i < entries; i++)
+        {
+            std::string entry = ini.Get_Entry(SORTORDERS, i);
+
+            TechnoTypeClass *t = NULL;
+            int id = AircraftTypeClass::From_Name(entry.c_str());
+            if (id != -1) {
+                t = (TechnoTypeClass*)&AircraftTypeClass::As_Reference((AircraftType)id);
+            }
+
+            id = BuildingTypeClass::From_Name(entry.c_str());
+            if (id != -1) {
+                t = (TechnoTypeClass*)&BuildingTypeClass::As_Reference((StructType)id);
+            }
+
+            id = InfantryTypeClass::From_Name(entry.c_str());
+            if (id != -1) {
+                t = (TechnoTypeClass*)&InfantryTypeClass::As_Reference((InfantryType)id);
+            }
+
+             id = UnitTypeClass::From_Name(entry.c_str());
+            if (id != -1) {
+                 t = (TechnoTypeClass*)&UnitTypeClass::As_Reference((UnitType)id);
+            }
+
+            id = VesselTypeClass::From_Name(entry.c_str());
+            if (id != -1) {
+                t = (TechnoTypeClass*)&VesselTypeClass::As_Reference((VesselType)id);
+            }
+
+            if (t) {
+                t->CameoOrder = ini.Get_Int(SORTORDERS, entry.c_str(), INT_MAX);
+            }
+
+        }
+
+        return true;
+    }
+    return false;
 }
 
 /***********************************************************************************************

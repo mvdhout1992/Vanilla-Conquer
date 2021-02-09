@@ -47,6 +47,7 @@ public:
     SuperClass(void)
         : Control(NoInitClass()){};
     SuperClass(int recharge,
+                int cameo_order,
                bool powered,
                VoxType charging = VOX_NONE,
                VoxType ready = VOX_NONE,
@@ -61,6 +62,10 @@ public:
     void Impatient_Click(void) const;
     int Anim_Stage(void) const;
     bool Discharged(bool player);
+    int Cameo_Order(void) const
+    {
+        return CameoOrder;
+    }
     bool Is_Ready(void) const
     {
         return (IsReady);
@@ -100,6 +105,7 @@ private:
     VoxType VoxImpatient;
     VoxType VoxSuspend;
     int RechargeTime;
+    int CameoOrder;
 
     // Needed to make ANIMATION_STAGES public so the animation frame numbers could be turned into progress
     // percentages - 2019/08/07 Jason Scott

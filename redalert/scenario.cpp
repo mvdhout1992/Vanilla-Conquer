@@ -516,6 +516,7 @@ bool Read_Scenario(char* name)
             CCINIClass ini;
             CCFileClass mplayerIniFile("MPLAYER.INI");
             if (ini.Load(mplayerIniFile, false)) {
+                Rule.Sort_Cameo_Orders(ini);
                 Rule.General(ini);
                 Rule.Recharge(ini);
                 Rule.AI(ini);
@@ -2200,6 +2201,7 @@ bool Read_Scenario_INI(char* fname, bool)
     BuildingTypeClass::As_Reference(STRUCT_LARVA2).Level = -1;
 #endif
 
+    Rule.Sort_Cameo_Orders(RuleINI);
     Rule.General(RuleINI);
     Rule.Recharge(RuleINI);
     Rule.AI(RuleINI);
@@ -2210,6 +2212,8 @@ bool Read_Scenario_INI(char* fname, bool)
     Rule.Objects(RuleINI);
     Rule.Difficulty(RuleINI);
 #ifdef FIXIT_CSII //	checked - ajw 9/28/98 - Except does this _change_ any rules, or just add to them? - Just adds.
+
+    Rule.Sort_Cameo_Orders(AftermathINI);
     Rule.General(AftermathINI);
     Rule.Recharge(AftermathINI);
     Rule.AI(AftermathINI);
@@ -2236,6 +2240,8 @@ bool Read_Scenario_INI(char* fname, bool)
     **	Override any rules values specified in this
     **	particular scenario file.
     */
+    Rule.Sort_Cameo_Orders(ini);
+    Rule.General(ini);
     Rule.General(ini);
     Rule.Recharge(ini);
     Rule.AI(ini);

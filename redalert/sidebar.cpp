@@ -672,6 +672,10 @@ bool SidebarClass::Add(RTTIType type, int id, bool via_capture)
             Activate(1);
             IsToRedraw = true;
             Flag_To_Redraw(false);
+            if (Rule.SortCameos) {
+                Sort_Cameo_Icons();
+            }
+
             return (true);
         }
         return (false);
@@ -1942,24 +1946,48 @@ bool SidebarClass::StripClass::Recalc(void)
     return (redraw);
 }
 
-void SidebarClass::StripClass::Sort_Cameo_Icons()
+template <class T>
+void Bubble_Sort(T* array, int count, int size_per_elem, int (*sort_func)(T* a1, T* a2))
 {
-    qsort(&Buildables, BuildableCount, sizeof(Buildables[0]), SidebarClass::StripClass::Cameo_Compare);
+    if (array != NULL && count > 1) {
+        bool swapflag;
+
+        do {
+            swapflag = false;
+            for (int index = 0; index < count - 1; index++) {
+                if (sort_func(&array[index], &array[index+1]) > 1) {
+                    T temp = array[index];
+                    array[index] = array[index + 1];
+                    array[index + 1] = temp;
+                    swapflag = true;
+                }
+            }
+        } while (swapflag);
+    }
 }
 
-int SidebarClass::StripClass::Cameo_Compare(const void* a1, const void* a2)
+// use Bubble sort so it's stable sort and cameo icons aren't randomly shuffled all over the place
+void SidebarClass::StripClass::Sort_Cameo_Icons()
 {
-    BuildType *b1 = (BuildType*)a1;
-    BuildType* b2 = (BuildType*)a2;
 
-    const TechnoTypeClass *t1 = Fetch_Techno_Type(b1->BuildableType, b1->BuildableID);
-    const TechnoTypeClass* t2 = Fetch_Techno_Type(b2->BuildableType, b2->BuildableID);
+    Bubble_Sort(Buildables, BuildableCount, sizeof(Buildables[0]), SidebarClass::StripClass::Cameo_Compare);
+    //qsort(&Buildables, BuildableCount, sizeof(Buildables[0]), SidebarClass::StripClass::Cameo_Compare);
+}
 
-    if (t1->CameoOrder == t2->CameoOrder) {
-        return (int*)b1 - (int*)b2;
-    }
+
+
+int SidebarClass::StripClass::Cameo_Compare(BuildType* a1, BuildType* a2)
+{
+    const TechnoTypeClass* t1 = Fetch_Techno_Type(a1->BuildableType, a1->BuildableID);
+    const TechnoTypeClass* t2 = Fetch_Techno_Type(a2->BuildableType, a2->BuildableID);
+
+    // Handle supeweapons (RTT_SPECIAL)
+    int CameoOrder1 =
+        a1->BuildableType == RTTI_SPECIAL ? PlayerPtr->SuperWeapon[a1->BuildableID].Cameo_Order() : t1->CameoOrder;
+    int CameoOrder2 =
+        a2->BuildableType == RTTI_SPECIAL ? PlayerPtr->SuperWeapon[a2->BuildableID].Cameo_Order() : t2->CameoOrder;
     
-    return t1->CameoOrder - t2->CameoOrder;
+    return CameoOrder1 - CameoOrder2;
 }
 
 

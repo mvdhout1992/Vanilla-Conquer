@@ -60,7 +60,8 @@ class RulesClass
 {
 public:
     RulesClass(void);
-
+    
+    bool Sort_Cameo_Orders(CCINIClass& ini);
     bool Process(CCINIClass& file);
     bool General(CCINIClass& ini);
     bool MPlayer(CCINIClass& ini);
@@ -886,6 +887,18 @@ public:
         RB_SELECTED = 0,
         RB_ALWAYS,
     } ResourceBarDisplayMode;
+
+    bool SortCameos;
+
+    int SonarCameoOrder;
+    int ChronoCameoOrder;
+    int ParaBombCameoOrder;
+    int ParaInfantryCameoOrder;
+    int ParaSaboteurCameoOrder;
+    int SpyPlaneCameoOrder;
+    int IronCurtainCameoOrder;
+    int GPSCameoOrder;
+    int NukeCameoOrder;
 };
 
 #endif
