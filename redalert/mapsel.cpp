@@ -141,7 +141,7 @@ char const* Map_Selection(void)
 
     //	fixed oldvolume = Options.ScoreVolume;
     //	Options.Set_Score_Volume(fixed(4, 10));
-    Theme.Queue_Song(THEME_MAP);
+    Theme.Queue_Song(Theme.Map_Theme());
 
     void* anim = Open_Animation(
         _filename, NULL, 0L, (WSAOpenType)(WSA_OPEN_FROM_MEM | WSA_OPEN_TO_PAGE), (unsigned char*)&mappalette);

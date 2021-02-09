@@ -404,7 +404,7 @@ bool Start_Scenario(char* name, bool briefing)
     }
 
     if (Scen.TransitTheme == THEME_NONE) {
-        Theme.Queue_Song(THEME_FIRST);
+        Theme.Queue_Song(Theme.First_Theme());
     }
 
     /*

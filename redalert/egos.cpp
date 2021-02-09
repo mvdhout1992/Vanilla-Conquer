@@ -724,7 +724,7 @@ void Show_Who_Was_Responsible(void)
     if (oldvolume == 0) {
         Options.Set_Score_Volume(fixed(4, 10), false);
     }
-    Theme.Queue_Song(THEME_CREDITS);
+    Theme.Queue_Song(Theme.Credits_Theme());
 
     /*
     ** Init misc timing variables.
@@ -799,7 +799,7 @@ void Show_Who_Was_Responsible(void)
         }
 
         if (frame > 1000 && !Theme.Still_Playing()) {
-            Theme.Queue_Song(THEME_CREDITS); // NONE);
+            Theme.Queue_Song(Theme.Credits_Theme()); // NONE);
         }
 
         /*

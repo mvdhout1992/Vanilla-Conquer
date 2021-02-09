@@ -57,7 +57,7 @@ ThemeControl _themes[] = {
     /*
     ** Retail
     */
-    {"BIGF226M", TXT_THEME_BIGF, "",  0, 307, true, false, true, HOUSEF_ALLIES, true},
+    {"BIGF226M", TXT_THEME_BIGF, "", 0, 307, true, false, true, HOUSEF_ALLIES, true},
     {"CRUS226M", TXT_THEME_CRUS, "", 0, 222, true, false, true, HOUSEF_SOVIET, true},
     {"FAC1226M", TXT_THEME_FAC1, "", 0, 271, true, false, true, HOUSEF_ALLIES, true},
     {"FAC2226M", TXT_THEME_FAC2, "", 0, 328, true, false, true, HOUSEF_SOVIET, true},
@@ -151,10 +151,11 @@ ThemeClass::ThemeClass(void)
 {
 }
 
-ThemeClass::~ThemeClass(void) {
-	for (int i = 0; i < Themes.Count(); i++) {
-		delete Themes[i];
-	}
+ThemeClass::~ThemeClass(void)
+{
+    for (int i = 0; i < Themes.Count(); i++) {
+        delete Themes[i];
+    }
 }
 
 /***********************************************************************************************
@@ -201,7 +202,8 @@ char const* ThemeClass::Full_Name(ThemeType theme) const
 void ThemeClass::AI(void)
 {
     if (SampleType && !Debug_Quiet) {
-        if (ScoresPresent && AtleastOneThemeAllowed && Options.ScoreVolume != 0 && !Still_Playing() && Pending != THEME_NONE) {
+        if (ScoresPresent && AtleastOneThemeAllowed && Options.ScoreVolume != 0 && !Still_Playing()
+            && Pending != THEME_NONE) {
 
             /*
             **	If the pending song needs to be picked, then pick it now.
@@ -250,7 +252,7 @@ ThemeType ThemeClass::Next_Song(ThemeType theme) const
             */
             ThemeType newtheme;
             do {
-                newtheme = Sim_Random_Pick(THEME_FIRST, (ThemeType)(Themes.Count()-1));
+                newtheme = Sim_Random_Pick(THEME_FIRST, (ThemeType)(Themes.Count() - 1));
             } while (newtheme == theme || !Is_Allowed(newtheme));
             theme = newtheme;
 
@@ -261,7 +263,7 @@ ThemeType ThemeClass::Next_Song(ThemeType theme) const
             */
             do {
                 theme++;
-                if (theme > Themes.Count()-1) {
+                if (theme > Themes.Count() - 1) {
                     theme = THEME_FIRST;
                 }
             } while (!Is_Allowed(theme));
@@ -286,6 +288,11 @@ ThemeType ThemeClass::Next_Song(ThemeType theme) const
  * HISTORY:                                                                                    *
  *   01/16/1995 JLB : Created.                                                                 *
  *=============================================================================================*/
+void ThemeClass::Queue_Song(const char* name)
+{
+    Queue_Song(From_Name(name));
+}
+
 void ThemeClass::Queue_Song(ThemeType theme)
 {
     /*
@@ -553,7 +560,8 @@ ThemeType ThemeClass::From_Name(char const* name) const
         **	yield a match, but is not guaranteed to be unique.
         */
         for (ThemeType theme = THEME_FIRST; theme < Themes.Count(); theme++) {
-            const char* fullname = Themes[theme]->NameId == -1 ? Themes[theme]->Name : Text_String(Themes[theme]->NameId);
+            const char* fullname =
+                Themes[theme]->NameId == -1 ? Themes[theme]->Name : Text_String(Themes[theme]->NameId);
             if (fullname != nullptr && strstr(fullname, name) != NULL) {
                 return (theme);
             }
@@ -591,6 +599,19 @@ void ThemeClass::Scan(void)
     if (ini.Load(file, false)) {
 
         loadhardcoded = ini.Get_Bool("General", "LoadHardcodedList", true);
+        ini.Get_String("General", "IntroTheme", _themes[THEME_INTRO].Filename, IntroTheme, sizeof(IntroTheme));
+        ini.Get_String("General", "MapTheme", _themes[THEME_MAP].Filename, MapTheme, sizeof(MapTheme));
+        ini.Get_String("General", "FirstTheme", _themes[THEME_FIRST].Filename, FirstTheme, sizeof(FirstTheme));
+        ini.Get_String("General", "ScoreTheme", _themes[THEME_SCORE].Filename, ScoreTheme, sizeof(ScoreTheme));
+        ini.Get_String("General", "CreditsTheme", _themes[THEME_CREDITS].Filename, CreditsTheme, sizeof(CreditsTheme));
+        ini.Get_String("General",
+                       "MatchEndSkirmishMenuTheme",
+                       _themes[THEME_CRUS].Filename,
+                       MatchEndSkirmishMenuTheme,
+                       sizeof(MatchEndSkirmishMenuTheme));
+
+        RandomFirstScore = ini.Get_Bool("General", "RandomFirstScore", false);
+
         if (loadhardcoded) {
             for (ThemeType t = THEME_FIRST; t < ARRAY_SIZE(_themes); t++) {
                 ThemeControl* theme = new ThemeControl;
@@ -603,17 +624,18 @@ void ThemeClass::Scan(void)
             std::string entry = ini.Get_Entry("Themes", i);
             std::string songsection = ini.Get_String("Themes", entry.c_str(), "<none>");
 
-            ThemeControl *theme = new ThemeControl;
+            ThemeControl* theme = new ThemeControl;
             theme->Repeat = ini.Get_Bool(songsection.c_str(), "Repeat", false);
             theme->NameId = ini.Get_Int(songsection.c_str(), "NameId", -1);
-            ini.Get_String(songsection.c_str(), "Filename", songsection.c_str(), theme->Filename, sizeof(theme->Filename));
+            ini.Get_String(
+                songsection.c_str(), "Filename", songsection.c_str(), theme->Filename, sizeof(theme->Filename));
             ini.Get_String(songsection.c_str(), "Name", "<none>", theme->Name, sizeof(theme->Name));
-            theme->Owner = ini.Get_Owners(songsection.c_str(), "Owner", HOUSEF_SOVIET| HOUSEF_ALLIES);
+            theme->Owner = ini.Get_Owners(songsection.c_str(), "Owner", HOUSEF_SOVIET | HOUSEF_ALLIES);
             theme->Normal = ini.Get_Bool(songsection.c_str(), "Normal", true);
             theme->Duration = ini.Get_Int(songsection.c_str(), "Duration", -1);
             theme->Scenario = ini.Get_Int(songsection.c_str(), "Scenario", 0);
             theme->IsHardcoded = false;
-			Themes.Add(theme);
+            Themes.Add(theme);
         }
     }
 
@@ -657,4 +679,22 @@ void ThemeClass::Set_Theme_Data(ThemeType theme, int scenario, int owners)
 bool ThemeClass::Is_Hard_Coded(ThemeType theme)
 {
     return Themes[theme]->IsHardcoded;
+}
+
+ThemeType ThemeClass::First_Theme(void) const
+{
+    if (!AtleastOneThemeAllowed) {
+        return THEME_QUIET;
+    }
+
+    if (RandomFirstScore) {
+        while (true) {
+            ThemeType theme = (ThemeType)Sim_Random_Pick(0, Max_Themes());
+            if (Is_Allowed(theme)) {
+                return theme;
+            }
+        }
+    }
+
+    return From_Name(FirstTheme);
 }

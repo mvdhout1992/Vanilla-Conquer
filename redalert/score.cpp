@@ -368,7 +368,7 @@ void ScoreClass::Presentation(void)
     ControlQ = 0;
     FontXSpacing = 0;
     Map.Override_Mouse_Shape(MOUSE_NORMAL);
-    Theme.Queue_Song(THEME_SCORE);
+    Theme.Queue_Song(Theme.Score_Theme());
 
     VisiblePage.Clear();
     PseudoSeenBuff->Clear();

@@ -57,7 +57,14 @@ private:
     int Current;       // Handle to current score.
     ThemeType Score;   // Score number currently being played.
     ThemeType Pending; // Score to play next.
-    bool AtleastOneThemeAllowed; // To prevent infinite loop trying to play song
+    char IntroTheme[128]; // Theme to play on main menu
+    char MapTheme[128];   // Theme to play on map screen
+    char ScoreTheme[128]; // Score to play on the SP score screen
+    char FirstTheme[128]; // First theme that plays on scenario load
+    char CreditsTheme[128];    // Theme to play on credits screen
+    char MatchEndSkirmishMenuTheme[128]; // Theme to use in skirmish menu after skirmish match ended
+    bool AtleastOneThemeAllowed; // To prevent infinite loop when no songs are allowed
+    bool RandomFirstScore; //  play Random score as 'first' score on scenario load
 
     DynamicVectorClass<ThemeControl*> Themes;
 
@@ -72,6 +79,34 @@ public:
 
     ThemeType From_Name(char const* name) const;
     ThemeType Next_Song(ThemeType index) const;
+   
+    const char *Match_End_Skirmish_Menu_Theme(void) const
+    {
+        return MatchEndSkirmishMenuTheme;
+    }
+
+    const char* Map_Theme(void) const
+    {
+        return MapTheme;
+    }
+
+    const char* Credits_Theme(void) const
+    {
+        return CreditsTheme;
+    }
+
+    const char* Intro_Theme(void) const
+    {
+        return IntroTheme;
+    }
+
+   const char* Score_Theme(void) const
+    {
+        return ScoreTheme;
+    }
+
+    ThemeType First_Theme(void) const;
+
     ThemeType What_Is_Playing(void) const
     {
         return Score;
@@ -97,6 +132,7 @@ public:
         Queue_Song(THEME_QUIET);
     }
     void Queue_Song(ThemeType index);
+    void Queue_Song(const char* index);
     void Set_Theme_Data(ThemeType theme, int scenario, int owners);
     void Stop(void);
     void Suspend(void);

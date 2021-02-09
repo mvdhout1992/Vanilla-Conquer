@@ -1014,7 +1014,7 @@ bool Load_Game(const char* file_name)
 #endif
 
     if (Scen.TransitTheme == THEME_NONE) {
-        Theme.Queue_Song(THEME_FIRST);
+        Theme.Queue_Song(Theme.First_Theme());
     } else {
         Theme.Queue_Song(Scen.TransitTheme);
     }

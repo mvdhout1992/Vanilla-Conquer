@@ -554,7 +554,7 @@ bool Select_Game(bool fade)
         /*
         **	Menu selection processing loop
         */
-        Theme.Queue_Song(THEME_CRUS);
+        Theme.Queue_Song(Theme.Match_End_Skirmish_Menu_Theme());
 
         /*
         ** If we're playing back a recording, load all pertinent values & skip
@@ -711,7 +711,7 @@ bool Select_Game(bool fade)
                 }
 #endif
                 Theme.Fade_Out();
-                Theme.Queue_Song(THEME_FIRST);
+                Theme.Queue_Song(Theme.First_Theme());
                 Session.Type = GAME_NORMAL;
                 process = false;
                 break;
@@ -824,7 +824,7 @@ bool Select_Game(bool fade)
             */
             case SEL_LOAD_MISSION:
                 if (LoadOptionsClass(LoadOptionsClass::LOAD).Process()) {
-                    Theme.Queue_Song(THEME_FIRST);
+                    Theme.Queue_Song(Theme.First_Theme());
                     process = false;
                     gameloaded = true;
                 } else {
@@ -1009,7 +1009,7 @@ bool Select_Game(bool fade)
                     //						Play_Movie(VQ_INTRO_MOVIE, THEME_NONE, false);		// has transitino picture to
                     //briefing
                 }
-                Theme.Queue_Song(THEME_CRUS);
+                Theme.Queue_Song(Theme.Match_End_Skirmish_Menu_Theme());
                 display = true;
                 fade = true;
                 selection = SEL_NONE;
