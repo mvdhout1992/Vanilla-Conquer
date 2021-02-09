@@ -3974,7 +3974,7 @@ static bool Change_Local_Dir(int cd)
             LastCD = cd;
             Theme.Stop();
             Reinit_Secondary_Mixfiles();
-            ThemeClass::Scan();
+            Theme.Scan();
 
             return true;
         }

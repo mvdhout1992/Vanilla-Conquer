@@ -872,8 +872,8 @@ bool RulesClass::Themes(CCINIClass& ini)
     static char const* const THEMECONTROL = "ThemeControl";
 
     if (ini.Is_Present(THEMECONTROL)) {
-        for (ThemeType theme = THEME_FIRST; theme < THEME_COUNT; theme++) {
-            if (ini.Is_Present(THEMECONTROL, Theme.Base_Name(theme))) {
+        for (ThemeType theme = THEME_FIRST; theme < Theme.Max_Themes(); theme++) {
+            if (Theme.Is_Hard_Coded(theme) && ini.Is_Present(THEMECONTROL, Theme.Base_Name(theme))) {
 
                 char buffer[128];
                 int scen = 1;

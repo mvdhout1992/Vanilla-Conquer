@@ -2428,7 +2428,7 @@ static void Init_Secondary_Mixfiles(void)
     */
     ScoresPresent = true;
     ScoreMix = new MFCD("SCORES.MIX", &FastKey);
-    ThemeClass::Scan();
+    Theme.Scan();
 
     /*
     **	These are sound card specific, but the install program would have

@@ -857,8 +857,6 @@ typedef enum ThemeType : char
     THEME_WASTELND,
 #endif
 
-    THEME_COUNT,
-    THEME_LAST = (int)THEME_COUNT - 1,
     THEME_FIRST = 0
 } ThemeType;
 

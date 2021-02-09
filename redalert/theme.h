@@ -35,28 +35,31 @@
 #ifndef THEME_H
 #define THEME_H
 
+typedef struct
+{
+    char Filename[128]; // Filename of score.
+    int NameId;         // Text number for full score name.
+    char Name[128];     // Name used if NameId is -1
+    int Scenario;       // Scenario when it first becomes available.
+    int Duration;       // Duration of theme in seconds.
+    bool Normal;        // Allowed in normal game play?
+    bool Repeat;        // Always repeat this score?
+    bool Available;     // Is the score available?
+    int Owner;          // What houses are allowed to play this theme (bit field)?
+    bool IsHardcoded; // If hard-coded apply RulesClass::Themes() for this song
+} ThemeControl;
+
 class ThemeClass
 {
 private:
-    static char const* Theme_File_Name(ThemeType theme);
+    char const* Theme_File_Name(ThemeType theme);
 
     int Current;       // Handle to current score.
     ThemeType Score;   // Score number currently being played.
     ThemeType Pending; // Score to play next.
+    bool AtleastOneThemeAllowed; // To prevent infinite loop trying to play song
 
-    typedef struct
-    {
-        char const* Name; // Filename of score.
-        int Fullname;     // Text number for full score name.
-        int Scenario;     // Scenario when it first becomes available.
-        int Duration;     // Duration of theme in seconds.
-        bool Normal;      // Allowed in normal game play?
-        bool Repeat;      // Always repeat this score?
-        bool Available;   // Is the score available?
-        int Owner;        // What houses are allowed to play this theme (bit field)?
-    } ThemeControl;
-
-    static ThemeControl _themes[THEME_COUNT];
+    DynamicVectorClass<ThemeControl*> Themes;
 
     enum
     {
@@ -65,6 +68,7 @@ private:
 
 public:
     ThemeClass(void);
+	~ThemeClass(void);
 
     ThemeType From_Name(char const* name) const;
     ThemeType Next_Song(ThemeType index) const;
@@ -75,18 +79,18 @@ public:
     bool Is_Allowed(ThemeType index) const;
     bool Is_Regular(ThemeType theme) const
     {
-        return (theme != THEME_NONE && _themes[theme].Normal);
+        return (theme != THEME_NONE && Themes[theme]->Normal);
     }
     char const* Base_Name(ThemeType index) const;
     char const* Full_Name(ThemeType index) const;
     int Max_Themes(void) const
     {
-        return THEME_COUNT;
+        return Themes.Count();
     }
     int Play_Song(ThemeType index);
     int Still_Playing(void) const;
     int Track_Length(ThemeType index) const;
-    static void Scan(void);
+    void Scan(void);
     void AI(void);
     void Fade_Out(void)
     {
@@ -96,6 +100,7 @@ public:
     void Set_Theme_Data(ThemeType theme, int scenario, int owners);
     void Stop(void);
     void Suspend(void);
+    bool Is_Hard_Coded(ThemeType theme);
 };
 
 #endif

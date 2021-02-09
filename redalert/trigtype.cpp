@@ -708,7 +708,7 @@ bool TriggerTypeClass::Edit(void)
                                  MFCD::Retrieve("EBTN-UP.SHP"),
                                  MFCD::Retrieve("EBTN-DN.SHP"));
 
-    for (ThemeType theme = THEME_FIRST; theme < THEME_COUNT; theme++) {
+    for (ThemeType theme = THEME_FIRST; theme < Theme.Max_Themes(); theme++) {
         themetype1list.Add_Item(Theme.Full_Name(theme));
         themetype2list.Add_Item(Theme.Full_Name(theme));
     }

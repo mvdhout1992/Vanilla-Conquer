@@ -2012,7 +2012,7 @@ int MapEditClass::Load_Scenario(void)
                                MFCD::Retrieve("EBTN-UP.SHP"),
                                MFCD::Retrieve("EBTN-DN.SHP"));
         themebtn.Add_Item("<none>");
-        for (ThemeType th = THEME_FIRST; th < THEME_COUNT; th++) {
+        for (ThemeType th = THEME_FIRST; th < Theme.Max_Themes(); th++) {
             themebtn.Add_Item(Theme.Full_Name(th));
         }
         if (Scen.TransitTheme != THEME_NONE) {

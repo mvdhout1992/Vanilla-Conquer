@@ -53,57 +53,57 @@
 /*
 **	These are the actual filename list for the theme sample files.
 */
-ThemeClass::ThemeControl ThemeClass::_themes[THEME_COUNT] = {
+ThemeControl _themes[] = {
     /*
     ** Retail
     */
-    {"BIGF226M", TXT_THEME_BIGF, 0, 307, true, false, true, HOUSEF_ALLIES},
-    {"CRUS226M", TXT_THEME_CRUS, 0, 222, true, false, true, HOUSEF_SOVIET},
-    {"FAC1226M", TXT_THEME_FAC1, 0, 271, true, false, true, HOUSEF_ALLIES},
-    {"FAC2226M", TXT_THEME_FAC2, 0, 328, true, false, true, HOUSEF_SOVIET},
-    {"HELL226M", TXT_THEME_HELL, 0, 375, true, false, true, HOUSEF_ALLIES},
-    {"RUN1226M", TXT_THEME_RUN1, 0, 312, true, false, true, HOUSEF_SOVIET},
-    {"SMSH226M", TXT_THEME_SMSH, 0, 272, true, false, true, HOUSEF_ALLIES},
-    {"TREN226M", TXT_THEME_TREN, 0, 312, true, false, true, HOUSEF_SOVIET},
-    {"WORK226M", TXT_THEME_WORK, 0, 277, true, false, true, HOUSEF_ALLIES},
-    {"AWAIT", TXT_THEME_AWAIT, 0, 259, true, false, true, HOUSEF_ALLIES},
-    {"DENSE_R", TXT_THEME_DENSE_R, 0, 294, true, false, true, HOUSEF_ALLIES},
-    {"FOGGER1A", TXT_THEME_FOGGER1A, 0, 297, true, false, true, HOUSEF_ALLIES},
-    {"MUD1A", TXT_THEME_MUD1A, 0, 280, true, false, true, HOUSEF_ALLIES},
-    {"RADIO2", TXT_THEME_RADIO2, 0, 237, true, false, true, HOUSEF_ALLIES},
-    {"ROLLOUT", TXT_THEME_ROLLOUT, 0, 227, true, false, true, HOUSEF_ALLIES},
-    {"SNAKE", TXT_THEME_SNAKE, 0, 277, true, false, true, HOUSEF_ALLIES},
-    {"TERMINAT", TXT_THEME_TERMINAT, 0, 310, true, false, true, HOUSEF_ALLIES},
-    {"TWIN", TXT_THEME_TWIN, 0, 229, true, false, true, HOUSEF_ALLIES},
-    {"VECTOR1A", TXT_THEME_VECTOR1A, 0, 252, true, false, true, HOUSEF_ALLIES},
-    {"MAP", TXT_THEME_MAP, 0, 63, false, true, true, HOUSEF_NONE},
-    {"SCORE", TXT_THEME_SCORE, 0, 106, false, true, true, HOUSEF_NONE},
-    {"INTRO", TXT_THEME_INTRO, 0, 205, false, true, true, HOUSEF_NONE},
-    {"CREDITS", TXT_THEME_CREDITS, 0, 163, false, true, true, HOUSEF_NONE},
+    {"BIGF226M", TXT_THEME_BIGF, "",  0, 307, true, false, true, HOUSEF_ALLIES, true},
+    {"CRUS226M", TXT_THEME_CRUS, "", 0, 222, true, false, true, HOUSEF_SOVIET, true},
+    {"FAC1226M", TXT_THEME_FAC1, "", 0, 271, true, false, true, HOUSEF_ALLIES, true},
+    {"FAC2226M", TXT_THEME_FAC2, "", 0, 328, true, false, true, HOUSEF_SOVIET, true},
+    {"HELL226M", TXT_THEME_HELL, "", 0, 375, true, false, true, HOUSEF_ALLIES, true},
+    {"RUN1226M", TXT_THEME_RUN1, "", 0, 312, true, false, true, HOUSEF_SOVIET, true},
+    {"SMSH226M", TXT_THEME_SMSH, "", 0, 272, true, false, true, HOUSEF_ALLIES, true},
+    {"TREN226M", TXT_THEME_TREN, "", 0, 312, true, false, true, HOUSEF_SOVIET, true},
+    {"WORK226M", TXT_THEME_WORK, "", 0, 277, true, false, true, HOUSEF_ALLIES, true},
+    {"AWAIT", TXT_THEME_AWAIT, "", 0, 259, true, false, true, HOUSEF_ALLIES, true},
+    {"DENSE_R", TXT_THEME_DENSE_R, "", 0, 294, true, false, true, HOUSEF_ALLIES, true},
+    {"FOGGER1A", TXT_THEME_FOGGER1A, "", 0, 297, true, false, true, HOUSEF_ALLIES, true},
+    {"MUD1A", TXT_THEME_MUD1A, "", 0, 280, true, false, true, HOUSEF_ALLIES, true},
+    {"RADIO2", TXT_THEME_RADIO2, "", 0, 237, true, false, true, HOUSEF_ALLIES, true},
+    {"ROLLOUT", TXT_THEME_ROLLOUT, "", 0, 227, true, false, true, HOUSEF_ALLIES, true},
+    {"SNAKE", TXT_THEME_SNAKE, "", 0, 277, true, false, true, HOUSEF_ALLIES, true},
+    {"TERMINAT", TXT_THEME_TERMINAT, "", 0, 310, true, false, true, HOUSEF_ALLIES, true},
+    {"TWIN", TXT_THEME_TWIN, "", 0, 229, true, false, true, HOUSEF_ALLIES, true},
+    {"VECTOR1A", TXT_THEME_VECTOR1A, "", 0, 252, true, false, true, HOUSEF_ALLIES, true},
+    {"MAP", TXT_THEME_MAP, "", 0, 63, false, true, true, HOUSEF_NONE, true},
+    {"SCORE", TXT_THEME_SCORE, "", 0, 106, false, true, true, HOUSEF_NONE, true},
+    {"INTRO", TXT_THEME_INTRO, "", 0, 205, false, true, true, HOUSEF_NONE, true},
+    {"CREDITS", TXT_THEME_CREDITS, "", 0, 163, false, true, true, HOUSEF_NONE, true},
 
     /*
     ** Counterstrike
     */
-    {"2ND_HAND", TXT_THEME_2ND_HAND, 0, 268, true, false, true, HOUSEF_ALLIES | HOUSEF_SPAIN},
-    {"ARAZOID", TXT_THEME_ARAZOID, 0, 257, true, false, true, HOUSEF_SOVIET | HOUSEF_SPAIN},
-    {"BACKSTAB", TXT_THEME_BACKSTAB, 0, 278, true, false, true, HOUSEF_ALLIES | HOUSEF_SPAIN},
-    {"CHAOS2", TXT_THEME_CHAOS2, 0, 250, true, false, true, HOUSEF_SOVIET | HOUSEF_SPAIN},
-    {"SHUT_IT", TXT_THEME_SHUT_IT, 0, 261, true, false, true, HOUSEF_ALLIES | HOUSEF_SPAIN},
-    {"TWINMIX1", TXT_THEME_TWINMIX1, 0, 222, true, false, true, HOUSEF_SOVIET | HOUSEF_SPAIN},
-    {"UNDER3", TXT_THEME_UNDER3, 0, 246, true, false, true, HOUSEF_ALLIES | HOUSEF_SPAIN},
-    {"VR2", TXT_THEME_VR2, 0, 255, true, false, true, HOUSEF_SOVIET | HOUSEF_SPAIN},
+    {"2ND_HAND", TXT_THEME_2ND_HAND, "", 0, 268, true, false, true, HOUSEF_ALLIES | HOUSEF_SPAIN, true},
+    {"ARAZOID", TXT_THEME_ARAZOID, "", 0, 257, true, false, true, HOUSEF_SOVIET | HOUSEF_SPAIN, true},
+    {"BACKSTAB", TXT_THEME_BACKSTAB, "", 0, 278, true, false, true, HOUSEF_ALLIES | HOUSEF_SPAIN, true},
+    {"CHAOS2", TXT_THEME_CHAOS2, "", 0, 250, true, false, true, HOUSEF_SOVIET | HOUSEF_SPAIN, true},
+    {"SHUT_IT", TXT_THEME_SHUT_IT, "", 0, 261, true, false, true, HOUSEF_ALLIES | HOUSEF_SPAIN, true},
+    {"TWINMIX1", TXT_THEME_TWINMIX1, "", 0, 222, true, false, true, HOUSEF_SOVIET | HOUSEF_SPAIN, true},
+    {"UNDER3", TXT_THEME_UNDER3, "", 0, 246, true, false, true, HOUSEF_ALLIES | HOUSEF_SPAIN, true},
+    {"VR2", TXT_THEME_VR2, "", 0, 255, true, false, true, HOUSEF_SOVIET | HOUSEF_SPAIN, true},
 
     /*
     ** Aftermath
     */
-    {"BOG", TXT_THEME_BOG, 0, 212, true, false, true, HOUSEF_ALLIES | HOUSEF_SPAIN},
-    {"FLOAT_V2", TXT_THEME_FLOAT_V2, 0, 274, true, false, true, HOUSEF_SOVIET | HOUSEF_SPAIN},
-    {"GLOOM", TXT_THEME_GLOOM, 0, 236, true, false, true, HOUSEF_ALLIES | HOUSEF_SPAIN},
-    {"GRNDWIRE", TXT_THEME_GRNDWIRE, 0, 228, true, false, true, HOUSEF_SOVIET | HOUSEF_SPAIN},
-    {"RPT", TXT_THEME_RPT, 0, 275, true, false, true, HOUSEF_ALLIES | HOUSEF_SPAIN},
-    {"SEARCH", TXT_THEME_SEARCH, 0, 276, true, false, true, HOUSEF_SOVIET | HOUSEF_SPAIN},
-    {"TRACTION", TXT_THEME_TRACTION, 0, 237, true, false, true, HOUSEF_ALLIES | HOUSEF_SPAIN},
-    {"WASTELND", TXT_THEME_WASTELND, 0, 242, true, false, true, HOUSEF_SOVIET | HOUSEF_SPAIN},
+    {"BOG", TXT_THEME_BOG, "", 0, 212, true, false, true, HOUSEF_ALLIES | HOUSEF_SPAIN, true},
+    {"FLOAT_V2", TXT_THEME_FLOAT_V2, "", 0, 274, true, false, true, HOUSEF_SOVIET | HOUSEF_SPAIN, true},
+    {"GLOOM", TXT_THEME_GLOOM, "", 0, 236, true, false, true, HOUSEF_ALLIES | HOUSEF_SPAIN, true},
+    {"GRNDWIRE", TXT_THEME_GRNDWIRE, "", 0, 228, true, false, true, HOUSEF_SOVIET | HOUSEF_SPAIN, true},
+    {"RPT", TXT_THEME_RPT, "", 0, 275, true, false, true, HOUSEF_ALLIES | HOUSEF_SPAIN, true},
+    {"SEARCH", TXT_THEME_SEARCH, "", 0, 276, true, false, true, HOUSEF_SOVIET | HOUSEF_SPAIN, true},
+    {"TRACTION", TXT_THEME_TRACTION, "", 0, 237, true, false, true, HOUSEF_ALLIES | HOUSEF_SPAIN, true},
+    {"WASTELND", TXT_THEME_WASTELND, "", 0, 242, true, false, true, HOUSEF_SOVIET | HOUSEF_SPAIN, true},
 };
 
 /***********************************************************************************************
@@ -124,8 +124,8 @@ ThemeClass::ThemeControl ThemeClass::_themes[THEME_COUNT] = {
  *=============================================================================================*/
 char const* ThemeClass::Base_Name(ThemeType theme) const
 {
-    if (theme != THEME_NONE) {
-        return (_themes[theme].Name);
+    if (theme != THEME_NONE && theme < Themes.Count()) {
+        return (Themes[theme]->Filename);
     }
     return ("No theme");
 }
@@ -151,6 +151,12 @@ ThemeClass::ThemeClass(void)
 {
 }
 
+ThemeClass::~ThemeClass(void) {
+	for (int i = 0; i < Themes.Count(); i++) {
+		delete Themes[i];
+	}
+}
+
 /***********************************************************************************************
  * ThemeClass::Full_Name -- Retrieves the full score name.                                     *
  *                                                                                             *
@@ -169,8 +175,9 @@ ThemeClass::ThemeClass(void)
  *=============================================================================================*/
 char const* ThemeClass::Full_Name(ThemeType theme) const
 {
-    if (theme >= THEME_FIRST && theme < THEME_COUNT) {
-        return (Text_String(_themes[theme].Fullname));
+    if (theme >= THEME_FIRST && theme < Themes.Count()) {
+        const char* name = Themes[theme]->NameId == -1 ? Themes[theme]->Name : Text_String(Themes[theme]->NameId);
+        return (name);
     }
     return (NULL);
 }
@@ -194,7 +201,7 @@ char const* ThemeClass::Full_Name(ThemeType theme) const
 void ThemeClass::AI(void)
 {
     if (SampleType && !Debug_Quiet) {
-        if (ScoresPresent && Options.ScoreVolume != 0 && !Still_Playing() && Pending != THEME_NONE) {
+        if (ScoresPresent && AtleastOneThemeAllowed && Options.ScoreVolume != 0 && !Still_Playing() && Pending != THEME_NONE) {
 
             /*
             **	If the pending song needs to be picked, then pick it now.
@@ -234,7 +241,7 @@ void ThemeClass::AI(void)
 ThemeType ThemeClass::Next_Song(ThemeType theme) const
 {
     if (theme == THEME_NONE || theme == THEME_PICK_ANOTHER
-        || (theme != THEME_QUIET && !_themes[theme].Repeat && !Options.IsScoreRepeat)) {
+        || (theme != THEME_QUIET && !Themes[theme]->Repeat && !Options.IsScoreRepeat)) {
         if (Options.IsScoreShuffle) {
 
             /*
@@ -243,7 +250,7 @@ ThemeType ThemeClass::Next_Song(ThemeType theme) const
             */
             ThemeType newtheme;
             do {
-                newtheme = Sim_Random_Pick(THEME_FIRST, THEME_LAST);
+                newtheme = Sim_Random_Pick(THEME_FIRST, (ThemeType)(Themes.Count()-1));
             } while (newtheme == theme || !Is_Allowed(newtheme));
             theme = newtheme;
 
@@ -254,7 +261,7 @@ ThemeType ThemeClass::Next_Song(ThemeType theme) const
             */
             do {
                 theme++;
-                if (theme > THEME_LAST) {
+                if (theme > Themes.Count()-1) {
                     theme = THEME_FIRST;
                 }
             } while (!Is_Allowed(theme));
@@ -284,7 +291,7 @@ void ThemeClass::Queue_Song(ThemeType theme)
     /*
     **	If there is no score file present, then abort.
     */
-    if (!ScoresPresent)
+    if (!ScoresPresent || !AtleastOneThemeAllowed)
         return;
 
     /*
@@ -331,7 +338,7 @@ void ThemeClass::Queue_Song(ThemeType theme)
  *=============================================================================================*/
 int ThemeClass::Play_Song(ThemeType theme)
 {
-    if (ScoresPresent && SampleType && !Debug_Quiet && Options.ScoreVolume != 0) {
+    if (ScoresPresent && AtleastOneThemeAllowed && SampleType && !Debug_Quiet && Options.ScoreVolume != 0) {
         Stop();
         Score = theme;
         if (theme != THEME_NONE && theme != THEME_QUIET) {
@@ -364,8 +371,8 @@ char const* ThemeClass::Theme_File_Name(ThemeType theme)
 {
     static char name[_MAX_FNAME + _MAX_EXT];
 
-    if (theme >= THEME_FIRST && theme < THEME_COUNT) {
-        _makepath(name, NULL, NULL, _themes[theme].Name, ".AUD");
+    if (theme >= THEME_FIRST && theme < Themes.Count()) {
+        _makepath(name, NULL, NULL, Themes[theme]->Filename, ".AUD");
         return ((char const*)(&name[0]));
     }
 
@@ -390,8 +397,8 @@ char const* ThemeClass::Theme_File_Name(ThemeType theme)
  *=============================================================================================*/
 int ThemeClass::Track_Length(ThemeType theme) const
 {
-    if ((unsigned)theme < THEME_COUNT) {
-        return (_themes[theme].Duration);
+    if ((int)theme < Themes.Count()) {
+        return (Themes[theme]->Duration);
     }
     return (0);
 }
@@ -413,7 +420,7 @@ int ThemeClass::Track_Length(ThemeType theme) const
  *=============================================================================================*/
 void ThemeClass::Stop(void)
 {
-    if (ScoresPresent && SampleType && !Debug_Quiet && Current != -1) {
+    if (ScoresPresent && AtleastOneThemeAllowed && SampleType && !Debug_Quiet && Current != -1) {
         Stop_Sample(Current);
         Current = -1;
         Score = THEME_NONE;
@@ -423,7 +430,7 @@ void ThemeClass::Stop(void)
 
 void ThemeClass::Suspend(void)
 {
-    if (ScoresPresent && SampleType && !Debug_Quiet && Current != -1) {
+    if (ScoresPresent && AtleastOneThemeAllowed && SampleType && !Debug_Quiet && Current != -1) {
         Stop_Sample(Current);
         Current = -1;
         Pending = Score;
@@ -447,7 +454,7 @@ void ThemeClass::Suspend(void)
  *=============================================================================================*/
 int ThemeClass::Still_Playing(void) const
 {
-    if (ScoresPresent && SampleType && Current != -1 && !Debug_Quiet) {
+    if (ScoresPresent && AtleastOneThemeAllowed && SampleType && Current != -1 && !Debug_Quiet) {
         return (Sample_Status(Current));
     }
     return (false);
@@ -472,19 +479,19 @@ int ThemeClass::Still_Playing(void) const
  *=============================================================================================*/
 bool ThemeClass::Is_Allowed(ThemeType index) const
 {
-    if ((unsigned)index >= THEME_COUNT)
-        return (true);
+    if (index < 0 || index >= Themes.Count())
+        return (false);
 
     /*
     **	If the theme is not present, then it certainly isn't allowed.
     */
-    if (!_themes[index].Available)
+    if (!Themes[index]->Available)
         return (false);
 
     /*
     **	Only normal themes (playable during battle) are considered allowed.
     */
-    if (!_themes[index].Normal)
+    if (!Themes[index]->Normal)
         return (false);
 
     /*
@@ -492,14 +499,14 @@ bool ThemeClass::Is_Allowed(ThemeType index) const
     **	it. If the player's house hasn't yet been determined, then presume this test
     **	passes.
     */
-    if (PlayerPtr != NULL && ((1 << PlayerPtr->ActLike) & _themes[index].Owner) == 0)
+    if (PlayerPtr != NULL && ((1 << PlayerPtr->ActLike) & Themes[index]->Owner) == 0)
         return (false);
 
     /*
     **	If the scenario doesn't allow this theme yet, then return the failure flag. The
     **	scenario check only makes sense for solo play.
     */
-    if (Session.Type == GAME_NORMAL && Scen.Scenario < _themes[index].Scenario)
+    if (Session.Type == GAME_NORMAL && Scen.Scenario < Themes[index]->Scenario)
         return (false);
 
     /*
@@ -534,8 +541,8 @@ ThemeType ThemeClass::From_Name(char const* name) const
         **	First search for an exact name match with the filename
         **	of the theme. This is guaranteed to be unique.
         */
-        for (ThemeType theme = THEME_FIRST; theme < THEME_COUNT; theme++) {
-            if (stricmp(_themes[theme].Name, name) == 0) {
+        for (ThemeType theme = THEME_FIRST; theme < Themes.Count(); theme++) {
+            if (stricmp(Themes[theme]->Filename, name) == 0) {
                 return (theme);
             }
         }
@@ -545,8 +552,8 @@ ThemeType ThemeClass::From_Name(char const* name) const
         **	a substring within the full name of the score. This might
         **	yield a match, but is not guaranteed to be unique.
         */
-        for (ThemeType theme = THEME_FIRST; theme < THEME_COUNT; theme++) {
-            const char* fullname = Text_String(_themes[theme].Fullname);
+        for (ThemeType theme = THEME_FIRST; theme < Themes.Count(); theme++) {
+            const char* fullname = Themes[theme]->NameId == -1 ? Themes[theme]->Name : Text_String(Themes[theme]->NameId);
             if (fullname != nullptr && strstr(fullname, name) != NULL) {
                 return (theme);
             }
@@ -575,8 +582,46 @@ ThemeType ThemeClass::From_Name(char const* name) const
  *=============================================================================================*/
 void ThemeClass::Scan(void)
 {
-    for (ThemeType theme = THEME_FIRST; theme < THEME_COUNT; theme++) {
-        _themes[theme].Available = CCFileClass(Theme_File_Name(theme)).Is_Available();
+    // This function can get executed multiple times while swapping CD, so always clear the themes
+    Themes.Clear();
+
+    bool loadhardcoded = true;
+    CCFileClass file("theme.ini");
+    CCINIClass ini;
+    if (ini.Load(file, false)) {
+
+        loadhardcoded = ini.Get_Bool("General", "LoadHardcodedList", true);
+        if (loadhardcoded) {
+            for (ThemeType t = THEME_FIRST; t < ARRAY_SIZE(_themes); t++) {
+                ThemeControl* theme = new ThemeControl;
+                memcpy((void*)theme, &_themes[t], sizeof(ThemeControl));
+                Themes.Add(theme);
+            }
+        }
+
+        for (int i = 0; i < ini.Entry_Count("Themes"); i++) {
+            std::string entry = ini.Get_Entry("Themes", i);
+            std::string songsection = ini.Get_String("Themes", entry.c_str(), "<none>");
+
+            ThemeControl *theme = new ThemeControl;
+            theme->Repeat = ini.Get_Bool(songsection.c_str(), "Repeat", false);
+            theme->NameId = ini.Get_Int(songsection.c_str(), "NameId", -1);
+            ini.Get_String(songsection.c_str(), "Filename", songsection.c_str(), theme->Filename, sizeof(theme->Filename));
+            ini.Get_String(songsection.c_str(), "Name", "<none>", theme->Name, sizeof(theme->Name));
+            theme->Owner = ini.Get_Owners(songsection.c_str(), "Owner", HOUSEF_SOVIET| HOUSEF_ALLIES);
+            theme->Normal = ini.Get_Bool(songsection.c_str(), "Normal", true);
+            theme->Duration = ini.Get_Int(songsection.c_str(), "Duration", -1);
+            theme->Scenario = ini.Get_Int(songsection.c_str(), "Scenario", 0);
+            theme->IsHardcoded = false;
+			Themes.Add(theme);
+        }
+    }
+
+    for (ThemeType theme = THEME_FIRST; theme < Themes.Count(); theme++) {
+        Themes[theme]->Available = CCFileClass(Theme_File_Name(theme)).Is_Available();
+        if (Themes[theme]->Available && this->Is_Allowed(theme)) {
+            AtleastOneThemeAllowed = true;
+        }
     }
 }
 
@@ -603,8 +648,13 @@ void ThemeClass::Scan(void)
 void ThemeClass::Set_Theme_Data(ThemeType theme, int scenario, int owners)
 {
     if (theme != THEME_NONE) {
-        _themes[theme].Normal = true;
-        _themes[theme].Scenario = scenario;
-        _themes[theme].Owner = owners;
+        Themes[theme]->Normal = true;
+        Themes[theme]->Scenario = scenario;
+        Themes[theme]->Owner = owners;
     }
+}
+
+bool ThemeClass::Is_Hard_Coded(ThemeType theme)
+{
+    return Themes[theme]->IsHardcoded;
 }
