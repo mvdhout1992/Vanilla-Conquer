@@ -1898,7 +1898,9 @@ bool SidebarClass::StripClass::Recalc(void)
     for (int index = 0; index < BuildableCount; index++) {
         TechnoTypeClass const* tech = Fetch_Techno_Type(Buildables[index].BuildableType, Buildables[index].BuildableID);
         if (tech != NULL) {
-            ok = tech->Who_Can_Build_Me(true, false, PlayerPtr->Class->House) != NULL;
+            ok = tech->Who_Can_Build_Me(
+                     true, Rule.CheckNonFactoryPrerequisitesWhenUpdatingBuildables, PlayerPtr->Class->House)
+                 != NULL;
         } else {
             if ((unsigned)Buildables[index].BuildableID < SPC_COUNT) {
                 ok = PlayerPtr->SuperWeapon[Buildables[index].BuildableID].Is_Present();

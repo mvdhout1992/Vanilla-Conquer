@@ -886,6 +886,11 @@ public:
         RB_SELECTED = 0,
         RB_ALWAYS,
     } ResourceBarDisplayMode;
+
+    // When a building is destroyed normally the game only checks if a factory for the type
+    // still exists when recalculating cameo icons in sidebar, this will also check other 
+    // prequisites, e.g. Service Depot for MCV
+    bool CheckNonFactoryPrerequisitesWhenUpdatingBuildables;
 };
 
 #endif

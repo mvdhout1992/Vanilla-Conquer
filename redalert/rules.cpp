@@ -267,6 +267,7 @@ RulesClass::RulesClass(void)
     , TiberiumLongScan(0x2000)
     , HealthBarDisplayMode(HB_SELECTED)
     , ResourceBarDisplayMode(RB_SELECTED)
+    , CheckNonFactoryPrerequisitesWhenUpdatingBuildables(false)
 {
 #ifdef FIXIT_CSII //	checked - ajw 9/28/98
     NewUnitsEnabled = SecretUnitsEnabled = 0;
@@ -502,6 +503,11 @@ bool RulesClass::General(CCINIClass& ini)
         VortexSpeed = MPHType(_Scale_To_256(ini.Get_Int(GENERAL, "VortexSpeed", VortexSpeed)));
         VortexDamage = ini.Get_Int(GENERAL, "VortexDamage", VortexDamage);
         VortexChance = ini.Get_Fixed(GENERAL, "VortexChance", VortexChance);
+
+        CheckNonFactoryPrerequisitesWhenUpdatingBuildables =
+            ini.Get_Bool(GENERAL,
+                         "CheckNonFactoryPrerequisitesWhenUpdatingBuildables",
+                         CheckNonFactoryPrerequisitesWhenUpdatingBuildables);
 
         ChronalVortex.Set_Range(VortexRange / CELL_LEPTON_W);
         ChronalVortex.Set_Speed(VortexSpeed);
