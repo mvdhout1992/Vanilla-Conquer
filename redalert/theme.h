@@ -57,12 +57,12 @@ private:
     int Current;       // Handle to current score.
     ThemeType Score;   // Score number currently being played.
     ThemeType Pending; // Score to play next.
-    char IntroTheme[128]; // Theme to play on main menu
-    char MapTheme[128];   // Theme to play on map screen
-    char ScoreTheme[128]; // Score to play on the SP score screen
-    char FirstTheme[128]; // First theme that plays on scenario load
-    char CreditsTheme[128];    // Theme to play on credits screen
-    char MatchEndSkirmishMenuTheme[128]; // Theme to use in skirmish menu after skirmish match ended
+    ThemeType IntroTheme; // Theme to play on main menu
+    ThemeType MapTheme;   // Theme to play on map screen
+    ThemeType ScoreTheme; // Score to play on the SP score screen
+    ThemeType FirstTheme;           // First theme that plays on scenario load
+    ThemeType CreditsTheme;              // Theme to play on credits screen
+    ThemeType MatchEndSkirmishMenuTheme; // Theme to use in skirmish menu after skirmish match ended
     bool AtleastOneThemeAllowed; // To prevent infinite loop when no songs are allowed
     bool RandomFirstScore; //  play Random score as 'first' score on scenario load
 
@@ -80,27 +80,27 @@ public:
     ThemeType From_Name(char const* name) const;
     ThemeType Next_Song(ThemeType index) const;
    
-    const char *Match_End_Skirmish_Menu_Theme(void) const
+    ThemeType Match_End_Skirmish_Menu_Theme(void) const
     {
         return MatchEndSkirmishMenuTheme;
     }
 
-    const char* Map_Theme(void) const
+    ThemeType Map_Theme(void) const
     {
         return MapTheme;
     }
 
-    const char* Credits_Theme(void) const
+    ThemeType Credits_Theme(void) const
     {
         return CreditsTheme;
     }
 
-    const char* Intro_Theme(void) const
+    ThemeType Intro_Theme(void) const
     {
         return IntroTheme;
     }
 
-   const char* Score_Theme(void) const
+   ThemeType Score_Theme(void) const
     {
         return ScoreTheme;
     }
@@ -132,7 +132,6 @@ public:
         Queue_Song(THEME_QUIET);
     }
     void Queue_Song(ThemeType index);
-    void Queue_Song(const char* index);
     void Set_Theme_Data(ThemeType theme, int scenario, int owners);
     void Stop(void);
     void Suspend(void);

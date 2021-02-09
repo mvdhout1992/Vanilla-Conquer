@@ -288,11 +288,6 @@ ThemeType ThemeClass::Next_Song(ThemeType theme) const
  * HISTORY:                                                                                    *
  *   01/16/1995 JLB : Created.                                                                 *
  *=============================================================================================*/
-void ThemeClass::Queue_Song(const char* name)
-{
-    Queue_Song(From_Name(name));
-}
-
 void ThemeClass::Queue_Song(ThemeType theme)
 {
     /*
@@ -549,7 +544,7 @@ ThemeType ThemeClass::From_Name(char const* name) const
         **	of the theme. This is guaranteed to be unique.
         */
         for (ThemeType theme = THEME_FIRST; theme < Themes.Count(); theme++) {
-            if (stricmp(Themes[theme]->Filename, name) == 0) {
+            if (strcmp(Themes[theme]->Filename, name) == 0) {
                 return (theme);
             }
         }
@@ -599,17 +594,6 @@ void ThemeClass::Scan(void)
     if (ini.Load(file, false)) {
 
         loadhardcoded = ini.Get_Bool("General", "LoadHardcodedList", true);
-        ini.Get_String("General", "IntroTheme", _themes[THEME_INTRO].Filename, IntroTheme, sizeof(IntroTheme));
-        ini.Get_String("General", "MapTheme", _themes[THEME_MAP].Filename, MapTheme, sizeof(MapTheme));
-        ini.Get_String("General", "FirstTheme", _themes[THEME_FIRST].Filename, FirstTheme, sizeof(FirstTheme));
-        ini.Get_String("General", "ScoreTheme", _themes[THEME_SCORE].Filename, ScoreTheme, sizeof(ScoreTheme));
-        ini.Get_String("General", "CreditsTheme", _themes[THEME_CREDITS].Filename, CreditsTheme, sizeof(CreditsTheme));
-        ini.Get_String("General",
-                       "MatchEndSkirmishMenuTheme",
-                       _themes[THEME_CRUS].Filename,
-                       MatchEndSkirmishMenuTheme,
-                       sizeof(MatchEndSkirmishMenuTheme));
-
         RandomFirstScore = ini.Get_Bool("General", "RandomFirstScore", false);
 
         if (loadhardcoded) {
@@ -637,6 +621,15 @@ void ThemeClass::Scan(void)
             theme->IsHardcoded = false;
             Themes.Add(theme);
         }
+
+    // Now we have eitehr loaded the hard-coded list or not, use From_Name() to give us 
+    // the corrct ThemeType, or THEME_NONE if hard-coded list is not found
+    IntroTheme = ini.Get_ThemeType("General", "IntroTheme", From_Name("INTRO"));
+    MapTheme = ini.Get_ThemeType("General", "MapTheme", From_Name("MAP"));
+    CreditsTheme = ini.Get_ThemeType("General", "CreditsTheme", From_Name("CREDITS"));
+    FirstTheme = ini.Get_ThemeType("General", "FirsTheme", From_Name("BIGF226M"));
+    ScoreTheme = ini.Get_ThemeType("General", "ScoreTheme", From_Name("SCORE"));
+    MatchEndSkirmishMenuTheme = ini.Get_ThemeType("General", "MatchEndSkirmishMenuTheme", From_Name("CRUS226M"));
     }
 
     for (ThemeType theme = THEME_FIRST; theme < Themes.Count(); theme++) {
@@ -645,6 +638,8 @@ void ThemeClass::Scan(void)
             AtleastOneThemeAllowed = true;
         }
     }
+
+
 }
 
 /***********************************************************************************************
@@ -696,5 +691,5 @@ ThemeType ThemeClass::First_Theme(void) const
         }
     }
 
-    return From_Name(FirstTheme);
+    return FirstTheme;
 }
