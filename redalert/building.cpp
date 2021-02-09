@@ -2199,6 +2199,7 @@ int BuildingClass::Exit_Object(TechnoClass* base)
                     if (node && ((BuildingClass*)base)->Class->Type == House->BuildStructure) {
                         House->BuildStructure = STRUCT_NONE;
                     }
+                    ((BuildingClass*)base)->IsToRepair = true;
                     return (2);
                 }
             }
@@ -5638,8 +5639,9 @@ void BuildingClass::Factory_AI(void)
             }
             //				fact->Completed();
             Factory->Completed();
-            //				delete fact;
-            delete (FactoryClass*)Factory;
+            House->Abandon_Production(product->What_Am_I());
+            this->Transmit_Message(RADIO_HELLO, product);
+   
             Factory = 0;
             break;
 
