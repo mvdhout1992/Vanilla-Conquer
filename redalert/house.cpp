@@ -1423,6 +1423,7 @@ void HouseClass::AI(void)
                 }
             }
         }
+        Map.Sort_Cameo_Icons();
 #ifdef REMASTER_BUILD
         Recalculate_Placement_Distances();
 #endif

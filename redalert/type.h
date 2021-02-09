@@ -567,6 +567,9 @@ public:
     */
     int Points;
 
+    // used for sidebar cameo sorting option, lower is higher in list
+    int CameoOrder;
+
     //--------------------------------------------------------------------
     TechnoTypeClass(NoInitClass const& x)
         : ObjectTypeClass(x)

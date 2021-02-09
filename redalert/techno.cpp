@@ -6680,6 +6680,7 @@ bool TechnoClass::Evaluate_Object(ThreatType method,
         , Speed(speed)
         , MaxAmmo(-1)
         , Ownable(0)
+        , CameoOrder(INT_MAX)
         , CameoData(NULL)
         , Rotation(rotation)
         , ROT(0)
@@ -7061,6 +7062,7 @@ bool TechnoClass::Evaluate_Object(ThreatType method,
             IsRepairable = ini.Get_Bool(Name(), "Repairable", IsRepairable);
             IsInvisible = ini.Get_Bool(Name(), "Invisible", IsInvisible);
             IsSelfHealing = ini.Get_Bool(Name(), "SelfHealing", IsSelfHealing);
+            CameoOrder = ini.Get_Int(Name(), "CameoOrder", INT_MAX);
             ROT = ini.Get_Int(Name(), "ROT", ROT);
             MaxPassengers = ini.Get_Int(Name(), "Passengers", MaxPassengers);
             // Mono_Printf("before image=: %s\n",GraphicName);

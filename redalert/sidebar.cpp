@@ -944,6 +944,12 @@ void SidebarClass::Recalc(void)
     }
 }
 
+void SidebarClass::Sort_Cameo_Icons()
+{
+    Column[0].Sort_Cameo_Icons();
+    Column[1].Sort_Cameo_Icons();
+}
+
 /***********************************************************************************************
  * SidebarClass::Activate -- Controls the sidebar activation.                                  *
  *                                                                                             *
@@ -1888,6 +1894,7 @@ bool SidebarClass::StripClass::Recalc(void)
     if (Debug_Map || !BuildableCount) {
         return (false);
     }
+    bool needstosort = false;
 
     /*
     **	Sweep through all objects listed in the sidebar. If any of those object can
@@ -1908,7 +1915,7 @@ bool SidebarClass::StripClass::Recalc(void)
         }
 
         if (!ok) {
-
+            needstosort = true;
             /*
             **	Removes this entry from the list.
             */
@@ -1934,6 +1941,27 @@ bool SidebarClass::StripClass::Recalc(void)
 #endif
     return (redraw);
 }
+
+void SidebarClass::StripClass::Sort_Cameo_Icons()
+{
+    qsort(&Buildables, BuildableCount, sizeof(Buildables[0]), SidebarClass::StripClass::Cameo_Compare);
+}
+
+int SidebarClass::StripClass::Cameo_Compare(const void* a1, const void* a2)
+{
+    BuildType *b1 = (BuildType*)a1;
+    BuildType* b2 = (BuildType*)a2;
+
+    const TechnoTypeClass *t1 = Fetch_Techno_Type(b1->BuildableType, b1->BuildableID);
+    const TechnoTypeClass* t2 = Fetch_Techno_Type(b2->BuildableType, b2->BuildableID);
+
+    if (t1->CameoOrder == t2->CameoOrder) {
+        return (int*)b1 - (int*)b2;
+    }
+    
+    return t1->CameoOrder - t2->CameoOrder;
+}
+
 
 /***********************************************************************************************
  * SidebarClass::StripClass::SelectClass::SelectClass -- Default constructor.                  *

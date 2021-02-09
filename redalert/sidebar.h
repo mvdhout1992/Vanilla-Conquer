@@ -117,6 +117,7 @@ public:
     virtual void Draw_It(bool complete);
     virtual void Refresh_Cells(CELL cell, short const* list);
 
+    void Sort_Cameo_Icons();
     void Zoom_Mode_Control(void);
     bool Abandon_Production(RTTIType type, int factory);
     bool Activate(int control);
@@ -149,6 +150,9 @@ public:
             virtual int Action(unsigned flags, KeyNumType& key);
         };
 
+    private:
+        static int Cameo_Compare(const void* a1, const void* a2);
+
     public:
         StripClass(void)
         {
@@ -172,6 +176,7 @@ public:
         void Activate(void);
         void Deactivate(void);
         void Flag_To_Redraw(void);
+        void Sort_Cameo_Icons();
         bool Factory_Link(int factory, RTTIType type, int id);
         void const* Get_Special_Cameo(SpecialWeaponType type);
 
