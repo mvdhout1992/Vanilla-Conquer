@@ -2195,13 +2195,19 @@ int BuildingClass::Exit_Object(TechnoClass* base)
                 if (Flush_For_Placement(base, Coord_Cell(coord))) {
                     return (1);
                 }
+
+                this->Transmit_Message(RADIO_HELLO, base);
                 if (base->Unlimbo(coord)) {
+                    Factory->Completed();
+                    House->Abandon_Production(base->What_Am_I());
+
                     if (node && ((BuildingClass*)base)->Class->Type == House->BuildStructure) {
                         House->BuildStructure = STRUCT_NONE;
                     }
                     ((BuildingClass*)base)->IsToRepair = true;
                     return (2);
                 }
+                this->Transmit_Message(RADIO_OVER_OUT);
             }
         }
         break;
@@ -5638,9 +5644,6 @@ void BuildingClass::Factory_AI(void)
                 break;
             }
             //				fact->Completed();
-            Factory->Completed();
-            House->Abandon_Production(product->What_Am_I());
-            this->Transmit_Message(RADIO_HELLO, product);
    
             Factory = 0;
             break;
