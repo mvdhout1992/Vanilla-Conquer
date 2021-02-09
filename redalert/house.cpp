@@ -860,9 +860,10 @@ bool HouseClass::Can_Build(ObjectTypeClass const* type, HousesType house) const
 #endif
 
     /*
-    **	The computer can always build everything.
+    **	The computer can always build everything in single player,
+    *  unless base building trigger is enabled
     */
-    if (!IsHuman && Session.Type == GAME_NORMAL)
+    if (!IsHuman && Session.Type == GAME_NORMAL && !IsBaseBuilding && IQ < Rule.IQProduction)
         return (true);
 
     /*
