@@ -381,7 +381,8 @@ void SmudgeTypeClass::Init(TheaterType theater)
        }
 
        for (int i = 0; i < entries; i++) {
-           std::string smudge = ini.Get_Entry("Smudgetypes", i);
+           std::string entry = ini.Get_Entry("Smudgetypes", i);
+           std::string smudge = ini.Get_String("SmudgeTypes", entry.c_str(), "<none>");
            int ID = (SMUDGE_COUNT * usehardcodedlist) + i;
            std::string ininame = smudge;
            int namestringid = ini.Get_Int(smudge.c_str(), "Name", -1); // display name ingme, string table value
@@ -459,7 +460,7 @@ void SmudgeTypeClass::Display(int x, int y, WindowNumberType window, HousesType)
  *=============================================================================================*/
 void SmudgeTypeClass::Prep_For_Add(void)
 {
-    for (SmudgeType index = SMUDGE_FIRST; index < SMUDGE_COUNT; index++) {
+    for (SmudgeType index = SMUDGE_FIRST; index < SmudgeTypes.Count(); index++) {
         if (As_Reference(index).Get_Image_Data()) {
             Map.Add_To_List(&As_Reference(index));
         }
