@@ -678,9 +678,12 @@ bool SidebarClass::Add(RTTIType type, int id, bool via_capture)
 
             return (true);
         }
+        if (Rule.SortCameos) {
+            Sort_Cameo_Icons();
+        }
+
         return (false);
     }
-
     return (false);
 }
 
@@ -946,6 +949,10 @@ void SidebarClass::Recalc(void)
         IsToRedraw = true;
         Flag_To_Redraw(false);
     }
+
+    if (Rule.SortCameos) {
+        Sort_Cameo_Icons();
+    }
 }
 
 void SidebarClass::Sort_Cameo_Icons()
@@ -1034,6 +1041,7 @@ bool SidebarClass::Activate(int control)
             Add_A_Button(Map.RadarButton);
             Map.PowerButton.Zap();
             Add_A_Button(Map.PowerButton);
+            Recalc();
         } else {
             Help_Text(TXT_NONE);
             Set_View_Dimensions(0, 8 * RESFACTOR);
@@ -1394,6 +1402,10 @@ bool SidebarClass::StripClass::Add(RTTIType type, int id, bool via_capture)
         Buildables[BuildableCount].BuildableViaCapture = via_capture;
         BuildableCount++;
         IsToRedraw = true;
+
+        if (Rule.SortCameos) {
+            Sort_Cameo_Icons();
+        }
         return (true);
     }
     return (false);
@@ -1935,6 +1947,10 @@ bool SidebarClass::StripClass::Recalc(void)
         }
     }
 
+    if (Rule.SortCameos) {
+        Sort_Cameo_Icons();
+    }
+
 #ifdef NEVER
     /*
     **	If there are no more buildable objects to display, make the sidebar go away.
@@ -1955,7 +1971,7 @@ void Bubble_Sort(T* array, int count, int size_per_elem, int (*sort_func)(T* a1,
         do {
             swapflag = false;
             for (int index = 0; index < count - 1; index++) {
-                if (sort_func(&array[index], &array[index+1]) > 1) {
+                if (sort_func(&array[index], &array[index+1]) > 0) {
                     T temp = array[index];
                     array[index] = array[index + 1];
                     array[index + 1] = temp;
