@@ -78,6 +78,7 @@ public:
     WeaponType Get_WeaponType(char const* section, char const* entry, WeaponType defvalue) const;
     long Get_Owners(char const* section, char const* entry, long defvalue) const;
     CrateType Get_CrateType(char const* section, char const* entry, CrateType defvalue) const;
+    LandType Get_LandType(char const* section, char const* entry, LandType defvalue) const;
 
     bool Put_Buildings(char const* section, char const* entry, long value);
     bool Put_AnimType(char const* section, char const* entry, AnimType value);

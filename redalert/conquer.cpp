@@ -4615,6 +4615,18 @@ CrateType Crate_From_Name(char const* name)
     return (CRATE_MONEY);
 }
 
+static char const* _lands[LAND_COUNT] = {"Clear", "Road", "Water", "Rock", "Wall", "Ore", "Beach", "Rough", "River"};
+
+LandType Land_From_Name(char const* name) {
+    if (name != NULL) {
+        for (LandType land = LAND_FIRST; land < LAND_COUNT; land++) {
+            if (stricmp(name, _lands[land]) == 0)
+                return (land);
+        }
+    }
+    return (LAND_NONE);
+}
+
 /***********************************************************************************************
  * Owner_From_Name -- Convert an owner name into a bitfield.                                   *
  *                                                                                             *

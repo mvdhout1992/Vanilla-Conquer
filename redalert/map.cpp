@@ -1628,7 +1628,7 @@ int MapClass::Validate(void)
         **	Validate Overlay
         */
         overlay = (*this)[cell].Overlay;
-        if (overlay < OVERLAY_NONE || overlay >= OVERLAY_COUNT) {
+        if (overlay < OVERLAY_NONE || overlay >= OverlayTypes.Count()) {
             return (false);
         }
 

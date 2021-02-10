@@ -1205,6 +1205,17 @@ CrateType CCINIClass::Get_CrateType(char const* section, char const* entry, Crat
     return (defvalue);
 }
 
+
+LandType CCINIClass::Get_LandType(char const* section, char const* entry, LandType defvalue) const
+{
+    char buffer[128];
+
+    if (Get_String(section, entry, "", buffer, sizeof(buffer))) {
+        return (Land_From_Name(buffer));
+    }
+    return (defvalue);
+}
+
 /***********************************************************************************************
  * CCINIClass::Put_CrateType -- Stores the crate value in the section and entry specified.     *
  *                                                                                             *

@@ -638,7 +638,7 @@ void OverlayTypeClass::One_Time(void)
 OverlayType OverlayTypeClass::From_Name(char const* name)
 {
     if (name != NULL) {
-        for (OverlayType index = OVERLAY_FIRST; index < OVERLAY_COUNT; index++) {
+        for (OverlayType index = OVERLAY_FIRST; index < OverlayTypes.Count(); index++) {
             if (stricmp(As_Reference(index).IniName, name) == 0) {
                 return (index);
             }
@@ -748,7 +748,7 @@ void OverlayTypeClass::Display(int x, int y, WindowNumberType window, HousesType
  *=============================================================================================*/
 void OverlayTypeClass::Prep_For_Add(void)
 {
-    for (OverlayType index = OVERLAY_FIRST; index < OVERLAY_COUNT; index++) {
+    for (OverlayType index = OVERLAY_FIRST; index < OverlayTypes.Count(); index++) {
         OverlayTypeClass const& overlay = As_Reference(index);
         if (overlay.Get_Image_Data() != NULL && !overlay.IsWall
             && (!overlay.IsTiberium || index == OVERLAY_GOLD1 || index == OVERLAY_GEMS1)) {
@@ -852,25 +852,85 @@ void OverlayTypeClass::Draw_It(int x, int y, int data) const
  *=============================================================================================*/
 void OverlayTypeClass::Init(TheaterType theater)
 {
-    if (theater != LastTheater) {
+    if (theater == LastTheater) {
+        return;
+    }
 
-        for (OverlayType index = OVERLAY_FIRST; index < OVERLAY_COUNT; index++) {
-            OverlayTypeClass& overlay = As_Reference(index);
-            char fullname[_MAX_FNAME + _MAX_EXT]; // Fully constructed iconset name.
+    bool usehardcodedlist = true;
 
-            if (overlay.IsTheater) {
-                _makepath(fullname, NULL, NULL, overlay.IniName, Theaters[theater].Suffix);
-            } else {
-                _makepath(fullname, NULL, NULL, overlay.IniName, ".SHP");
-            }
-            overlay.ImageData = MFCD::Retrieve(fullname);
+    std::string filename = Theaters[theater].Root;
+    filename += ".INI";
 
-            IsTheaterShape = overlay.IsTheater; // Tell Build_Frame if this is a theater specific shape
-            if (overlay.RadarIcon != NULL)
-                delete[](char*) overlay.RadarIcon;
-            overlay.RadarIcon = Get_Radar_Icon(overlay.Get_Image_Data(), 0, -1, 3);
-            IsTheaterShape = false;
+    CCFileClass file(filename.c_str());
+    CCINIClass ini;
+
+    if (ini.Load(file, false)) {
+
+        usehardcodedlist = ini.Get_Bool("General", "UseHardCodedOverlays", true);
+        int entries = ini.Entry_Count("OverlayTypes");
+
+        OverlayTypes.Set_Heap((OVERLAY_COUNT * usehardcodedlist) + entries);
+        if (usehardcodedlist) {
+            OverlayTypeClass::Init_Heap();
         }
+
+        for (int i = 0; i < entries; i++) {
+            std::string entry = ini.Get_Entry("OverlayTypes", i);
+            std::string overlay = ini.Get_String("OverlayTypes", entry.c_str(), "<none>");
+            int ID = (OVERLAY_COUNT * usehardcodedlist) + i;
+            std::string ininame = overlay;
+            int namestringid = ini.Get_Int(overlay.c_str(), "Name", -1); // display name ingme, string table value
+            bool iswall = ini.Get_Bool(overlay.c_str(), "IsWall", false);
+            bool istheater = ini.Get_Bool(overlay.c_str(), "IsTheater", false);
+
+            bool iscrate = ini.Get_Bool(overlay.c_str(), "IsCrate", false);
+            bool isradarvisible = ini.Get_Bool(overlay.c_str(), "IsRadarVisible", false);
+
+            bool iswooden = ini.Get_Bool(overlay.c_str(), "IsWooden", false);
+            bool istiberium = ini.Get_Bool(overlay.c_str(), "IsTiberium", false);
+            bool ishigh = ini.Get_Bool(overlay.c_str(), "IsHigh", false);
+            bool iscrushable = ini.Get_Bool(overlay.c_str(), "IsCrushable", false);
+            bool istarget = ini.Get_Bool(overlay.c_str(), "IsTargetable", false);
+
+            int damagelevels = ini.Get_Int(overlay.c_str(), "Damagelevels", 0);
+            int damagepoints = ini.Get_Int(overlay.c_str(), "DamagePoints", 0);
+
+            LandType land = ini.Get_LandType(overlay.c_str(), "Land", LAND_CLEAR);
+
+            new OverlayTypeClass((OverlayType)ID,
+                                 ininame.c_str(),
+                                 namestringid,
+                                 land,
+                                 damagelevels,
+                                 damagepoints,
+                                 isradarvisible,
+                                 iswooden,
+                                 istarget,
+                                 iscrushable,
+                                 istiberium,
+                                 ishigh,
+                                 istheater,
+                                 iswall,
+                                 iscrate);
+        }
+    }
+
+    for (OverlayType index = OVERLAY_FIRST; index < Overlays.Count(); index++) {
+        OverlayTypeClass& overlay = As_Reference(index);
+        char fullname[_MAX_FNAME + _MAX_EXT]; // Fully constructed iconset name.
+
+        if (overlay.IsTheater) {
+            _makepath(fullname, NULL, NULL, overlay.IniName, Theaters[theater].Suffix);
+        } else {
+            _makepath(fullname, NULL, NULL, overlay.IniName, ".SHP");
+        }
+        overlay.ImageData = MFCD::Retrieve(fullname);
+
+        IsTheaterShape = overlay.IsTheater; // Tell Build_Frame if this is a theater specific shape
+        if (overlay.RadarIcon != NULL)
+            delete[](char*) overlay.RadarIcon;
+        overlay.RadarIcon = Get_Radar_Icon(overlay.Get_Image_Data(), 0, -1, 3);
+        IsTheaterShape = false;
     }
 }
 
