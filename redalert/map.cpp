@@ -1636,7 +1636,7 @@ int MapClass::Validate(void)
         **	Validate Smudge
         */
         smudge = (*this)[cell].Smudge;
-        if (smudge < SMUDGE_NONE || smudge >= SMUDGE_COUNT) {
+        if (smudge < SMUDGE_NONE || smudge >= SmudgeTypes.Count()) {
             return (false);
         }
 

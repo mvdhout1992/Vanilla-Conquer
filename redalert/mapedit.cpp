@@ -109,7 +109,6 @@ MapEditClass::MapEditClass(void)
     **	Init data members.
     */
     //	ScenVar = SCEN_VAR_A;
-    ObjCount = 0;
     LastChoice = 0;
     LastHouse = HOUSE_GOOD;
     GrabbedObject = 0;
@@ -278,7 +277,7 @@ void MapEditClass::Clear_List(void)
     /*
     **	Set # object type ptrs to 0, set NumType for each type to 0
     */
-    ObjCount = 0;
+    Objects.Clear();
     for (int i = 0; i < NUM_EDIT_CLASSES; i++) {
         NumType[i] = 0;
     }
@@ -311,8 +310,8 @@ bool MapEditClass::Add_To_List(ObjectTypeClass const* object)
     /*
     **	Add the object if there's room.
     */
-    if (object && ObjCount < MAX_EDIT_OBJECTS) {
-        Objects[ObjCount++] = object;
+    if (object) {
+        Objects.Add(object);
 
         /*
         **	Update type counters.

@@ -301,7 +301,7 @@ int MapEditClass::Placement_Dialog(void)
     /*
     **	Return if no objects to place
     */
-    if (!ObjCount) {
+    if (Objects.Count() < 1) {
         return (-1);
     }
 
@@ -309,7 +309,7 @@ int MapEditClass::Placement_Dialog(void)
     **	Initialize
     */
     Set_Logic_Page(SeenBuff);
-    if (LastChoice >= ObjCount) {
+    if (LastChoice >= Objects.Count()) {
         LastChoice = 0;
     }
     curobj = Objects[LastChoice]; // current object to choose
@@ -525,7 +525,7 @@ int MapEditClass::Placement_Dialog(void)
             **	Increment to next obj
             */
             LastChoice++;
-            if (LastChoice == ObjCount) {
+            if (LastChoice == Objects.Count()) {
                 LastChoice = 0;
             }
             curobj = Objects[LastChoice];
@@ -545,7 +545,7 @@ int MapEditClass::Placement_Dialog(void)
             */
             LastChoice--;
             if (LastChoice < 0) {
-                LastChoice = ObjCount - 1;
+                LastChoice = Objects.Count() - 1;
             }
             curobj = Objects[LastChoice];
             prevbtn.Turn_Off();
@@ -723,8 +723,8 @@ void MapEditClass::Start_Placement(void)
     **	  House specified in the Base object
     */
     if (!BaseBuilding) {
-        if (LastChoice >= ObjCount) {
-            LastChoice = ObjCount - 1;
+        if (LastChoice >= Objects.Count()) {
+            LastChoice = Objects.Count() - 1;
         }
         PendingObject = Objects[LastChoice];
         PendingHouse = LastHouse;
@@ -733,8 +733,8 @@ void MapEditClass::Start_Placement(void)
         if (LastChoice < TypeOffset[7]) {
             LastChoice = TypeOffset[7];
         }
-        if (LastChoice >= ObjCount) {
-            LastChoice = ObjCount - 1;
+        if (LastChoice >= Objects.Count()) {
+            LastChoice = Objects.Count() - 1;
         }
         PendingObject = Objects[LastChoice];
         PendingHouse = LastHouse = Base.House;
@@ -1078,7 +1078,7 @@ void MapEditClass::Place_Next(void)
         **	Go to next object in Objects list
         */
         LastChoice++;
-        if (LastChoice == ObjCount) {
+        if (LastChoice == Objects.Count()) {
 
             /*
             ** If we're in normal placement mode, wrap to the 1st object;
@@ -1159,11 +1159,11 @@ void MapEditClass::Place_Prev(void)
         */
         if (!BaseBuilding) {
             if (LastChoice < 0) {
-                LastChoice = ObjCount - 1;
+                LastChoice = Objects.Count() - 1;
             }
         } else {
             if (LastChoice < TypeOffset[7]) {
-                LastChoice = ObjCount - 1;
+                LastChoice = Objects.Count() - 1;
             }
         }
 
@@ -1230,7 +1230,7 @@ void MapEditClass::Place_Next_Category(void)
     i = LastChoice;
     while (Objects[i]->What_Am_I() == Objects[LastChoice]->What_Am_I()) {
         i++;
-        if (i == ObjCount) {
+        if (i == Objects.Count()) {
             i = 0;
         }
     }
@@ -1261,7 +1261,7 @@ void MapEditClass::Place_Next_Category(void)
         if (!PendingObjectPtr) {
             PendingObject = NULL;
             LastChoice++;
-            if (LastChoice == ObjCount) {
+            if (LastChoice == Objects.Count()) {
                 LastChoice = 0;
             }
         }
@@ -1324,13 +1324,13 @@ void MapEditClass::Place_Prev_Category(void)
     while (Objects[i]->What_Am_I() == Objects[LastChoice]->What_Am_I()) {
         i--;
         if (i < 0) {
-            i = ObjCount - 1;
+            i = Objects.Count() - 1;
         }
     }
 
     i--;
     if (i < 0)
-        i = ObjCount - 1;
+        i = Objects.Count() - 1;
     LastChoice = i;
 
     /*
@@ -1339,12 +1339,12 @@ void MapEditClass::Place_Prev_Category(void)
     while (Objects[i]->What_Am_I() == Objects[LastChoice]->What_Am_I()) {
         i--;
         if (i < 0) {
-            i = ObjCount - 1;
+            i = Objects.Count() - 1;
         }
     }
 
     i++;
-    if (i >= ObjCount)
+    if (i >= Objects.Count())
         i = 0;
     LastChoice = i;
 
@@ -1374,7 +1374,7 @@ void MapEditClass::Place_Prev_Category(void)
             PendingObject = NULL;
             LastChoice--;
             if (LastChoice < 0) {
-                LastChoice = ObjCount - 1;
+                LastChoice = Objects.Count() - 1;
             }
         }
     }
@@ -1449,7 +1449,7 @@ void MapEditClass::Place_Home(void)
         if (!PendingObjectPtr) {
             PendingObject = NULL;
             LastChoice++;
-            if (LastChoice == ObjCount) {
+            if (LastChoice == Objects.Count()) {
                 LastChoice = 0;
             }
         }

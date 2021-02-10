@@ -301,7 +301,7 @@ void SmudgeTypeClass::Init_Heap(void)
 SmudgeType SmudgeTypeClass::From_Name(char const* name)
 {
     if (name != NULL) {
-        for (SmudgeType index = SMUDGE_FIRST; index < SMUDGE_COUNT; index++) {
+        for (SmudgeType index = SMUDGE_FIRST; index < SmudgeTypes.Count(); index++) {
             if (stricmp(As_Reference(index).IniName, name) == 0) {
                 return (index);
             }
@@ -358,15 +358,51 @@ short const* SmudgeTypeClass::Occupy_List(bool) const
  *=============================================================================================*/
 void SmudgeTypeClass::Init(TheaterType theater)
 {
-    if (theater != LastTheater) {
-        for (SmudgeType index = SMUDGE_FIRST; index < SMUDGE_COUNT; index++) {
-            SmudgeTypeClass const& smudge = As_Reference(index);
-            char fullname[_MAX_FNAME + _MAX_EXT]; // Fully constructed smudge data set name.
-
-            _makepath(fullname, NULL, NULL, smudge.IniName, Theaters[theater].Suffix);
-            ((void const*&)smudge.ImageData) = MFCD::Retrieve(fullname);
-        }
+    if (theater == LastTheater) {
+        return;
     }
+
+    bool usehardcodedlist = true;
+
+    std::string filename = Theaters[theater].Root;
+    filename += ".INI";
+
+    CCFileClass file(filename.c_str());
+    CCINIClass ini;
+
+    if (ini.Load(file, false)) {
+        
+       usehardcodedlist = ini.Get_Bool("General", "UseHardCodedSmudges", true);
+       int entries = ini.Entry_Count("SmudgeTypes");
+
+       SmudgeTypes.Set_Heap((SMUDGE_COUNT * usehardcodedlist) + entries);
+       if (usehardcodedlist) {
+            SmudgeTypeClass::Init_Heap();
+       }
+
+       for (int i = 0; i < entries; i++) {
+           std::string smudge = ini.Get_Entry("Smudgetypes", i);
+           int ID = (SMUDGE_COUNT * usehardcodedlist) + i;
+           std::string ininame = smudge;
+           int namestringid = ini.Get_Int(smudge.c_str(), "Name", -1); // display name ingme, string table value
+           int width = ini.Get_Int(smudge.c_str(), "Width", -1);
+           int height = ini.Get_Int(smudge.c_str(), "height", -1);
+           bool iscrater = ini.Get_Bool(smudge.c_str(), "IsCrater", false);
+           bool isbib = ini.Get_Bool(smudge.c_str(), "isBib", false);
+
+           new SmudgeTypeClass((SmudgeType)ID, ininame.c_str(), namestringid, width, height, isbib, iscrater);
+
+       }
+    }
+
+    for (SmudgeType index = SMUDGE_FIRST; index < SmudgeTypes.Count(); index++) {
+        SmudgeTypeClass const& smudge = As_Reference(index);
+        char fullname[_MAX_FNAME + _MAX_EXT]; // Fully constructed smudge data set name.
+
+        _makepath(fullname, NULL, NULL, smudge.IniName, Theaters[theater].Suffix);
+        ((void const*&)smudge.ImageData) = MFCD::Retrieve(fullname);
+    }
+
 }
 
 #ifdef SCENARIO_EDITOR
