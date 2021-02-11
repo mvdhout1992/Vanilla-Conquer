@@ -881,7 +881,7 @@ void OverlayTypeClass::Init(TheaterType theater)
             std::string ininame = overlay;
             int namestringid = ini.Get_Int(overlay.c_str(), "Name", -1); // display name ingme, string table value
             bool iswall = ini.Get_Bool(overlay.c_str(), "IsWall", false);
-            bool istheater = ini.Get_Bool(overlay.c_str(), "IsTheater", false);
+            bool istheater = ini.Get_Bool(overlay.c_str(), "IsTheater", true);
 
             bool iscrate = ini.Get_Bool(overlay.c_str(), "IsCrate", false);
             bool isradarvisible = ini.Get_Bool(overlay.c_str(), "IsRadarVisible", false);
@@ -915,7 +915,7 @@ void OverlayTypeClass::Init(TheaterType theater)
         }
     }
 
-    for (OverlayType index = OVERLAY_FIRST; index < Overlays.Count(); index++) {
+    for (OverlayType index = OVERLAY_FIRST; index < OverlayTypes.Count(); index++) {
         OverlayTypeClass& overlay = As_Reference(index);
         char fullname[_MAX_FNAME + _MAX_EXT]; // Fully constructed iconset name.
 

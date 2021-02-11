@@ -1215,6 +1215,63 @@ LandType CCINIClass::Get_LandType(char const* section, char const* entry, LandTy
     }
     return (defvalue);
 }
+static short const _List000011101000[] = {MAP_CELL_W, MAP_CELL_W + 1, MAP_CELL_W + 2, MAP_CELL_W * 2, REFRESH_EOL};
+static short const _List000110[] = {MAP_CELL_W, MAP_CELL_W + 1, REFRESH_EOL};
+static short const _List001011100110[] =
+    {2, MAP_CELL_W, MAP_CELL_W + 1, MAP_CELL_W + 2, MAP_CELL_W * 2 + 1, MAP_CELL_W * 2 + 2, REFRESH_EOL};
+static short const _List0010[] = {MAP_CELL_W, REFRESH_EOL};
+static short const _List0011[] = {MAP_CELL_W, MAP_CELL_W + 1, REFRESH_EOL};
+static short const _List001[] = {2, REFRESH_EOL};
+static short const _List010110[] = {1, MAP_CELL_W, MAP_CELL_W + 1, REFRESH_EOL};
+static short const _List01[] = {1, REFRESH_EOL};
+static short const _List11[] = {0, 1, REFRESH_EOL};
+static short const _List1001[] = {0, MAP_CELL_W + 1, REFRESH_EOL};
+static short const _List1010[] = {0, MAP_CELL_W, REFRESH_EOL};
+static short const _List101001[] = {0, 2, MAP_CELL_W + 2, REFRESH_EOL};
+static short const _List10[] = {0, REFRESH_EOL};
+static short const _List110000011001[] = {0, 1, MAP_CELL_W + 3, MAP_CELL_W * 2, MAP_CELL_W * 2 + 3, REFRESH_EOL};
+static short const _List110001[] = {0, 1, MAP_CELL_W + 2, REFRESH_EOL};
+static short const _List1100[] = {0, 1, REFRESH_EOL};
+static short const _List110110[] = {0, 1, MAP_CELL_W, MAP_CELL_W + 1, REFRESH_EOL};
+static short const _List1101[] = {0, 1, MAP_CELL_W + 1, REFRESH_EOL};
+static short const _List1111[] = {0, 1, MAP_CELL_W, MAP_CELL_W + 1, REFRESH_EOL};
+static short const _List111000010110[] = {0, 1, 2, MAP_CELL_W + 3, MAP_CELL_W * 2 + 1, MAP_CELL_W * 2 + 2, REFRESH_EOL};
+
+
+// Horrible hard-coded building foundations code
+short const* CCINIClass::Get_Foundation(char const* section, char const* entry, short const* defvalue)
+{
+    char buffer[512];
+    char str[512];
+    if (Get_String(section, entry, "", buffer, sizeof(buffer))) {
+        char* t = buffer;
+        char* d = str;
+        
+        // Remove spaces
+        do
+            while (isspace(*t))
+                t++;
+        while (*d++ = *t++);
+    }
+    // Remove ending comma character (',') if any
+    if (str[strlen(str) - 1] == ',') {
+        str[strlen(str) - 1] = '\0';
+    }
+    std::string s = str;
+    if (str == "0") {
+        return _List10;
+    }
+    if (str == "0,1") {
+        return _List11;
+    }
+
+    if (str == "0,1,w+0,w+2") {
+        return _List1111;
+    }
+    
+
+    return (defvalue);
+}
 
 /***********************************************************************************************
  * CCINIClass::Put_CrateType -- Stores the crate value in the section and entry specified.     *
