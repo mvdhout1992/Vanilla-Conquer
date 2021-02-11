@@ -79,7 +79,7 @@ public:
     long Get_Owners(char const* section, char const* entry, long defvalue) const;
     CrateType Get_CrateType(char const* section, char const* entry, CrateType defvalue) const;
     LandType Get_LandType(char const* section, char const* entry, LandType defvalue) const;
-    short const* Get_Foundation(char const* section, char const* entry, short const* defvalue);
+    short const* Get_Cell_List(char const* section, char const* entry, short const* defvalue, int defvaluesize);
 
     bool Put_Buildings(char const* section, char const* entry, long value);
     bool Put_AnimType(char const* section, char const* entry, AnimType value);

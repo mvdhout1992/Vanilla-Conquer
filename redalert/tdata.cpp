@@ -453,6 +453,8 @@ TerrainTypeClass::TerrainTypeClass(TerrainType terrain,
 {
     MaxStrength = 800;
     Armor = ARMOR_WOOD;
+    CustomOverlapList = false;
+    CustomOccupyList = false;
 }
 
 /***********************************************************************************************
@@ -596,6 +598,18 @@ void TerrainTypeClass::Init(TheaterType theater)
         return;
     }
 
+    // Deallocate custom allocated occupy&overlap list
+
+    for (TerrainType index = TERRAIN_FIRST; index < TerrainTypes.Count(); index++) {
+        TerrainTypeClass const& terrain = As_Reference(index);
+        if (terrain.CustomOverlapList) {
+            delete terrain.Overlap;
+        } else if (terrain.CustomOccupyList) {
+            delete terrain.Occupy;
+        }
+    }
+
+
     bool usehardcodedlist = true;
 
     std::string filename = Theaters[theater].Root;
@@ -626,18 +640,22 @@ void TerrainTypeClass::Init(TheaterType theater)
             bool iswater = ini.Get_Bool(terrain.c_str(), "IsWater", false);
             bool isimmune = ini.Get_Bool(terrain.c_str(), "IsImmune", true);
 
-            const short* foundation = ini.Get_Foundation(terrain.c_str(), "Foundation", _List10);
+            const short* occupy = ini.Get_Cell_List(terrain.c_str(), "OccupyList", _List10, ARRAY_SIZE(_List10));
+            const short* overlap = ini.Get_Cell_List(terrain.c_str(), "OverlapList", _List10, ARRAY_SIZE(_List10));
 
-            new TerrainTypeClass((TerrainType)ID,
+            TerrainTypeClass *t = new TerrainTypeClass((TerrainType)ID,
                                  theater,
                                  XYP_COORD(centerbasex, centerbasey),
                                  isimmune,
                                  iswater,
                                  ininame.c_str(),
                                  namestringid,
-                                 foundation,
-                                 NULL);
+                                 occupy,
+                                 overlap);
+            t->CustomOccupyList = true;
+            t->CustomOverlapList = true;
         }
+
     }
 
     for (TerrainType index = TERRAIN_FIRST; index < TerrainTypes.Count(); index++) {

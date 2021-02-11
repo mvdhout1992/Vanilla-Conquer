@@ -1628,6 +1628,11 @@ public:
     */
     unsigned IsWaterBased : 1;
 
+    // If these are set, means a custom list was allocated
+    // and we need to deallocate it
+    bool CustomOverlapList;
+    bool CustomOccupyList;
+
     //----------------------------------------------------------------
     TerrainTypeClass(NoInitClass const& x)
         : ObjectTypeClass(x)
