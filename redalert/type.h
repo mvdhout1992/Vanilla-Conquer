@@ -1583,7 +1583,7 @@ public:
 
     static void Init_Heap(void);
     static BulletTypeClass& As_Reference(BulletType type);
-    static void Init(TheaterType){};
+    static void Init(TheaterType);
     static void One_Time(void);
 
     virtual bool Read_INI(CCINIClass& ini);

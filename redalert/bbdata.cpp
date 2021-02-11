@@ -194,12 +194,13 @@ void BulletTypeClass::Init_Heap(void)
  * HISTORY:                                                                                    *
  *   05/28/1994 JLB : Created.                                                                 *
  *=============================================================================================*/
-void BulletTypeClass::One_Time(void)
+
+void BulletTypeClass::Init(TheaterType theater)
 {
     /*
     **	Load the bullet shapes.
     */
-    for (int index = BULLET_FIRST; index < BULLET_COUNT; index++) {
+    for (int index = BULLET_FIRST; index < BulletTypes.Count(); index++) {
         BulletTypeClass const& bullet = As_Reference((BulletType)index);
         char fullname[_MAX_FNAME + _MAX_EXT];
 
@@ -219,6 +220,10 @@ void BulletTypeClass::One_Time(void)
 #endif
         }
     }
+}
+void BulletTypeClass::One_Time(void)
+{
+    Init(THEATER_NONE);
 }
 
 /***********************************************************************************************
