@@ -586,7 +586,7 @@ private:
 #ifdef FIXIT_ANTS
     int BQuantity[STRUCT_COUNT - 3];
 #ifdef FIXIT_CSII //	checked - ajw 9/28/98
-    int UQuantity[UNIT_RA_COUNT - 3];
+    int UQuantity[UNIT_COUNT * 20];
 #else
     int UQuantity[UNIT_COUNT - 3];
 #endif

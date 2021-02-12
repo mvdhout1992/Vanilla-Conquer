@@ -203,6 +203,8 @@ public:
     */
     char GraphicName[_MAX_FNAME];
 
+    char CameoName[_MAX_FNAME];
+
     /*
     **	Is this object squashable by heavy vehicles?  If it is, then the vehicle
     **	can travel over this object and destroy it in the process.
@@ -315,6 +317,14 @@ public:
             return (GraphicName);
         return (Name());
     }
+
+    char const* Cameo_Name(void) const
+    {
+        if (CameoName[0] != '\0')
+            return (CameoName);
+        return (Graphic_Name());
+    }
+
     virtual int Max_Pips(void) const;
     virtual void Dimensions(int& width, int& height) const;
     virtual bool Create_And_Place(CELL, HousesType = HOUSE_NONE) const = 0;
@@ -1030,8 +1040,8 @@ public:
         return (ptr);
     };
     static void operator delete(void* ptr);
+    static void Init_Heap(CCINIClass& ini);
 
-    static void Init_Heap(void);
     static UnitType From_Name(char const* name);
     static UnitTypeClass& As_Reference(UnitType type);
     static void Init(TheaterType){};

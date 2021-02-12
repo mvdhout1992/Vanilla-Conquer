@@ -894,42 +894,77 @@ void UnitTypeClass::operator delete(void* pointer)
  * HISTORY:                                                                                    *
  *   07/09/1996 JLB : Created.                                                                 *
  *=============================================================================================*/
-void UnitTypeClass::Init_Heap(void)
+void UnitTypeClass::Init_Heap(CCINIClass& ini)
 {
-    /*
+
+    bool loadhardcoded = ini.Get_Bool("General", "LoadHardcodedUnits", true);
+    int entries = ini.Entry_Count("UnitTypes");
+
+    UnitTypes.Set_Heap((UNIT_COUNT * loadhardcoded) + entries);
+    if (loadhardcoded) {
+
+        /*
     **	These unit type class objects must be allocated in the exact order that they
     **	are specified in the UnitType enumeration. This is necessary because the heap
     **	allocation block index serves double duty as the type number index.
     */
-    new UnitTypeClass(UnitHTank);       //	UNIT_HTANK
-    new UnitTypeClass(UnitMTank);       //	UNIT_MTANK
-    new UnitTypeClass(UnitMTank2);      //	UNIT_MTANK2
-    new UnitTypeClass(UnitLTank);       //	UNIT_LTANK
-    new UnitTypeClass(UnitAPC);         //	UNIT_APC
-    new UnitTypeClass(UnitMineLayer);   // UNIT_MINELAYER
-    new UnitTypeClass(UnitJeep);        //	UNIT_JEEP
-    new UnitTypeClass(UnitHarvester);   //	UNIT_HARVESTER
-    new UnitTypeClass(UnitArty);        //	UNIT_ARTY
-    new UnitTypeClass(UnitMRJammer);    //	UNIT_MRJ
-    new UnitTypeClass(UnitMGG);         //	UNIT_MGG
-    new UnitTypeClass(UnitMCV);         // UNIT_MCV
-    new UnitTypeClass(UnitV2Launcher);  //	UNIT_V2_LAUNCHER
-    new UnitTypeClass(UnitConvoyTruck); // UNIT_TRUCK
-#ifdef FIXIT_ANTS
-    new UnitTypeClass(UnitAnt1); // UNIT_ANT1
-    new UnitTypeClass(UnitAnt2); // UNIT_ANT2
-    new UnitTypeClass(UnitAnt3); // UNIT_ANT3
-#endif
+        new UnitTypeClass(UnitHTank);       //	UNIT_HTANK
+        new UnitTypeClass(UnitMTank);       //	UNIT_MTANK
+        new UnitTypeClass(UnitMTank2);      //	UNIT_MTANK2
+        new UnitTypeClass(UnitLTank);       //	UNIT_LTANK
+        new UnitTypeClass(UnitAPC);         //	UNIT_APC
+        new UnitTypeClass(UnitMineLayer);   // UNIT_MINELAYER
+        new UnitTypeClass(UnitJeep);        //	UNIT_JEEP
+        new UnitTypeClass(UnitHarvester);   //	UNIT_HARVESTER
+        new UnitTypeClass(UnitArty);        //	UNIT_ARTY
+        new UnitTypeClass(UnitMRJammer);    //	UNIT_MRJ
+        new UnitTypeClass(UnitMGG);         //	UNIT_MGG
+        new UnitTypeClass(UnitMCV);         // UNIT_MCV
+        new UnitTypeClass(UnitV2Launcher);  //	UNIT_V2_LAUNCHER
+        new UnitTypeClass(UnitConvoyTruck); // UNIT_TRUCK
+        new UnitTypeClass(UnitAnt1);        // UNIT_ANT1
+        new UnitTypeClass(UnitAnt2);        // UNIT_ANT2
+        new UnitTypeClass(UnitAnt3);        // UNIT_ANT3
+        new UnitTypeClass(UnitChrono);      // UNIT_CHRONOTANK
+        new UnitTypeClass(UnitTesla);       // UNIT_TESLATANK
+        new UnitTypeClass(UnitMAD);         // UNIT_MAD
+        new UnitTypeClass(UnitDemoTruck);   // UNIT_DEMOTRUCK
+        new UnitTypeClass(UnitPhase);       //	UNIT_PHASETRANSPORT
+    }
 
-#ifdef FIXIT_CSII                     //	checked - ajw 9/28/98
-    new UnitTypeClass(UnitChrono);    // UNIT_CHRONOTANK
-    new UnitTypeClass(UnitTesla);     // UNIT_TESLATANK
-    new UnitTypeClass(UnitMAD);       // UNIT_MAD
-    new UnitTypeClass(UnitDemoTruck); // UNIT_DEMOTRUCK
-#ifdef FIXIT_PHASETRANSPORT           //	checked - ajw 9/28/98
-    new UnitTypeClass(UnitPhase);     //	UNIT_PHASETRANSPORT
-#endif
-#endif
+    for (int i = 0; i < entries; i++) {
+        std::string entry = ini.Get_Entry("UnitTypes", i);
+        std::string unit = ini.Get_String("UnitTypes", entry.c_str(), "<none>");
+        std::string ininame = unit;
+        int type = (UNIT_COUNT * loadhardcoded) + i;
+        new UnitTypeClass((UnitType)type,
+                          TXT_MTANK2,      // NAME:			Text name of this unit type.
+                          ininame.c_str(), // ININame
+                          ANIM_FRAG1,      // Explosion on death
+                          REMAP_NORMAL,    // Sidebar remap logic.
+                          0x0030,          //	Vertical offset.
+                          0x00C0,          // Primary weapon offset along turret centerline.
+                          0x0000,          // Primary weapon lateral offset along turret centerline.
+                          0x00C0,          // Secondary weapon offset along turret centerline.
+                          0x0000,          // Secondary weapon lateral offset along turret centerling.
+                          true,            // Can this be a goodie surprise from a crate?
+                          false,           // Always use the given name for the vehicle?
+                          true,            // Can this unit squash infantry?
+                          false,           // Does this unit harvest Tiberium?
+                          false,           // Is invisible to radar?
+                          false,           // Is it insignificant (won't be announced)?
+                          true,            // Is it equipped with a combat turret?
+                          false,           // Does it have a rotating radar dish?
+                          false,           // Is there an associated firing animation?
+                          false,           // Must the turret be in a locked down position while moving?
+                          true,            // Is this a gigundo-rotund-enormous unit?
+                          false,           // Does the unit have a constant animation?
+                          false,           // Is the unit capable of jamming radar?
+                          false,           // Is the unit a mobile gap generator?
+                          32,              // Rotation stages.
+                          0,               // Turret center offset along body centerline.
+                          MISSION_HUNT);   // ORDERS:		Default order to give new unit.
+    }
 }
 
 /***********************************************************************************************
@@ -952,7 +987,7 @@ void UnitTypeClass::Init_Heap(void)
 UnitType UnitTypeClass::From_Name(char const* name)
 {
     if (name != NULL) {
-        for (UnitType classid = UNIT_FIRST; classid < UNIT_COUNT; classid++) {
+        for (UnitType classid = UNIT_FIRST; classid < UnitTypes.Count(); classid++) {
             if (stricmp(As_Reference(classid).IniName, name) == 0) {
                 return (classid);
             }
@@ -1036,7 +1071,7 @@ void UnitTypeClass::Prep_For_Add(void)
  *=============================================================================================*/
 void UnitTypeClass::One_Time(void)
 {
-    for (UnitType index = UNIT_FIRST; index < UNIT_COUNT; index++) {
+    for (UnitType index = UNIT_FIRST; index < UnitTypes.Count(); index++) {
         char fullname[_MAX_FNAME + _MAX_EXT];
         char buffer[_MAX_FNAME];
         UnitTypeClass const& uclass = As_Reference(index);
@@ -1051,7 +1086,7 @@ void UnitTypeClass::One_Time(void)
         /*
         **	Fetch the supporting data files for the unit.
         */
-        sprintf(buffer, "%sICON", uclass.Graphic_Name());
+        sprintf(buffer, "%sICON", uclass.Cameo_Name());
         _makepath(fullname, NULL, NULL, buffer, ".SHP");
 #ifndef NDEBUG
         RawFileClass datafile(fullname);
@@ -1299,6 +1334,24 @@ bool UnitTypeClass::Read_INI(CCINIClass& ini)
     if (TechnoTypeClass::Read_INI(ini)) {
         IsNoFireWhileMoving = ini.Get_Bool(IniName, "NoMovingFire", IsNoFireWhileMoving);
         Speed = ini.Get_Bool(IniName, "Tracked", (Speed == SPEED_TRACK)) ? SPEED_TRACK : SPEED_WHEEL;
+        
+        IsCrateGoodie = ini.Get_Bool(IniName, "IsCrateGoodie", IsCrateGoodie);
+        IsCrusher = ini.Get_Bool(IniName, "IsCrusher", IsCrusher);
+        IsToHarvest = ini.Get_Bool(IniName, "IsToHarvest", IsToHarvest);
+        IsRadarEquipped = ini.Get_Bool(IniName, "IsRadarEquipped", IsRadarEquipped);
+
+        IsFireAnim = ini.Get_Bool(IniName, "IsFireAnim", IsFireAnim);
+        IsLockTurret = ini.Get_Bool(IniName, "IsLockTurret", IsLockTurret);
+
+        IsGigundo = ini.Get_Bool(IniName, "IsGigundo", IsGigundo);
+        IsAnimating = ini.Get_Bool(IniName, "IsAnimating", IsAnimating);
+
+        IsJammer = ini.Get_Bool(IniName, "IsJammer", IsJammer);
+        IsGapper = ini.Get_Bool(IniName, "IsGapper", IsGapper);
+
+        TurretOffset = ini.Get_Int(IniName, "TurretOffset", TurretOffset);
+        Explosion = ini.Get_AnimType(IniName, "Explosion", Explosion);
+        Mission = ini.Get_MissionTypec(IniName, "Mission", Mission);
 
         /*
         **	If this unit can drive over walls, then mark it as recognizing the crusher zone.

@@ -213,6 +213,9 @@ bool Init_Game(int, char*[])
     */
     Init_Secondary_Mixfiles();
 
+    CCFileClass rulesIniFile("RULES.INI");
+    bool RulesLoad = RuleINI.Load(rulesIniFile, false);
+
     /*
     **	This is a special hack to initialize the heaps that must be in place before the
     **	rules file is processed. These heaps should properly be allocated as a consequence
@@ -238,7 +241,7 @@ bool Init_Game(int, char*[])
     InfantryTypeClass::Init_Heap();
     BulletTypeClass::Init_Heap();
     AnimTypeClass::Init_Heap();
-    UnitTypeClass::Init_Heap();
+    UnitTypeClass::Init_Heap(RuleINI);
     VesselTypeClass::Init_Heap();
     TemplateTypeClass::Init_Heap();
     TerrainTypeClass::Init_Heap();
@@ -275,11 +278,7 @@ bool Init_Game(int, char*[])
     CCPtr<OverlayTypeClass>::Set_Heap(&OverlayTypes);
     CCPtr<SmudgeTypeClass>::Set_Heap(&SmudgeTypes);
 
-    /*
-    **	Find and process any rules for this game.
-    */
-    CCFileClass rulesIniFile("RULES.INI");
-    if (RuleINI.Load(rulesIniFile, false)) {
+    if (RulesLoad) {
         Rule.Process(RuleINI);
     }
 #ifdef FIXIT_CSII //	checked - ajw 9/28/98

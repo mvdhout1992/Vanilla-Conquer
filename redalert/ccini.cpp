@@ -1205,6 +1205,28 @@ CrateType CCINIClass::Get_CrateType(char const* section, char const* entry, Crat
     return (defvalue);
 }
 
+MissionType MissionType_From_Name(char const* name)
+{
+    if (name != NULL) {
+        for (MissionType miss = MISSION_FIRST; miss < MISSION_COUNT; miss++) {
+            if (stricmp(name, Missions[miss]) == 0)
+                return (miss);
+        }
+    }
+    return (MISSION_NONE);
+}
+
+MissionType CCINIClass::Get_MissionTypec(char const* section, char const* entry, MissionType defvalue) const
+{
+    char buffer[128];
+
+    if (Get_String(section, entry, "", buffer, sizeof(buffer))) {
+        return (MissionType_From_Name(buffer));
+    }
+    return (defvalue);
+
+}
+
 /***********************************************************************************************
  * CCINIClass::Put_CrateType -- Stores the crate value in the section and entry specified.     *
  *                                                                                             *

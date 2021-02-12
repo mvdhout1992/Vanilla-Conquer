@@ -2229,6 +2229,7 @@ bool Read_Scenario_INI(char* fname, bool)
         InfantryTypeClass* itype = InfantryTypes.Ptr(iindex);
         if (itype->IsCivilian) {
             itype->GraphicName[0] = '\0';
+            itype->CameoName[0] = '\0';
         }
     }
 
@@ -2630,7 +2631,7 @@ bool Read_Scenario_INI(char* fname, bool)
 #ifdef FIXIT_CSII //	checked - ajw 9/28/98 - Added runtime check.
     if (Is_Aftermath_Installed()) {
         if (Session.Type == GAME_SKIRMISH || Session.Type == GAME_GLYPHX_MULTIPLAYER) {
-            bAftermathMultiplayer = NewUnitsEnabled = OverrideNewUnitsEnabled;
+            bAftermathMultiplayer = NewUnitsEnabled = 1;
         }
     }
 #endif

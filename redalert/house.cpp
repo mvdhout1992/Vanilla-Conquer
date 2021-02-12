@@ -6082,7 +6082,7 @@ int HouseClass::AI_Unit(void)
 
     if (Session.Type == GAME_NORMAL) {
 
-        int counter[UNIT_COUNT];
+        int counter[UNIT_COUNT * 50];
         memset(counter, 0x00, sizeof(counter));
 
         /*
@@ -6143,8 +6143,8 @@ int HouseClass::AI_Unit(void)
         */
         int bestval = -1;
         int bestcount = 0;
-        UnitType bestlist[UNIT_COUNT];
-        for (UnitType utype = UNIT_FIRST; utype < UNIT_COUNT; utype++) {
+        UnitType bestlist[UNIT_COUNT * 50];
+        for (UnitType utype = UNIT_FIRST; utype < UnitTypes.Count(); utype++) {
             if (counter[utype] > 0 && Can_Build(&UnitTypeClass::As_Reference(utype), Class->House)
                 && UnitTypeClass::As_Reference(utype).Cost_Of() <= Available_Money()) {
                 if (bestval == -1 || bestval < counter[utype]) {
@@ -6159,16 +6159,16 @@ int HouseClass::AI_Unit(void)
         **	The unit type to build is now known. Fetch a pointer to the techno type class.
         */
         if (bestcount) {
-            BuildUnit = bestlist[Random_Pick(0, bestcount - 1)];
+            BuildUnit = bestlist[Random_Pick(0, UnitTypes.Count() - 1)];
         }
     }
 
     if (IsBaseBuilding) {
 
-        int counter[UNIT_COUNT];
+        int counter[UNIT_COUNT * 50];
         int total = 0;
         UnitType index;
-        for (index = UNIT_FIRST; index < UNIT_COUNT; index++) {
+        for (index = UNIT_FIRST; index < UnitTypes.Count(); index++) {
             UnitTypeClass const* utype = &UnitTypeClass::As_Reference(index);
             if (Can_Build(utype, ActLike) && utype->Type != UNIT_HARVESTER) {
                 if (utype->PrimaryWeapon != NULL) {
@@ -6184,7 +6184,7 @@ int HouseClass::AI_Unit(void)
 
         if (total > 0) {
             int choice = Random_Pick(0, total - 1);
-            for (index = UNIT_FIRST; index < UNIT_COUNT; index++) {
+            for (index = UNIT_FIRST; index < UnitTypes.Count(); index++) {
                 if (choice < counter[index]) {
                     BuildUnit = index;
                     break;
@@ -8193,13 +8193,13 @@ void HouseClass::Init_Unit_Trackers(void)
     if (Session.Type == GAME_INTERNET || Session.Type == GAME_GLYPHX_MULTIPLAYER) {
         AircraftTotals = new UnitTrackerClass((int)AIRCRAFT_COUNT);
         InfantryTotals = new UnitTrackerClass((int)INFANTRY_COUNT);
-        UnitTotals = new UnitTrackerClass((int)UNIT_COUNT);
+        UnitTotals = new UnitTrackerClass((int)UNIT_COUNT * 50);
         BuildingTotals = new UnitTrackerClass((int)STRUCT_COUNT);
         VesselTotals = new UnitTrackerClass((int)VESSEL_COUNT);
 
         DestroyedAircraft = new UnitTrackerClass((int)AIRCRAFT_COUNT);
         DestroyedInfantry = new UnitTrackerClass((int)INFANTRY_COUNT);
-        DestroyedUnits = new UnitTrackerClass((int)UNIT_COUNT);
+        DestroyedUnits = new UnitTrackerClass((int)UNIT_COUNT * 50);
         DestroyedBuildings = new UnitTrackerClass((int)STRUCT_COUNT);
         DestroyedVessels = new UnitTrackerClass((int)VESSEL_COUNT);
 

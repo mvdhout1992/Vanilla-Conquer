@@ -7065,6 +7065,7 @@ bool TechnoClass::Evaluate_Object(ThreatType method,
             MaxPassengers = ini.Get_Int(Name(), "Passengers", MaxPassengers);
             // Mono_Printf("before image=: %s\n",GraphicName);
             ini.Get_String(Name(), "Image", GraphicName, GraphicName, sizeof(GraphicName));
+            ini.Get_String(Name(), "Cameo", GraphicName, CameoName, sizeof(CameoName));
             // Mono_Printf("after image=: %s\n",GraphicName);if(Random_Pick(0,4)) Keyboard->Get();
 
             IsLeader = false;
