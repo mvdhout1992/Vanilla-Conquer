@@ -1176,7 +1176,7 @@ ResultType UnitClass::Take_Damage(int& damage, int distance, WarheadType warhead
                 /*
                 **	Try to return to base if possible.
                 */
-                if (*this == UNIT_HARVESTER && Pip_Count() && Health_Ratio() <= Rule.ConditionYellow) {
+                if (Class->IsToHarvest && Pip_Count() && Health_Ratio() <= Rule.ConditionYellow) {
 
                     /*
                     **	Find nearby refinery and head to it?
@@ -1197,7 +1197,7 @@ ResultType UnitClass::Take_Damage(int& damage, int distance, WarheadType warhead
         /*
         **	Computer controlled harvester will radio for help if they are attacked.
         */
-        if (*this == UNIT_HARVESTER && !House->IsHuman && source) {
+        if (Class->IsToHarvest && !House->IsHuman && source) {
             Base_Is_Attacked(source);
         }
     }
@@ -1736,7 +1736,7 @@ void UnitClass::Per_Cell_Process(PCPType why)
             } else {
                 TechnoClass* contact = Contact_With_Whom();
                 if (Transmit_Message(RADIO_UNLOADED) == RADIO_RUN_AWAY) {
-                    if (*this == UNIT_HARVESTER && contact && contact->What_Am_I() == RTTI_BUILDING
+                    if (Class->IsToHarvest && contact && contact->What_Am_I() == RTTI_BUILDING
                         && *((BuildingClass*)contact) != STRUCT_REPAIR) {
                         Assign_Mission(MISSION_HARVEST);
                     } else if (!Target_Legal(NavCom)) {
@@ -1754,7 +1754,7 @@ void UnitClass::Per_Cell_Process(PCPType why)
                         }
                     }
                 } else {
-                    if (*this == UNIT_HARVESTER) {
+                    if (Class->IsToHarvest) {
                         if (Target_Legal(ArchiveTarget)) {
                             Assign_Mission(MISSION_HARVEST);
                             Assign_Destination(ArchiveTarget);
@@ -2489,8 +2489,8 @@ int UnitClass::Mission_Unload(void)
     DirType dir;
     CELL cell;
 
-    switch (Class->Type) {
-    case UNIT_HARVESTER:
+
+    if (Class->IsToHarvest) {
         if (PrimaryFacing != DIR_W) {
             if (!IsRotating) {
                 Do_Turn(DIR_W);
@@ -2502,24 +2502,22 @@ int UnitClass::Mission_Unload(void)
             IsDumping = true;
             Set_Stage(0);
             Set_Rate(Rule.OreDumpRate);
-            break;
+        } else if (Fetch_Stage() < ARRAY_SIZE(Class->Harvester_Dump_List) - 1) {
+        } else {
+            IsDumping = false;
+            if (Tiberium) {
+                Tiberium = 0;
+                int credits = Credit_Load();
+                House->Harvested(credits);
+                Tiberium = Gold = Gems = 0;
+            }
+            Transmit_Message(RADIO_OVER_OUT);
+
+            Assign_Mission(MISSION_HARVEST);
         }
-        if (Fetch_Stage() < ARRAY_SIZE(Class->Harvester_Dump_List) - 1)
-            break;
+    }
 
-        IsDumping = false;
-        if (Tiberium) {
-            Tiberium = 0;
-            int credits = Credit_Load();
-            House->Harvested(credits);
-            Tiberium = Gold = Gems = 0;
-        }
-        Transmit_Message(RADIO_OVER_OUT);
-
-        Assign_Mission(MISSION_HARVEST);
-        break;
-
-    case UNIT_TRUCK:
+    if (Class->Type == UNIT_TRUCK) {
         switch (Status) {
         case INITIAL_CHECK:
             dir = Desired_Load_Dir(NULL, cell);
@@ -2585,12 +2583,8 @@ int UnitClass::Mission_Unload(void)
             Assign_Mission(MISSION_GUARD);
             break;
         }
-        break;
-
-    case UNIT_APC:
-#ifdef FIXIT_PHASETRANSPORT //	checked - ajw 9/28/98
-    case UNIT_PHASE:
-#endif
+    }
+    if (Class->Type == UNIT_APC || Class->Type == UNIT_PHASE) {
         switch (Status) {
         case INITIAL_CHECK:
             dir = Desired_Load_Dir(NULL, cell);
@@ -2675,9 +2669,9 @@ int UnitClass::Mission_Unload(void)
             }
             break;
         }
-        break;
+    }
 
-    case UNIT_MCV:
+    if (Class->Type == UNIT_MCV) {
         switch (Status) {
         case 0:
             Path[0] = FACING_NONE;
@@ -2708,8 +2702,9 @@ int UnitClass::Mission_Unload(void)
             break;
         }
         return (1);
+    }
 
-    case UNIT_MINELAYER:
+    if (Class->Type == UNIT_MINELAYER) {
         switch (Status) {
         case INITIAL_CHECK:
             dir = DIR_NE;
@@ -2784,10 +2779,10 @@ int UnitClass::Mission_Unload(void)
             }
             break;
         }
-        break;
+    }
 
 #ifdef FIXIT_CSII //	checked - ajw 9/28/98
-    case UNIT_MAD:
+    if (Class->Type == UNIT_MAD) {
         if (!Gems && !IsDumping) {
             Gems = 1;
             Gold = 0;
@@ -2848,9 +2843,9 @@ int UnitClass::Mission_Unload(void)
         Strength = 1;            // assure destruction
         PendingTimeQuake = true; // trigger a time quake
         TimeQuakeCenter = ::As_Target(Center_Coord());
-        break;
+    }
 
-    case UNIT_CHRONOTANK:
+   if (Class->Type == UNIT_PHASE) {
         if (IsOwnedByPlayer) {
             Map.IsTargettingMode = SPC_CHRONO2;
             HouseClass* old_player_ptr = PlayerPtr;
@@ -2866,11 +2861,8 @@ int UnitClass::Mission_Unload(void)
         House->UnitToTeleport = As_Target();
 
         Assign_Mission(MISSION_GUARD);
-        break;
-#endif
-    default:
-        break;
     }
+#endif
     return (MissionControl[Mission].Normal_Delay() + Random_Pick(0, 2));
 }
 
@@ -4067,7 +4059,7 @@ int UnitClass::Pip_Count(void) const
         return (retval);
     }
 
-    if (*this == UNIT_HARVESTER) {
+    if (Class->IsToHarvest) {
         return ((Gold + Gems) / 4);
     }
 
@@ -4452,7 +4444,7 @@ fixed UnitClass::Tiberium_Load(void) const
 {
     assert(IsActive);
 
-    if (*this == UNIT_HARVESTER) {
+    if (Class->IsToHarvest) {
         return (fixed(Tiberium, Rule.BailCount));
     }
     return (0);

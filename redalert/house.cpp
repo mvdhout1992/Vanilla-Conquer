@@ -6170,7 +6170,7 @@ int HouseClass::AI_Unit(void)
         UnitType index;
         for (index = UNIT_FIRST; index < UnitTypes.Count(); index++) {
             UnitTypeClass const* utype = &UnitTypeClass::As_Reference(index);
-            if (Can_Build(utype, ActLike) && utype->Type != UNIT_HARVESTER) {
+            if (Can_Build(utype, ActLike) && utype->IsToHarvest == false) {
                 if (utype->PrimaryWeapon != NULL) {
                     counter[index] = 20;
                 } else {
@@ -7204,7 +7204,7 @@ TARGET HouseClass::Find_Juicy_Target(COORDINATE coord) const
             if (unit->Anti_Air())
                 val *= 2;
 
-            if (*unit == UNIT_HARVESTER)
+            if (unit->Class->IsToHarvest)
                 val /= 2;
 
             if (value == 0 || val < value) {

@@ -201,7 +201,7 @@ RadioMessageType BuildingClass::Receive_Message(RadioClass* from, RadioMessageTy
             return (RADIO_NEGATIVE);
 
         case STRUCT_REFINERY:
-            if (from->What_Am_I() == RTTI_UNIT && *((UnitClass*)from) == UNIT_HARVESTER
+            if (from->What_Am_I() == RTTI_UNIT && ((UnitClass*)from)->Class->IsToHarvest
                 && (ScenarioInit || !Is_Something_Attached())) {
 
                 return ((Contact_With_Whom() != from) ? RADIO_ROGER : RADIO_NEGATIVE);

@@ -1254,7 +1254,7 @@ void UnitTypeClass::Dimensions(int& width, int& height) const
  *=============================================================================================*/
 int UnitTypeClass::Max_Pips(void) const
 {
-    if (Type == UNIT_HARVESTER) {
+    if (IsToHarvest) {
         return (7);
     }
 

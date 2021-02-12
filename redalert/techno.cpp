@@ -6091,7 +6091,7 @@ bool TechnoClass::Evaluate_Object(ThreatType method,
             ** Check if it's a harvester, to show the right type of pips for the
             ** various minerals it could have harvested.
             */
-            if (What_Am_I() == RTTI_UNIT && *(UnitClass*)this == UNIT_HARVESTER) {
+            if (What_Am_I() == RTTI_UNIT && ((UnitClass*)this)->Class->IsToHarvest) {
                 UnitClass* harv = (UnitClass*)this;
 
                 int iron = harv->Gems;
@@ -7067,6 +7067,7 @@ bool TechnoClass::Evaluate_Object(ThreatType method,
             ini.Get_String(Name(), "Image", GraphicName, GraphicName, sizeof(GraphicName));
             ini.Get_String(Name(), "Cameo", GraphicName, CameoName, sizeof(CameoName));
             // Mono_Printf("after image=: %s\n",GraphicName);if(Random_Pick(0,4)) Keyboard->Get();
+            IsTurretEquipped = ini.Get_Bool(Name(), "IsTurretEquipped", IsTurretEquipped);
 
             IsLeader = false;
             if (PrimaryWeapon != NULL && PrimaryWeapon->Attack > 0) {
