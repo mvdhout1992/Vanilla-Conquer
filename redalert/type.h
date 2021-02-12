@@ -999,6 +999,12 @@ public:
     */
     int MaxSize;
 
+
+    // For units like V2 Rocket Launcher and MSAM, this is for the special reload
+    // and graphics logic for the rocket they are carrying and isn't visible
+    // when they are reloading
+    int AmmoImageCount;
+
     /*
     **	This is the explicit unit class constructor.
     */
@@ -1032,7 +1038,8 @@ public:
                   bool is_gapper,
                   int rotation,
                   int toffset,
-                  MissionType order);
+                  MissionType order,
+                  bool ammoimagecount);
 
     static void* operator new(size_t);
     static void* operator new(size_t, void* ptr)

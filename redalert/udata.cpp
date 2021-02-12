@@ -87,7 +87,8 @@ static UnitTypeClass const UnitV2Launcher(UNIT_V2_LAUNCHER,
                                           false,           // Is the unit a mobile gap generator?
                                           32,              // Rotation stages.
                                           0,               // Turret center offset along body centerline.
-                                          MISSION_HUNT     // ORDERS:		Default order to give new unit.
+                                          MISSION_HUNT,     // ORDERS:		Default order to give new unit.
+                                          1 // Does this unit have reload graphics and logic like V2 & MSAM?
 );
 
 // Light tank
@@ -117,7 +118,8 @@ static UnitTypeClass const UnitLTank(UNIT_LTANK,
                                      false,        // Is the unit a mobile gap generator?
                                      32,           // Rotation stages.
                                      0,            // Turret center offset along body centerline.
-                                     MISSION_HUNT  // ORDERS:		Default order to give new unit.
+                                     MISSION_HUNT,  // ORDERS:		Default order to give new unit.
+                                     0             // Does this unit have reload graphics and logic like V2 & MSAM?
 );
 
 // Heavy tank
@@ -147,7 +149,8 @@ static UnitTypeClass const UnitMTank(UNIT_MTANK,
                                      false,        // Is the unit a mobile gap generator?
                                      32,           // Rotation stages.
                                      0,            // Turret center offset along body centerline.
-                                     MISSION_HUNT  // ORDERS:		Default order to give new unit.
+                                     MISSION_HUNT,  // ORDERS:		Default order to give new unit.
+                                     0             // Does this unit have reload graphics and logic like V2 & MSAM?
 );
 
 // Medium tank
@@ -177,7 +180,8 @@ static UnitTypeClass const UnitMTank2(UNIT_MTANK2,
                                       false,        // Is the unit a mobile gap generator?
                                       32,           // Rotation stages.
                                       0,            // Turret center offset along body centerline.
-                                      MISSION_HUNT  // ORDERS:		Default order to give new unit.
+                                      MISSION_HUNT,  // ORDERS:		Default order to give new unit.
+                                      0             // Does this unit have reload graphics and logic like V2 & MSAM?
 );
 
 // Mastadon tank
@@ -207,7 +211,8 @@ static UnitTypeClass const UnitHTank(UNIT_HTANK,
                                      false,         // Is the unit a mobile gap generator?
                                      32,            // Rotation stages.
                                      0,             // Turret center offset along body centerline.
-                                     MISSION_HUNT   // ORDERS:		Default order to give new unit.
+                                     MISSION_HUNT,   // ORDERS:		Default order to give new unit.
+                                     0              // Does this unit have reload graphics and logic like V2 & MSAM?
 );
 
 // Mobile Radar Jammer
@@ -237,7 +242,8 @@ static UnitTypeClass const UnitMRJammer(UNIT_MRJ,
                                         false,        // Is the unit a mobile gap generator?
                                         32,           // Rotation stages.
                                         0,            // Turret center offset along body centerline.
-                                        MISSION_HUNT  // ORDERS:		Default order to give new unit.
+                                        MISSION_HUNT,  // ORDERS:		Default order to give new unit.
+                                        0             // Does this unit have reload graphics and logic like V2 & MSAM?
 );
 
 // Mobile Gap Generator
@@ -267,7 +273,8 @@ static UnitTypeClass const UnitMGG(UNIT_MGG,
                                    true,         // Is the unit a mobile gap generator?
                                    32,           // Rotation stages.
                                    0,            // Turret center offset along body centerline.
-                                   MISSION_HUNT  // ORDERS:		Default order to give new unit.
+                                   MISSION_HUNT,  // ORDERS:		Default order to give new unit.
+                                   0             // Does this unit have reload graphics and logic like V2 & MSAM?
 );
 
 // Artillery
@@ -297,7 +304,8 @@ static UnitTypeClass const UnitArty(UNIT_ARTY,
                                     false,         // Is the unit a mobile gap generator?
                                     32,            // Rotation stages.
                                     0,             // Turret center offset along body centerline.
-                                    MISSION_HUNT   // ORDERS:		Default order to give new unit.
+                                    MISSION_HUNT,   // ORDERS:		Default order to give new unit.
+                                    0              // Does this unit have reload graphics and logic like V2 & MSAM?
 );
 
 // Harvester
@@ -327,7 +335,8 @@ static UnitTypeClass const UnitHarvester(UNIT_HARVESTER,
                                          false,           // Is the unit a mobile gap generator?
                                          32,              // Rotation stages.
                                          0,               // Turret center offset along body centerline.
-                                         MISSION_HARVEST  // ORDERS:		Default order to give new unit.
+                                         MISSION_HARVEST,  // ORDERS:		Default order to give new unit.
+                                         0 // Does this unit have reload graphics and logic like V2 & MSAM?
 );
 
 // Mobile construction vehicle
@@ -357,7 +366,8 @@ static UnitTypeClass const UnitMCV(UNIT_MCV,
                                    false,           // Is the unit a mobile gap generator?
                                    32,              // Rotation stages.
                                    0,               // Turret center offset along body centerline.
-                                   MISSION_HUNT     // ORDERS:		Default order to give new unit.
+                                   MISSION_HUNT,     // ORDERS:		Default order to give new unit.
+                                   0                // Does this unit have reload graphics and logic like V2 & MSAM?
 );
 
 // Jeep (hummer)
@@ -387,7 +397,8 @@ static UnitTypeClass const UnitJeep(UNIT_JEEP,
                                     false,        // Is the unit a mobile gap generator?
                                     32,           // Rotation stages.
                                     0,            // Turret center offset along body centerline.
-                                    MISSION_HUNT  // ORDERS:		Default order to give new unit.
+                                    MISSION_HUNT,  // ORDERS:		Default order to give new unit.
+                                    0             // Does this unit have reload graphics and logic like V2 & MSAM?
 );
 
 // Armored personnel carrier
@@ -417,7 +428,8 @@ static UnitTypeClass const UnitAPC(UNIT_APC,
                                    false,        // Is the unit a mobile gap generator?
                                    32,           // Rotation stages.
                                    0,            // Turret center offset along body centerline.
-                                   MISSION_HUNT  // ORDERS:		Default order to give new unit.
+                                   MISSION_HUNT,  // ORDERS:		Default order to give new unit.
+                                   0             // Does this unit have reload graphics and logic like V2 & MSAM?
 );
 
 // Mine laying truck
@@ -447,7 +459,8 @@ static UnitTypeClass const UnitMineLayer(UNIT_MINELAYER,
                                          false,          // Is the unit a mobile gap generator?
                                          32,             // Rotation stages.
                                          0,              // Turret center offset along body centerline.
-                                         MISSION_HUNT    // ORDERS:		Default order to give new unit.
+                                         MISSION_HUNT,    // ORDERS:		Default order to give new unit.
+                                         0 // Does this unit have reload graphics and logic like V2 & MSAM?
 );
 
 // Convoy Truck
@@ -477,38 +490,9 @@ static UnitTypeClass const UnitConvoyTruck(UNIT_TRUCK,
                                            false,        // Is the unit a mobile gap generator?
                                            32,           // Rotation stages.
                                            0,            // Turret center offset along body centerline.
-                                           MISSION_GUARD // ORDERS:		Default order to give new unit.
+                                           MISSION_GUARD, // ORDERS:		Default order to give new unit.
+                                           0 // Does this unit have reload graphics and logic like V2 & MSAM?
 );
-
-#ifdef FIXIT_ANTS
-/*
-[ANT]
-Name=Warrior Ant
-Primary=Mandible
-Strength=150
-Armor=light
-TechLevel=-1
-Sight=2
-Speed=5
-Cost=700
-Points=40
-ROT=5
-Tracked=yes
-Crewed=no
-NoMovingFire=yes
-
-; Ant mandible
-[Mandible]
-Damage=50
-ROF=5
-Range=1.5
-Projectile=Invisible
-Speed=100
-Warhead=HollowPoint
-Report=none
-
-
-*/
 
 // Warrior ant
 static UnitTypeClass const UnitAnt1(UNIT_ANT1,
@@ -537,7 +521,8 @@ static UnitTypeClass const UnitAnt1(UNIT_ANT1,
                                     false,           // Is the unit a mobile gap generator?
                                     8,               // Rotation stages.
                                     0,               // Turret center offset along body centerline.
-                                    MISSION_HUNT     // ORDERS:		Default order to give new unit.
+                                    MISSION_HUNT,     // ORDERS:		Default order to give new unit.
+                                    0                // Does this unit have reload graphics and logic like V2 & MSAM?
 );
 static UnitTypeClass const UnitAnt2(UNIT_ANT2,
                                     TXT_NONE,        // NAME:			Text name of this unit type.
@@ -565,7 +550,8 @@ static UnitTypeClass const UnitAnt2(UNIT_ANT2,
                                     false,           // Is the unit a mobile gap generator?
                                     8,               // Rotation stages.
                                     0,               // Turret center offset along body centerline.
-                                    MISSION_HUNT     // ORDERS:		Default order to give new unit.
+                                    MISSION_HUNT,     // ORDERS:		Default order to give new unit.
+                                    0                // Does this unit have reload graphics and logic like V2 & MSAM?
 );
 static UnitTypeClass const UnitAnt3(UNIT_ANT3,
                                     TXT_NONE,        // NAME:			Text name of this unit type.
@@ -593,11 +579,10 @@ static UnitTypeClass const UnitAnt3(UNIT_ANT3,
                                     false,           // Is the unit a mobile gap generator?
                                     8,               // Rotation stages.
                                     0,               // Turret center offset along body centerline.
-                                    MISSION_HUNT     // ORDERS:		Default order to give new unit.
+                                    MISSION_HUNT,     // ORDERS:		Default order to give new unit.
+                                    0            // Does this unit have reload graphics and logic like V2 & MSAM?
 );
-#endif
 
-#ifdef FIXIT_CSII //	checked - ajw 9/28/98
 // Chrono Tank
 static UnitTypeClass const UnitChrono(UNIT_CHRONOTANK,
                                       TXT_CHRONOTANK, // NAME:			Text name of this unit type.
@@ -625,7 +610,8 @@ static UnitTypeClass const UnitChrono(UNIT_CHRONOTANK,
                                       false,          // Is the unit a mobile gap generator?
                                       32,             // Rotation stages.
                                       0,              // Turret center offset along body centerline.
-                                      MISSION_HUNT    // ORDERS:		Default order to give new unit.
+                                      MISSION_HUNT,    // ORDERS:		Default order to give new unit.
+                                      0           // Does this unit have reload graphics and logic like V2 & MSAM?
 );
 
 // Tesla Tank
@@ -655,7 +641,8 @@ static UnitTypeClass const UnitTesla(UNIT_TESLATANK,
                                      false,         // Is the unit a mobile gap generator?
                                      32,            // Rotation stages.
                                      0,             // Turret center offset along body centerline.
-                                     MISSION_HUNT   // ORDERS:		Default order to give new unit.
+                                     MISSION_HUNT,   // ORDERS:		Default order to give new unit.
+                                     0          // Does this unit have reload graphics and logic like V2 & MSAM?
 );
 
 // M.A.D. Tank
@@ -685,7 +672,8 @@ static UnitTypeClass const UnitMAD(UNIT_MAD,
                                    false,        // Is the unit a mobile gap generator?
                                    32,           // Rotation stages.
                                    0,            // Turret center offset along body centerline.
-                                   MISSION_HUNT  // ORDERS:		Default order to give new unit.
+                                   MISSION_HUNT,  // ORDERS:		Default order to give new unit.
+                                   0         // Does this unit have reload graphics and logic like V2 & MSAM?
 );
 
 // Demolition Truck
@@ -715,9 +703,11 @@ static UnitTypeClass const UnitDemoTruck(UNIT_DEMOTRUCK,
                                          false,         // Is the unit a mobile gap generator?
                                          32,            // Rotation stages.
                                          0,             // Turret center offset along body centerline.
-                                         MISSION_GUARD  // ORDERS:		Default order to give new unit.
+                                         MISSION_GUARD,  // ORDERS:		Default order to give new unit.
+                                         0          // Does this unit have reload graphics and logic like V2 & MSAM?
+
 );
-#ifdef FIXIT_PHASETRANSPORT //	checked - ajw 9/28/98
+
 static UnitTypeClass const UnitPhase(UNIT_PHASE,
                                      TXT_PHASETRANSPORT, // NAME:			Text name of this unit type.
                                      "STNK",             // NAME:			Text name of this unit type.
@@ -744,11 +734,9 @@ static UnitTypeClass const UnitPhase(UNIT_PHASE,
                                      false,              // Is the unit a mobile gap generator?
                                      32,                 // Rotation stages.
                                      0,                  // Turret center offset along body centerline.
-                                     MISSION_HUNT        // ORDERS:		Default order to give new unit.
+                                     MISSION_HUNT,        // ORDERS:		Default order to give new unit.
+                                     0              // Does this unit have reload graphics and logic like V2 & MSAM?
 );
-
-#endif
-#endif
 
 /***********************************************************************************************
  * UnitTypeClass::UnitTypeClass -- Constructor for unit types.                                 *
@@ -793,7 +781,8 @@ UnitTypeClass::UnitTypeClass(UnitType type,
                              bool is_gapper,
                              int rotation,
                              int toffset,
-                             MissionType order)
+                             MissionType order,
+                             bool ammoimagecount)
     : TechnoTypeClass(RTTI_UNITTYPE,
                       int(type),
                       name,
@@ -832,6 +821,7 @@ UnitTypeClass::UnitTypeClass(UnitType type,
     , Mission(order)
     , Explosion(exp)
     , MaxSize(0)
+    , AmmoImageCount(ammoimagecount)
 {
     /*
     **	Forced unit overrides form the default.
@@ -963,7 +953,9 @@ void UnitTypeClass::Init_Heap(CCINIClass& ini)
                           false,           // Is the unit a mobile gap generator?
                           32,              // Rotation stages.
                           0,               // Turret center offset along body centerline.
-                          MISSION_HUNT);   // ORDERS:		Default order to give new unit.
+                          MISSION_HUNT,    // ORDERS:		Default order to give new unit.
+                          0                // Does this unit have reload graphics and logic like V2 & MSAM?
+        );
     }
 }
 
@@ -1352,6 +1344,8 @@ bool UnitTypeClass::Read_INI(CCINIClass& ini)
         TurretOffset = ini.Get_Int(IniName, "TurretOffset", TurretOffset);
         Explosion = ini.Get_AnimType(IniName, "Explosion", Explosion);
         Mission = ini.Get_MissionTypec(IniName, "Mission", Mission);
+
+        AmmoImageCount = ini.Get_Int(IniName, "AmmoImageCount", AmmoImageCount);
 
         /*
         **	If this unit can drive over walls, then mark it as recognizing the crusher zone.

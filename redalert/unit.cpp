@@ -604,7 +604,7 @@ bool UnitClass::Edge_Of_World_AI(void)
  *=============================================================================================*/
 void UnitClass::Reload_AI(void)
 {
-    if (*this == UNIT_V2_LAUNCHER && Ammo < Class->MaxAmmo) {
+    if (Class->AmmoImageCount && Ammo < Class->MaxAmmo) {
         if (IsDriving) {
             Reload = Reload + 1;
         } else {
@@ -1024,7 +1024,7 @@ ResultType UnitClass::Take_Damage(int& damage, int distance, WarheadType warhead
             **	SSM launchers will really explode big if they are carrying
             **	missiles at the time of the explosion.
             */
-            if (*this == UNIT_V2_LAUNCHER && Ammo) {
+            if (Class->AmmoImageCount && Ammo) {
                 anim = ANIM_NAPALM3;
             }
 
@@ -2057,9 +2057,9 @@ int UnitClass::Shape_Number(void) const
     **	The body of the V2 launcher indicates whether it is loaded with a missile
     **	or not.
     */
-    if (*this == UNIT_V2_LAUNCHER) {
-        if (Ammo == 0)
-            shapenum += 32;
+    if (Class->AmmoImageCount) {
+        int extranum = (Class->AmmoImageCount - Ammo) * 32;
+        shapenum += extranum;
     }
 
     return (shapenum);
@@ -4230,7 +4230,7 @@ DirType UnitClass::Fire_Direction(void) const
     assert(IsActive);
 
     if (Class->IsTurretEquipped) {
-        if (*this == UNIT_V2_LAUNCHER) {
+        if (Class->AmmoImageCount) {
             int diff1 = SecondaryFacing.Difference(DIR_E);
             int diff2 = SecondaryFacing.Difference(DIR_W);
             diff1 = ABS(diff1);
@@ -4395,7 +4395,7 @@ BulletClass* UnitClass::Fire_At(TARGET target, int which)
             /*
             **	Possible reload timer set.
             */
-            if ((*this == UNIT_V2_LAUNCHER) && Reload == 0) {
+            if (Class->AmmoImageCount && Reload == 0) {
                 Reload = TICKS_PER_SECOND * 30;
             }
         }
