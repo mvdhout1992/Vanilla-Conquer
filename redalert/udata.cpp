@@ -88,7 +88,9 @@ static UnitTypeClass const UnitV2Launcher(UNIT_V2_LAUNCHER,
                                           32,              // Rotation stages.
                                           0,               // Turret center offset along body centerline.
                                           MISSION_HUNT,     // ORDERS:		Default order to give new unit.
-                                          1 // Does this unit have reload graphics and logic like V2 & MSAM?
+                                          1, // Does this unit have reload graphics and logic like V2 & MSAM?
+                                          false, // Is this unit an APC?
+                                          false  // Is this unit a Phase Transport?
 );
 
 // Light tank
@@ -119,7 +121,9 @@ static UnitTypeClass const UnitLTank(UNIT_LTANK,
                                      32,           // Rotation stages.
                                      0,            // Turret center offset along body centerline.
                                      MISSION_HUNT,  // ORDERS:		Default order to give new unit.
-                                     0             // Does this unit have reload graphics and logic like V2 & MSAM?
+                                     0,             // Does this unit have reload graphics and logic like V2 & MSAM?
+                                     false,        // Is this unit an APC?
+                                     false         // Is this unit a Phase Transport?
 );
 
 // Heavy tank
@@ -150,7 +154,9 @@ static UnitTypeClass const UnitMTank(UNIT_MTANK,
                                      32,           // Rotation stages.
                                      0,            // Turret center offset along body centerline.
                                      MISSION_HUNT,  // ORDERS:		Default order to give new unit.
-                                     0             // Does this unit have reload graphics and logic like V2 & MSAM?
+                                     0,             // Does this unit have reload graphics and logic like V2 & MSAM?
+                                     false,        // Is this unit an APC?
+                                     false         // Is this unit a Phase Transport?
 );
 
 // Medium tank
@@ -181,7 +187,9 @@ static UnitTypeClass const UnitMTank2(UNIT_MTANK2,
                                       32,           // Rotation stages.
                                       0,            // Turret center offset along body centerline.
                                       MISSION_HUNT,  // ORDERS:		Default order to give new unit.
-                                      0             // Does this unit have reload graphics and logic like V2 & MSAM?
+                                      0,             // Does this unit have reload graphics and logic like V2 & MSAM?
+                                      false,        // Is this unit an APC?
+                                      false         // Is this unit a Phase Transport?
 );
 
 // Mastadon tank
@@ -212,7 +220,9 @@ static UnitTypeClass const UnitHTank(UNIT_HTANK,
                                      32,            // Rotation stages.
                                      0,             // Turret center offset along body centerline.
                                      MISSION_HUNT,   // ORDERS:		Default order to give new unit.
-                                     0              // Does this unit have reload graphics and logic like V2 & MSAM?
+                                     0,              // Does this unit have reload graphics and logic like V2 & MSAM?
+                                     false,         // Is this unit an APC?
+                                     false          // Is this unit a Phase Transport?
 );
 
 // Mobile Radar Jammer
@@ -243,7 +253,9 @@ static UnitTypeClass const UnitMRJammer(UNIT_MRJ,
                                         32,           // Rotation stages.
                                         0,            // Turret center offset along body centerline.
                                         MISSION_HUNT,  // ORDERS:		Default order to give new unit.
-                                        0             // Does this unit have reload graphics and logic like V2 & MSAM?
+                                        0,             // Does this unit have reload graphics and logic like V2 & MSAM?
+                                        false,        // Is this unit an APC?
+                                        false         // Is this unit a Phase Transport?
 );
 
 // Mobile Gap Generator
@@ -274,7 +286,9 @@ static UnitTypeClass const UnitMGG(UNIT_MGG,
                                    32,           // Rotation stages.
                                    0,            // Turret center offset along body centerline.
                                    MISSION_HUNT,  // ORDERS:		Default order to give new unit.
-                                   0             // Does this unit have reload graphics and logic like V2 & MSAM?
+                                   0,             // Does this unit have reload graphics and logic like V2 & MSAM?
+                                   false,        // Is this unit an APC?
+                                   false         // Is this unit a Phase Transport?
 );
 
 // Artillery
@@ -305,7 +319,9 @@ static UnitTypeClass const UnitArty(UNIT_ARTY,
                                     32,            // Rotation stages.
                                     0,             // Turret center offset along body centerline.
                                     MISSION_HUNT,   // ORDERS:		Default order to give new unit.
-                                    0              // Does this unit have reload graphics and logic like V2 & MSAM?
+                                    0,              // Does this unit have reload graphics and logic like V2 & MSAM?
+                                    false,         // Is this unit an APC?
+                                    false          // Is this unit a Phase Transport?
 );
 
 // Harvester
@@ -336,7 +352,9 @@ static UnitTypeClass const UnitHarvester(UNIT_HARVESTER,
                                          32,              // Rotation stages.
                                          0,               // Turret center offset along body centerline.
                                          MISSION_HARVEST,  // ORDERS:		Default order to give new unit.
-                                         0 // Does this unit have reload graphics and logic like V2 & MSAM?
+                                         0,                 // Does this unit have reload graphics and logic like V2 & MSAM?
+                                         false,             // Is this unit an APC?
+                                         false              // Is this unit a Phase Transport?
 );
 
 // Mobile construction vehicle
@@ -367,7 +385,9 @@ static UnitTypeClass const UnitMCV(UNIT_MCV,
                                    32,              // Rotation stages.
                                    0,               // Turret center offset along body centerline.
                                    MISSION_HUNT,     // ORDERS:		Default order to give new unit.
-                                   0                // Does this unit have reload graphics and logic like V2 & MSAM?
+                                   0,                // Does this unit have reload graphics and logic like V2 & MSAM?
+                                   false,           // Is this unit an APC?
+                                   false            // Is this unit a Phase Transport?
 );
 
 // Jeep (hummer)
@@ -398,7 +418,9 @@ static UnitTypeClass const UnitJeep(UNIT_JEEP,
                                     32,           // Rotation stages.
                                     0,            // Turret center offset along body centerline.
                                     MISSION_HUNT,  // ORDERS:		Default order to give new unit.
-                                    0             // Does this unit have reload graphics and logic like V2 & MSAM?
+                                    0,             // Does this unit have reload graphics and logic like V2 & MSAM?
+                                    false,        // Is this unit an APC?
+                                    false         // Is this unit a Phase Transport?
 );
 
 // Armored personnel carrier
@@ -429,7 +451,9 @@ static UnitTypeClass const UnitAPC(UNIT_APC,
                                    32,           // Rotation stages.
                                    0,            // Turret center offset along body centerline.
                                    MISSION_HUNT,  // ORDERS:		Default order to give new unit.
-                                   0             // Does this unit have reload graphics and logic like V2 & MSAM?
+                                   0,             // Does this unit have reload graphics and logic like V2 & MSAM?
+                                   true,        // Is this unit an APC?
+                                   false         // Is this unit a Phase Transport?
 );
 
 // Mine laying truck
@@ -460,7 +484,9 @@ static UnitTypeClass const UnitMineLayer(UNIT_MINELAYER,
                                          32,             // Rotation stages.
                                          0,              // Turret center offset along body centerline.
                                          MISSION_HUNT,    // ORDERS:		Default order to give new unit.
-                                         0 // Does this unit have reload graphics and logic like V2 & MSAM?
+                                         0,              // Does this unit have reload graphics and logic like V2 & MSAM?
+                                         false,           // Is this unit an APC?
+                                         false          // Is this unit a Phase Transport?
 );
 
 // Convoy Truck
@@ -491,7 +517,9 @@ static UnitTypeClass const UnitConvoyTruck(UNIT_TRUCK,
                                            32,           // Rotation stages.
                                            0,            // Turret center offset along body centerline.
                                            MISSION_GUARD, // ORDERS:		Default order to give new unit.
-                                           0 // Does this unit have reload graphics and logic like V2 & MSAM?
+                                           0, // Does this unit have reload graphics and logic like V2 & MSAM?
+                                           false, // Is this unit an APC?
+                                           false  // Is this unit a Phase Transport?
 );
 
 // Warrior ant
@@ -522,7 +550,9 @@ static UnitTypeClass const UnitAnt1(UNIT_ANT1,
                                     8,               // Rotation stages.
                                     0,               // Turret center offset along body centerline.
                                     MISSION_HUNT,     // ORDERS:		Default order to give new unit.
-                                    0                // Does this unit have reload graphics and logic like V2 & MSAM?
+                                    0,                // Does this unit have reload graphics and logic like V2 & MSAM?
+                                    false,           // Is this unit an APC?
+                                    false            // Is this unit a Phase Transport?
 );
 static UnitTypeClass const UnitAnt2(UNIT_ANT2,
                                     TXT_NONE,        // NAME:			Text name of this unit type.
@@ -551,7 +581,9 @@ static UnitTypeClass const UnitAnt2(UNIT_ANT2,
                                     8,               // Rotation stages.
                                     0,               // Turret center offset along body centerline.
                                     MISSION_HUNT,     // ORDERS:		Default order to give new unit.
-                                    0                // Does this unit have reload graphics and logic like V2 & MSAM?
+                                    0,                // Does this unit have reload graphics and logic like V2 & MSAM?
+                                    false,           // Is this unit an APC?
+                                    false            // Is this unit a Phase Transport?
 );
 static UnitTypeClass const UnitAnt3(UNIT_ANT3,
                                     TXT_NONE,        // NAME:			Text name of this unit type.
@@ -580,7 +612,9 @@ static UnitTypeClass const UnitAnt3(UNIT_ANT3,
                                     8,               // Rotation stages.
                                     0,               // Turret center offset along body centerline.
                                     MISSION_HUNT,     // ORDERS:		Default order to give new unit.
-                                    0            // Does this unit have reload graphics and logic like V2 & MSAM?
+                                    0,            // Does this unit have reload graphics and logic like V2 & MSAM?
+                                    false,           // Is this unit an APC?
+                                    false            // Is this unit a Phase Transport?
 );
 
 // Chrono Tank
@@ -611,7 +645,9 @@ static UnitTypeClass const UnitChrono(UNIT_CHRONOTANK,
                                       32,             // Rotation stages.
                                       0,              // Turret center offset along body centerline.
                                       MISSION_HUNT,    // ORDERS:		Default order to give new unit.
-                                      0           // Does this unit have reload graphics and logic like V2 & MSAM?
+                                      0,           // Does this unit have reload graphics and logic like V2 & MSAM?
+                                      false,          // Is this unit an APC?
+                                      false           // Is this unit a Phase Transport?
 );
 
 // Tesla Tank
@@ -642,7 +678,9 @@ static UnitTypeClass const UnitTesla(UNIT_TESLATANK,
                                      32,            // Rotation stages.
                                      0,             // Turret center offset along body centerline.
                                      MISSION_HUNT,   // ORDERS:		Default order to give new unit.
-                                     0          // Does this unit have reload graphics and logic like V2 & MSAM?
+                                     0,          // Does this unit have reload graphics and logic like V2 & MSAM?
+                                     false,         // Is this unit an APC?
+                                     false          // Is this unit a Phase Transport?
 );
 
 // M.A.D. Tank
@@ -673,7 +711,9 @@ static UnitTypeClass const UnitMAD(UNIT_MAD,
                                    32,           // Rotation stages.
                                    0,            // Turret center offset along body centerline.
                                    MISSION_HUNT,  // ORDERS:		Default order to give new unit.
-                                   0         // Does this unit have reload graphics and logic like V2 & MSAM?
+                                   0,         // Does this unit have reload graphics and logic like V2 & MSAM?
+                                   false,        // Is this unit an APC?
+                                   false         // Is this unit a Phase Transport?
 );
 
 // Demolition Truck
@@ -704,8 +744,9 @@ static UnitTypeClass const UnitDemoTruck(UNIT_DEMOTRUCK,
                                          32,            // Rotation stages.
                                          0,             // Turret center offset along body centerline.
                                          MISSION_GUARD,  // ORDERS:		Default order to give new unit.
-                                         0          // Does this unit have reload graphics and logic like V2 & MSAM?
-
+                                         0,          // Does this unit have reload graphics and logic like V2 & MSAM?
+                                         false,         // Is this unit an APC?
+                                         false          // Is this unit a Phase Transport?
 );
 
 static UnitTypeClass const UnitPhase(UNIT_PHASE,
@@ -735,7 +776,9 @@ static UnitTypeClass const UnitPhase(UNIT_PHASE,
                                      32,                 // Rotation stages.
                                      0,                  // Turret center offset along body centerline.
                                      MISSION_HUNT,        // ORDERS:		Default order to give new unit.
-                                     0              // Does this unit have reload graphics and logic like V2 & MSAM?
+                                     0,                   // Does this unit have reload graphics and logic like V2 & MSAM?
+                                     true,               // Is this unit an APC?
+                                     true                // Is this unit a Phase Transport?
 );
 
 /***********************************************************************************************
@@ -782,7 +825,9 @@ UnitTypeClass::UnitTypeClass(UnitType type,
                              int rotation,
                              int toffset,
                              MissionType order,
-                             bool ammoimagecount)
+                             bool ammoimagecount,
+                             bool is_apc,
+                             bool is_phase_transport)
     : TechnoTypeClass(RTTI_UNITTYPE,
                       int(type),
                       name,
@@ -822,6 +867,8 @@ UnitTypeClass::UnitTypeClass(UnitType type,
     , Explosion(exp)
     , MaxSize(0)
     , AmmoImageCount(ammoimagecount)
+    , IsAPC(is_apc)
+    , IsPhaseTransport(is_phase_transport)
 {
     /*
     **	Forced unit overrides form the default.
@@ -954,7 +1001,9 @@ void UnitTypeClass::Init_Heap(CCINIClass& ini)
                           32,              // Rotation stages.
                           0,               // Turret center offset along body centerline.
                           MISSION_HUNT,    // ORDERS:		Default order to give new unit.
-                          0                // Does this unit have reload graphics and logic like V2 & MSAM?
+                          0,                // Does this unit have reload graphics and logic like V2 & MSAM?
+                          false,           // Is this unit an APC?
+                          false             // Is this unit a Phase Transport?
         );
     }
 }
@@ -1346,6 +1395,8 @@ bool UnitTypeClass::Read_INI(CCINIClass& ini)
         Mission = ini.Get_MissionTypec(IniName, "Mission", Mission);
 
         AmmoImageCount = ini.Get_Int(IniName, "AmmoImageCount", AmmoImageCount);
+        IsAPC = ini.Get_Bool(Name(), "IsAPC", IsAPC);
+        IsPhaseTransport = ini.Get_Bool(Name(), "IsPhaseTransport", IsPhaseTransport);
 
         /*
         **	If this unit can drive over walls, then mark it as recognizing the crusher zone.

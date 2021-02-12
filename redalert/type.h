@@ -999,6 +999,9 @@ public:
     */
     int MaxSize;
 
+    bool IsAPC;
+    bool IsPhaseTransport;
+
 
     // For units like V2 Rocket Launcher and MSAM, this is for the special reload
     // and graphics logic for the rocket they are carrying and isn't visible
@@ -1039,7 +1042,9 @@ public:
                   int rotation,
                   int toffset,
                   MissionType order,
-                  bool ammoimagecount);
+                  bool ammoimagecount,
+                  bool is_apc,
+                  bool is_phase_transport);
 
     static void* operator new(size_t);
     static void* operator new(size_t, void* ptr)

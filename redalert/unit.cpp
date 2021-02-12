@@ -834,7 +834,7 @@ RadioMessageType UnitClass::Receive_Message(RadioClass* from, RadioMessageType m
                         **	to rotate.
                         */
 #ifdef FIXIT_PHASETRANSPORT //	checked - ajw 9/28/98
-                        if (*this == UNIT_APC || *this == UNIT_PHASE) {
+                        if (Class->IsAPC) {
 #else
                         if (*this == UNIT_APC) {
 #endif
@@ -856,7 +856,7 @@ RadioMessageType UnitClass::Receive_Message(RadioClass* from, RadioMessageType m
                         */
                         if (Transmit_Message(RADIO_MOVE_HERE, param, from) == RADIO_YEA_NOW_WHAT) {
 #ifdef FIXIT_PHASETRANSPORT //	checked - ajw 9/28/98
-                            if ((*this != UNIT_APC && *this != UNIT_PHASE) || Is_Door_Open()) {
+                            if (Class->IsAPC || Is_Door_Open()) {
 #else
                             if (*this != UNIT_APC || Is_Door_Open()) {
 #endif
@@ -2036,7 +2036,7 @@ int UnitClass::Shape_Number(void) const
                 **	Door opening and closing animation must be handled carefully. There are only
                 **	certain directions where this door animation will work.
                 */
-                if (!Is_Door_Closed() && (PrimaryFacing == DIR_NW || PrimaryFacing == DIR_NE)) {
+                if (Class->IsAPC && !Is_Door_Closed() && (PrimaryFacing == DIR_NW || PrimaryFacing == DIR_NE)) {
                     if (PrimaryFacing == DIR_NE) {
                         shapenum = 32;
                     } else {
@@ -2044,6 +2044,7 @@ int UnitClass::Shape_Number(void) const
                             shapenum = 35;
                         }
                     }
+                    
                     shapenum += Door_Stage();
                 }
             }
@@ -2170,7 +2171,7 @@ void UnitClass::Draw_It(int x, int y, WindowNumberType window) const
             */
             shapenum = TechnoClass::BodyShape[tfacing] + 32;
 #ifdef FIXIT_PHASETRANSPORT //	checked - ajw 9/28/98
-            if (*this == UNIT_PHASE) {
+            if (Class->IsPhaseTransport) {
                 shapenum += 6;
             }
 #endif
@@ -2584,7 +2585,7 @@ int UnitClass::Mission_Unload(void)
             break;
         }
     }
-    if (Class->Type == UNIT_APC || Class->Type == UNIT_PHASE) {
+    else if (Class->MaxPassengers) {
         switch (Status) {
         case INITIAL_CHECK:
             dir = Desired_Load_Dir(NULL, cell);
@@ -2599,6 +2600,7 @@ int UnitClass::Mission_Unload(void)
 
         case MANEUVERING:
             if (!IsRotating) {
+                
                 APC_Open_Door();
                 if (Is_Door_Opening()) {
                     Status = OPENING_DOOR;
@@ -2671,7 +2673,7 @@ int UnitClass::Mission_Unload(void)
         }
     }
 
-    if (Class->Type == UNIT_MCV) {
+    else if (Class->Type == UNIT_MCV) {
         switch (Status) {
         case 0:
             Path[0] = FACING_NONE;
@@ -2704,7 +2706,7 @@ int UnitClass::Mission_Unload(void)
         return (1);
     }
 
-    if (Class->Type == UNIT_MINELAYER) {
+    else if (Class->Type == UNIT_MINELAYER) {
         switch (Status) {
         case INITIAL_CHECK:
             dir = DIR_NE;
@@ -2782,7 +2784,7 @@ int UnitClass::Mission_Unload(void)
     }
 
 #ifdef FIXIT_CSII //	checked - ajw 9/28/98
-    if (Class->Type == UNIT_MAD) {
+    else if (Class->Type == UNIT_MAD) {
         if (!Gems && !IsDumping) {
             Gems = 1;
             Gold = 0;
@@ -2845,7 +2847,7 @@ int UnitClass::Mission_Unload(void)
         TimeQuakeCenter = ::As_Target(Center_Coord());
     }
 
-   if (Class->Type == UNIT_PHASE) {
+   else if (Class->Type == UNIT_CHRONOTANK) {
         if (IsOwnedByPlayer) {
             Map.IsTargettingMode = SPC_CHRONO2;
             HouseClass* old_player_ptr = PlayerPtr;
@@ -5319,7 +5321,7 @@ int UnitClass::Mission_Guard_Area(void)
     */
     if (Session.Type != GAME_NORMAL &&
 #ifdef FIXIT_PHASETRANSPORT //	checked - ajw 9/28/98
-        (*this == UNIT_APC || *this == UNIT_PHASE) &&
+        (Class->IsAPC) &&
 #else
         *this == UNIT_APC &&
 #endif

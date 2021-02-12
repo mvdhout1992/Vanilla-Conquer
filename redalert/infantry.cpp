@@ -2978,7 +2978,7 @@ ActionType InfantryClass::What_Action(ObjectClass const* object) const
                 if (object->Health_Ratio() < Rule.ConditionGreen) {
                     // If it's a mechanic force-moving into an APC, don't try to heal it.
                     if (*this == INFANTRY_MECHANIC && object->What_Am_I() == RTTI_UNIT
-                        && *(UnitClass*)object == UNIT_APC
+                        && ((UnitClass*)object)->Class->MaxPassengers
                         && (Keyboard->Down(Options.KeyForceMove1) || Keyboard->Down(Options.KeyForceMove2))) {
                     } else {
                         return (ACTION_HEAL);
