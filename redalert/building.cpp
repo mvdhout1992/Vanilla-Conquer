@@ -2417,7 +2417,7 @@ void BuildingClass::Update_Buildables(void)
             break;
 
         case RTTI_AIRCRAFTTYPE:
-            for (a = AIRCRAFT_FIRST; a < AIRCRAFT_COUNT; a++) {
+            for (a = AIRCRAFT_FIRST; a < AircraftTypes.Count(); a++) {
                 if (PlayerPtr->Can_Build(&AircraftTypeClass::As_Reference((AircraftType)a), ActLike)) {
                     Map.Add(RTTI_AIRCRAFTTYPE, a);
                 }

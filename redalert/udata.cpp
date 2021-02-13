@@ -1686,7 +1686,7 @@ bool UnitTypeClass::Read_INI(CCINIClass& ini)
 
         TurretOffset = ini.Get_Int(IniName, "TurretOffset", TurretOffset);
         Explosion = ini.Get_AnimType(IniName, "Explosion", Explosion);
-        Mission = ini.Get_MissionTypec(IniName, "Mission", Mission);
+        Mission = ini.Get_MissionType(IniName, "Mission", Mission);
 
         AmmoImageCount = ini.Get_Int(IniName, "AmmoImageCount", AmmoImageCount);
         IsAPC = ini.Get_Bool(Name(), "IsAPC", IsAPC);

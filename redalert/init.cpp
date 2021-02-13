@@ -237,7 +237,7 @@ bool Init_Game(int, char*[])
 
     HouseTypeClass::Init_Heap();
     BuildingTypeClass::Init_Heap();
-    AircraftTypeClass::Init_Heap();
+    AircraftTypeClass::Init_Heap(RuleINI);
     InfantryTypeClass::Init_Heap();
     BulletTypeClass::Init_Heap();
     AnimTypeClass::Init_Heap();

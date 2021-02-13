@@ -470,16 +470,22 @@ bool TEventClass::operator()(TDEventClass& td,
         **	exceptions.
         */
         case TEVENT_UNITS_DESTROYED:
-            if (hptr->ActiveUScan | hptr->ActiveIScan)
-                return (false);
+            if (hptr->Unit_Count() == 0 && !hptr->ActiveIScan)
+                return (true);
+            else {
+                return false;
+            }
             break;
 
         /*
         **	Verify that all buildings and units have been destroyed.
         */
         case TEVENT_ALL_DESTROYED:
-            if (hptr->ActiveBScan | hptr->ActiveUScan | hptr->ActiveIScan | hptr->ActiveVScan)
-                return (false);
+            if (hptr->Has_Nothing_Left())
+                return (true);
+            else {
+                return false;
+            }
             break;
 
         default:

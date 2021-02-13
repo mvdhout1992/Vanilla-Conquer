@@ -331,20 +331,53 @@ void AircraftTypeClass::operator delete(void* pointer)
  * HISTORY:                                                                                    *
  *   07/09/1996 JLB : Created.                                                                 *
  *=============================================================================================*/
-void AircraftTypeClass::Init_Heap(void)
+void AircraftTypeClass::Init_Heap(CCINIClass &ini)
 {
+    int entries = ini.Entry_Count("AircraftTypes");
+    bool usehardcoded = ini.Get_Bool("General","UseHardCodedAircrafts", true);
+    AircraftTypes.Set_Heap((usehardcoded * AIRCRAFT_COUNT) + entries);
+
     /*
     **	These aircraft type class objects must be allocated in the exact order that they
     **	are specified in the AircraftSmen enumeration. This is necessary because the heap
     **	allocation block index serves double duty as the type number index.
     */
-    new AircraftTypeClass(TransportHeli);
-    new AircraftTypeClass(BadgerPlane);
-    new AircraftTypeClass(U2Plane);
-    new AircraftTypeClass(MigPlane);
-    new AircraftTypeClass(YakPlane);
-    new AircraftTypeClass(AttackHeli);
-    new AircraftTypeClass(OrcaHeli);
+
+    if (usehardcoded) {
+        new AircraftTypeClass(TransportHeli);
+        new AircraftTypeClass(BadgerPlane);
+        new AircraftTypeClass(U2Plane);
+        new AircraftTypeClass(MigPlane);
+        new AircraftTypeClass(YakPlane);
+        new AircraftTypeClass(AttackHeli);
+        new AircraftTypeClass(OrcaHeli);
+    }
+
+    for (int i = 0; i < entries; i++) {
+        int id = (usehardcoded * AIRCRAFT_COUNT) + i;
+        std::string entry = ini.Get_Entry("AircraftTypes", i);
+        std::string air = ini.Get_String("AircraftTypes", entry.c_str(), "<none>");
+
+
+        new AircraftTypeClass((AircraftType)id,
+                              5,
+                              air.c_str(),
+                              0,
+                              0,
+                              0,
+                              false,
+                              false,
+                              false,
+                              false,
+                              false, true,
+                              true,
+                              false,
+                              false,
+                              STRUCT_NONE,
+                              0,
+                              0,
+                              MISSION_HUNT);
+    }
 }
 
 /***********************************************************************************************
@@ -366,13 +399,31 @@ void AircraftTypeClass::Init_Heap(void)
 AircraftType AircraftTypeClass::From_Name(char const* name)
 {
     if (name != NULL) {
-        for (int classid = AIRCRAFT_FIRST; classid < AIRCRAFT_COUNT; classid++) {
+        for (int classid = AIRCRAFT_FIRST; classid < AircraftTypes.Count(); classid++) {
             if (stricmp(As_Reference((AircraftType)classid).IniName, name) == 0) {
                 return (AircraftType)classid;
             }
         }
     }
     return (AIRCRAFT_NONE);
+}
+
+bool AircraftTypeClass::Read_INI(CCINIClass& ini)
+{
+    if (TechnoTypeClass::Read_INI(ini)) {
+
+        IsFixedWing = ini.Get_Bool(Name(), "IsFixedWing", IsFixedWing);
+        IsRotorEquipped = ini.Get_Bool(Name(), "IsRotorEquipped", IsRotorEquipped);
+        IsLandable = ini.Get_Bool(Name(), "IsLandable", IsLandable);
+        IsRotorCustom = ini.Get_Bool(Name(), "IsRotorCustom", IsRotorCustom);
+
+        Mission = ini.Get_MissionType(Name(), "Mission", Mission);
+        Building = ini.Get_StructType(Name(), "Building", Building);
+
+        int LandingSpeed;
+        return true;
+    }
+    return false;
 }
 
 /***********************************************************************************************
@@ -392,7 +443,7 @@ AircraftType AircraftTypeClass::From_Name(char const* name)
  *=============================================================================================*/
 void AircraftTypeClass::One_Time(void)
 {
-    for (int index = AIRCRAFT_FIRST; index < AIRCRAFT_COUNT; index++) {
+    for (int index = AIRCRAFT_FIRST; index < AircraftTypes.Count(); index++) {
         char fullname[_MAX_FNAME + _MAX_EXT];
         AircraftTypeClass const& uclass = As_Reference((AircraftType)index);
 
@@ -400,7 +451,7 @@ void AircraftTypeClass::One_Time(void)
         **	Fetch the supporting data files for the unit.
         */
         char buffer[_MAX_FNAME];
-        sprintf(buffer, "%sICON", uclass.Graphic_Name());
+        sprintf(buffer, "%sICON", uclass.Cameo_Name());
         _makepath(fullname, NULL, NULL, buffer, ".SHP");
         ((void const*&)uclass.CameoData) = MFCD::Retrieve(fullname);
 
@@ -454,7 +505,7 @@ ObjectClass* AircraftTypeClass::Create_One_Of(HouseClass* house) const
  *=============================================================================================*/
 void AircraftTypeClass::Prep_For_Add(void)
 {
-    for (AircraftType index = AIRCRAFT_FIRST; index < AIRCRAFT_COUNT; index++) {
+    for (AircraftType index = AIRCRAFT_FIRST; index < AircraftTypes.Count(); index++) {
         if (As_Reference(index).Get_Image_Data()) {
             Map.Add_To_List(&As_Reference(index));
         }

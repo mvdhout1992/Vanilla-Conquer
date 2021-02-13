@@ -647,7 +647,7 @@ int Create_Air_Reinforcement(HouseClass* house,
                              InfantryType passenger)
 {
     assert(house != 0);
-    assert((unsigned)air < AIRCRAFT_COUNT);
+    assert((unsigned)air < AircraftTypes.Count());
     assert(number != 0);
     assert((unsigned)mission < MISSION_COUNT);
     /*

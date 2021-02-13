@@ -78,8 +78,10 @@ public:
     WeaponType Get_WeaponType(char const* section, char const* entry, WeaponType defvalue) const;
     long Get_Owners(char const* section, char const* entry, long defvalue) const;
     CrateType Get_CrateType(char const* section, char const* entry, CrateType defvalue) const;
-    MissionType Get_MissionTypec(char const* section, char const* entry, MissionType defvalue) const;
+    MissionType Get_MissionType(char const* section, char const* entry, MissionType defvalue) const;
+    StructType Get_StructType(char const* section, char const* entry, StructType defvalue) const;
 
+    bool Put_StructType(char const* section, char const* entry, StructType value);
     bool Put_Buildings(char const* section, char const* entry, long value);
     bool Put_AnimType(char const* section, char const* entry, AnimType value);
     bool Put_UnitType(char const* section, char const* entry, UnitType value);

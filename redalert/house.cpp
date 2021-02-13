@@ -608,14 +608,9 @@ HouseClass::HouseClass(HousesType house)
     , BScan(0)
     , ActiveBScan(0)
     , OldBScan(0)
-    , ActiveUScan(0)
-    , OldUScan(0)
     , IScan(0)
     , ActiveIScan(0)
     , OldIScan(0)
-    , AScan(0)
-    , ActiveAScan(0)
-    , OldAScan(0)
     , VScan(0)
     , ActiveVScan(0)
     , OldVScan(0)
@@ -1281,7 +1276,7 @@ void HouseClass::AI(void)
                 iCount += BQuantity[i];
             }
             if (!iCount) {
-                for (i = 0; i != UNIT_RA_COUNT - 3; ++i) {
+                for (i = 0; i != UnitTypes.Count(); ++i) {
                     iCount += UQuantity[i];
                 }
                 if (!iCount) {
@@ -1291,7 +1286,7 @@ void HouseClass::AI(void)
                         iCount += IQuantity[i];
                     }
                     if (!iCount) {
-                        for (i = 0; i != AIRCRAFT_COUNT; ++i) {
+                        for (i = 0; i != AircraftTypes.Count(); ++i) {
                             iCount += AQuantity[i];
                         }
                         if (!iCount) {
@@ -2471,7 +2466,7 @@ unsigned char const* HouseClass::Remap_Table(bool blushing, RemapType remap) con
     return (ColorRemaps[RemapColor].RemapTable);
 }
 
-int HouseClass::Harvester_Count()
+int HouseClass::Harvester_Count() const
 {
     int count = 0;
 
@@ -2485,7 +2480,7 @@ int HouseClass::Harvester_Count()
     return count;
 }
 
-int HouseClass::MCV_Count()
+int HouseClass::MCV_Count() const
 {
     int count = 0;
 
@@ -5745,6 +5740,32 @@ int HouseClass::AI_Base_Defense(void)
 }
 #endif
 
+int HouseClass::Aircraft_Count() const
+{
+    int count = 0;
+    for (int i = 0; i < Aircraft.Count(); i++) {
+        AircraftClass* a = Aircraft.Ptr(i);
+
+        if (a->House == this && !a->IsInLimbo && !a->Class->IsInsignificant) {
+            count++;
+        }
+    }
+    return count;
+}
+
+int HouseClass::Unit_Count() const
+{
+    int count = 0;
+    for (int i = 0; i < Units.Count(); i++) {
+        UnitClass* u = Units.Ptr(i);
+
+        if (u->House == this && !u->IsInLimbo && !u->Class->IsInsignificant) {
+            count++;
+        }
+    }
+    return count;
+}
+
 /***********************************************************************************************
  * HouseClass::AI_Building -- Determines what building to build.                               *
  *                                                                                             *
@@ -5955,14 +5976,14 @@ int HouseClass::AI_Building(void)
             */
             bool airthreat = false;
             int threat_quantity = 0;
-            if (enemy != NULL && enemy->AScan != 0) {
+            if (enemy != NULL && enemy->Aircraft_Count() != 0) {
                 airthreat = true;
                 threat_quantity = enemy->CurAircraft;
             }
             if (!airthreat) {
                 for (HousesType house = HOUSE_FIRST; house < HOUSE_COUNT; house++) {
                     HouseClass* h = HouseClass::As_Pointer(house);
-                    if (h != NULL && !Is_Ally(house) && h->AScan != 0) {
+                    if (h != NULL && !Is_Ally(house) && h->Aircraft_Count() != 0) {
                         airthreat = true;
                         break;
                     }
@@ -6809,7 +6830,6 @@ void HouseClass::Tracking_Add(TechnoClass const* techno)
         CurAircraft++;
         aircraft = ((AircraftTypeClass const&)techno->Class_Of()).Type;
         AQuantity[aircraft]++;
-        AScan |= (1L << aircraft);
         if (Session.Type == GAME_INTERNET) {
             AircraftTotals->Increment_Unit_Total(techno->Class_Of().ID);
         }
@@ -7092,9 +7112,6 @@ void HouseClass::Recalc_Attributes(void)
             house->ActiveBScan = 0;
             house->IScan = 0;
             house->ActiveIScan = 0;
-            house->ActiveUScan = 0;
-            house->AScan = 0;
-            house->ActiveAScan = 0;
             house->VScan = 0;
             house->ActiveVScan = 0;
         }
@@ -7104,14 +7121,6 @@ void HouseClass::Recalc_Attributes(void)
     **	A second pass through the sentient objects is required so that the appropriate scan
     **	bits will be set for the owner house.
     */
-    for (index = 0; index < Units.Count(); index++) {
-        UnitClass const* unit = Units.Ptr(index);
-        if (unit->IsLocked && (Session.Type != GAME_NORMAL || !unit->House->IsHuman || unit->IsDiscoveredByPlayer)) {
-            if (!unit->IsInLimbo) {
-                unit->House->ActiveUScan |= (1L << unit->Class->Type);
-            }
-        }
-    }
     for (index = 0; index < Infantry.Count(); index++) {
         InfantryClass const* infantry = Infantry.Ptr(index);
         infantry->House->IScan |= (1L << infantry->Class->Type);
@@ -7123,17 +7132,7 @@ void HouseClass::Recalc_Attributes(void)
             }
         }
     }
-    for (index = 0; index < Aircraft.Count(); index++) {
-        AircraftClass const* aircraft = Aircraft.Ptr(index);
-        aircraft->House->AScan |= (1L << aircraft->Class->Type);
-        if (aircraft->IsLocked
-            && (Session.Type != GAME_NORMAL || !aircraft->House->IsHuman || aircraft->IsDiscoveredByPlayer)) {
-            if (!aircraft->IsInLimbo) {
-                aircraft->House->ActiveAScan |= (1L << aircraft->Class->Type);
-                aircraft->House->OldAScan |= (1L << aircraft->Class->Type);
-            }
-        }
-    }
+
     for (index = 0; index < Buildings.Count(); index++) {
         BuildingClass const* building = Buildings.Ptr(index);
         if (building->Class->Type < 32) {
@@ -8256,15 +8255,15 @@ void HouseClass::Check_Pertinent_Structures(void)
 void HouseClass::Init_Unit_Trackers(void)
 {
     if (Session.Type == GAME_INTERNET || Session.Type == GAME_GLYPHX_MULTIPLAYER) {
-        AircraftTotals = new UnitTrackerClass((int)AIRCRAFT_COUNT);
+        AircraftTotals = new UnitTrackerClass((int)AIRCRAFT_COUNT * 20);
         InfantryTotals = new UnitTrackerClass((int)INFANTRY_COUNT);
         UnitTotals = new UnitTrackerClass((int)UNIT_COUNT * 50);
         BuildingTotals = new UnitTrackerClass((int)STRUCT_COUNT);
         VesselTotals = new UnitTrackerClass((int)VESSEL_COUNT);
 
-        DestroyedAircraft = new UnitTrackerClass((int)AIRCRAFT_COUNT);
+        DestroyedAircraft = new UnitTrackerClass((int)AIRCRAFT_COUNT * 20);
         DestroyedInfantry = new UnitTrackerClass((int)INFANTRY_COUNT);
-        DestroyedUnits = new UnitTrackerClass((int)UNIT_COUNT * 50);
+        DestroyedUnits = new UnitTrackerClass((int)UNIT_COUNT * 20);
         DestroyedBuildings = new UnitTrackerClass((int)STRUCT_COUNT);
         DestroyedVessels = new UnitTrackerClass((int)VESSEL_COUNT);
 

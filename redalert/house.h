@@ -377,27 +377,11 @@ public:
     unsigned long OldBScan;
 
     /*
-    **	This is the last working scan bits for units. For every existing unit
-    **	type owned by this house, a corresponding bit is set in this element. As
-    **	the scan bits are being constructed, they are built into the "New" element
-    **	and then duplicated into the regular element at the end of every logic cycle.
-    */
-    unsigned long ActiveUScan;
-    unsigned long OldUScan;
-
-    /*
     **	Infantry type existence bits. Similar to unit and building bits.
     */
     unsigned long IScan;
     unsigned long ActiveIScan;
     unsigned long OldIScan;
-
-    /*
-    **	Aircraft type existence bits. Similar to unit and building bits.
-    */
-    unsigned long AScan;
-    unsigned long ActiveAScan;
-    unsigned long OldAScan;
 
     /*
     **	Vessel type existence bits. Similar to unit and building bits.
@@ -599,7 +583,7 @@ private:
 #else
     int IQuantity[INFANTRY_COUNT];
 #endif
-    int AQuantity[AIRCRAFT_COUNT];
+    int AQuantity[AIRCRAFT_COUNT * 20];
 #ifdef FIXIT_CSII //	checked - ajw 9/28/98
     int VQuantity[VESSEL_RA_COUNT];
 #else
@@ -757,8 +741,10 @@ public:
     int Get_Quantity(StructType building);
     unsigned char const* Remap_Table(bool blushing = false, RemapType remap = REMAP_NORMAL) const;
 
-    int Harvester_Count();
-    int MCV_Count();
+    int Harvester_Count() const;
+    int MCV_Count() const;
+    int Aircraft_Count() const;
+    int Unit_Count() const;
 
     TechnoTypeClass const* Suggest_New_Object(RTTIType objectype, bool kennel = false) const;
     BuildingTypeClass const* Suggest_New_Building(void) const;
@@ -993,8 +979,6 @@ public:
 #ifdef FIXIT_CSII //	checked - ajw 9/28/98
     int QuantityU(int index)
     {
-        if (index >= UNIT_RA_COUNT)
-            index -= UNIT_RA_COUNT;
         return (UQuantity[index]);
     }
     int QuantityI(int index)

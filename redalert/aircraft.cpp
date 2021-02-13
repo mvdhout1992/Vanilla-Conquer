@@ -292,13 +292,6 @@ bool AircraftClass::Unlimbo(COORDINATE coord, DirType dir)
         }
 
         /*
-        **	Ensure that the owning house knows about the
-        **	new object.
-        */
-        House->AScan |= (1L << Class->Type);
-        House->ActiveAScan |= (1L << Class->Type);
-
-        /*
         **	Hack it so that aircraft that are both passenger and cargo carrying
         **	will carry passengers at the expense of ammo.
         */

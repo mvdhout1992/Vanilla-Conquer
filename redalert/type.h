@@ -1447,12 +1447,13 @@ public:
     };
     static void operator delete(void* ptr);
 
-    static void Init_Heap(void);
+    static void Init_Heap(CCINIClass& ini);
     static AircraftType From_Name(char const* name);
     static AircraftTypeClass& As_Reference(AircraftType a);
     static void Init(TheaterType){};
     static void One_Time(void);
     static void Prep_For_Add(void);
+    virtual bool Read_INI(CCINIClass& ini);
 
     virtual void Dimensions(int& width, int& height) const;
     virtual bool Create_And_Place(CELL, HousesType) const;

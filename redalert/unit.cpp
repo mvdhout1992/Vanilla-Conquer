@@ -941,7 +941,6 @@ bool UnitClass::Unlimbo(COORDINATE coord, DirType dir)
         **	Ensure that the owning house knows about the
         **	new object.
         */
-        House->ActiveUScan |= (1L << Class->Type);
 
         /*
         **	If it starts off the edge of the map, then it already starts cloaked.

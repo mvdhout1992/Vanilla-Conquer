@@ -1224,7 +1224,7 @@ MissionType MissionType_From_Name(char const* name)
     return (MISSION_NONE);
 }
 
-MissionType CCINIClass::Get_MissionTypec(char const* section, char const* entry, MissionType defvalue) const
+MissionType CCINIClass::Get_MissionType(char const* section, char const* entry, MissionType defvalue) const
 {
     char buffer[128];
 
@@ -1232,7 +1232,21 @@ MissionType CCINIClass::Get_MissionTypec(char const* section, char const* entry,
         return (MissionType_From_Name(buffer));
     }
     return (defvalue);
+}
 
+StructType CCINIClass::Get_StructType(char const* section, char const* entry, StructType defvalue) const
+{
+    char buffer[128];
+
+    if (Get_String(section, entry, "", buffer, sizeof(buffer))) {
+        return (BuildingTypeClass::From_Name(buffer));
+    }
+    return (defvalue);
+}
+
+bool CCINIClass::Put_StructType(char const* section, char const* entry, StructType value)
+{
+    return (Put_String(section, entry, BuildingTypeClass::As_Reference(value).Name()));
 }
 
 /***********************************************************************************************

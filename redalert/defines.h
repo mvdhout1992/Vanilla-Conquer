@@ -1685,14 +1685,6 @@ typedef enum AircraftType : char
     AIRCRAFT_FIRST = 0
 } AircraftType;
 
-#define AIRCRAFTF_TRANSPORT (1L << AIRCRAFT_TRANSPORT)
-#define AIRCRAFTF_BADGER    (1L << AIRCRAFT_BADGER)
-#define AIRCRAFTF_U2        (1L << AIRCRAFT_U2)
-#define AIRCRAFTF_MIG       (1L << AIRCRAFT_MIG)
-#define AIRCRAFTF_YAK       (1L << AIRCRAFT_YAK)
-#define AIRCRAFTF_LONGBOW   (1L << AIRCRAFT_LONGBOW)
-#define AIRCRAFTF_HIND      (1L << AIRCRAFT_HIND)
-
 // PG inline AircraftType operator++(AircraftType &, int);
 
 /**********************************************************************
