@@ -287,7 +287,7 @@ bool AircraftClass::Unlimbo(COORDINATE coord, DirType dir)
 
     if (FootClass::Unlimbo(coord, dir)) {
 
-        if (*this == AIRCRAFT_BADGER || (Class->PrimaryWeapon != NULL && Class->PrimaryWeapon->IsCamera)) {
+        if (Class->IsBadger || (Class->PrimaryWeapon != NULL && Class->PrimaryWeapon->IsCamera)) {
             IsALoaner = true;
         }
 
@@ -521,7 +521,7 @@ void AircraftClass::Draw_Rotors(int x, int y, WindowNumberType window) const
         flags = flags | SHAPE_FADING | SHAPE_PREDATOR;
     }
 
-    if (*this == AIRCRAFT_TRANSPORT) {
+    if (Class->IsChinook) {
         int _stretch[FACING_COUNT] = {8, 9, 10, 9, 8, 9, 10, 9};
 
         /*
@@ -1100,7 +1100,7 @@ short const* AircraftClass::Overlap_List(bool redraw) const
         }
 #endif
 
-        if (*this == AIRCRAFT_BADGER) {
+        if (Class->IsBadger) {
             return (_listbadger);
         } else {
             return (_list);
@@ -2484,7 +2484,7 @@ DirType AircraftClass::Pose_Dir(void) const
     assert(Aircraft.ID(this) == ID);
     assert(IsActive);
 
-    if (*this == AIRCRAFT_TRANSPORT) {
+    if (Class->IsChinook) {
         return (DIR_N);
     }
     if (Class->IsFixedWing) {
@@ -3317,8 +3317,7 @@ int AircraftClass::Pip_Count(void) const
 
     int retval = 0;
 
-    bool carrying_passengers =
-        (Class->Max_Passengers() > 0) && ((*this != AIRCRAFT_BADGER) || (Mission != MISSION_HUNT));
+    bool carrying_passengers = (Class->Max_Passengers() > 0) && ((Class->IsBadger == false) || (Mission != MISSION_HUNT));
     if (carrying_passengers) {
         retval = How_Many();
     } else {

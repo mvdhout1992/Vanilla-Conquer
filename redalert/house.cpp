@@ -85,7 +85,7 @@
  *   HouseClass::Is_Ally -- Checks to see if the object is an ally.                            *
  *   HouseClass::Is_Ally -- Determines if the specified house is an ally.                      *
  *   HouseClass::Is_Hack_Prevented -- Is production of the specified type and id prohibted?    *
- *   HouseClass::Is_No_YakMig -- Determines if no more yaks or migs should be allowed.         *
+ *   HouseClass::Is_No_Fixed_Wing_Buildable_Airplane -- Determines if no more yaks or migs should be allowed.         *
  *   HouseClass::MPlayer_Defeated -- multiplayer; house is defeated                            *
  *   HouseClass::Make_Ally -- Make the specified house an ally.                                *
  *   HouseClass::Make_Enemy -- Make an enemy of the house specified.                           *
@@ -7605,7 +7605,7 @@ void HouseClass::Write_INI(CCINIClass& ini)
 }
 
 /***********************************************************************************************
- * HouseClass::Is_No_YakMig -- Determines if no more yaks or migs should be allowed.           *
+ * HouseClass::Is_No_Fixed_Wing_Buildable_Airplane -- Determines if no more yaks or migs should be allowed.           *
  *                                                                                             *
  *    This routine will examine the current yak and mig situation verses airfields. If there   *
  *    are equal aircraft to airfields, then this routine will return TRUE.                     *
@@ -7619,9 +7619,15 @@ void HouseClass::Write_INI(CCINIClass& ini)
  * HISTORY:                                                                                    *
  *   09/23/1996 JLB : Created.                                                                 *
  *=============================================================================================*/
-bool HouseClass::Is_No_YakMig(void) const
+bool HouseClass::Is_No_Fixed_Wing_Buildable_Airplane(void) const
 {
-    int quantity = AQuantity[AIRCRAFT_YAK] + AQuantity[AIRCRAFT_MIG];
+    int quantity = 0;
+    for (int i = 0; i < Aircraft.Count(); i++) {
+        AircraftClass* a = Aircraft.Ptr(i);
+        if (a->House == this && a->Class->IsFixedWing && a->Class->Level != -1) {
+            quantity++;
+        }
+    }
 
     /*
     **	Adjust the quantity down one if there is an aircraft in production. This will
@@ -7629,8 +7635,8 @@ bool HouseClass::Is_No_YakMig(void) const
     */
     FactoryClass const* factory = Fetch_Factory(RTTI_AIRCRAFT);
     if (factory != NULL && factory->Get_Object() != NULL) {
-        AircraftClass const* air = (AircraftClass const*)factory->Get_Object();
-        if (*air == AIRCRAFT_MIG || *air == AIRCRAFT_YAK) {
+        AircraftClass const* a = (AircraftClass const*)factory->Get_Object();
+        if (a->House == this && a->Class->IsFixedWing && a->Class->Level != -1) {
             quantity -= 1;
         }
     }
@@ -7661,8 +7667,11 @@ bool HouseClass::Is_No_YakMig(void) const
  *=============================================================================================*/
 bool HouseClass::Is_Hack_Prevented(RTTIType rtti, int value) const
 {
-    if (rtti == RTTI_AIRCRAFTTYPE && (value == AIRCRAFT_MIG || value == AIRCRAFT_YAK)) {
-        return (Is_No_YakMig());
+    if (rtti == RTTI_AIRCRAFTTYPE ) {
+        AircraftClass* a = Aircraft.Ptr(value);
+        if (a->Class->IsFixedWing && a->Class->Level != -1) {
+            return (Is_No_Fixed_Wing_Buildable_Airplane());
+        }
     }
     return (false);
 }

@@ -6049,7 +6049,7 @@ bool TechnoClass::Evaluate_Object(ThreatType method,
         **	pip color represents the type of occupant.
         */
         bool carrying_passengers = (Techno_Type_Class()->Max_Passengers() > 0)
-                                   && ((What_Am_I() != RTTI_AIRCRAFT) || (*(AircraftClass*)this != AIRCRAFT_BADGER)
+                                   && ((What_Am_I() != RTTI_AIRCRAFT) || (((AircraftClass*)this)->Class->IsBadger == false)
                                        || (Mission != MISSION_HUNT));
         if (carrying_passengers) {
             ObjectClass const* object = Attached_Object();

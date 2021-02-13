@@ -123,7 +123,7 @@ static bool _Pop_Group_Out_Of_Object(FootClass* group, TechnoClass* object)
  *=============================================================================================*/
 bool _Need_To_Take(AircraftClass const* air)
 {
-    if (*air == AIRCRAFT_YAK || *air == AIRCRAFT_MIG) {
+    if (air->Class->IsFixedWing && air->Class->Level != -1) {
         int deficit = air->House->Get_Quantity(STRUCT_AIRSTRIP);
         //		int deficit = air->House->Get_Quantity(STRUCT_AIRSTRIP) -
         //(air->House->Get_Quantity(AIRCRAFT_YAK)+air->House->Get_Quantity(AIRCRAFT_MIG));
@@ -133,7 +133,7 @@ bool _Need_To_Take(AircraftClass const* air)
         */
         for (int index = 0; index < Aircraft.Count(); index++) {
             AircraftClass const* airptr = Aircraft.Ptr(index);
-            if ((*airptr == AIRCRAFT_YAK || *airptr == AIRCRAFT_MIG) && airptr->IsOwnedByPlayer && !airptr->IsALoaner
+            if (airptr->Class->IsFixedWing && airptr->Class->Level != -1 && airptr->IsOwnedByPlayer && !airptr->IsALoaner
                 && airptr != air) {
                 deficit -= 1;
                 if (deficit == 0)
@@ -256,7 +256,7 @@ static FootClass* _Create_Group(TeamTypeClass const* teamtype)
     **	no passengers.
     */
     if (transport != NULL && object == NULL && transport->What_Am_I() == RTTI_AIRCRAFT
-        && *((AircraftClass*)transport) == AIRCRAFT_TRANSPORT) {
+        && ((AircraftClass*)transport)->Class->IsChinook) {
         transport->IsALoaner = false;
     }
 

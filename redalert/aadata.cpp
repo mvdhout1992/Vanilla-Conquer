@@ -660,7 +660,7 @@ bool AircraftTypeClass::Create_And_Place(CELL, HousesType) const
  *=============================================================================================*/
 void AircraftTypeClass::Dimensions(int& width, int& height) const
 {
-    if (Type == AIRCRAFT_BADGER) {
+    if (IsBadger) {
         width = 56;
         height = 56;
     } else {

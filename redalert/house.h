@@ -699,7 +699,7 @@ public:
 
     bool Fire_Sale(void);
     bool Is_Hack_Prevented(RTTIType rtti, int value) const;
-    bool Is_No_YakMig(void) const;
+    bool Is_No_Fixed_Wing_Buildable_Airplane(void) const;
     int Expert_AI(void);
     void Production_Begun(TechnoClass const* rtti);
     void Sell_Wall(CELL cell);

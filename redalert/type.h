@@ -1416,6 +1416,9 @@ public:
     */
     int LandingSpeed;
 
+    bool IsBadger;
+    bool IsChinook;
+
     AircraftTypeClass(NoInitClass const& x)
         : TechnoTypeClass(x)
     {
@@ -1438,7 +1441,9 @@ public:
                       StructType building,
                       int landingspeed,
                       int rotation,
-                      MissionType deforder);
+                      MissionType deforder,
+                      bool is_badger,
+                      bool is_chinook);
 
     static void* operator new(size_t);
     static void* operator new(size_t, void* ptr)
