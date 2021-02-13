@@ -4257,7 +4257,7 @@ int BuildingClass::Mission_Repair(void)
                 TechnoClass* radio = Contact_With_Whom();
 
                 if (((radio->Health_Ratio() < Rule.ConditionGreen)
-                     || (radio->What_Am_I() == RTTI_UNIT && *(UnitClass*)radio == UNIT_MINELAYER))
+                     || (radio->What_Am_I() == RTTI_UNIT && ((UnitClass*)radio)->Class->IsMineLayer))
                     && Transmit_Message(RADIO_REPAIR) == RADIO_ROGER) {
 
                     /*

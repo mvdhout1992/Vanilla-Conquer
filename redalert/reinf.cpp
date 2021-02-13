@@ -443,8 +443,7 @@ bool Do_Reinforcements(TeamTypeClass const* teamtype)
     **	For the ants, they will pop out of the ant hill directly.
     */
     if (teamtype->Origin != -1 && object->What_Am_I() == RTTI_UNIT
-        && (*((UnitClass*)object) == UNIT_ANT1 || *((UnitClass*)object) == UNIT_ANT2
-            || *((UnitClass*)object) == UNIT_ANT3)) {
+        && ((UnitClass*)object)->Class->IsAnt) {
         CELL newcell = Scen.Waypoint[teamtype->Origin];
         if (newcell != -1) {
             if (Map[newcell].TType == TEMPLATE_HILL01) {

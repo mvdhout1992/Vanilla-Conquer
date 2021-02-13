@@ -712,7 +712,7 @@ RadioMessageType UnitClass::Receive_Message(RadioClass* from, RadioMessageType m
     */
     case RADIO_NEED_REPAIR:
         if (!IsDriving && !Target_Legal(NavCom)
-            && (Health_Ratio() >= 1 && (*this != UNIT_MINELAYER || Ammo >= Class->MaxAmmo)))
+            && (Health_Ratio() >= 1 && (!Class->IsMineLayer || Ammo >= Class->MaxAmmo)))
             return (RADIO_NEGATIVE);
         break;
         //			return(RADIO_ROGER);
@@ -856,7 +856,7 @@ RadioMessageType UnitClass::Receive_Message(RadioClass* from, RadioMessageType m
                         */
                         if (Transmit_Message(RADIO_MOVE_HERE, param, from) == RADIO_YEA_NOW_WHAT) {
 #ifdef FIXIT_PHASETRANSPORT //	checked - ajw 9/28/98
-                            if (Class->IsAPC || Is_Door_Open()) {
+                            if (Class->IsAPC == false || Is_Door_Open()) {
 #else
                             if (*this != UNIT_APC || Is_Door_Open()) {
 #endif
@@ -1111,7 +1111,7 @@ ResultType UnitClass::Take_Damage(int& damage, int distance, WarheadType warhead
         **	If this is a truck, there is a possibility that a crate will drop out
         **	if the scenario so indicates and there is room.
         */
-        if (Scen.IsTruckCrate && *this == UNIT_TRUCK) {
+        if (Scen.IsTruckCrate && Class->IsTruck) {
             cell = Nearby_Location();
             if (cell != 0) {
                 new OverlayClass(OVERLAY_WOOD_CRATE, cell);
@@ -1121,11 +1121,11 @@ ResultType UnitClass::Take_Damage(int& damage, int distance, WarheadType warhead
         /*
         **	When the truck blows up, the entire side blows up if no bases capture the flag mode.
         */
-        if (*this == UNIT_TRUCK && !Session.Options.Bases && Special.IsCaptureTheFlag) {
+        if (this->Class->IsTruck && !Session.Options.Bases && Special.IsCaptureTheFlag) {
             House->Flag_To_Die();
         }
 
-        if (*this == UNIT_MCV) {
+        if (this->Class->IsMCV) {
             if (House) {
                 House->Check_Pertinent_Structures();
             }
@@ -1144,7 +1144,7 @@ ResultType UnitClass::Take_Damage(int& damage, int distance, WarheadType warhead
         */
         if (Health_Ratio() <= Rule.ConditionYellow && !IsAnimAttached) {
 #ifdef FIXIT_ANTS
-            if (*this != UNIT_ANT1 && *this != UNIT_ANT2 && *this != UNIT_ANT3) {
+            if (!this->Class->IsAnt) {
 #endif
                 AnimClass* anim = new AnimClass(ANIM_SMOKE_M, Coord_Add(Coord, XYP_Coord(0, -8)));
                 if (anim)
@@ -1255,7 +1255,7 @@ void UnitClass::Active_Click_With(ActionType action, ObjectClass* object)
         return;
     }
 #ifdef FIXIT_CSII //	checked - ajw 9/28/98
-    if (*this == UNIT_MAD && (IsDumping || Gold)) {
+    if (Class->IsMADTank && (IsDumping || Gold)) {
     } else {
         DriveClass::Active_Click_With(action, object);
     }
@@ -1290,7 +1290,7 @@ void UnitClass::Active_Click_With(ActionType action, CELL cell)
     assert(IsActive);
 
 #ifdef FIXIT_CSII //	checked - ajw 9/28/98
-    if (*this == UNIT_MAD && (IsDumping || Gold)) {
+    if (Class->IsMADTank && (IsDumping || Gold)) {
     } else {
         DriveClass::Active_Click_With(action, cell);
     }
@@ -1378,7 +1378,7 @@ void UnitClass::Enter_Idle_Mode(bool initial)
                     order = MISSION_UNLOAD;
                 } else {
 #ifdef FIXIT_CSII //	checked - ajw 9/28/98
-                    if (*this == UNIT_MAD && Mission == MISSION_UNLOAD) {
+                    if (Class->IsMADTank && Mission == MISSION_UNLOAD) {
                         order = MISSION_UNLOAD;
                     } else {
 #endif
@@ -1532,7 +1532,7 @@ bool UnitClass::Try_To_Deploy(void)
     assert(IsActive);
 
     if (!Target_Legal(NavCom) && !IsRotating) {
-        if (*this == UNIT_MCV) {
+        if (this->Class->IsMCV) {
 
             /*
             **	Determine if it is legal to deploy at this location. If not, tell the
@@ -1868,7 +1868,7 @@ void UnitClass::Per_Cell_Process(PCPType why)
             ** type of mine it deploys (only possible if it just dropped it
             ** down) then ignore the mine.
             */
-            if (*this != UNIT_MINELAYER || bldng->House != House) {
+            if (!Class->IsMineLayer || bldng->House != House) {
 
                 COORDINATE blcoord = bldng->Center_Coord();
 
@@ -2010,7 +2010,7 @@ int UnitClass::Shape_Number(void) const
             if (IsDumping) {
                 unsigned stage = Fetch_Stage();
 #ifdef FIXIT_CSII //	checked - ajw 9/28/98
-                if (*this == UNIT_MAD) {
+                if (Class->IsMADTank) {
                     if (stage >= 8) {
                         stage = 7;
                     }
@@ -2117,7 +2117,10 @@ void UnitClass::Draw_It(int x, int y, WindowNumberType window) const
         /*
         **	The artillery unit should have its entire body recoil when it fires.
         */
-        if (*this == UNIT_ARTY && IsInRecoilState) {
+
+        // Note this code is never called in the vanilla game because IsInRecoilState is only
+        // set for Turreted units and the artillery doesn't have one
+        if (Class->IsArtillery && IsInRecoilState) {
             Recoil_Adjust(PrimaryFacing.Current(), x, y);
         }
 
@@ -2130,7 +2133,7 @@ void UnitClass::Draw_It(int x, int y, WindowNumberType window) const
         **	If there is a rotating radar dish, draw it now.
         */
         if (Class->IsRadarEquipped) {
-            if (*this == UNIT_MGG) {
+            if (Class->IsMobileGapGen) {
                 int x2 = x, y2 = y;
                 shapenum = 32 + (Frame & 7);
                 Class->Turret_Adjust(PrimaryFacing, x2, y2);
@@ -2146,9 +2149,14 @@ void UnitClass::Draw_It(int x, int y, WindowNumberType window) const
                 shapenum = 32 + (Frame % 32);
 //#endif
 #ifdef FIXIT_CSII //	checked - ajw 9/28/98
-                if (*this == UNIT_TESLATANK) {
+                if (Class->IsTeslaTank) {
                     Techno_Draw_Object(shapefile, shapenum, x, y, window);
-                } else {
+
+                // original code to draw with y -5 offset, doesn't check for Mobile
+               // Radar Jammer but that's the only unit other than MGG & Tesla Tank that 
+               // has Radar Dish in Original game
+               // Thus the check is added (for custom units)
+                } else if (Class->IsMobileRadarJammer) {
                     Techno_Draw_Object(shapefile, shapenum, x, y - 5, window);
                 }
 #else
@@ -2518,7 +2526,7 @@ int UnitClass::Mission_Unload(void)
         }
     }
 
-    if (Class->Type == UNIT_TRUCK) {
+    else if (Class->IsTruck) {
         switch (Status) {
         case INITIAL_CHECK:
             dir = Desired_Load_Dir(NULL, cell);
@@ -2673,7 +2681,7 @@ int UnitClass::Mission_Unload(void)
         }
     }
 
-    else if (Class->Type == UNIT_MCV) {
+    else if (Class->IsMCV) {
         switch (Status) {
         case 0:
             Path[0] = FACING_NONE;
@@ -2706,7 +2714,7 @@ int UnitClass::Mission_Unload(void)
         return (1);
     }
 
-    else if (Class->Type == UNIT_MINELAYER) {
+    else if (Class->IsMineLayer) {
         switch (Status) {
         case INITIAL_CHECK:
             dir = DIR_NE;
@@ -2784,7 +2792,7 @@ int UnitClass::Mission_Unload(void)
     }
 
 #ifdef FIXIT_CSII //	checked - ajw 9/28/98
-    else if (Class->Type == UNIT_MAD) {
+    else if (Class->IsMADTank) {
         if (!Gems && !IsDumping) {
             Gems = 1;
             Gold = 0;
@@ -2847,7 +2855,7 @@ int UnitClass::Mission_Unload(void)
         TimeQuakeCenter = ::As_Target(Center_Coord());
     }
 
-   else if (Class->Type == UNIT_CHRONOTANK) {
+   else if (Class->IsChronoTank) {
         if (IsOwnedByPlayer) {
             Map.IsTargettingMode = SPC_CHRONO2;
             HouseClass* old_player_ptr = PlayerPtr;
@@ -3088,7 +3096,7 @@ int UnitClass::Mission_Hunt(void)
     assert(Units.ID(this) == ID);
     assert(IsActive);
 
-    if (*this == UNIT_MCV) {
+    if (Class->IsMCV) {
         enum
         {
             FIND_SPOT,
@@ -3576,7 +3584,7 @@ ActionType UnitClass::What_Action(ObjectClass const* object) const
     **	Don't allow special deploy action unless there is something to deploy.
     */
     if (action == ACTION_SELF) {
-        if (*this == UNIT_MCV) {
+        if (Class->IsMCV) {
 
             /*
             **	The MCV will get the no-deploy cursor if it couldn't
@@ -3595,7 +3603,7 @@ ActionType UnitClass::What_Action(ObjectClass const* object) const
             **	The mine layer can "deploy" its mines if it currently isn't
             **	sitting on top of a mine and it still has mines available.
             */
-            if (*this == UNIT_MINELAYER) {
+            if (Class->IsMineLayer) {
                 if (!Ammo || Map[Center_Coord()].Cell_Building()
                     || (Map[Center_Coord()].Smudge != SMUDGE_NONE
                         && SmudgeTypeClass::As_Reference(Map[Center_Coord()].Smudge).IsBib)) {
@@ -3603,8 +3611,8 @@ ActionType UnitClass::What_Action(ObjectClass const* object) const
                 }
             } else {
 #ifdef FIXIT_CSII //	checked - ajw 9/28/98
-                if (*this == UNIT_CHRONOTANK || *this == UNIT_MAD) {
-                    if (*this == UNIT_CHRONOTANK) {
+                if (Class->IsChronoTank || Class->IsMADTank) {
+                    if (Class->IsChronoTank) {
                         // If the chrono tank's counter is still charging up, don't allow deploy.  Or,
                         // if it's a player-controlled chrono tank, and the player's currently trying
                         // to teleport a different unit, don't allow teleporting this unit.
@@ -3684,7 +3692,7 @@ ActionType UnitClass::What_Action(ObjectClass const* object) const
     }
 
 #ifdef FIXIT_CSII //	checked - ajw 9/28/98
-    if (*this == UNIT_MAD && (IsDumping || Gold)) {
+    if (Class->IsMADTank && (IsDumping || Gold)) {
         action = ACTION_NONE;
     }
 #endif
@@ -3725,7 +3733,7 @@ ActionType UnitClass::What_Action(CELL cell) const
         return (ACTION_HARVEST);
     }
 #ifdef FIXIT_CSII //	checked - ajw 9/28/98
-    if (*this == UNIT_MAD && (IsDumping || Gold)) {
+    if (Class->IsMADTank && (IsDumping || Gold)) {
         action = ACTION_NOMOVE;
     }
 #endif
@@ -3809,7 +3817,7 @@ int UnitClass::Mission_Guard(void)
         //		return(MissionControl[Mission].Normal_Delay() + Random_Pick(0, 2));
     }
 
-    if (*this == UNIT_MCV && House->IsBaseBuilding) {
+    if (Class->IsMCV && House->IsBaseBuilding) {
         Assign_Mission(MISSION_UNLOAD);
         return (MissionControl[Mission].Normal_Delay() + Random_Pick(0, 2));
     }
@@ -4051,7 +4059,7 @@ int UnitClass::Pip_Count(void) const
         return (How_Many());
     }
 
-    if (*this == UNIT_MINELAYER) {
+    if (Class->IsMineLayer) {
         int retval = 0;
         if (Ammo > 0) {
             retval = Class->Max_Pips() * fixed(Ammo, Class->MaxAmmo);
@@ -4066,7 +4074,7 @@ int UnitClass::Pip_Count(void) const
     }
 
 #ifdef FIXIT_CSII //	checked - ajw 9/28/98
-    if (*this == UNIT_CHRONOTANK) {
+    if (Class->IsChronoTank) {
         int fulldur = ChronoTankDuration * TICKS_PER_MINUTE;
         return ((fulldur - MoebiusCountDown) / (fulldur / 5));
     }

@@ -653,7 +653,7 @@ void Keyboard_Process(KeyNumType& input)
             for (index = 0; index < Units.Count(); index++) {
                 UnitClass* unit = Units.Ptr(index);
 
-                if (unit != NULL && !unit->IsInLimbo && unit->House == PlayerPtr && *unit == UNIT_MCV) {
+                if (unit != NULL && !unit->IsInLimbo && unit->House == PlayerPtr && unit->Class->IsMCV) {
                     Unselect_All();
                     unit->Select();
                     break;

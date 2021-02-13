@@ -1610,7 +1610,7 @@ void HouseClass::Super_Weapon_Handler(void)
                         if (Map.IsTargettingMode == SPC_CHRONO2) {
                             TechnoClass* tech = (TechnoClass*)::As_Object(UnitToTeleport);
                             if (tech && tech->IsActive && tech->What_Am_I() == RTTI_UNIT
-                                && *(UnitClass*)tech == UNIT_CHRONOTANK) {
+                                && ((UnitClass*)tech)->Class->IsChronoTank) {
                             } else {
                                 Map.IsTargettingMode = SPC_NONE;
                             }
@@ -2983,7 +2983,7 @@ bool HouseClass::Place_Special_Blast(SpecialWeaponType id, CELL cell)
                     if (tech->What_Am_I() != RTTI_UNIT || !((UnitClass*)tech)->IsDeploying) {
 #ifdef FIXIT_CSII //	checked - ajw 9/28/98
                         bool porthim = true;
-                        if (tech->What_Am_I() == RTTI_UNIT && ((UnitClass*)tech)->Class->Type == UNIT_CHRONOTANK) {
+                        if (tech->What_Am_I() == RTTI_UNIT && ((UnitClass*)tech)->Class->IsChronoTank) {
                             porthim = false;
                         }
                         if (porthim) {
@@ -3041,11 +3041,11 @@ bool HouseClass::Place_Special_Blast(SpecialWeaponType id, CELL cell)
                 drive->Teleport_To(cell);
                 drive->IsMoebius = true;
 #ifdef FIXIT_CSII //	checked - ajw 9/28/98
-                if (tech->What_Am_I() == RTTI_UNIT && *(UnitClass*)tech == UNIT_CHRONOTANK) {
+                if (tech->What_Am_I() == RTTI_UNIT && ((UnitClass*)tech)->Class->IsChronoTank) {
                     drive->IsMoebius = false;
                 }
                 drive->MoebiusCountDown = Rule.ChronoDuration * TICKS_PER_MINUTE;
-                if (tech->What_Am_I() == RTTI_UNIT && *(UnitClass*)tech == UNIT_CHRONOTANK) {
+                if (tech->What_Am_I() == RTTI_UNIT && ((UnitClass*)tech)->Class->IsChronoTank) {
                     drive->MoebiusCountDown = ChronoTankDuration * TICKS_PER_MINUTE;
                 }
 #else
@@ -3071,7 +3071,7 @@ bool HouseClass::Place_Special_Blast(SpecialWeaponType id, CELL cell)
             Map.IsTargettingMode = SPC_NONE;
         }
 #ifdef FIXIT_CSII //	checked - ajw 9/28/98
-        if (tech && tech->IsActive && (tech->What_Am_I() != RTTI_UNIT || *(UnitClass*)tech != UNIT_CHRONOTANK)) {
+        if (tech && tech->IsActive && (tech->What_Am_I() != RTTI_UNIT || ((UnitClass*)tech)->Class->IsChronoTank == false)) {
 #endif
             SuperWeapon[SPC_CHRONOSPHERE].Discharged(this == PlayerPtr);
 #ifdef FIXIT_CSII //	checked - ajw 9/28/98
@@ -3095,7 +3095,7 @@ bool HouseClass::Place_Special_Blast(SpecialWeaponType id, CELL cell)
         */
 #ifdef FIXIT_CSII //	checked - ajw 9/28/98                                                                             \
                   // Don't allow a vortex if the teleportation was due to a chrono tank.
-        if (tech && tech->IsActive && (tech->What_Am_I() != RTTI_UNIT || *(UnitClass*)tech != UNIT_CHRONOTANK))
+        if (tech && tech->IsActive && (tech->What_Am_I() != RTTI_UNIT || ((UnitClass*)tech)->Class->IsChronoTank == false))
 #endif
             if (!ChronalVortex.Is_Active() && Percent_Chance(Rule.VortexChance * 100)) {
                 int x = Random_Pick(0, Map.MapCellWidth - 1);
@@ -8162,7 +8162,7 @@ void HouseClass::Check_Pertinent_Structures(void)
         for (int index = 0; index < Units.Count(); index++) {
             UnitClass* unit = Units.Ptr(index);
 
-            if (unit && unit->IsActive && *unit == UNIT_MCV && unit->House == this) {
+            if (unit && unit->IsActive && unit->Class->IsMCV && unit->House == this) {
                 if (!unit->IsInLimbo && unit->Strength > 0) {
                     any_good_buildings = true;
                     break;

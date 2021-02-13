@@ -2827,7 +2827,7 @@ bool DisplayClass::Good_Reinforcement_Cell(CELL outcell, CELL incell, SpeedType 
  *=============================================================================================*/
 static bool should_exclude_from_selection(ObjectClass* obj)
 {
-    return (obj->What_Am_I() == RTTI_UNIT) && (((UnitClass*)obj)->Class->IsToHarvest || *((UnitClass*)obj) == UNIT_MCV);
+    return (obj->What_Am_I() == RTTI_UNIT) && (((UnitClass*)obj)->Class->IsToHarvest || ((UnitClass*)obj)->Class->IsMCV);
 }
 
 void DisplayClass::Select_These(COORDINATE coord1, COORDINATE coord2, bool additive)

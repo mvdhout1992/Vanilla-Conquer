@@ -1302,7 +1302,7 @@ void DriveClass::AI(void)
     */
     if (IsMoebius) {
 #ifdef FIXIT_CSII //	checked - ajw 9/28/98
-        if (What_Am_I() != RTTI_UNIT || ((UnitClass*)this)->Class->Type != UNIT_CHRONOTANK) {
+        if (What_Am_I() != RTTI_UNIT || ((UnitClass*)this)->Class->IsChronoTank == false) {
 #endif
             if (MoebiusCountDown == 0) {
                 IsMoebius = false;

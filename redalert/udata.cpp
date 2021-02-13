@@ -90,7 +90,19 @@ static UnitTypeClass const UnitV2Launcher(UNIT_V2_LAUNCHER,
                                           MISSION_HUNT,     // ORDERS:		Default order to give new unit.
                                           1, // Does this unit have reload graphics and logic like V2 & MSAM?
                                           false, // Is this unit an APC?
-                                          false  // Is this unit a Phase Transport?
+                                          false,  // Is this unit a Phase Transport?
+                                          false, // is ant ?
+                                          false, // Is mine layer?
+                                          false, // is mobile gap gen?
+                                          false, // is jeep?
+                                          false, // chrono tank?
+                                          false, // is mcv?
+                                          false, // is mobile radar jammer?
+                                          false, // is tesla tank?
+                                          false, // is truck?
+                                          false, // is artillery?
+                                          false, // is demo truck?
+                                          false  // is mad tank?
 );
 
 // Light tank
@@ -123,7 +135,19 @@ static UnitTypeClass const UnitLTank(UNIT_LTANK,
                                      MISSION_HUNT,  // ORDERS:		Default order to give new unit.
                                      0,             // Does this unit have reload graphics and logic like V2 & MSAM?
                                      false,        // Is this unit an APC?
-                                     false         // Is this unit a Phase Transport?
+                                     false,         // Is this unit a Phase Transport?
+                                     false,        // is ant ?
+                                     false,        // Is mine layer?
+                                     false,        // is mobile gap gen?
+                                     false,        // is jeep?
+                                     false,        // chrono tank?
+                                     false,        // is mcv?
+                                     false,        // is mobile radar jammer?
+                                     false,        // is tesla tank?
+                                     false,        // is truck?
+                                     false,        // is artillery?
+                                     false,        // is demo truck?
+                                     false         // is mad tank?
 );
 
 // Heavy tank
@@ -156,7 +180,19 @@ static UnitTypeClass const UnitMTank(UNIT_MTANK,
                                      MISSION_HUNT,  // ORDERS:		Default order to give new unit.
                                      0,             // Does this unit have reload graphics and logic like V2 & MSAM?
                                      false,        // Is this unit an APC?
-                                     false         // Is this unit a Phase Transport?
+                                     false,         // Is this unit a Phase Transport?
+                                     false,        // is ant ?
+                                     false,        // Is mine layer?
+                                     false,        // is mobile gap gen?
+                                     false,        // is jeep?
+                                     false,        // chrono tank?
+                                     false,        // is mcv?
+                                     false,        // is mobile radar jammer?
+                                     false,        // is tesla tank?
+                                     false,        // is truck?
+                                     false,        // is artillery?
+                                     false,        // is demo truck?
+                                     false         // is mad tank?
 );
 
 // Medium tank
@@ -189,7 +225,19 @@ static UnitTypeClass const UnitMTank2(UNIT_MTANK2,
                                       MISSION_HUNT,  // ORDERS:		Default order to give new unit.
                                       0,             // Does this unit have reload graphics and logic like V2 & MSAM?
                                       false,        // Is this unit an APC?
-                                      false         // Is this unit a Phase Transport?
+                                      false,         // Is this unit a Phase Transport?
+                                      false,        // is ant ?
+                                      false,        // Is mine layer?
+                                      false,        // is mobile gap gen?
+                                      false,        // is jeep?
+                                      false,        // chrono tank?
+                                      false,        // is mcv?
+                                      false,        // is mobile radar jammer?
+                                      false,        // is tesla tank?
+                                      false,        // is truck?
+                                      false,        // is artillery?
+                                      false,        // is demo truck?
+                                      false         // is mad tank?
 );
 
 // Mastadon tank
@@ -222,7 +270,19 @@ static UnitTypeClass const UnitHTank(UNIT_HTANK,
                                      MISSION_HUNT,   // ORDERS:		Default order to give new unit.
                                      0,              // Does this unit have reload graphics and logic like V2 & MSAM?
                                      false,         // Is this unit an APC?
-                                     false          // Is this unit a Phase Transport?
+                                     false,          // Is this unit a Phase Transport?
+                                     false,         // is ant ?
+                                     false,         // Is mine layer?
+                                     false,         // is mobile gap gen?
+                                     false,         // is jeep?
+                                     false,         // chrono tank?
+                                     false,         // is mcv?
+                                     false,          // is mobile radar jammer?
+                                     false,         // is tesla tank?
+                                     false,         // is truck?
+                                     false,         // is artillery?
+                                     false,         // is demo truck?
+                                     false          // is mad tank?
 );
 
 // Mobile Radar Jammer
@@ -255,7 +315,19 @@ static UnitTypeClass const UnitMRJammer(UNIT_MRJ,
                                         MISSION_HUNT,  // ORDERS:		Default order to give new unit.
                                         0,             // Does this unit have reload graphics and logic like V2 & MSAM?
                                         false,        // Is this unit an APC?
-                                        false         // Is this unit a Phase Transport?
+                                        false,         // Is this unit a Phase Transport?
+                                        false,        // is ant ?
+                                        false,        // Is mine layer?
+                                        false,        // is mobile gap gen?
+                                        false,        // is jeep?
+                                        false,        // chrono tank?
+                                        false,         // is mcv?
+                                        true,        // is mobile radar jammer?
+                                        false,        // is tesla tank?
+                                        false,        // is truck?
+                                        false,        // is artillery?
+                                        false,        // is demo truck?
+                                        false         // is mad tank?
 );
 
 // Mobile Gap Generator
@@ -288,7 +360,19 @@ static UnitTypeClass const UnitMGG(UNIT_MGG,
                                    MISSION_HUNT,  // ORDERS:		Default order to give new unit.
                                    0,             // Does this unit have reload graphics and logic like V2 & MSAM?
                                    false,        // Is this unit an APC?
-                                   false         // Is this unit a Phase Transport?
+                                   false,         // Is this unit a Phase Transport?
+                                   false,        // is ant ?
+                                   false,        // Is mine layer?
+                                   true,        // is mobile gap gen?
+                                   false,        // is jeep?
+                                   false,        // chrono tank?
+                                   false,         // is mcv?
+                                   false,        // is mobile radar jammer?
+                                   false,        // is tesla tank?
+                                   false,        // is truck?
+                                   false,        // is artillery?
+                                   false,        // is demo truck?
+                                   false         // is mad tank?
 );
 
 // Artillery
@@ -321,7 +405,19 @@ static UnitTypeClass const UnitArty(UNIT_ARTY,
                                     MISSION_HUNT,   // ORDERS:		Default order to give new unit.
                                     0,              // Does this unit have reload graphics and logic like V2 & MSAM?
                                     false,         // Is this unit an APC?
-                                    false          // Is this unit a Phase Transport?
+                                    false,          // Is this unit a Phase Transport?
+                                    false,         // is ant ?
+                                    false,         // Is mine layer?
+                                    false,         // is mobile gap gen?
+                                    false,         // is jeep?
+                                    false,         // chrono tank?
+                                    false,          // is mcv?
+                                    false,         // is mobile radar jammer?
+                                    false,         // is tesla tank?
+                                    false,         // is truck?
+                                    true,         // is artillery?
+                                    false,         // is demo truck?
+                                    false          // is mad tank?
 );
 
 // Harvester
@@ -354,7 +450,19 @@ static UnitTypeClass const UnitHarvester(UNIT_HARVESTER,
                                          MISSION_HARVEST,  // ORDERS:		Default order to give new unit.
                                          0,                 // Does this unit have reload graphics and logic like V2 & MSAM?
                                          false,             // Is this unit an APC?
-                                         false              // Is this unit a Phase Transport?
+                                         false,              // Is this unit a Phase Transport?
+                                         false,          // is ant ?
+                                         false,         // Is mine layer?
+                                         false,         // is mobile gap gen?
+                                         false,             // is jeep?
+                                         false,             // chrono tank?
+                                         false,           // is mcv?
+                                         false,         // is mobile radar jammer?
+                                         false,         // is tesla tank?
+                                         false,         // is truck?
+                                         false,       // is artillery?
+                                         false,             // is demo truck?
+                                         false      // is mad tank?
 );
 
 // Mobile construction vehicle
@@ -387,7 +495,19 @@ static UnitTypeClass const UnitMCV(UNIT_MCV,
                                    MISSION_HUNT,     // ORDERS:		Default order to give new unit.
                                    0,                // Does this unit have reload graphics and logic like V2 & MSAM?
                                    false,           // Is this unit an APC?
-                                   false            // Is this unit a Phase Transport?
+                                   false,            // Is this unit a Phase Transport?
+                                   false,           // is ant ?
+                                   false,           // Is mine layer?
+                                   false,           // is mobile gap gen?
+                                   false,           // is jeep?
+                                   false,           // chrono tank?
+                                   true,           // is mcv?
+                                   false,           // is mobile radar jammer?
+                                   false,           // is tesla tank?
+                                   false,           // is truck?
+                                   false,           // is artillery?
+                                   false,           // is demo truck?
+                                   false            // is mad tank?
 );
 
 // Jeep (hummer)
@@ -420,7 +540,19 @@ static UnitTypeClass const UnitJeep(UNIT_JEEP,
                                     MISSION_HUNT,  // ORDERS:		Default order to give new unit.
                                     0,             // Does this unit have reload graphics and logic like V2 & MSAM?
                                     false,        // Is this unit an APC?
-                                    false         // Is this unit a Phase Transport?
+                                    false,         // Is this unit a Phase Transport?
+                                    false,        // is ant ?
+                                    false,        // Is mine layer?
+                                    false,        // is mobile gap gen?
+                                    true,        // is jeep?
+                                    false,        // chrono tank?
+                                    false,        // is mcv?
+                                    false,        // is mobile radar jammer?
+                                    false,        // is tesla tank?
+                                    false,        // is truck?
+                                    false,        // is artillery?
+                                    false,        // is demo truck?
+                                    false         // is mad tank?
 );
 
 // Armored personnel carrier
@@ -453,7 +585,19 @@ static UnitTypeClass const UnitAPC(UNIT_APC,
                                    MISSION_HUNT,  // ORDERS:		Default order to give new unit.
                                    0,             // Does this unit have reload graphics and logic like V2 & MSAM?
                                    true,        // Is this unit an APC?
-                                   false         // Is this unit a Phase Transport?
+                                   false,         // Is this unit a Phase Transport?
+                                   false,        // is ant ?
+                                   false,        // Is mine layer?
+                                   false,        // is mobile gap gen?
+                                   false,        // is jeep?
+                                   false,        // chrono tank?
+                                   false,        // is mcv?
+                                   false,        // is mobile radar jammer?
+                                   false,        // is tesla tank?
+                                   false,        // is truck?
+                                   false,        // is artillery?
+                                   false,        // is demo truck?
+                                   false         // is mad tank?
 );
 
 // Mine laying truck
@@ -486,7 +630,19 @@ static UnitTypeClass const UnitMineLayer(UNIT_MINELAYER,
                                          MISSION_HUNT,    // ORDERS:		Default order to give new unit.
                                          0,              // Does this unit have reload graphics and logic like V2 & MSAM?
                                          false,           // Is this unit an APC?
-                                         false          // Is this unit a Phase Transport?
+                                         false,          // Is this unit a Phase Transport?
+                                         false, // is ant ?
+                                         false, // Is mine layer?
+                                         false, // is mobile gap gen?
+                                         false, // is jeep?
+                                         false, // chrono tank?
+                                         false, // is mcv?
+                                         false, // is mobile radar jammer?
+                                         false, // is tesla tank?
+                                         false, // is truck?
+                                         false, // is artillery?
+                                         false, // is demo truck?
+                                         false  // is mad tank?
 );
 
 // Convoy Truck
@@ -519,7 +675,19 @@ static UnitTypeClass const UnitConvoyTruck(UNIT_TRUCK,
                                            MISSION_GUARD, // ORDERS:		Default order to give new unit.
                                            0, // Does this unit have reload graphics and logic like V2 & MSAM?
                                            false, // Is this unit an APC?
-                                           false  // Is this unit a Phase Transport?
+                                           false,  // Is this unit a Phase Transport?
+                                           false, // is ant ?
+                                           false, // Is mine layer?
+                                           false, // is mobile gap gen?
+                                           false, // is jeep?
+                                           false, // chrono tank?
+                                           false, // is mcv?
+                                           false, // is mobile radar jammer?
+                                           false,  // is tesla tank?
+                                           true, // is truck?
+                                           false, // is artillery?
+                                           false, // is demo truck?
+                                           false  // is mad tank?
 );
 
 // Warrior ant
@@ -552,7 +720,19 @@ static UnitTypeClass const UnitAnt1(UNIT_ANT1,
                                     MISSION_HUNT,     // ORDERS:		Default order to give new unit.
                                     0,                // Does this unit have reload graphics and logic like V2 & MSAM?
                                     false,           // Is this unit an APC?
-                                    false            // Is this unit a Phase Transport?
+                                    false,            // Is this unit a Phase Transport?
+                                    true,           // is ant ?
+                                    false,           // Is mine layer?
+                                    false,           // is mobile gap gen?
+                                    false,           // is jeep?
+                                    false,           // chrono tank?
+                                    false,           // is mcv?
+                                    false,           // is mobile radar jammer?
+                                    false,            // is tesla tank?
+                                    false,           // is truck?
+                                    false,           // is artillery?
+                                    false,           // is demo truck?
+                                    false            // is mad tank?
 );
 static UnitTypeClass const UnitAnt2(UNIT_ANT2,
                                     TXT_NONE,        // NAME:			Text name of this unit type.
@@ -583,7 +763,19 @@ static UnitTypeClass const UnitAnt2(UNIT_ANT2,
                                     MISSION_HUNT,     // ORDERS:		Default order to give new unit.
                                     0,                // Does this unit have reload graphics and logic like V2 & MSAM?
                                     false,           // Is this unit an APC?
-                                    false            // Is this unit a Phase Transport?
+                                    false,            // Is this unit a Phase Transport?
+                                    true,           // is ant ?
+                                    false,           // Is mine layer?
+                                    false,           // is mobile gap gen?
+                                    false,           // is jeep?
+                                    false,           // chrono tank?
+                                    false,           // is mcv?
+                                    false,           // is mobile radar jammer?
+                                    false,            // is tesla tank?
+                                    false,           // is truck?
+                                    false,           // is artillery?
+                                    false,           // is demo truck?
+                                    false            // is mad tank?
 );
 static UnitTypeClass const UnitAnt3(UNIT_ANT3,
                                     TXT_NONE,        // NAME:			Text name of this unit type.
@@ -614,7 +806,19 @@ static UnitTypeClass const UnitAnt3(UNIT_ANT3,
                                     MISSION_HUNT,     // ORDERS:		Default order to give new unit.
                                     0,            // Does this unit have reload graphics and logic like V2 & MSAM?
                                     false,           // Is this unit an APC?
-                                    false            // Is this unit a Phase Transport?
+                                    false,            // Is this unit a Phase Transport?
+                                    true,           // is ant ?
+                                    false,           // Is mine layer?
+                                    false,           // is mobile gap gen?
+                                    false,           // is jeep?
+                                    false,           // chrono tank?
+                                    false,           // is mcv?
+                                    false,           // is mobile radar jammer?
+                                    false,            // is tesla tank?
+                                    false,           // is truck?
+                                    false,           // is artillery?
+                                    false,           // is demo truck?
+                                    false            // is mad tank?
 );
 
 // Chrono Tank
@@ -647,7 +851,19 @@ static UnitTypeClass const UnitChrono(UNIT_CHRONOTANK,
                                       MISSION_HUNT,    // ORDERS:		Default order to give new unit.
                                       0,           // Does this unit have reload graphics and logic like V2 & MSAM?
                                       false,          // Is this unit an APC?
-                                      false           // Is this unit a Phase Transport?
+                                      false,           // Is this unit a Phase Transport?
+                                      false,          // is ant ?
+                                      false,          // Is mine layer?
+                                      false,          // is mobile gap gen?
+                                      false,          // is jeep?
+                                      true,          // chrono tank?
+                                      false,          // is mcv?
+                                      false,          // is mobile radar jammer?
+                                      false,           // is tesla tank?
+                                      false,          // is truck?
+                                      false,          // is artillery?
+                                      false,          // is demo truck?
+                                      false           // is mad tank?
 );
 
 // Tesla Tank
@@ -680,7 +896,19 @@ static UnitTypeClass const UnitTesla(UNIT_TESLATANK,
                                      MISSION_HUNT,   // ORDERS:		Default order to give new unit.
                                      0,          // Does this unit have reload graphics and logic like V2 & MSAM?
                                      false,         // Is this unit an APC?
-                                     false          // Is this unit a Phase Transport?
+                                     false,         // Is this unit a Phase Transport?
+                                     false,         // is ant ?
+                                     false,         // Is mine layer?
+                                     false,         // is mobile gap gen?
+                                     false,         // is jeep?
+                                     false,         // chrono tank?
+                                     false,         // is mcv?
+                                     false,         // is mobile radar jammer?
+                                     true,         // is tesla tank?
+                                     false,         // is truck?
+                                     false,         // is artillery?
+                                     false,         // is demo truck?
+                                     false          // is mad tank?
 );
 
 // M.A.D. Tank
@@ -713,7 +941,19 @@ static UnitTypeClass const UnitMAD(UNIT_MAD,
                                    MISSION_HUNT,  // ORDERS:		Default order to give new unit.
                                    0,         // Does this unit have reload graphics and logic like V2 & MSAM?
                                    false,        // Is this unit an APC?
-                                   false         // Is this unit a Phase Transport?
+                                   false,        // Is this unit a Phase Transport?
+                                   false,        // is ant ?
+                                   false,        // Is mine layer?
+                                   false,        // is mobile gap gen?
+                                   false,        // is jeep?
+                                   false,        // chrono tank?
+                                   false,        // is mcv?
+                                   false,        // is mobile radar jammer?
+                                   false,        // is tesla tank?
+                                   false,        // is truck?
+                                   false,        // is artillery?
+                                   false,         // is demo truck?
+                                   true         // is mad tank?
 );
 
 // Demolition Truck
@@ -746,7 +986,19 @@ static UnitTypeClass const UnitDemoTruck(UNIT_DEMOTRUCK,
                                          MISSION_GUARD,  // ORDERS:		Default order to give new unit.
                                          0,          // Does this unit have reload graphics and logic like V2 & MSAM?
                                          false,         // Is this unit an APC?
-                                         false          // Is this unit a Phase Transport?
+                                         false,          // Is this unit a Phase Transport?
+                                         false,         // is ant ?
+                                         false,         // Is mine layer?
+                                         false,         // is mobile gap gen?
+                                         false,         // is jeep?
+                                         false,         // chrono tank?
+                                         false,         // is mcv?
+                                         false,         // is mobile radar jammer?
+                                         false,         // is tesla tank?
+                                         false,         // is truck?
+                                         false,         // is artillery?
+                                         true,         // is demo truck?
+                                         false          // is mad tank?
 );
 
 static UnitTypeClass const UnitPhase(UNIT_PHASE,
@@ -778,7 +1030,19 @@ static UnitTypeClass const UnitPhase(UNIT_PHASE,
                                      MISSION_HUNT,        // ORDERS:		Default order to give new unit.
                                      0,                   // Does this unit have reload graphics and logic like V2 & MSAM?
                                      true,               // Is this unit an APC?
-                                     true                // Is this unit a Phase Transport?
+                                     true,                // Is this unit a Phase Transport?
+                                     false,             // is ant ?
+                                     false,             // Is mine layer?
+                                     false,             // is mobile gap gen?
+                                     false,             // is jeep?
+                                     false,             // chrono tank?
+                                     false,             // is mcv?
+                                     false,             // is mobile radar jammer?
+                                     false,             // is tesla tank?
+                                     false,             // is truck?
+                                     false,             // is artillery?
+                                     false,             // is demo truck?
+                                     false              // is mad tank?
 );
 
 /***********************************************************************************************
@@ -827,7 +1091,19 @@ UnitTypeClass::UnitTypeClass(UnitType type,
                              MissionType order,
                              bool ammoimagecount,
                              bool is_apc,
-                             bool is_phase_transport)
+                             bool is_phase_transport,
+                             bool is_ant,
+                             bool is_mine_layer,
+                             bool is_mobile_gap_gen,
+                             bool is_jeep,
+                             bool is_chrono_tank,
+                             bool is_mcv,
+                             bool is_mobile_radar_jammer,
+                             bool is_tesla_tank,
+                             bool is_truck,
+                             bool is_artillery,
+                             bool is_demo_truck,
+                             bool is_mad_tank)
     : TechnoTypeClass(RTTI_UNITTYPE,
                       int(type),
                       name,
@@ -869,6 +1145,18 @@ UnitTypeClass::UnitTypeClass(UnitType type,
     , AmmoImageCount(ammoimagecount)
     , IsAPC(is_apc)
     , IsPhaseTransport(is_phase_transport)
+    , IsAnt(is_ant)
+    , IsMineLayer(is_mine_layer)
+    ,IsMobileGapGen(is_mobile_gap_gen)
+    ,IsJeep(is_jeep)
+    ,IsChronoTank(is_chrono_tank)
+    ,IsMCV(is_mcv)
+    ,IsMobileRadarJammer(is_mobile_radar_jammer)
+    ,IsTeslaTank(is_tesla_tank)
+    ,IsTruck(is_truck)
+    ,IsArtillery(is_artillery)
+    ,IsDemoTruck(is_demo_truck)
+    ,IsMADTank(is_mad_tank)
 {
     /*
     **	Forced unit overrides form the default.
@@ -1001,9 +1289,21 @@ void UnitTypeClass::Init_Heap(CCINIClass& ini)
                           32,              // Rotation stages.
                           0,               // Turret center offset along body centerline.
                           MISSION_HUNT,    // ORDERS:		Default order to give new unit.
-                          0,                // Does this unit have reload graphics and logic like V2 & MSAM?
+                          0,               // Does this unit have reload graphics and logic like V2 & MSAM?
                           false,           // Is this unit an APC?
-                          false             // Is this unit a Phase Transport?
+                          false,           // Is this unit a Phase Transport?
+                          false,           // ant ?
+                          false,           // Is mine layer?
+                          false,           // is mobile gap gen?
+                          false,           // is jeep?
+                          false,           // chrono tank?
+                          false,           // is mcv?
+                          false,           // is mobile radar jammer?
+                          false,           // is tesla tank?
+                          false,           // is truck?
+                          false,           // is artillery?
+                          false,           // is demo truck?
+                          false            // is mad tank?   
         );
     }
 }
@@ -1299,7 +1599,7 @@ int UnitTypeClass::Max_Pips(void) const
         return (7);
     }
 
-    if (Type == UNIT_MINELAYER) {
+    if (IsMineLayer) {
         return (MaxAmmo);
     }
     return (Max_Passengers());
@@ -1339,19 +1639,14 @@ void UnitTypeClass::Turret_Adjust(DirType dir, int& x, int& y) const
                      {2, 0},   {2, 1},   {1, 2}};
 
     int index = 0;
-    switch (Type) {
-    case UNIT_JEEP:
+    if (IsJeep) {
         y -= 4;
-        break;
+    }
 
-    case UNIT_MGG:
+    else if (IsMobileGapGen) {
         index = Dir_To_32(dir);
         x += _adjust[index].X;
         y += _adjust[index].Y;
-        break;
-
-    default:
-        break;
     }
 }
 
@@ -1397,6 +1692,21 @@ bool UnitTypeClass::Read_INI(CCINIClass& ini)
         AmmoImageCount = ini.Get_Int(IniName, "AmmoImageCount", AmmoImageCount);
         IsAPC = ini.Get_Bool(Name(), "IsAPC", IsAPC);
         IsPhaseTransport = ini.Get_Bool(Name(), "IsPhaseTransport", IsPhaseTransport);
+
+        IsAnt = ini.Get_Bool(Name(), "IsAnt", IsAnt);
+        IsMineLayer = ini.Get_Bool(Name(), "IsMineLayer", IsMineLayer);
+        IsMobileGapGen = ini.Get_Bool(Name(), "IsMobileGapGen", IsMobileGapGen);
+        IsJeep = ini.Get_Bool(Name(), "IsJeep", IsJeep);
+
+        IsChronoTank = ini.Get_Bool(Name(), "IsChronoTank", IsChronoTank);
+        IsMCV = ini.Get_Bool(Name(), "IsMCV", IsMCV);
+        IsMobileRadarJammer = ini.Get_Bool(Name(), "IsMobileRadarJammer", IsMobileRadarJammer);
+        IsTeslaTank = ini.Get_Bool(Name(), "IsTeslaTank", IsTeslaTank);
+
+        IsTruck = ini.Get_Bool(Name(), "IsTruck", IsTruck);
+        IsArtillery = ini.Get_Bool(Name(), "IsArtillery", IsArtillery);
+        IsDemoTruck = ini.Get_Bool(Name(), "IsDemoTruck", IsDemoTruck);
+        IsMADTank = ini.Get_Bool(Name(), "IsMADTank", IsMADTank);
 
         /*
         **	If this unit can drive over walls, then mark it as recognizing the crusher zone.

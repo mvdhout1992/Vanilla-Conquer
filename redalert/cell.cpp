@@ -2538,7 +2538,7 @@ bool CellClass::Goodie_Check(FootClass* object)
 #else
                 UnitType utype = Random_Pick(UNIT_FIRST, (UnitType)(UNIT_COUNT - 1));
 #endif
-                if (utype != UNIT_MCV || Session.Options.Bases) {
+                if (&UnitTypeClass::As_Reference(utype).IsMCV == false || Session.Options.Bases) {
                     utp = &UnitTypeClass::As_Reference(utype);
                     if (utp->IsCrateGoodie
                         && (utp->Ownable & (1 << HouseClass::As_Pointer(object->Owner())->ActLike))) {

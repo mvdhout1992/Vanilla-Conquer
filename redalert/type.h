@@ -1002,6 +1002,18 @@ public:
     bool IsAPC;
     bool IsPhaseTransport;
 
+    bool IsAnt;
+    bool IsMineLayer;
+    bool IsMobileGapGen;
+    bool IsJeep;
+    bool IsChronoTank;
+    bool IsMCV;
+    bool IsMobileRadarJammer;
+    bool IsTeslaTank;
+    bool IsTruck;
+    bool IsArtillery;
+    bool IsDemoTruck;
+    bool IsMADTank;
 
     // For units like V2 Rocket Launcher and MSAM, this is for the special reload
     // and graphics logic for the rocket they are carrying and isn't visible
@@ -1044,7 +1056,20 @@ public:
                   MissionType order,
                   bool ammoimagecount,
                   bool is_apc,
-                  bool is_phase_transport);
+                  bool is_phase_transport,
+                  bool is_ant,
+                  bool is_mine_layer,
+                  bool is_mobile_gap_gen,
+                  bool is_jeep,
+                  bool is_chrono_tank,
+                  bool is_mcv,
+                  bool is_mobile_radar_jammer,
+                  bool is_tesla_tank,
+                  bool is_truck,
+                  bool is_artillery,
+                  bool is_demo_truck,
+                  bool is_mad_tank     
+        );
 
     static void* operator new(size_t);
     static void* operator new(size_t, void* ptr)

@@ -714,7 +714,7 @@ bool TechnoClass::Is_Visible_On_Radar(void) const
     ** Hack: MRJ is invisible to radar, unless it's allied with the player.
     */
     if (What_Am_I() == RTTI_UNIT) {
-        if (*((UnitClass*)this) == UNIT_MRJ) {
+        if (((UnitClass*)this)->Class->IsMobileRadarJammer) {
             if (!House->Is_Ally(PlayerPtr)) {
                 return (false);
             }
@@ -1005,7 +1005,7 @@ RadioMessageType TechnoClass::Receive_Message(RadioClass* from, RadioMessageType
         ** If it's a mine layer, re-arm him if he's empty. This always takes precedence
         **	over repair, since this operation is free.
         */
-        if (What_Am_I() == RTTI_UNIT && *((UnitClass*)this) == UNIT_MINELAYER
+        if (What_Am_I() == RTTI_UNIT && ((UnitClass*)this)->Class->IsMineLayer
             && ((UnitClass*)this)->Ammo < ((UnitClass*)this)->Class->MaxAmmo) {
             ((UnitClass*)this)->Ammo = ((UnitClass*)this)->Class->MaxAmmo;
             return (RADIO_NEGATIVE);
@@ -6127,7 +6127,7 @@ bool TechnoClass::Evaluate_Object(ThreatType method,
             /*
             ** Check if it's a Chrono tank, to show the recharge gauge.
             */
-            else if (What_Am_I() == RTTI_UNIT && *(UnitClass*)this == UNIT_CHRONOTANK) {
+            else if (What_Am_I() == RTTI_UNIT && ((UnitClass*)this)->Class->IsChronoTank) {
                 for (int index = 0; index < 5; index++) {
                     int shape = PIP_EMPTY;
                     if (index < pips) {

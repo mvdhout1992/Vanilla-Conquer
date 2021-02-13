@@ -1651,7 +1651,7 @@ void TeamClass::Coordinate_Attack(void)
 #ifdef FIXIT_CSII //	checked - ajw 9/28/98
                 FootClass* unit = Member;
                 TeamMissionClass const* mission = &Class->MissionList[CurrentMission];
-                if (unit->What_Am_I() != RTTI_UNIT || *(UnitClass*)unit != UNIT_CHRONOTANK
+                if (unit->What_Am_I() != RTTI_UNIT || ((UnitClass*)unit)->Class->IsChronoTank == false
                     || mission->Mission != TMISSION_SPY)
 #endif
                     Target = 0; // invalidize the target so it'll go to next mission.
@@ -1679,7 +1679,7 @@ void TeamClass::Coordinate_Attack(void)
                 } else {
 #ifdef FIXIT_CSII //	checked - ajw 9/28/98
                     if (mission->Mission == TMISSION_SPY && unit->What_Am_I() == RTTI_UNIT
-                        && *(UnitClass*)unit == UNIT_CHRONOTANK) {
+                        && ((UnitClass*)unit)->Class->IsChronoTank) {
                         UnitClass* tank = (UnitClass*)unit;
                         tank->Teleport_To(::As_Cell(Target));
                         tank->MoebiusCountDown = ChronoTankDuration * TICKS_PER_MINUTE;
@@ -2117,8 +2117,9 @@ int TeamClass::TMission_Unload(void)
 #ifdef FIXIT_CSII //	checked - ajw 9/28/98
             /* Also, allow unload if it's a MAD Tank. */
             if (unit->Is_Something_Attached()
-                || (unit->What_Am_I() == RTTI_UNIT && *(UnitClass*)unit == UNIT_MINELAYER && unit->Ammo)
-                || (unit->What_Am_I() == RTTI_UNIT && *(UnitClass*)unit == UNIT_MAD)) {
+                || (unit->What_Am_I() == RTTI_UNIT && ((UnitClass*)unit)->Class->IsMineLayer && unit->Ammo)
+                || (unit->What_Am_I() == RTTI_UNIT && ((UnitClass*)unit)->Class->IsMADTank))
+                {
 #else
             if (unit->Is_Something_Attached()
                 || (unit->What_Am_I() == RTTI_UNIT && *(UnitClass*)unit == UNIT_MINELAYER && unit->Ammo)) {
@@ -2769,7 +2770,7 @@ int TeamClass::TMission_Spy(void)
 #ifdef FIXIT_CSII //	checked - ajw 9/28/98
         else {
             FootClass* member = Member;
-            if (member->What_Am_I() == RTTI_UNIT && *(UnitClass*)member == UNIT_CHRONOTANK) {
+            if (member->What_Am_I() == RTTI_UNIT && ((UnitClass*)member)->Class->IsChronoTank) {
                 bool finished = true;
                 while (member) {
                     if (!((UnitClass*)member)->MoebiusCountDown)
@@ -2965,7 +2966,7 @@ int TeamClass::TMission_Deploy(void)
 
         if (_Is_It_Playing(unit)) {
 
-            if (unit->What_Am_I() == RTTI_UNIT && *(UnitClass*)unit == UNIT_MCV) {
+            if (unit->What_Am_I() == RTTI_UNIT && ((UnitClass*)unit)->Class->IsMCV) {
                 if (unit->Mission != MISSION_UNLOAD) {
                     unit->Assign_Destination(TARGET_NONE);
                     unit->Assign_Target(TARGET_NONE);
@@ -2974,7 +2975,7 @@ int TeamClass::TMission_Deploy(void)
                 }
             }
 
-            if (unit->What_Am_I() == RTTI_UNIT && *(UnitClass*)unit == UNIT_MINELAYER && unit->Ammo != 0) {
+            if (unit->What_Am_I() == RTTI_UNIT && ((UnitClass*)unit)->Class->IsMineLayer && unit->Ammo != 0) {
                 /*
                 **	The check for a building is located here because the mine layer may have
                 **	already unloaded the mine but is still in the process of retracting
