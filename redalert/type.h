@@ -1459,6 +1459,8 @@ public:
     static void One_Time(void);
     static void Prep_For_Add(void);
     virtual bool Read_INI(CCINIClass& ini);
+    virtual bool Write_INI(CCINIClass& ini);
+    static void Debug_Dump_INI();
 
     virtual void Dimensions(int& width, int& height) const;
     virtual bool Create_And_Place(CELL, HousesType) const;

@@ -1246,6 +1246,9 @@ StructType CCINIClass::Get_StructType(char const* section, char const* entry, St
 
 bool CCINIClass::Put_StructType(char const* section, char const* entry, StructType value)
 {
+    if (value == STRUCT_NONE) {
+        return (Put_String(section, entry, "<none>"));
+    }
     return (Put_String(section, entry, BuildingTypeClass::As_Reference(value).Name()));
 }
 

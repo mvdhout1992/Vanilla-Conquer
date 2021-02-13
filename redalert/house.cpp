@@ -7668,8 +7668,8 @@ bool HouseClass::Is_No_Fixed_Wing_Buildable_Airplane(void) const
 bool HouseClass::Is_Hack_Prevented(RTTIType rtti, int value) const
 {
     if (rtti == RTTI_AIRCRAFTTYPE ) {
-        AircraftClass* a = Aircraft.Ptr(value);
-        if (a->Class->IsFixedWing && a->Class->Level != -1) {
+        AircraftTypeClass* a = AircraftTypes.Ptr(value);
+        if (a->IsFixedWing && a->Level != -1) {
             return (Is_No_Fixed_Wing_Buildable_Airplane());
         }
     }

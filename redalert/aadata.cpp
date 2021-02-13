@@ -71,7 +71,9 @@ static AircraftTypeClass const BadgerPlane(AIRCRAFT_BADGER, // What kind of airc
                                            STRUCT_NONE,     // Preferred landing building.
                                            0xFF,            // Landing speed
                                            16,              // Number of rotation stages.
-                                           MISSION_HUNT     // Default mission for aircraft.
+                                           MISSION_HUNT,     // Default mission for aircraft.
+                                           true,           // Is Badger plane (logic)?
+                                           false            // Is Chinook plane (logic)?
 );
 
 // Photo recon plane.
@@ -93,7 +95,9 @@ static AircraftTypeClass const U2Plane(AIRCRAFT_U2, // What kind of aircraft is 
                                        STRUCT_NONE, // Preferred landing building.
                                        0xFF,        // Landing speed
                                        16,          // Number of rotation stages.
-                                       MISSION_HUNT // Default mission for aircraft.
+                                       MISSION_HUNT, // Default mission for aircraft.
+                                       false,        // Is Badger plane (logic)?
+                                       false         // Is Chinook plane (logic)?
 );
 
 // Mig attack aircraft.
@@ -115,7 +119,9 @@ static AircraftTypeClass const MigPlane(AIRCRAFT_MIG,    // What kind of aircraf
                                         STRUCT_AIRSTRIP, // Preferred landing building.
                                         0xC0,            // Landing speed
                                         16,              // Number of rotation stages.
-                                        MISSION_HUNT     // Default mission for aircraft.
+                                        MISSION_HUNT,     // Default mission for aircraft.
+                                        false,           // Is Badger plane (logic)?
+                                        false            // Is Chinook plane (logic)?
 );
 
 // Yak attack aircraft.
@@ -137,7 +143,9 @@ static AircraftTypeClass const YakPlane(AIRCRAFT_YAK,    // What kind of aircraf
                                         STRUCT_AIRSTRIP, // Preferred landing building.
                                         0xFF,            // Landing speed
                                         16,              // Number of rotation stages.
-                                        MISSION_HUNT     // Default mission for aircraft.
+                                        MISSION_HUNT,     // Default mission for aircraft.
+                                        false,           // Is Badger plane (logic)?
+                                        false            // Is Chinook plane (logic)?
 );
 
 // Transport helicopter.
@@ -159,7 +167,9 @@ static AircraftTypeClass const TransportHeli(AIRCRAFT_TRANSPORT, // What kind of
                                              STRUCT_NONE, // Preferred landing building.
                                              0xFF,        // Landing speed
                                              32,          // Number of rotation stages.
-                                             MISSION_HUNT // Default mission for aircraft.
+                                             MISSION_HUNT, // Default mission for aircraft.
+                                             false,        // Is Badger plane (logic)?
+                                             true         // Is Chinook plane (logic)?
 );
 
 // Longbow attack helicopter
@@ -181,7 +191,9 @@ static AircraftTypeClass const AttackHeli(AIRCRAFT_LONGBOW, // What kind of airc
                                           STRUCT_HELIPAD,   // Preferred landing building.
                                           0xFF,             // Landing speed
                                           32,               // Number of rotation stages.
-                                          MISSION_HUNT      // Default mission for aircraft.
+                                          MISSION_HUNT,      // Default mission for aircraft.
+                                          false,            // Is Badger plane (logic)?
+                                          false             // Is Chinook plane (logic)?
 );
 
 // Hind
@@ -203,7 +215,9 @@ static AircraftTypeClass const OrcaHeli(AIRCRAFT_HIND,  // What kind of aircraft
                                         STRUCT_HELIPAD, // Preferred landing building.
                                         0xFF,           // Landing speed
                                         32,             // Number of rotation stages.
-                                        MISSION_HUNT    // Default mission for aircraft.
+                                        MISSION_HUNT,    // Default mission for aircraft.
+                                        false,          // Is Badger plane (logic)?
+                                        false          // Is Chinook plane (logic)?
 );
 
 /***********************************************************************************************
@@ -238,7 +252,9 @@ AircraftTypeClass::AircraftTypeClass(AircraftType airtype,
                                      StructType building,
                                      int landingspeed,
                                      int rotation,
-                                     MissionType deforder)
+                                     MissionType deforder,
+                                     bool is_badger,
+                                     bool is_chinook)
     : TechnoTypeClass(RTTI_AIRCRAFTTYPE,
                       int(airtype),
                       name,
@@ -269,6 +285,8 @@ AircraftTypeClass::AircraftTypeClass(AircraftType airtype,
     , Mission(deforder)
     , Building(building)
     , LandingSpeed(landingspeed)
+    , IsBadger(is_badger)
+    , IsChinook(is_chinook)
 {
     /*
     **	Forced aircraft overrides from the default.
@@ -376,7 +394,9 @@ void AircraftTypeClass::Init_Heap(CCINIClass &ini)
                               STRUCT_NONE,
                               0,
                               0,
-                              MISSION_HUNT);
+                              MISSION_HUNT,
+                              false,
+                              false);
     }
 }
 
@@ -419,6 +439,28 @@ bool AircraftTypeClass::Read_INI(CCINIClass& ini)
 
         Mission = ini.Get_MissionType(Name(), "Mission", Mission);
         Building = ini.Get_StructType(Name(), "Building", Building);
+
+        IsBadger = ini.Get_Bool(Name(), "IsBadger", IsBadger);
+        IsChinook = ini.Get_Bool(Name(), "IsChinook", IsChinook);
+
+        int LandingSpeed;
+        return true;
+    }
+    return false;
+}
+
+bool AircraftTypeClass::Write_INI(CCINIClass& ini)
+{
+    if (TechnoTypeClass::Write_INI(ini)) {
+
+        ini.Put_Bool(Name(), "IsFixedWing", IsFixedWing);
+        ini.Put_Bool(Name(), "IsRotorEquipped", IsRotorEquipped);
+        ini.Put_Bool(Name(), "IsLandable", IsLandable);
+        ini.Put_Bool(Name(), "IsRotorCustom", IsRotorCustom);
+        ini.Put_MissionType(Name(), "Mission", Mission);
+        ini.Put_StructType(Name(), "Building", Building);
+        ini.Put_Bool(Name(), "IsBadger", IsBadger);
+        ini.Put_Bool(Name(), "IsChinook", IsChinook);
 
         int LandingSpeed;
         return true;
@@ -541,7 +583,22 @@ void AircraftTypeClass::Display(int x, int y, WindowNumberType window, HousesTyp
     }
     CC_Draw_Shape(ptr, shape, x, y, window, SHAPE_CENTER | SHAPE_WIN_REL);
 }
+
 #endif
+
+void AircraftTypeClass::Debug_Dump_INI()
+{
+    CCINIClass ini;
+    
+    for (int i = 0; i < AircraftTypes.Count(); i++) {
+        AircraftTypeClass& air = AircraftTypeClass::As_Reference((AircraftType)i);
+        std::string entry = std::to_string(i);
+        ini.Put_String("AircraftTypes", entry.c_str(), air.IniName);
+        air.Write_INI(ini);
+    }
+
+    ini.Save(CCFileClass("debug_aircrafttypes.txt"), false);
+}
 
 /***********************************************************************************************
  * AircraftTypeClass::Occupy_List -- Returns with occupation list for landed aircraft.         *
