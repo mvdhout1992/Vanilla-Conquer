@@ -98,8 +98,9 @@ public:
     bool Put_TriggerType(char const* section, char const* entry, TriggerTypeClass* value);
     bool Put_VocType(char const* section, char const* entry, VocType value);
     bool Put_WarheadType(char const* section, char const* entry, WarheadType value);
-    bool Put_WeaponType(char const* section, char const* entry, WeaponType value);
+    bool Put_WeaponType(char const* section, char const* entry, const WeaponType value);
     bool Put_CrateType(char const* section, char const* entry, CrateType value);
+    bool Put_MissionType(char const* section, char const* entry, MissionType value);
 
     int Get_Unique_ID(void) const;
 

@@ -7090,6 +7090,44 @@ bool TechnoClass::Evaluate_Object(ThreatType method,
         return (false);
     }
 
+       bool TechnoTypeClass::Write_INI(CCINIClass & ini)
+    {
+            ini.Put_String(Name(), "Name", Name());
+            ini.Put_Bool(Name(), "DoubleOwned", IsDoubleOwned);
+            ini.Get_Lepton(Name(), "GuardRange", ThreatRange);
+            ini.Get_Bool(Name(), "Explodes", IsExploding);
+            ini.Put_WeaponType(Name(), "Primary", PrimaryWeapon != NULL ? (WeaponType)PrimaryWeapon->ID : WEAPON_NONE);
+            ini.Put_WeaponType(Name(), "Secondary", SecondaryWeapon != NULL ? (WeaponType)SecondaryWeapon->ID : WEAPON_NONE);
+
+            ini.Put_Bool(Name(), "Cloakable", IsCloakable);
+            ini.Put_Bool(Name(), "Crushable", IsCrushable);
+            ini.Put_Bool(Name(), "Sensors", IsScanner);
+            ini.Put_ArmorType(Name(), "Armor", Armor);
+            ini.Put_Buildings(Name(), "Prerequisite", Prerequisite);
+            ini.Put_Int(Name(), "Strength", MaxStrength);
+            ini.Put_Int(Name(), "Sight", SightRange);
+            ini.Put_Int(Name(), "TechLevel", Level);
+
+            ini.Put_MPHType(Name(), "Speed", MaxSpeed);
+            ini.Put_Int(Name(), "Cost", Cost);
+            ini.Put_Int(Name(), "Ammo", MaxAmmo);
+            ini.Put_Int(Name(), "Points", Points);
+            ini.Put_Owners(Name(), "Owner", Ownable);
+            ini.Put_Bool(Name(), "Crewed", IsCrew);
+            ini.Put_Bool(Name(), "Repairable", IsRepairable);
+            ini.Put_Bool(Name(), "Invisible", IsInvisible);
+            ini.Put_Bool(Name(), "SelfHealing", IsSelfHealing);
+            ini.Put_Int(Name(), "ROT", ROT);
+            ini.Put_Int(Name(), "Passengers", MaxPassengers);
+
+            ini.Put_String(Name(), "Image", GraphicName);
+            ini.Put_String(Name(), "Cameo", CameoName);
+
+            ini.Put_Bool(Name(), "IsTurretEquipped", IsTurretEquipped);
+
+            return (true);
+    }
+
     int TechnoTypeClass::Legal_Placement(CELL pos) const
     {
         if (pos == -1)

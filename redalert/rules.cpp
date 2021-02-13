@@ -971,6 +971,8 @@ bool RulesClass::Objects(CCINIClass& ini)
         UnitTypes.Ptr(uindex)->Read_INI(ini);
     }
 
+    //UnitTypeClass::Debug_Dump_INI();
+
     for (int iindex = 0; iindex < InfantryTypes.Count(); iindex++) {
         InfantryTypes.Ptr(iindex)->Read_INI(ini);
     }

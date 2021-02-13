@@ -1221,7 +1221,6 @@ void UnitTypeClass::operator delete(void* pointer)
  *=============================================================================================*/
 void UnitTypeClass::Init_Heap(CCINIClass& ini)
 {
-
     bool loadhardcoded = ini.Get_Bool("General", "LoadHardcodedUnits", true);
     int entries = ini.Entry_Count("UnitTypes");
 
@@ -1717,4 +1716,67 @@ bool UnitTypeClass::Read_INI(CCINIClass& ini)
         return (true);
     }
     return (false);
+}
+
+bool UnitTypeClass::Write_INI(CCINIClass& ini)
+{
+    if (TechnoTypeClass::Write_INI(ini)) {
+
+        ini.Put_Bool(IniName, "NoMovingFire", IsNoFireWhileMoving);
+        ini.Put_Bool(IniName, "Tracked", (Speed == SPEED_TRACK)) ? SPEED_TRACK : SPEED_WHEEL;
+
+        ini.Put_Bool(IniName, "IsCrateGoodie", IsCrateGoodie);
+        ini.Put_Bool(IniName, "IsCrusher", IsCrusher);
+        ini.Put_Bool(IniName, "IsToHarvest", IsToHarvest);
+        ini.Put_Bool(IniName, "IsRadarEquipped", IsRadarEquipped);
+
+        ini.Put_Bool(IniName, "IsFireAnim", IsFireAnim);
+        ini.Put_Bool(IniName, "IsLockTurret", IsLockTurret);
+
+        ini.Put_Bool(IniName, "IsGigundo", IsGigundo);
+        ini.Put_Bool(IniName, "IsAnimating", IsAnimating);
+
+        ini.Put_Bool(IniName, "IsJammer", IsJammer);
+        ini.Put_Bool(IniName, "IsGapper", IsGapper);
+
+        ini.Put_Int(IniName, "TurretOffset", TurretOffset);
+        ini.Put_AnimType(IniName, "Explosion", Explosion);
+        ini.Put_MissionType(IniName, "Mission", Mission);
+
+        ini.Put_Int(IniName, "AmmoImageCount", AmmoImageCount);
+        ini.Put_Bool(Name(), "IsAPC", IsAPC);
+        ini.Put_Bool(Name(), "IsPhaseTransport", IsPhaseTransport);
+
+        ini.Put_Bool(Name(), "IsAnt", IsAnt);
+        ini.Put_Bool(Name(), "IsMineLayer", IsMineLayer);
+        ini.Put_Bool(Name(), "IsMobileGapGen", IsMobileGapGen);
+        ini.Put_Bool(Name(), "IsJeep", IsJeep);
+
+        ini.Put_Bool(Name(), "IsChronoTank", IsChronoTank);
+        ini.Put_Bool(Name(), "IsMCV", IsMCV);
+        ini.Put_Bool(Name(), "IsMobileRadarJammer", IsMobileRadarJammer);
+        ini.Put_Bool(Name(), "IsTeslaTank", IsTeslaTank);
+
+        ini.Put_Bool(Name(), "IsTruck", IsTruck);
+        ini.Put_Bool(Name(), "IsArtillery", IsArtillery);
+        ini.Put_Bool(Name(), "IsDemoTruck", IsDemoTruck);
+        ini.Put_Bool(Name(), "IsMADTank", IsMADTank);
+        return (true);
+    }
+    return (false);
+}
+
+void UnitTypeClass::Debug_Dump_INI()
+{
+    CCINIClass ini;
+
+    for (int i = 0; i < UnitTypes.Count(); i++) {
+        std::string entry = std::to_string(i);
+        UnitTypeClass& ut = UnitTypeClass::As_Reference((UnitType)i);
+
+        ini.Put_String("UnitTypes", entry.c_str(), ut.IniName);
+        ut.Write_INI(ini);
+    }
+
+    ini.Save(CCFileClass("debug_unittypes.txt"), false);
 }

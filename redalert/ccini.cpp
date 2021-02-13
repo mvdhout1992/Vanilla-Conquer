@@ -607,6 +607,14 @@ bool CCINIClass::Put_AnimType(char const* section, char const* entry, AnimType v
     return (Put_String(section, entry, Anim_Name(value)));
 }
 
+bool CCINIClass::Put_MissionType(char const* section, char const* entry, MissionType value)
+{
+    if (value == MISSION_NONE) {
+        return (Put_String(section, entry, "<none>"));
+    }
+    return (Put_String(section, entry, Missions[value]));
+}
+
 UnitType CCINIClass::Get_UnitType(char const* section, char const* entry, UnitType defvalue) const
 {
     char buffer[128];
@@ -675,7 +683,7 @@ WeaponType CCINIClass::Get_WeaponType(char const* section, char const* entry, We
  * HISTORY:                                                                                    *
  *   07/03/1996 JLB : Created.                                                                 *
  *=============================================================================================*/
-bool CCINIClass::Put_WeaponType(char const* section, char const* entry, WeaponType value)
+bool CCINIClass::Put_WeaponType(char const* section, char const* entry, const WeaponType value)
 {
     if (value == WEAPON_NONE) {
         return (Put_String(section, entry, "<none>"));

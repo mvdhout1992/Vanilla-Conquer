@@ -620,6 +620,7 @@ public:
     virtual int Time_To_Build(HousesType house) const;
     virtual int Get_Ownable(void) const;
     virtual bool Read_INI(CCINIClass& ini);
+    virtual bool Write_INI(CCINIClass& ini);
 
     /*
     **	This is a pointer to the wake shape (as needed by the gunboat).
@@ -1086,10 +1087,12 @@ public:
     static void Prep_For_Add(void);
 
     virtual bool Read_INI(CCINIClass& ini);
+    virtual bool Write_INI(CCINIClass& ini);
     virtual void Dimensions(int& width, int& height) const;
     virtual bool Create_And_Place(CELL cell, HousesType house) const;
     virtual ObjectClass* Create_One_Of(HouseClass* house) const;
     virtual int Max_Pips(void) const;
+    static void Debug_Dump_INI();
 
     void Turret_Adjust(DirType dir, int& x, int& y) const;
 
