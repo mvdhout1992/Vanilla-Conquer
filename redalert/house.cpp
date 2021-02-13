@@ -608,7 +608,6 @@ HouseClass::HouseClass(HousesType house)
     , BScan(0)
     , ActiveBScan(0)
     , OldBScan(0)
-    , UScan(0)
     , ActiveUScan(0)
     , OldUScan(0)
     , IScan(0)
@@ -951,6 +950,46 @@ void HouseClass::Init(void)
     }
 }
 
+bool HouseClass::Has_Nothing_Left()
+{
+    for (int i = 0; i < Buildings.Count(); i++) {
+        BuildingClass* b = (BuildingClass*)Buildings.Active_Ptr(i);
+
+        if (b->IsActive && b->House == this)
+            return false;
+    }
+
+    for (int i = 0; i < Vessels.Count(); i++) {
+        VesselClass* v = (VesselClass*)Vessels.Active_Ptr(i);
+
+        if (v->IsActive && v->House == this)
+            return false;
+    }
+
+    for (int i = 0; i < Aircraft.Count(); i++) {
+        AircraftClass* a = (AircraftClass*)Aircraft.Active_Ptr(i);
+
+        if (a->IsActive && a->House == this)
+            return false;
+    }
+
+    for (int i = 0; i < Infantry.Count(); i++) {
+        InfantryClass* inf = (InfantryClass*)Infantry.Active_Ptr(i);
+
+        if (inf->IsActive && inf->House == this)
+            return false;
+    }
+
+    for (int i = 0; i < Units.Count(); i++) {
+        UnitClass* u = (UnitClass*)Units.Active_Ptr(i);
+
+        if (u->IsActive && u->House == this)
+            return false;
+    }
+
+    return true;
+}
+
 // Object selection list is switched with player context for GlyphX. ST - 8/7/2019 10:11AM
 extern void Logic_Switch_Player_Context(HouseClass* house);
 extern bool MPSuperWeaponDisable;
@@ -1289,8 +1328,7 @@ void HouseClass::AI(void)
     ** may not properly set IScan etc for each house; you have to go
     ** through each object's AI before it will be properly set.
     */
-    if (Session.Type != GAME_NORMAL && !IsDefeated && !ActiveBScan && !ActiveAScan && !UScan && !ActiveIScan
-        && !ActiveVScan && Frame > 0) {
+    if (Session.Type != GAME_NORMAL && !IsDefeated && Has_Nothing_Left() && Frame > 0) {
         MPlayer_Defeated();
     }
 
@@ -2433,6 +2471,33 @@ unsigned char const* HouseClass::Remap_Table(bool blushing, RemapType remap) con
     return (ColorRemaps[RemapColor].RemapTable);
 }
 
+int HouseClass::Harvester_Count()
+{
+    int count = 0;
+
+    for (int i = 0; i < Units.Count(); i++) {
+        UnitClass* u = (UnitClass*)Units.Active_Ptr(i);
+
+        if (u->IsActive && u->House == this && u->Class->IsToHarvest)
+            count++;
+    }
+
+    return count;
+}
+
+int HouseClass::MCV_Count()
+{
+    int count = 0;
+
+    for (int i = 0; i < Units.Count(); i++) {
+        UnitClass* u = (UnitClass*)Units.Active_Ptr(i);
+
+        if (u->IsActive && u->House == this && u->Class->IsMCV)
+            count++;
+    }
+    return count;
+}
+
 /***********************************************************************************************
  * HouseClass::Suggested_New_Team -- Determine what team should be created.                    *
  *                                                                                             *
@@ -2454,7 +2519,7 @@ TeamTypeClass const* HouseClass::Suggested_New_Team(bool alertcheck)
 {
     assert(Houses.ID(this) == ID);
 
-    return (TeamTypeClass::Suggested_New_Team(this, AScan, UScan, IScan, VScan, alertcheck));
+    return (TeamTypeClass::Suggested_New_Team(this, alertcheck));
 }
 
 /***********************************************************************************************
@@ -3071,7 +3136,8 @@ bool HouseClass::Place_Special_Blast(SpecialWeaponType id, CELL cell)
             Map.IsTargettingMode = SPC_NONE;
         }
 #ifdef FIXIT_CSII //	checked - ajw 9/28/98
-        if (tech && tech->IsActive && (tech->What_Am_I() != RTTI_UNIT || ((UnitClass*)tech)->Class->IsChronoTank == false)) {
+        if (tech && tech->IsActive
+            && (tech->What_Am_I() != RTTI_UNIT || ((UnitClass*)tech)->Class->IsChronoTank == false)) {
 #endif
             SuperWeapon[SPC_CHRONOSPHERE].Discharged(this == PlayerPtr);
 #ifdef FIXIT_CSII //	checked - ajw 9/28/98
@@ -3095,7 +3161,8 @@ bool HouseClass::Place_Special_Blast(SpecialWeaponType id, CELL cell)
         */
 #ifdef FIXIT_CSII //	checked - ajw 9/28/98                                                                             \
                   // Don't allow a vortex if the teleportation was due to a chrono tank.
-        if (tech && tech->IsActive && (tech->What_Am_I() != RTTI_UNIT || ((UnitClass*)tech)->Class->IsChronoTank == false))
+        if (tech && tech->IsActive
+            && (tech->What_Am_I() != RTTI_UNIT || ((UnitClass*)tech)->Class->IsChronoTank == false))
 #endif
             if (!ChronalVortex.Is_Active() && Percent_Chance(Rule.VortexChance * 100)) {
                 int x = Random_Pick(0, Map.MapCellWidth - 1);
@@ -6778,7 +6845,7 @@ void HouseClass::Tracking_Add(TechnoClass const* techno)
 #else
         UQuantity[unit]++;
 #endif
-        UScan |= (1L << unit);
+
         if (Session.Type == GAME_INTERNET) {
             UnitTotals->Increment_Unit_Total(techno->Class_Of().ID);
         }
@@ -7025,7 +7092,6 @@ void HouseClass::Recalc_Attributes(void)
             house->ActiveBScan = 0;
             house->IScan = 0;
             house->ActiveIScan = 0;
-            house->UScan = 0;
             house->ActiveUScan = 0;
             house->AScan = 0;
             house->ActiveAScan = 0;
@@ -7040,7 +7106,6 @@ void HouseClass::Recalc_Attributes(void)
     */
     for (index = 0; index < Units.Count(); index++) {
         UnitClass const* unit = Units.Ptr(index);
-        unit->House->UScan |= (1L << unit->Class->Type);
         if (unit->IsLocked && (Session.Type != GAME_NORMAL || !unit->House->IsHuman || unit->IsDiscoveredByPlayer)) {
             if (!unit->IsInLimbo) {
                 unit->House->ActiveUScan |= (1L << unit->Class->Type);

@@ -941,7 +941,6 @@ bool UnitClass::Unlimbo(COORDINATE coord, DirType dir)
         **	Ensure that the owning house knows about the
         **	new object.
         */
-        House->UScan |= (1L << Class->Type);
         House->ActiveUScan |= (1L << Class->Type);
 
         /*

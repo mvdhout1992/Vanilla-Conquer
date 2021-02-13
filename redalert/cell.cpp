@@ -2389,7 +2389,7 @@ bool CellClass::Goodie_Check(FootClass* object)
                 && object->House->Available_Money() > ((BuildingTypeClass::As_Reference(STRUCT_REFINERY).Cost
                                                         + BuildingTypeClass::As_Reference(STRUCT_POWER).Cost)
                                                        * object->House->CostBias)
-                && Session.Options.Bases && !(object->House->UScan & UNITF_MCV)) {
+                && Session.Options.Bases && object->House->MCV_Count() == 0) {
                 powerup = CRATE_UNIT;
                 force_mcv = true;
             }
@@ -2514,7 +2514,7 @@ bool CellClass::Goodie_Check(FootClass* object)
             **	If the player has a base and a refinery, but no harvester, then give him
             **	a free one.
             */
-            if (utp == NULL && (object->House->BScan & STRUCTF_REFINERY) && !(object->House->UScan & UNITF_HARVESTER)) {
+            if (utp == NULL && (object->House->BScan & STRUCTF_REFINERY) && object->House->Harvester_Count() == 0) {
                 utp = &UnitTypeClass::As_Reference(UNIT_HARVESTER);
             }
 

@@ -382,7 +382,6 @@ public:
     **	the scan bits are being constructed, they are built into the "New" element
     **	and then duplicated into the regular element at the end of every logic cycle.
     */
-    unsigned long UScan;
     unsigned long ActiveUScan;
     unsigned long OldUScan;
 
@@ -758,6 +757,9 @@ public:
     int Get_Quantity(StructType building);
     unsigned char const* Remap_Table(bool blushing = false, RemapType remap = REMAP_NORMAL) const;
 
+    int Harvester_Count();
+    int MCV_Count();
+
     TechnoTypeClass const* Suggest_New_Object(RTTIType objectype, bool kennel = false) const;
     BuildingTypeClass const* Suggest_New_Building(void) const;
     void Recalc_Center(void);
@@ -816,6 +818,7 @@ public:
     static void One_Time(void);
     static HouseClass* As_Pointer(HousesType house);
     static void Recalc_Attributes(void);
+    bool Has_Nothing_Left();
 
     /*
     ** New default win mode to avoid griefing. ST - 1/31/2020 3:33PM

@@ -1629,17 +1629,6 @@ typedef enum UnitType : char
 
 // PG inline UnitType operator++(UnitType &, int);
 
-#define UNITF_HTANK     (1L << UNIT_HTANK)
-#define UNITF_MTANK     (1L << UNIT_MTANK)
-#define UNITF_MTANK2    (1L << UNIT_MTANK2)
-#define UNITF_LTANK     (1L << UNIT_LTANK)
-#define UNITF_STANK     (1L << UNIT_STANK)
-#define UNITF_APC       (1L << UNIT_APC)
-#define UNITF_MLRS      (1L << UNIT_MLRS)
-#define UNITF_JEEP      (1L << UNIT_JEEP)
-#define UNITF_HARVESTER (1L << UNIT_HARVESTER)
-#define UNITF_ARTY      (1L << UNIT_ARTY)
-#define UNITF_MCV       (1L << UNIT_MCV)
 
 /**********************************************************************
 **	The naval vessels are enumerated below.

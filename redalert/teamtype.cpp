@@ -410,7 +410,7 @@ void TeamTypeClass::Destroy_All_Of(void) const
  *   07/13/1995 JLB : Created.                                                                 *
  *   07/21/1995 JLB : Will autocreate team even if no members in field.                        *
  *=============================================================================================*/
-TeamTypeClass const* TeamTypeClass::Suggested_New_Team(HouseClass* house, long, long, long, long, bool alerted)
+TeamTypeClass const* TeamTypeClass::Suggested_New_Team(HouseClass* house, bool alerted)
 // TeamTypeClass const * TeamTypeClass::Suggested_New_Team(HouseClass * house, long atypes, long utypes, long itypes,
 // long vtypes, bool alerted)
 {
