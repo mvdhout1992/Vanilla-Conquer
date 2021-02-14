@@ -1660,11 +1660,6 @@ typedef enum VesselType : char
 
 // inline VesselType operator++(VesselType &, int);
 
-#define VESSELF_SS        (1L << VESSEL_SS)
-#define VESSELF_DD        (1L << VESSEL_DD)
-#define VESSELF_CA        (1L << VESSEL_CA)
-#define VESSELF_TRANSPORT (1L << VESSEL_TRANSPORT)
-#define VESSELF_PT        (1L << VESSEL_PT)
 
 /**********************************************************************
 **	The various aircraft types are enumerated here. These include helicopters
