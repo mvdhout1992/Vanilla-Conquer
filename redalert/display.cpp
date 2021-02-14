@@ -89,6 +89,7 @@
 #include "vortex.h"
 #include "xpipe.h"
 #include "common/fading.h"
+#include <common/linear.h>
 
 /*
 **	These layer control elements are used to group the displayable objects
@@ -163,6 +164,8 @@ DisplayClass::DisplayClass(void)
     : TacticalCoord(0)
     , TacLeptonWidth(0)
     , TacLeptonHeight(0)
+    , UnzoomedTacLeptonWidth(0)
+    , UnzoomedTacLeptonHeight(0)
     , ZoneCell(0)
     , ZoneOffset(0)
     , CursorSize(0)
@@ -180,6 +183,7 @@ DisplayClass::DisplayClass(void)
     , IsRubberBand(false)
     , IsTentative(false)
     , IsShadowPresent(false)
+    , ZoomLevel(0)
     , BandX(0)
     , BandY(0)
     , NewX(0)
@@ -540,7 +544,7 @@ short const* DisplayClass::Text_Overlap_List(char const* text, int x, int y) con
  *   12/06/1994 JLB : Created.                                                                 *
  *   06/27/1995 JLB : Adjusts tactical map position if necessary.                              *
  *=============================================================================================*/
-void DisplayClass::Set_View_Dimensions(int x, int y, int width, int height)
+void DisplayClass::Set_View_Dimensions(int x, int y, int width, int height, int zoomlevel)
 {
     if (width == -1) {
         TacLeptonWidth = Pixel_To_Lepton(SeenBuff.Get_Width() - x);
@@ -572,8 +576,26 @@ void DisplayClass::Set_View_Dimensions(int x, int y, int width, int height)
     int yy = Coord_Y(TacticalCoord) - (MapCellY * CELL_LEPTON_H);
 #endif
 
-    Confine_Rect(
-        &xx, &yy, TacLeptonWidth, TacLeptonHeight, MapCellWidth * CELL_LEPTON_W, MapCellHeight * CELL_LEPTON_H);
+    UnzoomedTacLeptonHeight = TacLeptonHeight;
+    UnzoomedTacLeptonWidth = TacLeptonWidth;
+    int zoomfactor = zoomlevel;
+    ZoomLevel = zoomlevel;
+
+    if (zoomlevel > 0) {
+        zoomfactor += 1;
+        TacLeptonHeight = UnzoomedTacLeptonHeight / zoomfactor;
+        TacLeptonWidth = UnzoomedTacLeptonWidth / zoomfactor;
+    } else if (zoomlevel < 0) {
+        zoomfactor = abs(zoomfactor) + 1;
+        TacLeptonHeight = UnzoomedTacLeptonHeight * zoomfactor;
+        TacLeptonWidth = UnzoomedTacLeptonWidth * zoomfactor;
+    }
+    Confine_Rect(&xx,
+                 &yy,
+                 UnzoomedTacLeptonWidth,
+                 UnzoomedTacLeptonHeight,
+                 MapCellWidth * CELL_LEPTON_W,
+                 MapCellHeight * CELL_LEPTON_H);
 
     Set_Tactical_Position(XY_Coord(xx + (MapCellX * CELL_LEPTON_W), yy + (MapCellY * CELL_LEPTON_H)));
 
@@ -581,8 +603,8 @@ void DisplayClass::Set_View_Dimensions(int x, int y, int width, int height)
     TacPixelY = y;
     WindowList[WINDOW_TACTICAL][WINDOWX] = x;
     WindowList[WINDOW_TACTICAL][WINDOWY] = y;
-    WindowList[WINDOW_TACTICAL][WINDOWWIDTH] = Lepton_To_Pixel(TacLeptonWidth);
-    WindowList[WINDOW_TACTICAL][WINDOWHEIGHT] = Lepton_To_Pixel(TacLeptonHeight);
+    WindowList[WINDOW_TACTICAL][WINDOWWIDTH] = Lepton_To_Pixel(UnzoomedTacLeptonWidth);
+    WindowList[WINDOW_TACTICAL][WINDOWHEIGHT] = Lepton_To_Pixel(UnzoomedTacLeptonHeight);
     if (Window == WINDOW_TACTICAL) {
         Change_Window(0);
         Change_Window(Window);
@@ -592,8 +614,8 @@ void DisplayClass::Set_View_Dimensions(int x, int y, int width, int height)
 
     TacButton.X = TacPixelX;
     TacButton.Y = TacPixelY;
-    TacButton.Width = Lepton_To_Pixel(TacLeptonWidth);
-    TacButton.Height = Lepton_To_Pixel(TacLeptonHeight);
+    TacButton.Width = Lepton_To_Pixel(UnzoomedTacLeptonWidth);
+    TacButton.Height = Lepton_To_Pixel(UnzoomedTacLeptonHeight);
 }
 
 /***********************************************************************************************
@@ -1056,8 +1078,8 @@ void DisplayClass::AI(KeyNumType& input, int x, int y)
 {
     if (IsRubberBand
         && (Get_Mouse_X() < TacPixelX || Get_Mouse_Y() < TacPixelY
-            || Get_Mouse_X() >= (TacPixelX + Lepton_To_Pixel(TacLeptonWidth))
-            || Get_Mouse_Y() >= (TacPixelY + Lepton_To_Pixel(TacLeptonHeight)))) {
+            || Get_Mouse_X() >= (TacPixelX + Lepton_To_Pixel(UnzoomedTacLeptonWidth))
+            || Get_Mouse_Y() >= (TacPixelY + Lepton_To_Pixel(UnzoomedTacLeptonHeight)))) {
         Mouse_Left_Release(-1, Get_Mouse_X(), Get_Mouse_Y(), NULL, ACTION_NONE);
     }
 
@@ -1148,7 +1170,7 @@ CELL DisplayClass::Click_Cell_Calc(int x, int y) const
     y = Pixel_To_Lepton(y);
 
     // Possibly ignore the view constraints if we aren't using the internal renderer. ST - 8/5/2019 11:56AM
-    if (IgnoreViewConstraints || (unsigned)x < TacLeptonWidth && (unsigned)y < TacLeptonHeight) {
+    if (IgnoreViewConstraints || (unsigned)x < UnzoomedTacLeptonWidth && (unsigned)y < UnzoomedTacLeptonHeight) {
         COORDINATE tcoord = XY_Coord(Pixel_To_Lepton(Lepton_To_Pixel(Coord_X(TacticalCoord))),
                                      Pixel_To_Lepton(Lepton_To_Pixel(Coord_Y(TacticalCoord))));
         return (Coord_Cell(Coord_Add(tcoord, XY_Coord(x, y))));
@@ -1888,9 +1910,20 @@ ObjectClass* DisplayClass::Cell_Object(CELL cell, int x, int y) const
  *   12/24/1994 JLB : Combined with old Refresh_Map() function.                                *
  *   01/10/1995 JLB : Rubber band drawing.                                                     *
  *=============================================================================================*/
+
+    GraphicBufferClass ZoomBuff(8000, 80000, (void*)0);
+
 void DisplayClass::Draw_It(bool forced)
 {
     int x, y; // Working cell index values.
+
+    int zoomwidth = ZoomLevel < 0 ?( SeenBuff.Get_Width()  * (abs(ZoomLevel) + 1)) : SeenBuff.Get_Width();
+   int zoomheight = ZoomLevel < 0 ? (SeenBuff.Get_Height() * (abs(ZoomLevel) + 1)) : SeenBuff.Get_Height();
+    // GraphicBufferClass allocates new buffer but doesnt clean it up
+    //GraphicBufferClass ZoomBuff(zoomwidth, zoomheight, (void*)0);
+
+   // test Iran
+    forced = true;
 
     MapClass::Draw_It(forced);
 
@@ -1963,8 +1996,8 @@ void DisplayClass::Draw_It(bool forced)
             int oldx = Lepton_To_Pixel(Coord_X(TacticalCoord)) - xmod; // Old relative offset.
             int oldy = Lepton_To_Pixel(Coord_Y(TacticalCoord)) - ymod;
 
-            int oldw = Lepton_To_Pixel(TacLeptonWidth) - ABS(oldx);  // Replicable width.
-            int oldh = Lepton_To_Pixel(TacLeptonHeight) - ABS(oldy); // Replicable height.
+            int oldw = Lepton_To_Pixel(UnzoomedTacLeptonWidth) - ABS(oldx);  // Replicable width.
+            int oldh = Lepton_To_Pixel(UnzoomedTacLeptonHeight) - ABS(oldy); // Replicable height.
 
             if (oldw < 1)
                 forced = true;
@@ -1982,7 +2015,9 @@ void DisplayClass::Draw_It(bool forced)
             /*
             **	Blit any replicable block to avoid having to drawstamp.
             */
-            if (!forced && (oldw != Lepton_To_Pixel(TacLeptonWidth) || oldh != Lepton_To_Pixel(TacLeptonHeight))) {
+            if (!forced
+                && (oldw != Lepton_To_Pixel(UnzoomedTacLeptonWidth)
+                    || oldh != Lepton_To_Pixel(UnzoomedTacLeptonHeight))) {
                 Set_Cursor_Pos(-1);
 
                 /*
@@ -1990,23 +2025,54 @@ void DisplayClass::Draw_It(bool forced)
                 **  an overlapped region.
                 */
                 if (HidPage.Get_IsDirectDraw()) {
+                    // redraw top tabs
+                      //  SeenBuff.Blit(ZoomBuff, 0, 0, 0, 0, 640, 40);
                     Hide_Mouse();
-                    SeenBuff.Blit(HidPage,
+                    //BufPage.Lock();
+                    /*SeenBuff.Blit(ZoomBuff,
                                   ((oldx < 0) ? -oldx : 0) + TacPixelX,
                                   ((oldy < 0) ? -oldy : 0) + TacPixelY,
                                   ((oldx < 0) ? 0 : oldx) + TacPixelX,
                                   ((oldy < 0) ? 0 : oldy) + TacPixelY,
                                   oldw,
-                                  oldh);
+                                  oldh); */
+                    if (ZoomLevel == 0) {
+                        SeenBuff.Blit(ZoomBuff,
+                                     ((oldx < 0) ? -oldx : 0) + TacPixelX,
+                                     ((oldy < 0) ? -oldy : 0) + TacPixelY,
+                                     ((oldx < 0) ? 0 : oldx) + TacPixelX,
+                                     ((oldy < 0) ? 0 : oldy) + TacPixelY,
+                                     oldw,
+                                     oldh);
+                    }
+
+                    else
+                        {
+                        SeenBuff.Scale(ZoomBuff,
+                                       ((oldx < 0) ? -oldx : 0) + TacPixelX,
+                                       ((oldy < 0) ? -oldy : 0) + TacPixelY,
+                                       ((oldx < 0) ? 0 : oldx) + TacPixelX,
+                                       ((oldy < 0) ? 0 : oldy) + TacPixelY,
+                                       Lepton_To_Pixel(UnzoomedTacLeptonWidth),
+                                       Lepton_To_Pixel(UnzoomedTacLeptonHeight),
+                                       Lepton_To_Pixel(TacLeptonWidth),
+                                       Lepton_To_Pixel(TacLeptonHeight),
+                                        false,
+                                       (char*)0);
+                    }
+
+                    //BufPage.Unlock();
                     Show_Mouse();
                 } else {
-                    HidPage.Blit(HidPage,
+                    //BufPage.Lock();
+                    HidPage.Blit(ZoomBuff,
                                  ((oldx < 0) ? -oldx : 0) + TacPixelX,
                                  ((oldy < 0) ? -oldy : 0) + TacPixelY,
                                  ((oldx < 0) ? 0 : oldx) + TacPixelX,
                                  ((oldy < 0) ? 0 : oldy) + TacPixelY,
                                  oldw,
                                  oldh);
+                    //BufPage.Unlock();
                 }
 
             } else {
@@ -2165,7 +2231,8 @@ void DisplayClass::Draw_It(bool forced)
         **	flagged to be redrawn.
         */
         if (HidPage.Lock()) {
-            Redraw_Icons();
+           GraphicViewPortClass *oldpage = Set_Logic_Page(ZoomBuff);
+           Redraw_Icons();
 
             /*
             **	Draw the infantry bodies in this special layer.
@@ -2186,10 +2253,15 @@ void DisplayClass::Draw_It(bool forced)
             Redraw_OIcons();
 #endif
 
+            
             HidPage.Unlock();
+            Set_Logic_Page(oldpage);
         }
 
+
         if (HidPage.Lock()) {
+            GraphicViewPortClass* oldpage = Set_Logic_Page(ZoomBuff);
+            
 
 #ifndef SORTDRAW
             /*
@@ -2234,14 +2306,33 @@ void DisplayClass::Draw_It(bool forced)
             BStart(BENCH_SHROUD);
             Redraw_Shadow();
             BEnd(BENCH_SHROUD);
+
+            HidPage.Unlock();
+            Set_Logic_Page(oldpage);
         }
-        HidPage.Unlock();
+
 
 #ifdef SORTDRAW
         for (int index = 0; index < Layer[LAYER_GROUND].Count(); index++) {
             Layer[LAYER_GROUND][index]->IsToDisplay = false;
         }
 #endif
+        if (ZoomLevel != 0)
+            ZoomBuff.Scale(*LogicPage,
+                           TacPixelX,
+                           TacPixelY,
+                           TacPixelX,
+                           TacPixelY,
+                           Lepton_To_Pixel(TacLeptonWidth),
+                           Lepton_To_Pixel(TacLeptonHeight),
+                           Lepton_To_Pixel(UnzoomedTacLeptonWidth),
+                           Lepton_To_Pixel(UnzoomedTacLeptonHeight),
+                           false,
+                           (char*)NULL);
+        else {
+            ZoomBuff.Blit(*LogicPage);
+        }
+
 
         /*
         **	Draw the rubber band over the top of it all.
@@ -2254,6 +2345,48 @@ void DisplayClass::Draw_It(bool forced)
         **	Clear the redraw flags so that normal redraw flag setting can resume.
         */
         CellRedraw.Reset();
+
+//        BufPage.Lock();
+
+
+       /* Linear_Scale_To_Linear(&SeenBuff, &HidPage,
+                                        TacPixelX,
+                                        TacPixelY,
+                                        TacPixelX,
+                                        TacPixelY,
+                                        Lepton_To_Pixel(UnzoomedTacLeptonWidth),
+                                        Lepton_To_Pixel(UnzoomedTacLeptonHeight),
+                                        400,
+                                        640, false,
+                                        (char*)NULL); */
+        //HidPage.
+        //BufPage.Unlock();
+       /* BufPage.Blit(HidPage,
+                      TacPixelX,
+                      TacPixelY,
+                     TacPixelX,
+                     TacPixelY,
+                      Lepton_To_Pixel(UnzoomedTacLeptonWidth),
+                      Lepton_To_Pixel(UnzoomedTacLeptonHeight)); */
+       /* ZoomBuff.Blit(LogicPage->Get_Graphic_Buffer(),
+                     0,
+                     0,
+                     Lepton_To_Pixel(UnzoomedTacLeptonWidth),
+                     Lepton_To_Pixel(UnzoomedTacLeptonHeight)); */
+
+
+
+
+      /* SeenBuff.Scale(HidPage,
+                     TacPixelX,
+                     TacPixelY,
+                       TacPixelX,
+                       TacPixelY,
+                     Lepton_To_Pixel(UnzoomedTacLeptonWidth),
+                     Lepton_To_Pixel(UnzoomedTacLeptonHeight), 
+            Lepton_To_Pixel(UnzoomedTacLeptonWidth),
+                       Lepton_To_Pixel(UnzoomedTacLeptonHeight),
+                       (char*)NULL); */
 
 #ifdef SCENARIO_EDITOR
         /*
@@ -2550,6 +2683,7 @@ ObjectClass* DisplayClass::Prev_Object(ObjectClass* object) const
  *=============================================================================================*/
 COORDINATE DisplayClass::Pixel_To_Coord(int x, int y) const
 {
+    Map.Pixel_To_Zoom(x, y);
     /*
     **	Normalize the pixel coordinates to be relative to the upper left corner
     **	of the tactical map. The coordinates are expressed in leptons.
@@ -2565,7 +2699,7 @@ COORDINATE DisplayClass::Pixel_To_Coord(int x, int y) const
     */
     // Possibly ignore the view constraints if we aren't using the internal renderer. ST - 8/6/2019 10:47AM
     // if ((unsigned)x < TacLeptonWidth && (unsigned)y < TacLeptonHeight) {
-    if (IgnoreViewConstraints || ((unsigned)x < TacLeptonWidth && (unsigned)y < TacLeptonHeight)) {
+    if (IgnoreViewConstraints || ((unsigned)x < UnzoomedTacLeptonWidth && (unsigned)y < UnzoomedTacLeptonHeight)) {
         return (Coord_Add(TacticalCoord, XY_Coord(x, y)));
     }
     return (0);
@@ -3014,21 +3148,21 @@ void DisplayClass::Refresh_Band(void)
 
         CELL cell;
         for (int y = y1; y <= y2 + CELL_PIXEL_H; y += CELL_PIXEL_H) {
-            cell = Click_Cell_Calc(x1, Bound(y, 0, TacPixelY + Lepton_To_Pixel(TacLeptonHeight)));
+            cell = Click_Cell_Calc(x1, Bound(y, 0, TacPixelY + Lepton_To_Pixel(UnzoomedTacLeptonHeight)));
             if (cell != -1)
                 (*this)[cell].Redraw_Objects();
 
-            cell = Click_Cell_Calc(x2, Bound(y, 0, TacPixelY + Lepton_To_Pixel(TacLeptonHeight)));
+            cell = Click_Cell_Calc(x2, Bound(y, 0, TacPixelY + Lepton_To_Pixel(UnzoomedTacLeptonHeight)));
             if (cell != -1)
                 (*this)[cell].Redraw_Objects();
         }
 
         for (int x = x1; x <= x2 + CELL_PIXEL_W; x += CELL_PIXEL_W) {
-            cell = Click_Cell_Calc(Bound(x, 0, TacPixelX + Lepton_To_Pixel(TacLeptonWidth)), y1);
+            cell = Click_Cell_Calc(Bound(x, 0, TacPixelX + Lepton_To_Pixel(UnzoomedTacLeptonWidth)), y1);
             if (cell != -1)
                 (*this)[cell].Redraw_Objects();
 
-            cell = Click_Cell_Calc(Bound(x, 0, TacPixelX + Lepton_To_Pixel(TacLeptonWidth)), y2);
+            cell = Click_Cell_Calc(Bound(x, 0, TacPixelX + Lepton_To_Pixel(UnzoomedTacLeptonWidth)), y2);
             if (cell != -1)
                 (*this)[cell].Redraw_Objects();
         }
@@ -3045,6 +3179,23 @@ void DisplayClass::Refresh_Band(void)
         }
     }
 }
+
+void DisplayClass::Pixel_To_Zoom(int& x, int& y)
+{
+    if (ZoomLevel == 0) {
+        return;
+    }
+
+    if (ZoomLevel > 0) {
+        x = x / (ZoomLevel + 1);
+        y = y / (ZoomLevel + 1);
+    } else {
+        x = x * (abs(ZoomLevel) + 1);
+        y = y * (abs(ZoomLevel) + 1);
+    }
+}
+
+
 
 /***********************************************************************************************
  * DisplayClass::TacticalClass::Action -- Processes input for the tactical map.                *
@@ -3071,6 +3222,7 @@ int DisplayClass::TacticalClass::Action(unsigned flags, KeyNumType& key)
     bool shadow;
     ObjectClass* object = 0;
     ActionType action = ACTION_NONE; // Action possible with currently selected object.
+    bool edge = false;
 
     /*
     **	Set some working variables that depend on the mouse position. For the press
@@ -3083,10 +3235,13 @@ int DisplayClass::TacticalClass::Action(unsigned flags, KeyNumType& key)
     } else {
         x = Get_Mouse_X();
         y = Get_Mouse_Y();
+
+        edge = (y == 0 || x == 0 || x == SeenBuff.Get_Width() - 1 || y == SeenBuff.Get_Height() - 1);
     }
-    bool edge = (y == 0 || x == 0 || x == SeenBuff.Get_Width() - 1 || y == SeenBuff.Get_Height() - 1);
+
     COORDINATE coord = Map.Pixel_To_Coord(x, y);
     CELL cell = Coord_Cell(coord);
+
     if (coord) {
 
         // shadow = (!Map[cell].IsMapped && !Debug_Unshroud);
@@ -3310,9 +3465,12 @@ int DisplayClass::TacticalClass::Selection_At_Mouse(unsigned flags, KeyNumType& 
         x = Get_Mouse_X();
         y = Get_Mouse_Y();
 
-        if (x == 0 || y == 199 || x == 319)
-            edge = true;
+
+
     }
+    if (x == 0 || y == 199 || x == 319)
+        edge = true;
+
     COORDINATE coord = Map.Pixel_To_Coord(x, y);
     CELL cell = Coord_Cell(coord);
 
@@ -3384,9 +3542,12 @@ int DisplayClass::TacticalClass::Command_Object(unsigned flags, KeyNumType& key)
         x = Get_Mouse_X();
         y = Get_Mouse_Y();
 
-        if (x == 0 || y == 199 || x == 319)
-            edge = true;
+
     }
+    if (x == 0 || y == 199 || x == 319)
+        edge = true;
+
+
     COORDINATE coord = Map.Pixel_To_Coord(x, y);
     CELL cell = Coord_Cell(coord);
 
@@ -3840,7 +4001,15 @@ void DisplayClass::Mouse_Left_Release(CELL cell, int x, int y, ObjectClass* obje
 
         if (IsRubberBand) {
             Refresh_Band();
-            Select_These(XYP_Coord(BandX, BandY), XYP_Coord(x, y));
+
+            int bandy = BandY;
+            int bandx = BandX;
+           // Map.Pixel_To_Zoom(bandx, bandy);
+            int xx = x;
+            int yy = y;
+            //Map.Pixel_To_Zoom(xx, yy);
+
+            Select_These(XYP_Coord(bandx, bandy), XYP_Coord(x, y));
 
             Set_Default_Mouse(MOUSE_NORMAL, wsmall);
             IsRubberBand = false;
@@ -4130,8 +4299,8 @@ void DisplayClass::Mouse_Left_Held(int x, int y)
 {
     if (IsRubberBand) {
         if (x != NewX || y != NewY) {
-            x = Bound(x, 0, Lepton_To_Pixel(TacLeptonWidth) - 1);
-            y = Bound(y, 0, Lepton_To_Pixel(TacLeptonHeight) - 1);
+            x = Bound(x, 0, Lepton_To_Pixel(UnzoomedTacLeptonWidth) - 1);
+            y = Bound(y, 0, Lepton_To_Pixel(UnzoomedTacLeptonHeight) - 1);
             Refresh_Band();
             NewX = x;
             NewY = y;
@@ -4153,8 +4322,8 @@ void DisplayClass::Mouse_Left_Held(int x, int y)
             */
             if (ABS(x - BandX) > 4 || ABS(y - BandY) > 4) {
                 IsRubberBand = true;
-                x = Bound(x, 0, Lepton_To_Pixel(TacLeptonWidth) - 1);
-                y = Bound(y, 0, Lepton_To_Pixel(TacLeptonHeight) - 1);
+                x = Bound(x, 0, Lepton_To_Pixel(UnzoomedTacLeptonWidth) - 1);
+                y = Bound(y, 0, Lepton_To_Pixel(UnzoomedTacLeptonHeight) - 1);
                 NewX = x;
                 NewY = y;
                 IsToRedraw = true;

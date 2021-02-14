@@ -535,6 +535,17 @@ void Keyboard_Process(KeyNumType& input)
     if (input & WWKEY_CTRL_BIT)
         action = 2;
 
+
+    if (key != 0 && key == KN_F3) {
+        int zoom = Map.Get_Zoom_Level() - 1;
+        Map.Set_View_Dimensions(0, 0, -1, -1, zoom);
+    }
+
+    if (key != 0 && key == KN_F4) {
+        int zoom = Map.Get_Zoom_Level() + 1;
+        Map.Set_View_Dimensions(0, 0, -1, -1, zoom);
+    }
+
     /*
     **	If the "N" key is pressed, then select the next object.
     */

@@ -1349,7 +1349,9 @@ void FootClass::Active_Click_With(ActionType action, CELL cell)
 
     case ACTION_MOVE:
         if (AllowVoice) {
-            COORDINATE coord = Map.Pixel_To_Coord(Get_Mouse_X(), Get_Mouse_Y());
+            int mousex = Get_Mouse_X();
+            int mousey = Get_Mouse_Y();
+            COORDINATE coord = Map.Pixel_To_Coord(mousex, mousey);
             OutList.Add(EventClass(ANIM_MOVE_FLASH, PlayerPtr->Class->House, coord, 1 << PlayerPtr->Class->House));
         }
         // Fall into next case.

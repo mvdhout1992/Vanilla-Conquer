@@ -76,6 +76,11 @@ public:
     LEPTON TacLeptonWidth;
     LEPTON TacLeptonHeight;
 
+    LEPTON UnzoomedTacLeptonWidth;
+    LEPTON UnzoomedTacLeptonHeight;
+
+    int ZoomLevel;
+
     /*
     **	These layer control elements are used to group the displayable objects
     **	so that proper overlap can be obtained.
@@ -163,7 +168,7 @@ public:
     virtual MouseType Get_Mouse_Shape(void) const = 0;
     virtual bool Scroll_Map(DirType facing, int& distance, bool really);
     virtual void Refresh_Cells(CELL cell, short const* list);
-    virtual void Set_View_Dimensions(int x, int y, int width = -1, int height = -1);
+    virtual void Set_View_Dimensions(int x, int y, int width = -1, int height = -1, int zoomlevel = 0);
 
     /*
     **	Pending object placement control.
@@ -179,6 +184,7 @@ public:
     */
     virtual void Set_Tactical_Position(COORDINATE coord);
     void Refresh_Band(void);
+    void Pixel_To_Zoom(int& x, int& y);
     void Select_These(COORDINATE coord1, COORDINATE coord2, bool additive = false);
     COORDINATE Pixel_To_Coord(int x, int y) const;
     bool Coord_To_Pixel(COORDINATE coord, int& x, int& y) const;
@@ -234,6 +240,11 @@ public:
     */
     int TacPixelX;
     int TacPixelY;
+
+    int Get_Zoom_Level()
+    {
+        return ZoomLevel;
+    }
 
     /*
     **	This is the coordinate that the tactical map should be in at next available opportunity.
