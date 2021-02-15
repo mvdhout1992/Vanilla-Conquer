@@ -1673,7 +1673,7 @@ void TeamClass::Coordinate_Attack(void)
 
             if (_Is_It_Playing(unit)) {
                 if (mission->Mission == TMISSION_SPY && unit->What_Am_I() == RTTI_INFANTRY
-                    && *(InfantryClass*)unit == INFANTRY_SPY) {
+                    &&  ((InfantryClass*)unit)->Class->IsSpy) {
                     unit->Assign_Mission(MISSION_CAPTURE);
                     unit->Assign_Target(Target);
                 } else {

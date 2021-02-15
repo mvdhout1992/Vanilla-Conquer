@@ -658,7 +658,7 @@ int Create_Air_Reinforcement(HouseClass* house,
     /*
     ** Abort the airstrike if Tanya is the passenger and she's dead.
     */
-    if (passenger == INFANTRY_TANYA && IsTanyaDead) {
+    if (passenger && InfantryTypeClass::As_Reference(passenger).IsTanya  && IsTanyaDead) {
         number = 0;
     }
 

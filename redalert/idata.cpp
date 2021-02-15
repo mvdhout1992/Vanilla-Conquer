@@ -505,7 +505,21 @@ static InfantryTypeClass const Dog(INFANTRY_DOG,  // Infantry type number.
                                    DogDoControls,
                                    1, // Frame of projectile launch.
                                    1, // Frame of projectile launch while prone.
-                                   0  // pointer to override remap table
+                                   0,  // pointer to override remap table
+                                   0,     // Horizontal offset
+                                   false, // Is Einstein?
+                                   false, // Is Chan?
+                                   false, // Is Delphi?
+                                   false, // Is Engineer?
+                                   false, // Is Spy?
+                                   false, // Is Thief?
+                                   false, // Is General?
+                                   false, // Is Medic?
+                                   false, // Is Mechanic?
+                                   false, // Is Shock Trooper?
+                                   false, // Is minigunner?
+                                   false, // Is Tanya?
+                                   false  // Is Rocket Soldier?
 );
 
 // Minigunners
@@ -525,7 +539,21 @@ static InfantryTypeClass const E1(INFANTRY_E1, // Infantry type number.
                                   E1DoControlsVirtual,
                                   2, // Frame of projectile launch.
                                   2, // Frame of projectile launch while prone.
-                                  0  // pointer to override remap table
+                                  0,     // pointer to override remap table
+                                  0,     // Horizontal offset
+                                  false, // Is Einstein?
+                                  false, // Is Chan?
+                                  false, // Is Delphi?
+                                  false, // Is Engineer?
+                                  false, // Is Spy?
+                                  false, // Is Thief?
+                                  false, // Is General?
+                                  false, // Is Medic?
+                                  false, // Is Mechanic?
+                                  false, // Is Shock Trooper?
+                                  true, // Is minigunner?
+                                  false, // Is Tanya?
+                                  false  // Is Rocket Soldier?
 );
 
 // Grenadiers
@@ -545,7 +573,21 @@ static InfantryTypeClass const E2(INFANTRY_E2, // Infantry type number.
                                   E2DoControlsVirtual,
                                   14, // Frame of projectile launch.
                                   6,  // Frame of projectile launch while prone.
-                                  0   // pointer to override remap table
+                                  0,     // pointer to override remap table
+                                  0,     // Horizontal offset
+                                  false, // Is Einstein?
+                                  false, // Is Chan?
+                                  false, // Is Delphi?
+                                  false, // Is Engineer?
+                                  false, // Is Spy?
+                                  false, // Is Thief?
+                                  false, // Is General?
+                                  false, // Is Medic?
+                                  false, // Is Mechanic?
+                                  false, // Is Shock Trooper?
+                                  false, // Is minigunner?
+                                  false, // Is Tanya?
+                                  false  // Is Rocket Soldier?
 );
 
 // Bazooka
@@ -565,7 +607,21 @@ static InfantryTypeClass const E3(INFANTRY_E3, // Infantry type number.
                                   E3DoControlsVirtual,
                                   3, // Frame of projectile launch.
                                   3, // Frame of projectile launch while prone.
-                                  0  // pointer to override remap table
+                                  0,     // pointer to override remap table
+                                  0,     // Horizontal offset
+                                  false, // Is Einstein?
+                                  false, // Is Chan?
+                                  false, // Is Delphi?
+                                  false, // Is Engineer?
+                                  false, // Is Spy?
+                                  false, // Is Thief?
+                                  false, // Is General?
+                                  false, // Is Medic?
+                                  false, // Is Mechanic?
+                                  false, // Is Shock Trooper?
+                                  false, // Is minigunner?
+                                  false, // Is Tanya?
+                                  true  // Is Rocket Soldier?
 );
 
 // Flamethrower
@@ -585,7 +641,21 @@ static InfantryTypeClass const E4(INFANTRY_E4, // Infantry type number.
                                   E4DoControlsVirtual,
                                   2, // Frame of projectile launch.
                                   0, // Frame of projectile launch while prone.
-                                  0  // pointer to override remap table
+                                  0,     // pointer to override remap table
+                                  0,     // Horizontal offset
+                                  false, // Is Einstein?
+                                  false, // Is Chan?
+                                  false,  // Is Delphi?
+                                  false, // Is Engineer?
+                                  false, // Is Spy?
+                                  false, // Is Thief?
+                                  false, // Is General?
+                                  false, // Is Medic?
+                                  false, // Is Mechanic?
+                                  false, // Is Shock Trooper?
+                                  false, // Is minigunner?
+                                  false, // Is Tanya?
+                                  false  // Is Rocket Soldier?
 );
 
 // Renovator
@@ -605,7 +675,21 @@ static InfantryTypeClass const E6(INFANTRY_RENOVATOR, // Infantry type number.
                                   E6DoControls,
                                   3, // Frame of projectile launch.
                                   3, // Frame of projectile launch while prone.
-                                  0  // pointer to override remap table
+                                  0,     // pointer to override remap table
+                                  0,     // Horizontal offset
+                                  false, // Is Einstein?
+                                  false, // Is Chan?
+                                  false, // Is Delphi?
+                                  true, // Is Engineer?
+                                  false, // Is Spy?
+                                  false, // Is Thief?
+                                  false, // Is General?
+                                  false, // Is Medic?
+                                  false, // Is Mechanic?
+                                  false, // Is Shock Trooper?
+                                  false, // Is minigunner?
+                                  false, // Is Tanya?
+                                  false  // Is Rocket Soldier?
 );
 
 // Spy
@@ -625,7 +709,21 @@ static InfantryTypeClass const E8(INFANTRY_SPY, // Infantry type number.
                                   SpyDoControls,
                                   3, // Frame of projectile launch.
                                   3, // Frame of projectile launch while prone.
-                                  0  // pointer to override remap table
+                                  0,     // pointer to override remap table
+                                  0,     // Horizontal offset
+                                  false, // Is Einstein?
+                                  false, // Is Chan?
+                                  false, // Is Delphi?
+                                  false, // Is Engineer?
+                                  true, // Is Spy?
+                                  false, // Is Thief?
+                                  false, // Is General?
+                                  false, // Is Medic?
+                                  false, // Is Mechanic?
+                                  false, // Is Shock Trooper?
+                                  false, // Is minigunner?
+                                  false, // Is Tanya?
+                                  false  // Is Rocket Soldier?
 );
 
 // Thief
@@ -645,7 +743,21 @@ static InfantryTypeClass const E9(INFANTRY_THIEF, // Infantry type number.
                                   E9DoControls,
                                   3, // Frame of projectile launch.
                                   3, // Frame of projectile launch while prone.
-                                  0  // pointer to override remap table
+                                  0,     // pointer to override remap table
+                                  0,     // Horizontal offset
+                                  false, // Is Einstein?
+                                  false, // Is Chan?
+                                  false, // Is Delphi?
+                                  false, // Is Engineer?
+                                  false, // Is Spy?
+                                  true, // Is Thief?
+                                  false, // Is General?
+                                  false, // Is Medic?
+                                  false, // Is Mechanic?
+                                  false, // Is Shock Trooper?
+                                  false, // Is minigunner?
+                                  false, // Is Tanya?
+                                  false  // Is Rocket Soldier?
 );
 
 // Tanya
@@ -665,7 +777,21 @@ static InfantryTypeClass const E7(INFANTRY_TANYA, // Infantry type number.
                                   E7DoControls,
                                   2, // Frame of projectile launch.
                                   2, // Frame of projectile launch while prone.
-                                  0  // pointer to override remap table
+                                  0,     // pointer to override remap table
+                                  0,     // Horizontal offset
+                                  false, // Is Einstein?
+                                  false, // Is Chan?
+                                  false, // Is Delphi?
+                                  false, // Is Engineer?
+                                  false, // Is Spy?
+                                  false, // Is Thief?
+                                  false, // Is General?
+                                  false, // Is Medic?
+                                  false, // Is Mechanic?
+                                  false, // Is Shock Trooper?
+                                  false, // Is minigunner?
+                                  true, // Is Tanya?
+                                  false  // Is Rocket Soldier?
 );
 
 static InfantryTypeClass const Medic(INFANTRY_MEDIC, // Infantry type number.
@@ -684,7 +810,21 @@ static InfantryTypeClass const Medic(INFANTRY_MEDIC, // Infantry type number.
                                      MedicDoControls,
                                      25, // Frame of projectile launch.
                                      25, // Frame of projectile launch while prone.
-                                     0   // pointer to override remap table
+                                     0,     // pointer to override remap table
+                                     0,     // Horizontal offset
+                                     false, // Is Einstein?
+                                     false, // Is Chan?
+                                     false, // Is Delphi?
+                                     false, // Is Engineer?
+                                     false, // Is Spy?
+                                     false, // Is Thief?
+                                     false, // Is General?
+                                     true, // Is Medic?
+                                     false, // Is Mechanic?
+                                     false, // Is Shock Trooper?
+                                     false, // Is minigunner?
+                                     false, // Is Tanya?
+                                     false  // Is Rocket Soldier?
 );
 
 static InfantryTypeClass const General(INFANTRY_GENERAL, // Infantry type number.
@@ -703,7 +843,21 @@ static InfantryTypeClass const General(INFANTRY_GENERAL, // Infantry type number
                                        GeneralDoControls,
                                        2, // Frame of projectile launch.
                                        2, // Frame of projectile launch while prone.
-                                       0  // pointer to override remap table
+                                       0,     // pointer to override remap table
+                                       0,     // Horizontal offset
+                                       false, // Is Einstein?
+                                       false, // Is Chan?
+                                       false, // Is Delphi?
+                                       false, // Is Engineer?
+                                       false, // Is Spy?
+                                       false, // Is Thief?
+                                       true, // Is General?
+                                       false, // Is Medic?
+                                       false, // Is Mechanic?
+                                       false, // Is Shock Trooper?
+                                       false, // Is minigunner?
+                                       false, // Is Tanya?
+                                       false  // Is Rocket Soldier?
 );
 
 // Civilians
@@ -723,7 +877,21 @@ static InfantryTypeClass const C1(INFANTRY_C1,  // Infantry type number.
                                   CivilianDoControlsVirtual,
                                   2, // Frame of projectile launch.
                                   0, // Frame of projectile launch while prone.
-                                  0  // pointer to override remap table
+                                  0,     // pointer to override remap table
+                                  0,     // Horizontal offset
+                                  false, // Is Einstein?
+                                  false, // Is Chan?
+                                  false, // Is Delphi?
+                                  false, // Is Engineer?
+                                  false, // Is Spy?
+                                  false, // Is Thief?
+                                  false, // Is General?
+                                  false, // Is Medic?
+                                  false, // Is Mechanic?
+                                  false, // Is Shock Trooper?
+                                  false, // Is minigunner?
+                                  false, // Is Tanya?
+                                  false  // Is Rocket Soldier?
 );
 
 static InfantryTypeClass const C2(INFANTRY_C2,  // Infantry type number.
@@ -742,7 +910,21 @@ static InfantryTypeClass const C2(INFANTRY_C2,  // Infantry type number.
                                   CivilianDoControlsVirtual,
                                   2,        // Frame of projectile launch.
                                   0,        // Frame of projectile launch while prone.
-                                  RemapCiv2 // pointer to override remap table
+                                  RemapCiv2, // pointer to override remap table
+                                  0,        // Horizontal offset
+                                  false,    // Is Einstein?
+                                  false,    // Is Chan?
+                                  false,    // Is Delphi?
+                                  false,    // Is Engineer?
+                                  false,    // Is Spy?
+                                  false,    // Is Thief?
+                                  false,    // Is General?
+                                  false,    // Is Medic?
+                                  false,    // Is Mechanic?
+                                  false,    // Is Shock Trooper?
+                                  false,    // Is minigunner?
+                                  false,    // Is Tanya?
+                                  false     // Is Rocket Soldier?
 );
 
 static InfantryTypeClass const C3(INFANTRY_C3,  // Infantry type number.
@@ -761,7 +943,21 @@ static InfantryTypeClass const C3(INFANTRY_C3,  // Infantry type number.
                                   CivilianDoControlsVirtual,
                                   2, // Frame of projectile launch.
                                   0, // Frame of projectile launch while prone.
-                                  0  // pointer to override remap table
+                                  0,     // pointer to override remap table
+                                  0,     // Horizontal offset
+                                  false, // Is Einstein?
+                                  false, // Is Chan?
+                                  false, // Is Delphi?
+                                  false, // Is Engineer?
+                                  false, // Is Spy?
+                                  false, // Is Thief?
+                                  false, // Is General?
+                                  false, // Is Medic?
+                                  false, // Is Mechanic?
+                                  false, // Is Shock Trooper?
+                                  false, // Is minigunner?
+                                  false, // Is Tanya?
+                                  false  // Is Rocket Soldier?
 );
 
 static InfantryTypeClass const C4(INFANTRY_C4,  // Infantry type number.
@@ -780,7 +976,21 @@ static InfantryTypeClass const C4(INFANTRY_C4,  // Infantry type number.
                                   CivilianDoControlsVirtual,
                                   2,        // Frame of projectile launch.
                                   0,        // Frame of projectile launch while prone.
-                                  RemapCiv4 // pointer to override remap table
+                                  RemapCiv4, // pointer to override remap table
+                                  0,        // Horizontal offset
+                                  false,    // Is Einstein?
+                                  false,    // Is Chan?
+                                  false,    // Is Delphi?
+                                  false,    // Is Engineer?
+                                  false,    // Is Spy?
+                                  false,    // Is Thief?
+                                  false,    // Is General?
+                                  false,    // Is Medic?
+                                  false,    // Is Mechanic?
+                                  false,    // Is Shock Trooper?
+                                  false,    // Is minigunner?
+                                  false,    // Is Tanya?
+                                  false     // Is Rocket Soldier?
 );
 
 static InfantryTypeClass const C5(INFANTRY_C5,  // Infantry type number.
@@ -799,7 +1009,21 @@ static InfantryTypeClass const C5(INFANTRY_C5,  // Infantry type number.
                                   CivilianDoControlsVirtual,
                                   2,        // Frame of projectile launch.
                                   0,        // Frame of projectile launch while prone.
-                                  RemapCiv5 // pointer to override remap table
+                                  RemapCiv5, // pointer to override remap table
+                                  0,        // Horizontal offset
+                                  false,    // Is Einstein?
+                                  false,    // Is Chan?
+                                  false,    // Is Delphi?
+                                  false,    // Is Engineer?
+                                  false,    // Is Spy?
+                                  false,    // Is Thief?
+                                  false,    // Is General?
+                                  false,    // Is Medic?
+                                  false,    // Is Mechanic?
+                                  false,    // Is Shock Trooper?
+                                  false,    // Is minigunner?
+                                  false,    // Is Tanya?
+                                  false     // Is Rocket Soldier?
 );
 
 static InfantryTypeClass const C6(INFANTRY_C6,  // Infantry type number.
@@ -818,7 +1042,21 @@ static InfantryTypeClass const C6(INFANTRY_C6,  // Infantry type number.
                                   CivilianDoControlsVirtual,
                                   2,        // Frame of projectile launch.
                                   0,        // Frame of projectile launch while prone.
-                                  RemapCiv6 // pointer to override remap table
+                                  RemapCiv6, // pointer to override remap table
+                                  0,        // Horizontal offset
+                                  false,    // Is Einstein?
+                                  false,    // Is Chan?
+                                  false,    // Is Delphi?
+                                  false,    // Is Engineer?
+                                  false,    // Is Spy?
+                                  false,    // Is Thief?
+                                  false,    // Is General?
+                                  false,    // Is Medic?
+                                  false,    // Is Mechanic?
+                                  false,    // Is Shock Trooper?
+                                  false,    // Is minigunner?
+                                  false,    // Is Tanya?
+                                  false     // Is Rocket Soldier?
 );
 
 static InfantryTypeClass const C7(INFANTRY_C7,  // Infantry type number.
@@ -837,7 +1075,21 @@ static InfantryTypeClass const C7(INFANTRY_C7,  // Infantry type number.
                                   CivilianDoControlsVirtual,
                                   2,        // Frame of projectile launch.
                                   0,        // Frame of projectile launch while prone.
-                                  RemapCiv7 // pointer to override remap table
+                                  RemapCiv7, // pointer to override remap table
+                                  0,        // Horizontal offset
+                                  false,    // Is Einstein?
+                                  false,    // Is Chan?
+                                  false,    // Is Delphi?
+                                  false,    // Is Engineer?
+                                  false,    // Is Spy?
+                                  false,    // Is Thief?
+                                  false,    // Is General?
+                                  false,    // Is Medic?
+                                  false,    // Is Mechanic?
+                                  false,    // Is Shock Trooper?
+                                  false,    // Is minigunner?
+                                  false,    // Is Tanya?
+                                  false     // Is Rocket Soldier?
 );
 
 static InfantryTypeClass const C8(INFANTRY_C8,  // Infantry type number.
@@ -856,7 +1108,21 @@ static InfantryTypeClass const C8(INFANTRY_C8,  // Infantry type number.
                                   CivilianDoControlsVirtual,
                                   2,        // Frame of projectile launch.
                                   0,        // Frame of projectile launch while prone.
-                                  RemapCiv8 // pointer to override remap table
+                                  RemapCiv8, // pointer to override remap table
+                                  0,        // Horizontal offset
+                                  false,    // Is Einstein?
+                                  false,    // Is Chan?
+                                  false,    // Is Delphi?
+                                  false,    // Is Engineer?
+                                  false,    // Is Spy?
+                                  false,    // Is Thief?
+                                  false,    // Is General?
+                                  false,    // Is Medic?
+                                  false,    // Is Mechanic?
+                                  false,    // Is Shock Trooper?
+                                  false,    // Is minigunner?
+                                  false,    // Is Tanya?
+                                  false     // Is Rocket Soldier?
 );
 
 static InfantryTypeClass const C9(INFANTRY_C9,  // Infantry type number.
@@ -875,7 +1141,21 @@ static InfantryTypeClass const C9(INFANTRY_C9,  // Infantry type number.
                                   CivilianDoControlsVirtual,
                                   2,        // Frame of projectile launch.
                                   0,        // Frame of projectile launch while prone.
-                                  RemapCiv9 // pointer to override remap table
+                                  RemapCiv9, // pointer to override remap table
+                                  0,        // Horizontal offset
+                                  false,    // Is Einstein?
+                                  false,    // Is Chan?
+                                  false,    // Is Delphi?
+                                  false,    // Is Engineer?
+                                  false,    // Is Spy?
+                                  false,    // Is Thief?
+                                  false,    // Is General?
+                                  false,    // Is Medic?
+                                  false,    // Is Mechanic?
+                                  false,    // Is Shock Trooper?
+                                  false,    // Is minigunner?
+                                  false,    // Is Tanya?
+                                  false     // Is Rocket Soldier?
 );
 
 // Nikoomba
@@ -895,7 +1175,21 @@ static InfantryTypeClass const C10(INFANTRY_C10, // Infantry type number.
                                    CivilianDoControlsVirtual,
                                    2,         // Frame of projectile launch.
                                    0,         // Frame of projectile launch while prone.
-                                   RemapCiv10 // pointer to override remap table
+                                   RemapCiv10, // pointer to override remap table
+                                   0,         // Horizontal offset
+                                   false,     // Is Einstein?
+                                   false,     // Is Chan?
+                                   false,     // Is Delphi?
+                                   false,     // Is Engineer?
+                                   false,     // Is Spy?
+                                   false,     // Is Thief?
+                                   false,     // Is General?
+                                   false,     // Is Medic?
+                                   false,     // Is Mechanic?
+                                   false,     // Is Shock Trooper?
+                                   false,     // Is minigunner?
+                                   false,     // Is Tanya?
+                                   false      // Is Rocket Soldier?
 );
 
 static InfantryTypeClass const Einstein(INFANTRY_EINSTEIN, // Infantry type number.
@@ -914,7 +1208,21 @@ static InfantryTypeClass const Einstein(INFANTRY_EINSTEIN, // Infantry type numb
                                         EinsteinDoControls,
                                         0, // Frame of projectile launch.
                                         0, // Frame of projectile launch while prone.
-                                        0  // pointer to override remap table
+                                        0,     // pointer to override remap table
+                                        0,     // Horizontal offset
+                                        true, // Is Einstein?
+                                        false, // Is Chan?
+                                        false, // Is Delphi?
+                                        false, // Is Engineer?
+                                        false, // Is Spy?
+                                        false, // Is Thief?
+                                        false, // Is General?
+                                        false, // Is Medic?
+                                        false, // Is Mechanic?
+                                        false, // Is Shock Trooper?
+                                        false, // Is minigunner?
+                                        false, // Is Tanya?
+                                        false  // Is Rocket Soldier?
 );
 
 static InfantryTypeClass const Delphi(INFANTRY_DELPHI, // Infantry type number.
@@ -933,7 +1241,21 @@ static InfantryTypeClass const Delphi(INFANTRY_DELPHI, // Infantry type number.
                                       CivilianDoControlsVirtual,
                                       2, // Frame of projectile launch.
                                       0, // Frame of projectile launch while prone.
-                                      0  // pointer to override remap table
+                                      0,     // pointer to override remap table
+                                      0,     // Horizontal offset
+                                      false, // Is Einstein?
+                                      false, // Is Chan?
+                                      true, // Is Delphi?
+                                      false, // Is Engineer?
+                                      false, // Is Spy?
+                                      false, // Is Thief?
+                                      false, // Is General?
+                                      false, // Is Medic?
+                                      false, // Is Mechanic?
+                                      false, // Is Shock Trooper?
+                                      false, // Is minigunner?
+                                      false, // Is Tanya?
+                                      false  // Is Rocket Soldier?
 );
 
 static InfantryTypeClass const DrChan(INFANTRY_CHAN, // Infantry type number.
@@ -952,7 +1274,21 @@ static InfantryTypeClass const DrChan(INFANTRY_CHAN, // Infantry type number.
                                       EinsteinDoControls,
                                       2, // Frame of projectile launch.
                                       0, // Frame of projectile launch while prone.
-                                      0  // pointer to override remap table
+                                      0,     // pointer to override remap table
+                                      0,     // Horizontal offset
+                                      false, // Is Einstein?
+                                      true, // Is Chan?
+                                      false,  // Is Delphi?
+                                      false, // Is Engineer?
+                                      false, // Is Spy?
+                                      false, // Is Thief?
+                                      false, // Is General?
+                                      false, // Is Medic?
+                                      false, // Is Mechanic?
+                                      false, // Is Shock Trooper?
+                                      false, // Is minigunner?
+                                      false, // Is Tanya?
+                                      false  // Is Rocket Soldier?
 );
 
 #ifdef FIXIT_CSII //	checked - ajw 9/28/98
@@ -975,7 +1311,20 @@ static InfantryTypeClass const ShockTrooper(INFANTRY_SHOCK,   // Infantry type n
                                             2,     // Frame of projectile launch.
                                             0,     // Frame of projectile launch while prone.
                                             0,     // pointer to override remap table
-                                            0x0018 //	Horizontal offset.
+                                            0x0018, //	Horizontal offset.
+                                            false, // Is Einstein?
+                                            false, // Is Chan?
+                                            false,  // Is Delphi?
+                                            false, // Is Engineer?
+                                            false, // Is Spy?
+                                            false, // Is Thief?
+                                            false, // Is General?
+                                            false, // Is Medic?
+                                            false, // Is Mechanic?
+                                            true, // Is Shock Trooper?
+                                            false, // Is minigunner?
+                                            false, // Is Tanya?
+                                            false  // Is Rocket Soldier?
 );
 
 static InfantryTypeClass const Mechanic(INFANTRY_MECHANIC, // Infantry type number.
@@ -994,7 +1343,21 @@ static InfantryTypeClass const Mechanic(INFANTRY_MECHANIC, // Infantry type numb
                                         MedicDoControls,
                                         25, // Frame of projectile launch.
                                         25, // Frame of projectile launch while prone.
-                                        0   // pointer to override remap table
+                                        0,     // pointer to override remap table
+                                        0,     // Horizontal offset
+                                        false, // Is Einstein?
+                                        false, // Is Chan?
+                                        false,  // Is Delphi?
+                                        false, // Is Engineer?
+                                        false, // Is Spy?
+                                        false, // Is Thief?
+                                        false, // Is General?
+                                        false, // Is Medic?
+                                        true, // Is Mechanic?
+                                        false, // Is Shock Trooper?
+                                        false, // Is minigunner?
+                                        false, // Is Tanya?
+                                        false  // Is Rocket Soldier?
 );
 #endif
 
@@ -1031,7 +1394,20 @@ InfantryTypeClass::InfantryTypeClass(InfantryType type,
                                      int firelaunch,
                                      int pronelaunch,
                                      unsigned char const* override_remap,
-                                     int horizontaloffset)
+                                     int horizontaloffset,
+                                     bool is_einstein,
+                                     bool is_chan,
+                                     bool is_delphi,
+                                     bool is_engineer,
+                                     bool is_spy,
+                                     bool is_thief,
+                                     bool is_general,
+                                     bool is_medic,
+                                     bool is_mechanic,
+                                     bool is_shocktrooper,
+                                     bool is_minigunner,
+                                     bool is_tanya,
+                                     bool is_rocketsoldier)
     : TechnoTypeClass(RTTI_INFANTRYTYPE,
                       int(type),
                       name,
@@ -1070,6 +1446,19 @@ InfantryTypeClass::InfantryTypeClass(InfantryType type,
     , FireLaunch(firelaunch)
     , ProneLaunch(pronelaunch)
     , OverrideRemap(override_remap)
+    , IsEinstein(is_einstein)
+    , IsChan(is_chan)
+    , IsDelphi(is_delphi)
+    , IsEngineer(is_engineer)
+    , IsSpy(is_spy)
+    , IsThief(is_thief)
+    , IsGeneral(is_general)
+    , IsMedic(is_medic)
+    , IsMechanic(is_mechanic) 
+    , IsShockTrooper(is_shocktrooper)
+    , IsMiniGunner(is_minigunner)
+    , IsTanya(is_tanya)
+    , IsRocketSoldier(is_rocketsoldier)
 {
     /*
     **	Forced infantry overrides from the default.
@@ -1176,7 +1565,7 @@ void InfantryTypeClass::Init_Heap(CCINIClass &ini)
         std::string entry = ini.Get_Entry("InfantryTypes", i);
         std::string inf = ini.Get_String("InfantryTypes", entry.c_str(), "<none>");
 
-        new InfantryTypeClass((InfantryType)id, // Infantry type number.
+        new InfantryTypeClass((InfantryType)id,     // Infantry type number.
                                           5,      // Translate name number for infantry type.
                                           inf.c_str(),  // INI name for infantry.
                                           0x0035,      //	Vertical offset.
@@ -1192,7 +1581,21 @@ void InfantryTypeClass::Init_Heap(CCINIClass &ini)
                                           E1DoControlsVirtual,
                                           2, // Frame of projectile launch.
                                           2, // Frame of projectile launch while prone.
-                                          0  // pointer to override remap table
+                                          0,  // pointer to override remap table
+                                          0, // Horizontal offset
+                              false,                // Is Einstein?
+                              false,                // Is Chan?
+                              false,                // Is Delphi?
+                              false,                // Is Engineer?
+                              false,                // Is Spy?
+                              false,                // Is Thief?
+                              false,                // Is General?
+                              false,                // Is Medic?
+                              false,                // Is Mechanic?
+                              false,                // Is Shock Trooper?
+                              false,                // Is minigunner?
+                              false,                // Is Tanya?
+                              false                 // Is Rocket Soldier?
         );
     }
  }
@@ -1442,8 +1845,8 @@ void InfantryTypeClass::One_Time(void)
  *=============================================================================================*/
 int InfantryTypeClass::Full_Name(void) const
 {
-    if (Debug_Map || !IsNominal || Rule.IsNamed || Type == INFANTRY_C10 || Type == INFANTRY_DELPHI
-        || Type == INFANTRY_EINSTEIN) {
+    if (Debug_Map || !IsNominal || Rule.IsNamed || Type == INFANTRY_C10 || IsDelphi
+        || IsEinstein ) {
         return (TechnoTypeClass::Full_Name());
     }
     return (TXT_CIVILIAN);
@@ -1492,7 +1895,7 @@ bool InfantryTypeClass::Read_INI(CCINIClass& ini)
         IsBomber = ini.Get_Bool(Name(), "C4", IsBomber);
         IsDog = ini.Get_Bool(Name(), "IsCanine", IsDog);
         IsCrawling = ini.Get_Bool(Name(), "IsCrawling", IsCrawling);
-        IsCivilian = ini.Get_Bool(Name(), "IsCrawling", IsCrawling);
+        IsCivilian = ini.Get_Bool(Name(), "IsCivilian", IsCivilian);
 
         FireLaunch = (char)ini.Get_Int(Name(), "FireLaunch", FireLaunch);
         ProneLaunch = (char)ini.Get_Int(Name(), "ProneLaunch", ProneLaunch);
@@ -1523,7 +1926,7 @@ bool InfantryTypeClass::Write_INI(CCINIClass& ini)
         ini.Put_Bool(Name(), "IsCanine", IsDog);
 
         ini.Put_Bool(Name(), "IsCrawling", IsCrawling);
-        ini.Put_Bool(Name(), "IsCrawling", IsCrawling);
+        ini.Put_Bool(Name(), "IsCivilian", IsCivilian);
 
         ini.Put_Int(Name(), "FireLaunch", FireLaunch);
         ini.Put_Int(Name(), "ProneLaunch", ProneLaunch);

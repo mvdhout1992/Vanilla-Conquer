@@ -5059,7 +5059,7 @@ bool UnitClass::Should_Crush_It(TechnoClass const* it) const
     /*
     ** Don't allow crushing of spies by computer-controlled vehicles.
     */
-    if (it->What_Am_I() == RTTI_INFANTRY && *(InfantryClass*)it == INFANTRY_SPY) {
+    if (it->What_Am_I() == RTTI_INFANTRY && ((InfantryClass*)it)->Class->IsSpy ) {
         return (false);
     }
 

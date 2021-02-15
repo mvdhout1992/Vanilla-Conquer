@@ -132,7 +132,7 @@ static bool _Counts_As_Civ_Evac(ObjectClass const* candidate)
     **	Certain infantry types will always be considered a civilian evacuation candidate. These
     **	include the special one-time infantry that appear in some missions.
     */
-    if (*inf == INFANTRY_EINSTEIN || *inf == INFANTRY_GENERAL || *inf == INFANTRY_DELPHI || *inf == INFANTRY_CHAN)
+    if (inf->Class->IsEinstein || inf->Class->IsGeneral || inf->Class->IsDelphi || inf->Class->IsChan)
         return (true);
 
     /*

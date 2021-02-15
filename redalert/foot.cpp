@@ -693,8 +693,8 @@ int FootClass::Mission_Hunt(void)
         Random_Animate();
     } else {
         if (What_Am_I() == RTTI_INFANTRY
-            && (((InfantryTypeClass const&)Class_Of()).Type == INFANTRY_RENOVATOR
-                || ((InfantryTypeClass const&)Class_Of()).Type == INFANTRY_THIEF)) {
+            && (((InfantryTypeClass const&)Class_Of()).IsEngineer
+                || ((InfantryTypeClass const&)Class_Of()).IsThief)) {
             Assign_Destination(TarCom);
             Assign_Mission(MISSION_CAPTURE);
         } else {

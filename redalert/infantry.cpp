@@ -353,7 +353,7 @@ ResultType InfantryClass::Take_Damage(int& damage, int distance, WarheadType war
         return (res);
 
     if (res == RESULT_DESTROYED) {
-        if (*this == INFANTRY_TANYA) {
+        if (Class->IsTanya) {
             IsTanyaDead = true;
         }
         Death_Announcement(source);
@@ -367,7 +367,7 @@ ResultType InfantryClass::Take_Damage(int& damage, int distance, WarheadType war
         VocType altsound;
         sound = Sim_Random_Pick(VOC_SCREAM1, VOC_SCREAM11);
         altsound = VOC_YELL1;
-        if (*this == INFANTRY_TANYA) {
+        if (Class->IsTanya) {
             sound = altsound = VOC_TANYA_DIE;
         }
         if (Class->IsDog) {
@@ -432,7 +432,7 @@ ResultType InfantryClass::Take_Damage(int& damage, int distance, WarheadType war
         **	If an engineer is damaged and it is just sitting there, then tell it
         **	to go do something since it will definitely die if it doesn't.
         */
-        if (!House->IsHuman && *this == INFANTRY_RENOVATOR
+        if (!House->IsHuman && this->Class->IsEngineer
             && (Mission == MISSION_GUARD || Mission == MISSION_GUARD_AREA)) {
             Assign_Mission(MISSION_HUNT);
         }
@@ -513,7 +513,7 @@ int InfantryClass::Shape_Number(WindowNumberType window) const
     *- 9/5/2019 12:34PM
     */
     const DoInfoStruct* do_controls = (window == WINDOW_VIRTUAL) ? Class->DoControlsVirtual : Class->DoControls;
-    if (window != WINDOW_VIRTUAL && !IsOwnedByPlayer && *this == INFANTRY_SPY) {
+    if (window != WINDOW_VIRTUAL && !IsOwnedByPlayer && Class->IsSpy) {
         do_controls = InfantryTypeClass::As_Reference(INFANTRY_E1).DoControls;
     }
 
@@ -633,7 +633,7 @@ void InfantryClass::Per_Cell_Process(PCPType why)
                 tech = cellptr->Cell_Techno();
             }
             if (tech != NULL && (tech->As_Target() == NavCom || tech->As_Target() == TarCom)) {
-                if (*this == INFANTRY_RENOVATOR) {
+                if (this->Class->IsEngineer) {
 
                     /*
                     **	An engineer will either mega-repair a friendly or allied
@@ -680,11 +680,11 @@ void InfantryClass::Per_Cell_Process(PCPType why)
                     }
 
                 } else {
-                    if (*this != INFANTRY_SPY && tech->Trigger.Is_Valid()) {
+                    if (Class->IsSpy == false && tech->Trigger.Is_Valid()) {
                         tech->Trigger->Spring(TEVENT_PLAYER_ENTERED, this);
                     }
 
-                    if (*this == INFANTRY_SPY) {
+                    if (Class->IsSpy) {
                         int housespy = (1 << (House->Class->House));
                         //						tech->House->IsSpied = true;
 
@@ -747,7 +747,7 @@ void InfantryClass::Per_Cell_Process(PCPType why)
 
                     } else {
 
-                        if (*this == INFANTRY_THIEF) { // Thief just raided a storage facility
+                        if (Class->IsThief) { // Thief just raided a storage facility
                             tech->House->IsThieved = true;
 
                             if (tech->What_Am_I() == RTTI_BUILDING) {
@@ -972,7 +972,7 @@ void InfantryClass::Per_Cell_Process(PCPType why)
             /*
             **	Special voice play.
             */
-            if (*this == INFANTRY_TANYA) {
+            if (Class->IsTanya) {
                 Sound_Effect(VOC_TANYA_LAUGH, Coord);
             }
 
@@ -1538,7 +1538,7 @@ MoveType InfantryClass::Can_Enter_Cell(CELL cell, FacingType) const
                         return (MOVE_NO);
 #endif
                     case RTTI_INFANTRY:
-                        if (*(InfantryClass*)obj == INFANTRY_SPY && !Class->IsDog) {
+                        if ( ((InfantryClass*)obj)->Class->IsSpy && !Class->IsDog) {
                             retval = MOVE_TEMP;
                             break;
                         }
@@ -1942,7 +1942,7 @@ bool InfantryClass::Random_Animate(void)
             Mark(MARK_CHANGE_REDRAW);
             PrimaryFacing.Set(Facing_Dir(Random_Pick(FACING_N, FACING_NW)));
             Mark(MARK_CHANGE_REDRAW);
-            if (!Is_Selected_By_Player() && IsOwnedByPlayer && *this == INFANTRY_TANYA && Sim_Random_Pick(0, 2) == 0) {
+            if (!Is_Selected_By_Player() && IsOwnedByPlayer && Class->IsTanya && Sim_Random_Pick(0, 2) == 0) {
                 Sound_Effect(VOC_TANYA_SHAKE, Coord);
             }
             break;
@@ -2133,7 +2133,7 @@ bool InfantryClass::Do_Action(DoType todo, bool force)
         return (false);
     }
 
-    if (*this == INFANTRY_SPY && todo >= DO_GESTURE1) {
+    if (Class->IsSpy && todo >= DO_GESTURE1) {
         todo = (DoType)(DO_IDLE1 + Random_Pick(0, 1));
     }
 
@@ -2466,7 +2466,7 @@ TARGET InfantryClass::Greatest_Threat(ThreatType threat) const
     }
 
     if (!Is_Weapon_Equipped()) {
-        if (!Class->IsCapture && *this != INFANTRY_RENOVATOR && *this != INFANTRY_SPY && *this != INFANTRY_THIEF) {
+        if (!Class->IsCapture && Class->IsEngineer == false && Class->IsSpy == false && Class->IsThief == false) {
             return (TARGET_NONE);
         }
     }
@@ -2475,7 +2475,7 @@ TARGET InfantryClass::Greatest_Threat(ThreatType threat) const
     **	Special hack to make Tanya not auto-fire if controlled by a
     **	human player.
     */
-    if (*this == INFANTRY_TANYA && House->IsHuman) {
+    if (Class->IsTanya && House->IsHuman) {
         return (TARGET_NONE);
     }
 
@@ -2512,7 +2512,7 @@ TARGET InfantryClass::Greatest_Threat(ThreatType threat) const
     ** Special hack: if it's a thief, then the only possible objects to
     ** consider are tiberium-processing objects (silos & refineries).
     */
-    if (*this == INFANTRY_THIEF) {
+    if (Class->IsThief) {
         threat = threat | THREAT_CAPTURE | THREAT_TIBERIUM;
         //		threat = (ThreatType)(THREAT_CAPTURE | THREAT_TIBERIUM);
     }
@@ -2544,7 +2544,7 @@ void InfantryClass::Response_Select(void)
     if (!AllowVoice)
         return;
 
-    if (Class->IsCivilian && *this != INFANTRY_EINSTEIN) {
+    if (Class->IsCivilian && Class->IsEinstein == false) {
         VocType response = VOC_NONE;
         if (Class->IsFemale) {
             response = VOC_GIRL_YEAH;
@@ -2572,8 +2572,8 @@ void InfantryClass::Response_Select(void)
         int size = 0;
         VocType* response = NULL;
         HousesType house = PlayerPtr->ActLike;
-        switch (Class->Type) {
-        case INFANTRY_GENERAL:
+        
+        if (Class->IsGeneral) {
             if (house != HOUSE_USSR && house != HOUSE_BAD) {
                 response = _stavros;
                 size = ARRAY_SIZE(_stavros);
@@ -2582,62 +2582,60 @@ void InfantryClass::Response_Select(void)
                 size = ARRAY_SIZE(_default_response);
             }
             house = HOUSE_USSR;
-            break;
+        }
 
-        case INFANTRY_DOG:
+        else if (Class->IsDog) {
             response = _dog_response;
             size = ARRAY_SIZE(_dog_response);
-            break;
+        }
 
-        case INFANTRY_EINSTEIN:
+        else if (Class->IsEinstein) {
             response = _ein_response;
             size = ARRAY_SIZE(_ein_response);
-            break;
+        }
 
-        case INFANTRY_SPY:
+        else if (Class->IsSpy) {
             response = _spy_response;
             size = ARRAY_SIZE(_spy_response);
-#ifdef FIXIT_CSII //	checked - ajw 9/28/98
+
             if (house == HOUSE_USSR) {
                 response = _default_response;
                 size = ARRAY_SIZE(_default_response);
             }
-#endif
-            break;
+        }
 
-        case INFANTRY_MEDIC:
+        else if (Class->IsMedic) {
             response = _medic_response;
             size = ARRAY_SIZE(_medic_response);
-            break;
-#ifdef FIXIT_CSII //	checked - ajw 9/28/98
-        case INFANTRY_MECHANIC:
+        }
+
+        else if (Class->IsMechanic) {
             response = _mechanic_response;
             size = ARRAY_SIZE(_mechanic_response);
-            break;
-        case INFANTRY_SHOCK:
+        } 
+        else if (Class->IsShockTrooper) {
             response = _shock_response;
             size = ARRAY_SIZE(_shock_response);
-            break;
-#endif
-        case INFANTRY_TANYA:
+        }
+
+        else if (Class->IsTanya) {
             response = _tanya_response;
             size = ARRAY_SIZE(_tanya_response);
-            break;
+        }
 
-        case INFANTRY_THIEF:
+        else if (Class->IsThief) {
             response = _thief_response;
             size = ARRAY_SIZE(_thief_response);
-            break;
+        }
 
-        case INFANTRY_RENOVATOR:
+        else if (Class->IsThief) {
             response = _eng_response;
             size = ARRAY_SIZE(_eng_response);
-            break;
+        }
 
-        default:
+        else {
             response = _default_response;
             size = ARRAY_SIZE(_default_response);
-            break;
         }
         if (response != NULL) {
             Sound_Effect(response[Sim_Random_Pick(0, size - 1)], fixed(1), ID + 1, 0, house);
@@ -2669,7 +2667,7 @@ void InfantryClass::Response_Move(void)
     if (!AllowVoice)
         return;
 
-    if (Class->IsCivilian && *this != INFANTRY_EINSTEIN) {
+    if (Class->IsCivilian && Class->IsEinstein == false) {
         VocType response;
         if (Class->IsFemale) {
             response = VOC_GIRL_OKAY;
@@ -2700,8 +2698,8 @@ void InfantryClass::Response_Move(void)
         int size = 0;
         VocType* response = NULL;
         HousesType house = PlayerPtr->ActLike;
-        switch (Class->Type) {
-        case INFANTRY_GENERAL:
+
+        if (Class->IsGeneral) {
             if (house != HOUSE_USSR && house != HOUSE_BAD) {
                 response = _stavros;
                 size = ARRAY_SIZE(_stavros);
@@ -2709,66 +2707,62 @@ void InfantryClass::Response_Move(void)
                 response = _default_response;
                 size = ARRAY_SIZE(_default_response);
             }
-            house = HOUSE_USSR;
-            break;
+        house = HOUSE_USSR;
+    }
 
-        case INFANTRY_DOG:
-            response = _dog_response;
-            size = ARRAY_SIZE(_dog_response);
-            break;
+    else if (Class->IsDog) {
+        response = _dog_response;
+        size = ARRAY_SIZE(_dog_response);
+    }
 
-        case INFANTRY_EINSTEIN:
-            response = _ein_response;
-            size = ARRAY_SIZE(_ein_response);
-            break;
+    else if (Class->IsEinstein) {
+        response = _ein_response;
+        size = ARRAY_SIZE(_ein_response);
+    }
 
-        case INFANTRY_RENOVATOR:
-            response = _eng_response;
-            size = ARRAY_SIZE(_eng_response);
-            break;
+    else if (Class->IsEngineer) {
+        response = _eng_response;
+        size = ARRAY_SIZE(_eng_response);
+    }
 
-        case INFANTRY_SPY:
-            response = _spy_response;
-            size = ARRAY_SIZE(_spy_response);
-#ifdef FIXIT_CSII //	checked - ajw 9/28/98
-            if (house == HOUSE_USSR) {
-                response = _default_response;
-                size = ARRAY_SIZE(_default_response);
-            }
-#endif
-            break;
+    else if (Class->IsSpy) {
+        response = _spy_response;
+        size = ARRAY_SIZE(_spy_response);
 
-        case INFANTRY_MEDIC:
-            response = _medic_response;
-            size = ARRAY_SIZE(_medic_response);
-            break;
-
-#ifdef FIXIT_CSII //	checked - ajw 9/28/98
-        case INFANTRY_MECHANIC:
-            response = _mechanic;
-            size = ARRAY_SIZE(_mechanic);
-            break;
-
-        case INFANTRY_SHOCK:
-            response = _shock;
-            size = ARRAY_SIZE(_shock);
-            break;
-
-#endif
-        case INFANTRY_TANYA:
-            response = _tanya_response;
-            size = ARRAY_SIZE(_tanya_response);
-            break;
-
-        case INFANTRY_THIEF:
-            response = _thief_response;
-            size = ARRAY_SIZE(_thief_response);
-            break;
-
-        default:
+        if (house == HOUSE_USSR) {
             response = _default_response;
             size = ARRAY_SIZE(_default_response);
-            break;
+        }
+    }
+
+    else if (Class->IsMedic) {
+        response = _medic_response;
+        size = ARRAY_SIZE(_medic_response);
+    }
+
+    else if (Class->IsMechanic) {
+        response = _mechanic;
+        size = ARRAY_SIZE(_mechanic);
+    }
+
+    else if (Class->IsShockTrooper) {
+        response = _shock;
+        size = ARRAY_SIZE(_shock);
+    }
+
+    else if (Class->IsTanya) {
+        response = _tanya_response;
+        size = ARRAY_SIZE(_tanya_response);
+    }
+
+    else if (Class->IsThief) {
+        response = _thief_response;
+        size = ARRAY_SIZE(_thief_response);
+    }
+
+    else {
+            response = _default_response;
+            size = ARRAY_SIZE(_default_response);
         }
         if (response != NULL) {
             Sound_Effect(response[Sim_Random_Pick(0, size - 1)], fixed(1), ID + 1, 0, house);
@@ -2800,7 +2794,7 @@ void InfantryClass::Response_Attack(void)
     if (!AllowVoice)
         return;
 
-    if (Class->IsCivilian && *this != INFANTRY_EINSTEIN) {
+    if (Class->IsCivilian && Class->IsEinstein == false) {
         VocType response;
         if (Class->IsFemale) {
             response = VOC_GIRL_OKAY;
@@ -2832,8 +2826,8 @@ void InfantryClass::Response_Attack(void)
         int size = 0;
         VocType* response = NULL;
         HousesType house = PlayerPtr->ActLike;
-        switch (Class->Type) {
-        case INFANTRY_GENERAL:
+
+        if (Class->IsGeneral) {
             if (house != HOUSE_USSR && house != HOUSE_BAD) {
                 response = _stavros;
                 size = ARRAY_SIZE(_stavros);
@@ -2842,63 +2836,60 @@ void InfantryClass::Response_Attack(void)
                 size = ARRAY_SIZE(_default_response);
             }
             house = HOUSE_USSR;
-            break;
+        }
 
-        case INFANTRY_DOG:
+        else if (Class->IsDog) {
             response = _dog_response;
             size = ARRAY_SIZE(_dog_response);
-            break;
+        }
 
-        case INFANTRY_SPY:
+        else if (Class->IsSpy) {
             response = _spy_response;
             size = ARRAY_SIZE(_spy_response);
-#ifdef FIXIT_CSII //	checked - ajw 9/28/98
+
             if (house == HOUSE_USSR) {
                 response = _default_response;
                 size = ARRAY_SIZE(_default_response);
             }
-#endif
-            break;
+        }
 
-        case INFANTRY_EINSTEIN:
+        else if (Class->IsEinstein) {
             response = _ein_response;
             size = ARRAY_SIZE(_ein_response);
-            break;
+        }
 
-        case INFANTRY_RENOVATOR:
+        else if (Class->IsEngineer) {
             response = _eng_response;
             size = ARRAY_SIZE(_eng_response);
-            break;
+        }
 
-        case INFANTRY_MEDIC:
+        else if (Class->IsMedic) {
             response = _medic_response;
             size = ARRAY_SIZE(_medic_response);
-            break;
-#ifdef FIXIT_CSII //	checked - ajw 9/28/98
-        case INFANTRY_MECHANIC:
+        }
+
+        else if (Class->IsMechanic) {
             response = _mechanic;
             size = ARRAY_SIZE(_mechanic);
-            break;
+        }
 
-        case INFANTRY_SHOCK:
+        else if (Class->IsShockTrooper) {
             response = _shock;
             size = ARRAY_SIZE(_shock);
-            break;
-#endif
-        case INFANTRY_TANYA:
+        }
+
+        else if (Class->IsTanya) {
             response = _tanya_response;
             size = ARRAY_SIZE(_tanya_response);
-            break;
-
-        case INFANTRY_THIEF:
+        } 
+        
+        else if (Class->IsThief) {
             response = _thief_response;
             size = ARRAY_SIZE(_thief_response);
-            break;
-
-        default:
+        }
+        else {
             response = _default_response;
             size = ARRAY_SIZE(_default_response);
-            break;
         }
         if (response != NULL) {
             Sound_Effect(response[Sim_Random_Pick(0, size - 1)], fixed(1), ID + 1, 0, house);
@@ -2937,7 +2928,7 @@ ActionType InfantryClass::What_Action(ObjectClass const* object) const
     ** renovate it.
     ** However, abort the whole thing if the building is a barrel or mine.
     */
-    if (*this == INFANTRY_RENOVATOR && object->What_Am_I() == RTTI_BUILDING && House->IsPlayerControl) {
+    if (Class->IsEngineer && object->What_Am_I() == RTTI_BUILDING && House->IsPlayerControl) {
         BuildingClass const* bldg = (BuildingClass*)object;
         if (bldg->Class->IsRepairable) {
             if (House->Is_Ally(bldg)) {
@@ -2970,14 +2961,13 @@ ActionType InfantryClass::What_Action(ObjectClass const* object) const
     */
     if (Combat_Damage() < 0 && House->IsPlayerControl) {
         if (House->Is_Ally(object)) {
-#ifdef FIXIT_CSII //	checked - ajw 9/28/98
-            if ((object->What_Am_I() == RTTI_INFANTRY && object != this && *this == INFANTRY_MEDIC)
-                || (*this == INFANTRY_MECHANIC
+            if ((object->What_Am_I() == RTTI_INFANTRY && object != this && Class->IsMedic)
+                || (Class->IsMechanic
                     && (object->What_Am_I() == RTTI_UNIT || object->What_Am_I() == RTTI_AIRCRAFT))) {
 
                 if (object->Health_Ratio() < Rule.ConditionGreen) {
                     // If it's a mechanic force-moving into an APC, don't try to heal it.
-                    if (*this == INFANTRY_MECHANIC && object->What_Am_I() == RTTI_UNIT
+                    if (Class->IsMechanic && object->What_Am_I() == RTTI_UNIT
                         && ((UnitClass*)object)->Class->MaxPassengers
                         && (Keyboard->Down(Options.KeyForceMove1) || Keyboard->Down(Options.KeyForceMove2))) {
                     } else {
@@ -2985,13 +2975,7 @@ ActionType InfantryClass::What_Action(ObjectClass const* object) const
                     }
                 }
             }
-#else
-            if (object->What_Am_I() == RTTI_INFANTRY && object != this) {
-                if (object->Health_Ratio() < Rule.ConditionGreen) {
-                    return (ACTION_HEAL);
-                }
-            }
-#endif
+
             if (!object->Is_Techno() || !((TechnoClass*)object)->Techno_Type_Class()->Max_Passengers()) {
                 if (action == ACTION_GUARD_AREA || action == ACTION_MOVE) {
                     return (action);
@@ -3085,7 +3069,7 @@ ActionType InfantryClass::What_Action(ObjectClass const* object) const
                 // *)object)->Pip_Count() == 0 && *((AircraftClass *)object) == AIRCRAFT_TRANSPORT) ||
                 (object->What_Am_I() == RTTI_BUILDING && object->Can_Capture()))) {
 
-            if (*this == INFANTRY_THIEF
+            if (Class->IsThief
                 && (object->What_Am_I() == RTTI_BUILDING && ((BuildingClass*)object)->Class->Capacity == 0)) {
                 action = ACTION_NONE;
             } else {
@@ -3278,7 +3262,7 @@ int InfantryClass::Full_Name(void) const
         return (TXT_TECHNICIAN);
     }
 
-    if (*this == INFANTRY_SPY && !House->IsPlayerControl) {
+    if (Class->IsSpy && !House->IsPlayerControl) {
         return (TXT_E1);
     }
 
@@ -3753,10 +3737,9 @@ void InfantryClass::Firing_AI(void)
             case FIRE_ILLEGAL:
                 if (Combat_Damage(primary) < 0) {
                     ObjectClass* targ = As_Object(TarCom);
-#ifdef FIXIT_CSII //	checked - ajw 9/28/98
                     if (targ) {
-                        if ((targ->What_Am_I() == RTTI_INFANTRY && *this == INFANTRY_MEDIC)
-                            || (*this == INFANTRY_MECHANIC
+                        if ((targ->What_Am_I() == RTTI_INFANTRY && Class->IsMedic)
+                            || (Class->IsMechanic
                                 && (targ->What_Am_I() == RTTI_AIRCRAFT || targ->What_Am_I() == RTTI_UNIT))) {
 
                             if (targ->Health_Ratio() >= Rule.ConditionGreen) {
@@ -3766,15 +3749,6 @@ void InfantryClass::Firing_AI(void)
                     } else {
                         Assign_Target(TARGET_NONE);
                     }
-#else
-                    if (targ && targ->What_Am_I() == RTTI_INFANTRY) {
-                        if (targ->Health_Ratio() >= Rule.ConditionGreen) {
-                            Assign_Target(TARGET_NONE);
-                        }
-                    } else {
-                        Assign_Target(TARGET_NONE);
-                    }
-#endif
                 } else if (Class->IsDog) {
                     Assign_Target(TARGET_NONE);
                 }
@@ -4280,7 +4254,7 @@ void InfantryClass::Movement_AI(void)
  *=============================================================================================*/
 void const* InfantryClass::Get_Image_Data(void) const
 {
-    if (!IsOwnedByPlayer && *this == INFANTRY_SPY) {
+    if (!IsOwnedByPlayer && Class->IsSpy) {
         return (MFCD::Retrieve("E1.SHP"));
     }
     return (TechnoClass::Get_Image_Data());

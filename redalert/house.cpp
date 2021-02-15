@@ -3597,9 +3597,9 @@ TechnoTypeClass const* HouseClass::Suggest_New_Object(RTTIType objecttype, bool 
     case RTTI_INFANTRY:
     case RTTI_INFANTRYTYPE:
         if (BuildInfantry != INFANTRY_NONE) {
-            if (kennel && BuildInfantry != INFANTRY_DOG)
+            if (kennel && InfantryTypeClass::As_Reference(BuildInfantry).IsDog == false)
                 return (NULL);
-            if (!kennel && BuildInfantry == INFANTRY_DOG)
+            if (!kennel && InfantryTypeClass::As_Reference(BuildInfantry).IsDog)
                 return (NULL);
             return (&InfantryTypeClass::As_Reference(BuildInfantry));
         }
@@ -5434,7 +5434,7 @@ bool HouseClass::AI_Attack(UrgencyType)
         InfantryClass* i = Infantry.Ptr(index);
 
         if (i != NULL && !i->IsInLimbo && i->House == this && i->Strength > 0) {
-            if (!shuffle && (i->Is_Weapon_Equipped() || *i == INFANTRY_RENOVATOR) && (forced || Percent_Chance(75))) {
+            if (!shuffle && (i->Is_Weapon_Equipped() || i->Class->IsEngineer) && (forced || Percent_Chance(75))) {
                 i->Assign_Mission(MISSION_HUNT);
             } else {
 
@@ -6489,7 +6489,8 @@ int HouseClass::AI_Infantry(void)
         InfantryType bestlist[INFANTRY_COUNT * 20];
         for (InfantryType utype = INFANTRY_FIRST; utype < InfantryTypes.Count(); utype++) {
 
-            if (utype != INFANTRY_DOG || !(IScan & INFANTRYF_DOG)) {
+            // Iran: !(IScan & INFANTRYF_DOG) ??? does this check if the house has built a dog, so this would limit the amount of dogs to 1?
+            if (utype != INFANTRY_NONE && InfantryTypeClass::As_Reference(utype).IsDog == false || !(IScan & INFANTRYF_DOG)) {
                 if (counter[utype] > 0 && Can_Build(&InfantryTypeClass::As_Reference(utype), Class->House)
                     && InfantryTypeClass::As_Reference(utype).Cost_Of() <= Available_Money()) {
                     if (bestval == -1 || bestval < counter[utype]) {

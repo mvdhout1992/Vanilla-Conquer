@@ -1329,6 +1329,21 @@ public:
     */
     unsigned char const* OverrideRemap;
 
+    bool IsEinstein;
+    bool IsChan;
+    bool IsDelphi;
+    bool IsEngineer;
+    bool IsSpy;
+    bool IsThief;
+    bool IsGeneral;
+    bool IsMedic;
+    bool IsMechanic;
+    bool IsShockTrooper;
+    bool IsMiniGunner;
+    bool IsTanya;
+    bool IsRocketSoldier;
+
+
     /*
     **	This is the explicit unit class constructor.
     */
@@ -1353,7 +1368,20 @@ public:
                       int firelaunch,
                       int pronelaunch,
                       unsigned char const* override_remap,
-                      int horizontaloffset = 0);
+                      int horizontaloffset,
+                      bool is_einstein,
+                      bool is_chan,
+                      bool is_delphi,
+                      bool is_engineer,
+                      bool is_spy,
+                      bool is_thief,
+                      bool is_general,
+                      bool is_medic,
+                      bool is_mechanic,
+                      bool is_shocktrooper,
+                      bool is_minigunner,
+                      bool is_tanya,
+                      bool is_rocketsoldier);
 
     static void* operator new(size_t);
     static void* operator new(size_t, void* ptr)

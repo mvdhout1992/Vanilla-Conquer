@@ -579,7 +579,7 @@ private:
 #endif
 
 #ifdef FIXIT_CSII //	checked - ajw 9/28/98
-    int IQuantity[INFANTRY_RA_COUNT];
+    int IQuantity[INFANTRY_RA_COUNT * 20];
 #else
     int IQuantity[INFANTRY_COUNT];
 #endif

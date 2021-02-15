@@ -1504,7 +1504,7 @@ ResultType BuildingClass::Take_Damage(int& damage, int distance, WarheadType war
                         ** renovator that caused the damage.
                         */
                         if (source == NULL || source->What_Am_I() != RTTI_INFANTRY
-                            || *(InfantryClass*)source != INFANTRY_RENOVATOR) {
+                            || ((InfantryClass*)source)->Class->IsEngineer == false) {
                             anim = new AnimClass(ANIM_FIRE_SMALL,
                                                  Coord_Scatter(Cell_Coord(cell), 0x0060),
                                                  Random_Pick(0, 7),
@@ -3773,10 +3773,10 @@ int BuildingClass::Mission_Deconstruction(void)
                     **	construction yard.
                     */
                     InfantryType typ = Crew_Type();
-                    while (typ == INFANTRY_RENOVATOR && engine) {
+                    while (typ != INFANTRY_NONE && InfantryTypeClass::As_Reference(typ).IsEngineer && engine) {
                         typ = Crew_Type();
                     }
-                    if (typ == INFANTRY_RENOVATOR)
+                    if (typ != INFANTRY_NONE && InfantryTypeClass::As_Reference(typ).IsEngineer)
                         engine = true;
 
                     InfantryClass* infantry = 0;

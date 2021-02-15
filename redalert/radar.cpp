@@ -748,7 +748,7 @@ void RadarClass::Render_Infantry(CELL cell, int x, int y, int size)
                 /*
                 ** Draw the infantryman's pixel.  If he's a spy, draw in my house color
                 */
-                if (*(InfantryClass*)obj == INFANTRY_SPY) {
+                if ( ((InfantryClass*)obj)->Class->IsSpy) {
                     color = ColorRemaps[PlayerPtr->RemapColor].Bar;
                     //						color = ColorRemaps[PlayerPtr->RemapColor].BrightColor;
                 }

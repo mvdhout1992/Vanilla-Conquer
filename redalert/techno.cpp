@@ -1657,7 +1657,7 @@ bool TechnoClass::Evaluate_Object(ThreatType method,
     /*
     **	Never consider a spy to be a valid target, unless you're a dog
     */
-    if (otype == RTTI_INFANTRY && ((InfantryTypeClass const*)tclass)->Type == INFANTRY_SPY) {
+    if (otype == RTTI_INFANTRY && ((InfantryTypeClass const*)tclass)->IsSpy) {
         if (What_Am_I() == RTTI_INFANTRY && ((InfantryClass*)this)->Class->IsDog) {
             // continue executing...
         } else {
@@ -2151,7 +2151,7 @@ bool TechnoClass::Evaluate_Object(ThreatType method,
             if (((InfantryClass*)this)->Class->IsDog || Combat_Damage() < 0) {
                 method = THREAT_INFANTRY | (method & (THREAT_RANGE | THREAT_AREA));
 #ifdef FIXIT_CSII //	checked - ajw 9/28/98
-                if (*(InfantryClass*)this == INFANTRY_MECHANIC) {
+                if ( ((InfantryClass*)this)->Class->IsMechanic) {
                     method = (THREAT_VEHICLES | THREAT_AIR) | (method & (THREAT_RANGE | THREAT_AREA));
                 }
 #endif
@@ -4580,7 +4580,7 @@ bool TechnoClass::Evaluate_Object(ThreatType method,
             */
             if (What_Am_I() == RTTI_INFANTRY) {
                 if (!IsOwnedByPlayer) {
-                    if (*(InfantryClass*)this == INFANTRY_SPY)
+                    if ( ((InfantryClass*)this)->Class->IsSpy)
                         remap = PlayerPtr->Remap_Table();
                 }
                 if (((InfantryClass*)this)->Class->IsRemapOverride) {
@@ -4809,7 +4809,7 @@ bool TechnoClass::Evaluate_Object(ThreatType method,
             */
             if (What_Am_I() == RTTI_INFANTRY) {
                 if (!IsOwnedByPlayer) {
-                    if (*(InfantryClass*)this == INFANTRY_SPY)
+                    if ( ((InfantryClass*)this)->Class->IsSpy )
                         remap = PlayerPtr->Remap_Table();
                 }
                 if (((InfantryClass*)this)->Class->IsRemapOverride) {
@@ -5630,7 +5630,7 @@ bool TechnoClass::Evaluate_Object(ThreatType method,
         **	If a human house is not allowed to retaliate automatically, then don't
         */
         if (House->IsHuman && !Rule.IsSmartDefense
-            && (What_Am_I() != RTTI_INFANTRY || *((InfantryClass*)this) != INFANTRY_TANYA
+            && (What_Am_I() != RTTI_INFANTRY || ((InfantryClass*)this)->Class->IsTanya == false
                 || source->What_Am_I() != RTTI_INFANTRY))
             return (false);
 
