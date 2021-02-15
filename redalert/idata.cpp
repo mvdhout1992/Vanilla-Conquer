@@ -1811,7 +1811,7 @@ void InfantryTypeClass::One_Time(void)
         **	The small build image icon sized shapes are always generic.
         */
         char buffer[_MAX_FNAME];
-        sprintf(buffer, "%.4sICON", uclass->Graphic_Name());
+        sprintf(buffer, "%.4sICON", uclass->Cameo_Name());
         _makepath(fullname, NULL, NULL, buffer, ".SHP");
 
 #ifndef NDEBUG
@@ -1954,7 +1954,7 @@ void InfantryTypeClass::Debug_Dump_INI()
         ut.Write_INI(ini);
     }
 
-    ini.Save(CCFileClass("debug_unittypes.txt"), false);
+    ini.Save(CCFileClass("debug_infantrytypes.txt"), false);
 }
 
 void InfantryTypeClass::Dimensions(int& width, int& height) const

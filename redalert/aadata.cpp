@@ -378,25 +378,27 @@ void AircraftTypeClass::Init_Heap(CCINIClass &ini)
 
 
         new AircraftTypeClass((AircraftType)id,
-                              5,
-                              air.c_str(),
-                              0,
-                              0,
-                              0,
-                              false,
-                              false,
-                              false,
-                              false,
-                              false, true,
-                              true,
-                              false,
-                              false,
-                              STRUCT_NONE,
-                              0,
-                              0,
-                              MISSION_HUNT,
-                              false,
-                              false);
+                              5,              // Translated text number for aircraft.
+                              air.c_str(),    // INI name of aircraft.
+                              0x0000,         //	Vertical offset.
+                              0x0040,         // Primary weapon offset along turret centerline.
+                              0x0000,         // Primary weapon lateral offset along turret centerline.
+                              false,          // Fixed wing aircraft?
+                              true,           // Equipped with a rotor?
+                              false,          // Custom rotor sets for each facing?
+                              false,          // Can this aircraft land on clear terrain?
+                              true,           // Is it invisible on radar?
+                              true,           // Can the player select it so as to give it orders?
+                              true,           // Can it be assigned as a target for attack.
+                              false,          // Is it insignificant (won't be announced)?
+                              false,          // Is it immune to normal combat damage?
+                              STRUCT_HELIPAD, // Preferred landing building.
+                              0xFF,           // Landing speed
+                              32,             // Number of rotation stages.
+                              MISSION_HUNT,   // Default mission for aircraft.
+                              false,          // Is Badger plane (logic)?
+                              false           // Is Chinook plane (logic)?
+        );
     }
 }
 

@@ -1006,6 +1006,7 @@ bool RulesClass::Objects(CCINIClass& ini)
     UnitTypeClass::Debug_Dump_INI();
     AircraftTypeClass::Debug_Dump_INI();
     VesselTypeClass::Debug_Dump_INI();
+    InfantryTypeClass::Debug_Dump_INI();
 
     return (true);
 }

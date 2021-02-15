@@ -457,7 +457,7 @@ void VesselTypeClass::Debug_Dump_INI()
         air.Write_INI(ini);
     }
 
-    ini.Save(CCFileClass("debug_aircrafttypes.txt"), false);
+    ini.Save(CCFileClass("debug_vesseltypes.txt"), false);
 }
 
 /***********************************************************************************************

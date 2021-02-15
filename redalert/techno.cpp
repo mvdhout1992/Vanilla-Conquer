@@ -7063,6 +7063,16 @@ bool TechnoClass::Evaluate_Object(ThreatType method,
             IsSelfHealing = ini.Get_Bool(Name(), "SelfHealing", IsSelfHealing);
             ROT = ini.Get_Int(Name(), "ROT", ROT);
             MaxPassengers = ini.Get_Int(Name(), "Passengers", MaxPassengers);
+
+            Rotation = ini.Get_Int(Name(), "Facings", Rotation);
+
+            HorizontalOffset = ini.Get_Int(Name(), "HorizontalOffset", HorizontalOffset);
+            VerticalOffset = ini.Get_Int(Name(), "VerticalOffset", VerticalOffset);
+            PrimaryOffset = ini.Get_Int(Name(), "PrimaryOffset", PrimaryOffset);
+            PrimaryLateral = ini.Get_Int(Name(), "PrimaryLateral", PrimaryLateral);
+            SecondaryOffset = ini.Get_Int(Name(), "SecondaryOffset", SecondaryOffset);
+            SecondaryLateral = ini.Get_Int(Name(), "SecondaryLateral", SecondaryLateral);
+
             // Mono_Printf("before image=: %s\n",GraphicName);
             ini.Get_String(Name(), "Image", GraphicName, GraphicName, sizeof(GraphicName));
             ini.Get_String(Name(), "Cameo", GraphicName, CameoName, sizeof(CameoName));
@@ -7119,6 +7129,14 @@ bool TechnoClass::Evaluate_Object(ThreatType method,
             ini.Put_Bool(Name(), "SelfHealing", IsSelfHealing);
             ini.Put_Int(Name(), "ROT", ROT);
             ini.Put_Int(Name(), "Passengers", MaxPassengers);
+
+            ini.Put_Int(Name(), "Facings", Rotation);
+            ini.Put_Int(Name(), "HorizontalOffset", HorizontalOffset);
+            ini.Put_Int(Name(), "VerticalOffset", VerticalOffset);
+            ini.Put_Int(Name(), "PrimaryOffset", PrimaryOffset);
+            ini.Put_Int(Name(), "PrimaryLateral", PrimaryLateral);
+            ini.Put_Int(Name(), "SecondaryOffset", SecondaryOffset);
+            ini.Put_Int(Name(), "SecondaryLateral", SecondaryLateral);
 
             ini.Put_String(Name(), "Image", GraphicName);
             ini.Put_String(Name(), "Cameo", CameoName);
