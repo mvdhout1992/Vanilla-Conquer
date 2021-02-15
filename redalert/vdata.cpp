@@ -63,7 +63,14 @@ static VesselTypeClass const VesselSubmarine(VESSEL_SS,
                                              true,        // Always use the given name for the vehicle?
                                              false,       // Is it equipped with a combat turret?
                                              8,           // Rotation stages.
-                                             14           // Turret center offset along body centerline.
+                                             14,          // Turret center offset along body centerline.
+                                             true,        // is submarine?
+                                             false,       // is Missile Sub?
+                                             false,       // is Destroyer?
+                                             false,       // Is LST (transport vessel)?
+                                             false,       // Is Cruiser?
+                                             false,       // Is Gunboat?
+                                             false        // Is Carrier?
 );
 
 // Destroyer
@@ -80,7 +87,14 @@ static VesselTypeClass const VesselDestroyer(VESSEL_DD,
                                              true,        // Always use the given name for the vehicle?
                                              true,        // Is it equipped with a combat turret?
                                              8,           // Rotation stages.
-                                             14           // Turret center offset along body centerline.
+                                             14,          // Turret center offset along body centerline.
+                                             false,       // is submarine?
+                                             false,       // is Missile Sub?
+                                             true,        // is Destroyer?
+                                             false,       // Is LST (transport vessel)?
+                                             false,       // Is Cruiser?
+                                             false,       // Is Gunboat?
+                                             false        // Is Carrier?
 );
 
 // Cruiser
@@ -97,7 +111,14 @@ static VesselTypeClass const VesselCruiser(VESSEL_CA,
                                            true,        // Always use the given name for the vehicle?
                                            true,        // Is it equipped with a combat turret?
                                            8,           // Rotation stages.
-                                           14           // Turret center offset along body centerline.
+                                             14,          // Turret center offset along body centerline.
+                                             false,       // is submarine?
+                                             false,       // is Missile Sub?
+                                             false,       // is Destroyer?
+                                             false,       // Is LST (transport vessel)?
+                                             true,        // Is Cruiser?
+                                             false,       // Is Gunboat?
+                                             false        // Is Carrier?
 );
 
 // Transport
@@ -114,7 +135,14 @@ static VesselTypeClass const VesselTransport(VESSEL_TRANSPORT,
                                              true,          // Always use the given name for the vehicle?
                                              false,         // Is it equipped with a combat turret?
                                              0,             // Rotation stages.
-                                             0              // Turret center offset along body centerline.
+                                             0,          // Turret center offset along body centerline.
+                                             false,       // is submarine?
+                                             false,       // is Missile Sub?
+                                             false,       // is Destroyer?
+                                             true,       // Is LST (transport vessel)?
+                                             false,       // Is Cruiser?
+                                             false,       // Is Gunboat?
+                                             false       // Is Carrier?
 );
 
 // Gun Boat
@@ -131,7 +159,14 @@ static VesselTypeClass const VesselPTBoat(VESSEL_PT,
                                           true,        // Always use the given name for the vehicle?
                                           true,        // Is it equipped with a combat turret?
                                           8,           // Rotation stages.
-                                          14           // Turret center offset along body centerline.
+                                          14,          // Turret center offset along body centerline.
+                                             false,       // is submarine?
+                                             false,       // is Missile Sub?
+                                             false,       // is Destroyer?
+                                             false,       // Is LST (transport vessel)?
+                                             false,       // Is Cruiser?
+                                             true,       // Is Gunboat?
+                                             false       // Is Carrier?
 );
 
 #ifdef FIXIT_CSII //	checked - ajw 9/28/98
@@ -149,12 +184,19 @@ static VesselTypeClass const VesselMissileSubmarine(VESSEL_MISSILESUB,
                                                     true,   // Always use the given name for the vehicle?
                                                     false,  // Is it equipped with a combat turret?
                                                     8,      // Rotation stages.
-                                                    14      // Turret center offset along body centerline.
+                                             14,          // Turret center offset along body centerline.
+                                             false,       // is submarine?
+                                             false,       // is Missile Sub?
+                                             false,       // is Destroyer?
+                                             false,       // Is LST (transport vessel)?
+                                             false,       // Is Cruiser?
+                                             false,       // Is Gunboat?
+                                             false       // Is Carrier?
 );
 #endif
 
 #ifdef FIXIT_CARRIER //	checked - ajw 9/28/98
-// Transport
+// Carrier
 static VesselTypeClass const VesselCarrier(VESSEL_CARRIER,
                                            TXT_CARRIER, // NAME:			Text name of this unit type.
                                            "CARR",      // NAME:			Text name of this unit type.
@@ -168,7 +210,14 @@ static VesselTypeClass const VesselCarrier(VESSEL_CARRIER,
                                            true,        // Always use the given name for the vehicle?
                                            false,       // Is it equipped with a combat turret?
                                            0,           // Rotation stages.
-                                           0            // Turret center offset along body centerline.
+                                             0,          // Turret center offset along body centerline.
+                                             false,       // is submarine?
+                                             false,       // is Missile Sub?
+                                             false,       // is Destroyer?
+                                             false,       // Is LST (transport vessel)?
+                                             false,       // Is Cruiser?
+                                             false,       // Is Gunboat?
+                                             true       // Is Carrier?
 );
 #endif
 
@@ -200,7 +249,14 @@ VesselTypeClass::VesselTypeClass(VesselType type,
                                  bool is_nominal,
                                  bool is_turret_equipped,
                                  int rotation,
-                                 int toffset)
+                                 int toffset,
+                                 bool is_sub,
+                                 bool is_missilesub,
+                                 bool Is_destroyer,
+                                 bool is_lst,
+                                 bool is_cruiser,
+                                 bool is_gunboat,
+                                 bool is_carrier)
     : TechnoTypeClass(RTTI_VESSELTYPE,
                       int(type),
                       name,
@@ -229,6 +285,13 @@ VesselTypeClass::VesselTypeClass(VesselType type,
     , Mission(MISSION_GUARD)
     , Explosion(exp)
     , MaxSize(0)
+    , IsSub(is_sub)
+    , IsMissileSub(is_missilesub)
+    , IsDestroyer(Is_destroyer)
+    , IsLST(is_lst)
+    , IsCruiser(is_cruiser)
+    , IsGunBoat(is_gunboat)
+    , IsCarrier(is_carrier)
 {
     /*
     **	Forced vessel overrides from the default.
@@ -292,24 +355,109 @@ void VesselTypeClass::operator delete(void* pointer)
  * HISTORY:                                                                                    *
  *   07/09/1996 JLB : Created.                                                                 *
  *=============================================================================================*/
-void VesselTypeClass::Init_Heap(void)
+void VesselTypeClass::Init_Heap(CCINIClass& ini)
 {
-    /*
-    **	These vessel type class objects must be allocated in the exact order that they
-    **	are specified in the VesselType enumeration. This is necessary because the heap
-    **	allocation block index serves double duty as the type number index.
-    */
-    new VesselTypeClass(VesselSubmarine);        //	VESSEL_SS
-    new VesselTypeClass(VesselDestroyer);        //	VESSEL_DD
-    new VesselTypeClass(VesselCruiser);          // VESSEL_CA
-    new VesselTypeClass(VesselTransport);        // VESSEL_TRANSPORT
-    new VesselTypeClass(VesselPTBoat);           // VESSEL_PT
-#ifdef FIXIT_CSII                                //	checked - ajw 9/28/98
-    new VesselTypeClass(VesselMissileSubmarine); // VESSEL_MISSILESUB
-#endif
-#ifdef FIXIT_CARRIER                    //	checked - ajw 9/28/98
-    new VesselTypeClass(VesselCarrier); // VESSEL_CARRIER
-#endif
+    int entries = ini.Entry_Count("VesselTypes");
+    bool usehardcoded = ini.Get_Bool("General", "UseHardCodedVessels", true);
+    VesselTypes.Set_Heap((usehardcoded * VESSEL_COUNT) + entries);
+
+    if (usehardcoded) {
+        new VesselTypeClass(VesselSubmarine);        //	VESSEL_SS
+        new VesselTypeClass(VesselDestroyer);        //	VESSEL_DD
+        new VesselTypeClass(VesselCruiser);          // VESSEL_CA
+        new VesselTypeClass(VesselTransport);        // VESSEL_TRANSPORT
+        new VesselTypeClass(VesselPTBoat);           // VESSEL_PT
+        new VesselTypeClass(VesselMissileSubmarine); // VESSEL_MISSILESUB
+        new VesselTypeClass(VesselCarrier);          // VESSEL_CARRIER
+    }
+
+    for (int i = 0; i < entries; i++) {
+        int id = (usehardcoded * VESSEL_COUNT) + i;
+        std::string entry = ini.Get_Entry("VesselTypes", i);
+        std::string ves = ini.Get_String("VesselTypes", entry.c_str(), "<none>");
+
+        new VesselTypeClass((VesselType)id,
+                            5,           // NAME:			Text name of this unit type.
+                            ves.c_str(), // NAME:			Text name of this unit type.
+                            ANIM_FBALL1, // EXPLOSION:	Type of explosion when destroyed.
+                            0x0000,      //	Vertical offset.
+                            0x0000,      // Primary weapon offset along turret centerline.
+                            0x0000,      // Primary weapon lateral offset along turret centerline.
+                            0x0000,      // Secondary weapon offset along turret centerline.
+                            0x0000,      // Secondary weapon lateral offset along turret centerling.
+                            false,       // Only has eight facings?
+                            true,        // Always use the given name for the vehicle?
+                            true,        // Is it equipped with a combat turret?
+                            8,           // Rotation stages.
+                            14,          // Turret center offset along body centerline.
+                            false,       // is submarine?
+                            false,       // is Missile Sub?
+                            false,       // is Destroyer?
+                            false,       // Is LST (transport vessel)?
+                            false,       // Is Cruiser?
+                            false,       // Is Gunboat?
+                            false       // Is Carrier?
+        );
+    }
+}
+
+bool VesselTypeClass::Read_INI(CCINIClass& ini)
+{
+    if (TechnoTypeClass::Read_INI(ini)) {
+
+        TurretOffset = ini.Get_Int(IniName, "TurretOffset", TurretOffset);
+        Explosion = ini.Get_AnimType(IniName, "Explosion", Explosion);
+        Mission = ini.Get_MissionType(IniName, "Mission", Mission);
+
+        MaxSize = ini.Get_Int(IniName, "MaxSize", MaxSize);
+
+        IsSub = ini.Get_Bool(IniName, "IsSub", IsSub);
+        IsMissileSub = ini.Get_Bool(IniName, "IsMissileSub", IsMissileSub);
+        IsDestroyer = ini.Get_Bool(IniName, "IsDestroyer", IsDestroyer);
+        IsLST = ini.Get_Bool(IniName, "IsLST", IsLST);
+        IsCruiser = ini.Get_Bool(IniName, "IsCruiser", IsCruiser);
+        IsGunBoat = ini.Get_Bool(IniName, "IsGunBoat", IsGunBoat);
+        IsCarrier = ini.Get_Bool(IniName, "IsCarrier", IsCarrier);
+
+        return (true);
+    }
+    return (false);
+}
+
+bool VesselTypeClass::Write_INI(CCINIClass& ini)
+{
+    if (TechnoTypeClass::Write_INI(ini)) {
+
+        ini.Put_Int(IniName, "TurretOffset", TurretOffset);
+        ini.Put_AnimType(IniName, "Explosion", Explosion);
+        ini.Put_MissionType(IniName, "Mission", Mission);
+
+        ini.Put_Int(IniName, "MaxSize", MaxSize);
+
+        ini.Put_Bool(IniName, "IsSub", IsSub);
+        ini.Put_Bool(IniName, "IsMissileSub", IsMissileSub);
+        ini.Put_Bool(IniName, "IsDestroyer", IsDestroyer);
+        ini.Put_Bool(IniName, "IsLST", IsLST);
+        ini.Put_Bool(IniName, "IsCruiser", IsCruiser);
+        ini.Put_Bool(IniName, "IsGunBoat", IsGunBoat);
+        ini.Put_Bool(IniName, "IsCarrier", IsCarrier);
+        return (true);
+    }
+    return (false);
+}
+
+void VesselTypeClass::Debug_Dump_INI()
+{
+    CCINIClass ini;
+
+    for (int i = 0; i < AircraftTypes.Count(); i++) {
+        AircraftTypeClass& air = AircraftTypeClass::As_Reference((AircraftType)i);
+        std::string entry = std::to_string(i);
+        ini.Put_String("VesselTypes", entry.c_str(), air.IniName);
+        air.Write_INI(ini);
+    }
+
+    ini.Save(CCFileClass("debug_aircrafttypes.txt"), false);
 }
 
 /***********************************************************************************************
@@ -527,12 +675,12 @@ void VesselTypeClass::Dimensions(int& width, int& height) const
  *=============================================================================================*/
 void VesselTypeClass::One_Time(void)
 {
-    for (VesselType index = VESSEL_FIRST; index < VESSEL_COUNT; index++) {
+    for (VesselType index = VESSEL_FIRST; index < VesselTypes.Count(); index++) {
         char fullname[_MAX_FNAME + _MAX_EXT];
         char buffer[_MAX_FNAME];
         VesselTypeClass const& uclass = As_Reference(index);
 #ifdef FIXIT_CARRIER //	checked - ajw 9/28/98
-        if (uclass.Level != -1 || index == VESSEL_CARRIER) {
+        if (uclass.Level != -1 || uclass.IsCarrier) {
 #else
         if (uclass.Level != -1) {
 #endif
@@ -541,7 +689,7 @@ void VesselTypeClass::One_Time(void)
             /*
             **	Fetch the supporting data files for the unit.
             */
-            sprintf(buffer, "%sICON", uclass.Graphic_Name());
+            sprintf(buffer, "%sICON", uclass.Cameo_Name());
             _makepath(fullname, NULL, NULL, buffer, ".SHP");
             ((void const*&)uclass.CameoData) = MFCD::Retrieve(fullname);
         }
@@ -580,24 +728,18 @@ void VesselTypeClass::Turret_Adjust(DirType dir, int& x, int& y) const
     short xx = x;
     short yy = y;
 
-    switch (Type) {
-    case VESSEL_CA:
+    if (IsCruiser) {
         Normal_Move_Point(xx, yy, dir, 22);
         x = xx;
         y = yy - 4;
-        break;
-
-    case VESSEL_PT:
+    } else if (IsGunBoat) {
         Normal_Move_Point(xx, yy, dir, 14);
         x = xx;
         y = yy + 1;
-        break;
-
-    case VESSEL_DD:
+    } else if (IsDestroyer) {
         Normal_Move_Point(xx, yy, dir + DIR_S, 8);
         x = xx;
         y = yy - 4;
-        break;
     }
 }
 
@@ -661,7 +803,7 @@ short const* VesselTypeClass::Overlap_List(void) const
 VesselType VesselTypeClass::From_Name(char const* name)
 {
     if (name != NULL) {
-        for (VesselType classid = VESSEL_FIRST; classid < VESSEL_COUNT; classid++) {
+        for (VesselType classid = VESSEL_FIRST; classid < VesselTypes.Count(); classid++) {
             if (stricmp(As_Reference(classid).IniName, name) == 0) {
                 return (classid);
             }

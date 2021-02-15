@@ -1785,7 +1785,7 @@ int AircraftClass::Mission_Move(void)
                             dist = Distance(building);
                         for (int index = 0; index < Vessels.Count(); index++) {
                             VesselClass* ship = Vessels.Ptr(index);
-                            if (ship != NULL && *ship == VESSEL_CARRIER && !ship->IsInLimbo && ship->IsActive
+                            if (ship != NULL && ship->Class->IsCarrier && !ship->IsInLimbo && ship->IsActive
                                 && ship->House == House && ship->How_Many() < ship->Class->Max_Passengers()) {
                                 if (Distance(ship) < dist || !building) {
                                     building = (BuildingClass*)ship;
@@ -2125,7 +2125,7 @@ void AircraftClass::Enter_Idle_Mode(bool)
                                 dist = Distance(building);
                             for (int index = 0; index < Vessels.Count(); index++) {
                                 VesselClass* ship = Vessels.Ptr(index);
-                                if (ship != NULL && *ship == VESSEL_CARRIER && !ship->IsInLimbo && ship->IsActive
+                                if (ship != NULL && ship->Class->IsCarrier && !ship->IsInLimbo && ship->IsActive
                                     && ship->House == House
                                     && ship->How_Many()
                                            < ship->Class->Max_Passengers() /* && !ship->In_Radio_Contact()*/) {
@@ -2396,7 +2396,7 @@ ActionType AircraftClass::What_Action(ObjectClass const* target) const
     }
 #ifdef FIXIT_CARRIER //	checked - ajw 9/28/98
     if (!Class->IsFixedWing && House->IsPlayerControl && House->Is_Ally(target) && target->What_Am_I() == RTTI_VESSEL
-        && *(VesselClass*)target == VESSEL_CARRIER
+        && ((VesselClass*)target)->Class->IsCarrier
         && ((AircraftClass*)this)->Transmit_Message(RADIO_CAN_LOAD, (TechnoClass*)target) == RADIO_ROGER) {
         action = ACTION_ENTER;
     }
@@ -3861,7 +3861,7 @@ int AircraftClass::Mission_Guard(void)
                     dist = Distance(building);
                 for (int index = 0; index < Vessels.Count(); index++) {
                     VesselClass* ship = Vessels.Ptr(index);
-                    if (ship != NULL && *ship == VESSEL_CARRIER && !ship->IsInLimbo && ship->IsActive
+                    if (ship != NULL && ship->Class->IsCarrier && !ship->IsInLimbo && ship->IsActive
                         && ship->House == House && ship->How_Many() < ship->Class->Max_Passengers()) {
                         if (Distance(ship) < dist || !building) {
                             building = (BuildingClass*)ship;

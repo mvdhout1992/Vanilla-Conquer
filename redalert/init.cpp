@@ -238,11 +238,11 @@ bool Init_Game(int, char*[])
     HouseTypeClass::Init_Heap();
     BuildingTypeClass::Init_Heap();
     AircraftTypeClass::Init_Heap(RuleINI);
-    InfantryTypeClass::Init_Heap();
+    InfantryTypeClass::Init_Heap(RuleINI);
     BulletTypeClass::Init_Heap();
     AnimTypeClass::Init_Heap();
     UnitTypeClass::Init_Heap(RuleINI);
-    VesselTypeClass::Init_Heap();
+    VesselTypeClass::Init_Heap(RuleINI);
     TemplateTypeClass::Init_Heap();
     TerrainTypeClass::Init_Heap();
     OverlayTypeClass::Init_Heap();

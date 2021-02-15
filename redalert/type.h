@@ -1159,6 +1159,14 @@ public:
     */
     int MaxSize;
 
+    bool IsSub;
+    bool IsMissileSub;
+    bool IsDestroyer;
+    bool IsLST;
+    bool IsCruiser;
+    bool IsGunBoat;
+    bool IsCarrier;
+
     /*
     **	This is the explicit unit class constructor.
     */
@@ -1179,7 +1187,14 @@ public:
                     bool is_nominal,
                     bool is_turret_equipped,
                     int rotation,
-                    int toffset);
+                    int toffset,
+                    bool is_sub,
+                    bool is_misssilesub,
+                    bool Is_destroyer,
+                    bool is_lst,
+                    bool is_cruiser,
+                    bool is_gunboat,
+                    bool is_carrier);
 
     static void* operator new(size_t);
     static void* operator new(size_t, void* ptr)
@@ -1188,13 +1203,16 @@ public:
     };
     static void operator delete(void* ptr);
 
-    static void Init_Heap(void);
+    static void Init_Heap(CCINIClass &ini);
     static VesselType From_Name(char const* name);
     static VesselTypeClass& As_Reference(VesselType type);
     static void Init(TheaterType){};
     static void One_Time(void);
     static void Prep_For_Add(void);
 
+    virtual bool Write_INI(CCINIClass& ini);
+    virtual bool Read_INI(CCINIClass& ini);
+    static void Debug_Dump_INI();
     virtual void Dimensions(int& width, int& height) const;
     virtual bool Create_And_Place(CELL cell, HousesType house) const;
     virtual ObjectClass* Create_One_Of(HouseClass* house) const;
@@ -1344,7 +1362,7 @@ public:
     };
     static void operator delete(void* ptr);
 
-    static void Init_Heap(void);
+    static void Init_Heap(CCINIClass& ini);
     static InfantryType From_Name(char const* name);
     static InfantryTypeClass& As_Reference(InfantryType type);
     static void Init(TheaterType){};
@@ -1352,6 +1370,8 @@ public:
     static void Prep_For_Add(void);
 
     virtual bool Read_INI(CCINIClass& ini);
+    virtual bool Write_INI(CCINIClass& ini);
+    static void Debug_Dump_INI();
     virtual void Dimensions(int& width, int& height) const;
     virtual bool Create_And_Place(CELL cell, HousesType house) const;
     virtual ObjectClass* Create_One_Of(HouseClass* house) const;

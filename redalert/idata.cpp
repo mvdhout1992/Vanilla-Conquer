@@ -1136,42 +1136,66 @@ void InfantryTypeClass::operator delete(void* pointer)
  * HISTORY:                                                                                    *
  *   07/11/1996 JLB : Created.                                                                 *
  *=============================================================================================*/
-void InfantryTypeClass::Init_Heap(void)
+void InfantryTypeClass::Init_Heap(CCINIClass &ini)
 {
-    /*
-    **	These infantry type class objects must be allocated in the exact order that they
-    **	are specified in the InfantryType enumeration. This is necessary because the heap
-    **	allocation block index serves double duty as the type number index.
-    */
-    new InfantryTypeClass(E1);
-    new InfantryTypeClass(E2);
-    new InfantryTypeClass(E3);
-    new InfantryTypeClass(E4);
-    new InfantryTypeClass(E6);
-    new InfantryTypeClass(E7);
-    new InfantryTypeClass(E8);
-    new InfantryTypeClass(E9);
-    new InfantryTypeClass(Medic);
-    new InfantryTypeClass(General);
-    new InfantryTypeClass(Dog);
-    new InfantryTypeClass(C1);
-    new InfantryTypeClass(C2);
-    new InfantryTypeClass(C3);
-    new InfantryTypeClass(C4);
-    new InfantryTypeClass(C5);
-    new InfantryTypeClass(C6);
-    new InfantryTypeClass(C7);
-    new InfantryTypeClass(C8);
-    new InfantryTypeClass(C9);
-    new InfantryTypeClass(C10);
-    new InfantryTypeClass(Einstein);
-    new InfantryTypeClass(Delphi);
-    new InfantryTypeClass(DrChan);
-#ifdef FIXIT_CSII //	checked - ajw 9/28/98
-    new InfantryTypeClass(ShockTrooper);
-    new InfantryTypeClass(Mechanic);
-#endif
-}
+    int entries = ini.Entry_Count("InfantryTypes");
+    bool usehardcoded = ini.Get_Bool("General", "UseHardCodedAInfantry", true);
+    InfantryTypes.Set_Heap((usehardcoded * INFANTRY_COUNT) + entries);
+
+    if (usehardcoded) {
+        new InfantryTypeClass(E1);
+        new InfantryTypeClass(E2);
+        new InfantryTypeClass(E3);
+        new InfantryTypeClass(E4);
+        new InfantryTypeClass(E6);
+        new InfantryTypeClass(E7);
+        new InfantryTypeClass(E8);
+        new InfantryTypeClass(E9);
+        new InfantryTypeClass(Medic);
+        new InfantryTypeClass(General);
+        new InfantryTypeClass(Dog);
+        new InfantryTypeClass(C1);
+        new InfantryTypeClass(C2);
+        new InfantryTypeClass(C3);
+        new InfantryTypeClass(C4);
+        new InfantryTypeClass(C5);
+        new InfantryTypeClass(C6);
+        new InfantryTypeClass(C7);
+        new InfantryTypeClass(C8);
+        new InfantryTypeClass(C9);
+        new InfantryTypeClass(C10);
+        new InfantryTypeClass(Einstein);
+        new InfantryTypeClass(Delphi);
+        new InfantryTypeClass(DrChan);
+        new InfantryTypeClass(ShockTrooper);
+        new InfantryTypeClass(Mechanic);
+    }
+
+     for (int i = 0; i < entries; i++) {
+        int id = (usehardcoded * INFANTRY_COUNT) + i;
+        std::string entry = ini.Get_Entry("InfantryTypes", i);
+        std::string inf = ini.Get_String("InfantryTypes", entry.c_str(), "<none>");
+
+        new InfantryTypeClass((InfantryType)id, // Infantry type number.
+                                          5,      // Translate name number for infantry type.
+                                          inf.c_str(),  // INI name for infantry.
+                                          0x0035,      //	Vertical offset.
+                                          0x0010,      // Primary weapon offset along turret centerline.
+                                          false,       // Is this a female type?
+                                          true,        // Has crawling animation frames?
+                                          false,       // Is this a civilian?
+                                          false,       // Does this unit use the override remap table?
+                                          false,       // Always use the given name for the infantry?
+                                          false,       // Theater specific graphic image?
+                                          PIP_FULL,    // Transport pip shape/color to use.
+                                          E1DoControls,
+                                          E1DoControlsVirtual,
+                                          2, // Frame of projectile launch.
+                                          2, // Frame of projectile launch while prone.
+                                          0  // pointer to override remap table
+        );
+    }
+ }
 
 /***********************************************************************************************
  * InfantryTypeClass::Create_One_Of -- Creates an infantry object.                             *
@@ -1331,7 +1355,7 @@ void InfantryTypeClass::Prep_For_Add(void)
 InfantryType InfantryTypeClass::From_Name(char const* name)
 {
     if (name != NULL) {
-        for (InfantryType classid = INFANTRY_FIRST; classid < INFANTRY_COUNT; classid++) {
+        for (InfantryType classid = INFANTRY_FIRST; classid < InfantryTypes.Count(); classid++) {
             if (stricmp(As_Reference(classid).IniName, name) == 0) {
                 return (classid);
             }
@@ -1357,7 +1381,7 @@ InfantryType InfantryTypeClass::From_Name(char const* name)
  *=============================================================================================*/
 void InfantryTypeClass::One_Time(void)
 {
-    for (InfantryType index = INFANTRY_FIRST; index < INFANTRY_COUNT; index++) {
+    for (InfantryType index = INFANTRY_FIRST; index < InfantryTypes.Count(); index++) {
         char fullname[_MAX_FNAME + _MAX_EXT];
         InfantryTypeClass const* uclass;
         CCFileClass file;
@@ -1467,6 +1491,18 @@ bool InfantryTypeClass::Read_INI(CCINIClass& ini)
         IsCapture = ini.Get_Bool(Name(), "Infiltrate", IsCapture);
         IsBomber = ini.Get_Bool(Name(), "C4", IsBomber);
         IsDog = ini.Get_Bool(Name(), "IsCanine", IsDog);
+        IsCrawling = ini.Get_Bool(Name(), "IsCrawling", IsCrawling);
+        IsCivilian = ini.Get_Bool(Name(), "IsCrawling", IsCrawling);
+
+        FireLaunch = (char)ini.Get_Int(Name(), "FireLaunch", FireLaunch);
+        ProneLaunch = (char)ini.Get_Int(Name(), "ProneLaunch", ProneLaunch);
+
+        ///PipEnum Pip;
+
+        //DoInfoStruct const* DoControls;
+        // unsigned char const* OverrideRemap;
+        //     unsigned IsRemapOverride : 1;
+
         if (IsBomber)
             IsCapture = true;
         if (IsDog)
@@ -1474,6 +1510,48 @@ bool InfantryTypeClass::Read_INI(CCINIClass& ini)
         return (true);
     }
     return (false);
+}
+
+
+bool InfantryTypeClass::Write_INI(CCINIClass& ini)
+{
+    if (TechnoTypeClass::Write_INI(ini)) {
+
+        ini.Put_Bool(Name(), "Fraidycat", IsFraidyCat);
+        ini.Put_Bool(Name(), "Infiltrate", IsCapture);
+        ini.Put_Bool(Name(), "C4", IsBomber);
+        ini.Put_Bool(Name(), "IsCanine", IsDog);
+
+        ini.Put_Bool(Name(), "IsCrawling", IsCrawling);
+        ini.Put_Bool(Name(), "IsCrawling", IsCrawling);
+
+        ini.Put_Int(Name(), "FireLaunch", FireLaunch);
+        ini.Put_Int(Name(), "ProneLaunch", ProneLaunch);
+
+        ///PipEnum Pip;
+
+        //DoInfoStruct const* DoControls;
+        // unsigned char const* OverrideRemap;
+        //     unsigned IsRemapOverride : 1;
+
+        return (true);
+    }
+    return (false);
+}
+
+void InfantryTypeClass::Debug_Dump_INI()
+{
+    CCINIClass ini;
+
+    for (int i = 0; i < UnitTypes.Count(); i++) {
+        std::string entry = std::to_string(i);
+        UnitTypeClass& ut = UnitTypeClass::As_Reference((UnitType)i);
+
+        ini.Put_String("UnitTypes", entry.c_str(), ut.IniName);
+        ut.Write_INI(ini);
+    }
+
+    ini.Save(CCFileClass("debug_unittypes.txt"), false);
 }
 
 void InfantryTypeClass::Dimensions(int& width, int& height) const

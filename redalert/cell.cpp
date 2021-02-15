@@ -2353,13 +2353,13 @@ bool CellClass::Goodie_Check(FootClass* object)
                                 for (j = 0; j < UnitTypes.Count(); j++) {
                                     ucount += hptr->QuantityU(j);
                                 }
-                                for (j = 0; j < INFANTRY_COUNT; j++) {
+                                for (j = 0; j < InfantryTypes.Count(); j++) {
                                     ucount += hptr->QuantityI(j);
                                 }
                                 for (j = 0; j < AircraftTypes.Count(); j++) {
                                     ucount += hptr->QuantityA(j);
                                 }
-                                for (j = 0; j < VESSEL_COUNT; j++) {
+                                for (j = 0; j < VesselTypes.Count(); j++) {
                                     ucount += hptr->QuantityV(j);
                                 }
                                 int bcount = 0;

@@ -3059,7 +3059,7 @@ ActionType InfantryClass::What_Action(ObjectClass const* object) const
     */
     if (House->Is_Ally(object) && House->IsPlayerControl && object->Is_Techno()) {
 #ifdef FIXIT_CARRIER //	checked - ajw 9/28/98
-        if (object->What_Am_I() != RTTI_VESSEL || *(VesselClass*)object != VESSEL_CARRIER) {
+        if (object->What_Am_I() != RTTI_VESSEL || ((VesselClass*)object)->Class->IsCarrier == false) {
 #endif
             switch (((InfantryClass*)this)->Transmit_Message(RADIO_CAN_LOAD, (TechnoClass*)object)) {
             case RADIO_ROGER:

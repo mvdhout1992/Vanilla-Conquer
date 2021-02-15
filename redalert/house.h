@@ -585,7 +585,7 @@ private:
 #endif
     int AQuantity[AIRCRAFT_COUNT * 20];
 #ifdef FIXIT_CSII //	checked - ajw 9/28/98
-    int VQuantity[VESSEL_RA_COUNT];
+    int VQuantity[VESSEL_RA_COUNT * 20];
 #else
     int VQuantity[VESSEL_COUNT];
 #endif

@@ -612,18 +612,11 @@ int FootClass::Mission_Guard(void)
 
     int dtime = MissionControl[Mission].Normal_Delay();
     if (What_Am_I() == RTTI_VESSEL) {
-        switch (((VesselClass*)this)->Class->Type) {
-        case VESSEL_DD:
-        case VESSEL_PT:
+        if ( ((VesselClass*)this)->Class->IsDestroyer || ((VesselClass*)this)->Class->IsGunBoat) {
             dtime = MissionControl[Mission].AA_Delay();
-            break;
-
-        case VESSEL_CA:
+        }
+        else if ( ((VesselClass*)this)->Class->IsCruiser) {
             dtime *= 2;
-            break;
-
-        default:
-            break;
         }
     }
     if (What_Am_I() == RTTI_INFANTRY) {
@@ -637,14 +630,9 @@ int FootClass::Mission_Guard(void)
             Assign_Mission(MISSION_SABOTAGE);
         }
 
-        switch (((InfantryClass*)this)->Class->Type) {
-        case INFANTRY_E1:
-        case INFANTRY_E3:
+        // Iran: not a typo, the code has minigunner (E1) uses AA_Delay for delay, TODO check TD code
+        if(((InfantryClass*)this)->Class->IsMiniGunner || ((InfantryClass*)this)->Class->IsRocketSoldier) {
             dtime = MissionControl[Mission].AA_Delay();
-            break;
-
-        default:
-            break;
         }
     }
 

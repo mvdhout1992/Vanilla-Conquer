@@ -2377,7 +2377,7 @@ void BuildingClass::Update_Buildables(void)
             int v;
 
         case RTTI_VESSELTYPE:
-            for (v = VESSEL_FIRST; v < VESSEL_COUNT; v++) {
+            for (v = VESSEL_FIRST; v < VesselTypes.Count(); v++) {
                 if (PlayerPtr->Can_Build(&VesselTypeClass::As_Reference((VesselType)v), ActLike)) {
                     Map.Add(RTTI_VESSELTYPE, v);
                 }
@@ -2401,7 +2401,7 @@ void BuildingClass::Update_Buildables(void)
             break;
 
         case RTTI_INFANTRYTYPE:
-            for (f = INFANTRY_FIRST; f < INFANTRY_COUNT; f++) {
+            for (f = INFANTRY_FIRST; f < InfantryTypes.Count(); f++) {
                 if (PlayerPtr->Can_Build(&InfantryTypeClass::As_Reference((InfantryType)f), ActLike)) {
                     if (InfantryTypeClass::As_Reference((InfantryType)f).IsDog) {
                         if (*this == STRUCT_KENNEL) {
@@ -5052,6 +5052,7 @@ InfantryType BuildingClass::Crew_Type(void) const
     assert(IsActive);
 
     switch (Class->Type) {
+    // Iran: Civilians should spawn from Ore Silo 50% of the type but I don't think this happens
     case STRUCT_STORAGE:
         if (Percent_Chance(50)) {
             return (INFANTRY_C1);
@@ -5065,6 +5066,7 @@ InfantryType BuildingClass::Crew_Type(void) const
         }
         break;
 
+    // Iran: Dog should spawn from kennel 50% of the type but I don't think this happens
     case STRUCT_KENNEL:
         if (Percent_Chance(50)) {
             return (INFANTRY_DOG);

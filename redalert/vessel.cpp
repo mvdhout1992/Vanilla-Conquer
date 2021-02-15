@@ -338,11 +338,11 @@ int VesselClass::Shape_Number(void) const
     **	Special case code for transport. The north/south facing is in frame
     **	0. The east/west facing is in frame 3.
     */
-    if (*this == VESSEL_TRANSPORT) {
+    if (Class->IsLST) {
         shapenum = 0;
     }
 #ifdef FIXIT_CARRIER //	checked - ajw 9/28/98
-    if (*this == VESSEL_CARRIER) {
+    if (Class->IsCarrier) {
         shapenum = 0;
     }
 #endif
@@ -421,8 +421,7 @@ void VesselClass::Draw_It(int x, int y, WindowNumberType window) const
             int shapenum = TechnoClass::BodyShape[tfacing] + 32;
             DirType turdir = DirType(Dir_To_16(PrimaryFacing) * 16);
 
-            switch (Class->Type) {
-            case VESSEL_CA:
+            if (Class->IsCruiser) {
                 turret_shape_name = "TURR";
                 shapefile = Class->TurretShapes;
                 shapenum = TechnoClass::BodyShape[Dir_To_32(SecondaryFacing)];
@@ -434,26 +433,19 @@ void VesselClass::Draw_It(int x, int y, WindowNumberType window) const
                 yy = y;
                 turdir = DirType(Dir_To_16(PrimaryFacing + DIR_S) * 16);
                 Class->Turret_Adjust(turdir, xx, yy);
-                break;
-
-            case VESSEL_DD:
+            } else if (Class->IsDestroyer) {
                 turret_shape_name = "SSAM";
                 shapefile = Class->SamShapes;
                 shapenum = TechnoClass::BodyShape[Dir_To_32(SecondaryFacing)];
                 Class->Turret_Adjust(turdir, xx, yy);
-                break;
-
-            case VESSEL_PT:
+            } else if (Class->IsGunBoat) {
                 turret_shape_name = "MGUN";
                 shapefile = Class->MGunShapes;
                 shapenum = TechnoClass::BodyShape[Dir_To_32(SecondaryFacing)];
                 Class->Turret_Adjust(turdir, xx, yy);
-                break;
-
-            default:
+            } else {
                 shapenum = TechnoClass::BodyShape[Dir_To_32(SecondaryFacing)];
                 Class->Turret_Adjust(turdir, xx, yy);
-                break;
             }
 
             /*
@@ -614,7 +606,7 @@ void VesselClass::AI(void)
 
 #ifdef FIXIT_CARRIER //	checked - ajw 9/28/98                                                                          \
                      // Re-stock the ammo of any on-board helicopters on an aircraft carrier.
-    if (*this == VESSEL_CARRIER && How_Many()) {
+    if (Class->IsCarrier && How_Many()) {
         if (!MoebiusCountDown) {
             MoebiusCountDown = Rule.ReloadRate * TICKS_PER_MINUTE;
             ObjectClass* obj = Attached_Object();
@@ -779,7 +771,7 @@ ActionType VesselClass::What_Action(ObjectClass const* object) const
             // check to see if the transporter can unload.
             bool found = 0;
 #ifdef FIXIT_CARRIER //	checked - ajw 9/28/98
-            if (*this != VESSEL_CARRIER)
+            if (Class->IsCarrier == false)
 #endif
                 for (FacingType face = FACING_N; face < FACING_COUNT && !found; face++) {
                     CELL cellnum = Adjacent_Cell(Coord_Cell(Coord), face);
@@ -811,8 +803,7 @@ ActionType VesselClass::What_Action(ObjectClass const* object) const
         }
     }
 #ifdef FIXIT_CSII //	checked - ajw 9/28/98
-    if (action == ACTION_ATTACK && object->What_Am_I() == RTTI_VESSEL
-        && (*this == VESSEL_MISSILESUB || *this == VESSEL_CA)) {
+    if (action == ACTION_ATTACK && object->What_Am_I() == RTTI_VESSEL && (Class->IsMissileSub || Class->IsDestroyer)) {
         action = ACTION_NOMOVE;
     }
 #endif
@@ -996,7 +987,7 @@ ResultType VesselClass::Take_Damage(int& damage, int distance, WarheadType warhe
         */
 #ifdef FIXIT_CSII //	checked - ajw 9/28/98
         if (Health_Ratio() <= Rule.ConditionYellow && !IsAnimAttached
-            && (*this != VESSEL_SS && *this != VESSEL_MISSILESUB)) {
+            && (Class->IsSub == false && Class->IsMissileSub == false)) {
 #else
         if (Health_Ratio() <= Rule.ConditionYellow && !IsAnimAttached && (*this != VESSEL_SS)) {
 #endif
@@ -1036,7 +1027,7 @@ FireErrorType VesselClass::Can_Fire(TARGET target, int which) const
     int diff;
 
 #ifdef FIXIT_CARRIER //	checked - ajw 9/28/98
-    if (*this == VESSEL_CARRIER) {
+    if (Class->IsCarrier) {
         if (!How_Many() || Arm) {
             return (FIRE_REARM);
         } else {
@@ -1045,7 +1036,7 @@ FireErrorType VesselClass::Can_Fire(TARGET target, int which) const
     }
 #endif
     FireErrorType fire = DriveClass::Can_Fire(target, which);
-    if (*this == VESSEL_DD) {
+    if (Class->IsDestroyer) {
         Mono_Set_Cursor(0, 0);
     }
     if (fire == FIRE_OK || fire == FIRE_CLOAKED) {
@@ -1110,7 +1101,7 @@ FireErrorType VesselClass::Can_Fire(TARGET target, int which) const
             } else {
 #ifdef FIXIT_CSII //	checked - ajw 9/28/98
                 if (Is_Target_Vessel(target)
-                    && (*As_Vessel(target) != VESSEL_SS && *As_Vessel(target) != VESSEL_MISSILESUB)) {
+                    && (As_Vessel(target)->Class->IsSub == false && As_Vessel(target)->Class->IsMissileSub == false)) {
 #else
                 if (Is_Target_Vessel(target) && *As_Vessel(target) != VESSEL_SS) {
 #endif
@@ -1122,7 +1113,7 @@ FireErrorType VesselClass::Can_Fire(TARGET target, int which) const
         } else {
 #ifdef FIXIT_CSII //	checked - ajw 9/28/98
             if (Is_Target_Vessel(target)
-                && (*As_Vessel(target) == VESSEL_SS || *As_Vessel(target) == VESSEL_MISSILESUB)) {
+                && (As_Vessel(target)->Class->IsSub || As_Vessel(target)->Class->IsMissileSub)) {
 #else
             if (Is_Target_Vessel(target) && *As_Vessel(target) == VESSEL_SS) {
 #endif
@@ -1271,7 +1262,7 @@ void VesselClass::Init(void)
  *=============================================================================================*/
 TARGET VesselClass::Greatest_Threat(ThreatType threat) const
 {
-    if (*this == VESSEL_SS) {
+    if (Class->IsSub) {
         threat = threat & ThreatType(THREAT_RANGE | THREAT_AREA);
         threat = threat | THREAT_BOATS;
 
@@ -1300,7 +1291,7 @@ TARGET VesselClass::Greatest_Threat(ThreatType threat) const
         }
     }
 #ifdef FIXIT_CARRIER //	checked - ajw 9/28/98
-    if (*this == VESSEL_CARRIER) {
+    if (Class->IsCarrier) {
         return (TARGET_NONE);
     }
 #endif
@@ -1409,7 +1400,7 @@ RadioMessageType VesselClass::Receive_Message(RadioClass* from, RadioMessageType
             return (RADIO_STATIC);
         if (How_Many() < Class->Max_Passengers()) {
 #ifdef FIXIT_CARRIER //	checked - ajw 9/28/98
-            if (*this == VESSEL_CARRIER && from->What_Am_I() == RTTI_AIRCRAFT) {
+            if (Class->IsCarrier && from->What_Am_I() == RTTI_AIRCRAFT) {
                 return (RADIO_ROGER);
             }
 #endif
@@ -1431,7 +1422,7 @@ RadioMessageType VesselClass::Receive_Message(RadioClass* from, RadioMessageType
     */
     case RADIO_IM_IN:
 #ifdef FIXIT_CARRIER //	checked - ajw 9/28/98
-        if (*this != VESSEL_CARRIER) {
+        if (Class->IsCarrier == false) {
 #endif
             if (How_Many() == Class->Max_Passengers()) {
                 LST_Close_Door();
@@ -1493,7 +1484,7 @@ RadioMessageType VesselClass::Receive_Message(RadioClass* from, RadioMessageType
         /*
         **
         */
-        if (Class->Max_Passengers() > 0 && *this == VESSEL_TRANSPORT && How_Many() < Class->Max_Passengers()) {
+        if (Class->Max_Passengers() > 0 && Class->IsLST && How_Many() < Class->Max_Passengers()) {
             DriveClass::Receive_Message(from, message, param);
 
             if (!IsDriving && !IsRotating) {
@@ -1548,7 +1539,7 @@ RadioMessageType VesselClass::Receive_Message(RadioClass* from, RadioMessageType
             return (RADIO_ROGER);
         }
 #ifdef FIXIT_CARRIER //	checked - ajw 9/28/98
-        if (Class->Max_Passengers() > 0 && *this == VESSEL_CARRIER && How_Many() < Class->Max_Passengers()) {
+        if (Class->Max_Passengers() > 0 && Class->IsCarrier && How_Many() < Class->Max_Passengers()) {
             TechnoClass::Receive_Message(from, message, param);
             /*
             **	Establish contact with the object if this building isn't already in contact
@@ -1764,8 +1755,7 @@ int VesselClass::Mission_Unload(void)
     DirType dir;
     CELL cell;
 
-    switch (Class->Type) {
-    case VESSEL_TRANSPORT:
+    if (Class->IsLST) {
         switch (Status) {
         case INITIAL_CHECK:
             dir = Desired_Load_Dir(NULL, cell);
@@ -1880,10 +1870,6 @@ int VesselClass::Mission_Unload(void)
             }
             break;
         }
-        break;
-
-    default:
-        break;
     }
     return (MissionControl[Mission].Normal_Delay());
 }
@@ -2426,7 +2412,7 @@ BulletClass* VesselClass::Fire_At(TARGET target, int which)
     // PG assert(Units.ID(this) == ID);
     assert(IsActive);
 
-    if (*this == VESSEL_CARRIER) {
+    if (Class->IsCarrier) {
         Arm = CarrierLaunchDelay;
         FootClass* passenger = Detach_Object();
         if (passenger != NULL) {

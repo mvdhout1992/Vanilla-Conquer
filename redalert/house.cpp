@@ -1298,7 +1298,7 @@ void HouseClass::AI(void)
                                 //	Do the ping.
                                 for (int index = 0; index < Vessels.Count(); index++) {
                                     VesselClass* sub = Vessels.Ptr(index);
-                                    if (*sub == VESSEL_SS || *sub == VESSEL_MISSILESUB) {
+                                    if (sub->Class->IsSub || sub->Class->IsMissileSub) {
                                         sub->PulseCountDown = 15 * TICKS_PER_SECOND;
                                         sub->Do_Uncloak();
                                     }
@@ -2862,7 +2862,7 @@ bool HouseClass::Place_Special_Blast(SpecialWeaponType id, CELL cell)
             for (int index = 0; index < Vessels.Count(); index++) {
                 VesselClass* sub = Vessels.Ptr(index);
 #ifdef FIXIT_CSII //	checked - ajw 9/28/98
-                if (*sub == VESSEL_SS || *sub == VESSEL_MISSILESUB) {
+                if (sub->Class->IsSub || sub->Class->IsMissileSub) {
 #else
                 if (*sub == VESSEL_SS) {
 #endif
@@ -3035,7 +3035,7 @@ bool HouseClass::Place_Special_Blast(SpecialWeaponType id, CELL cell)
                 if (tech->What_Am_I() == RTTI_UNIT || tech->What_Am_I() == RTTI_INFANTRY ||
 #ifdef FIXIT_CARRIER //	checked - ajw 9/28/98
                     (tech->What_Am_I() == RTTI_VESSEL
-                     && (*((VesselClass*)tech) != VESSEL_TRANSPORT && *((VesselClass*)tech) != VESSEL_CARRIER))) {
+                     && (((VesselClass*)tech)->Class->IsLST == false && ((VesselClass*)tech)->Class->IsCarrier == false))) {
 #else
                     (tech->What_Am_I() == RTTI_VESSEL && *((VesselClass*)tech) != VESSEL_TRANSPORT)) {
 #endif
@@ -6297,11 +6297,11 @@ int HouseClass::AI_Vessel(void)
 
     if (Session.Type == GAME_NORMAL) {
 
-        int counter[VESSEL_COUNT];
+        int counter[VESSEL_COUNT * 20];
         if (Session.Type == GAME_NORMAL) {
             memset(counter, 0x00, sizeof(counter));
         } else {
-            for (VesselType index = VESSEL_FIRST; index < VESSEL_COUNT; index++) {
+            for (VesselType index = VESSEL_FIRST; index < VesselTypes.Count(); index++) {
                 if (Can_Build(&VesselTypeClass::As_Reference(index), Class->House)
                     && VesselTypeClass::As_Reference(index).Level <= (unsigned)Control.TechLevel) {
                     counter[index] = 16;
@@ -6369,8 +6369,8 @@ int HouseClass::AI_Vessel(void)
         */
         int bestval = -1;
         int bestcount = 0;
-        VesselType bestlist[VESSEL_COUNT];
-        for (VesselType utype = VESSEL_FIRST; utype < VESSEL_COUNT; utype++) {
+        VesselType bestlist[VESSEL_COUNT * 20];
+        for (VesselType utype = VESSEL_FIRST; utype < VesselTypes.Count(); utype++) {
             if (counter[utype] > 0 && Can_Build(&VesselTypeClass::As_Reference(utype), Class->House)
                 && VesselTypeClass::As_Reference(utype).Cost_Of() <= Available_Money()) {
                 if (bestval == -1 || bestval < counter[utype]) {
@@ -6422,7 +6422,7 @@ int HouseClass::AI_Infantry(void)
 
     if (Session.Type == GAME_NORMAL) {
         TechnoTypeClass const* techno = 0;
-        int counter[INFANTRY_COUNT];
+        int counter[INFANTRY_COUNT * 20];
         memset(counter, 0x00, sizeof(counter));
 
         /*
@@ -6486,8 +6486,8 @@ int HouseClass::AI_Infantry(void)
         */
         int bestval = -1;
         int bestcount = 0;
-        InfantryType bestlist[INFANTRY_COUNT];
-        for (InfantryType utype = INFANTRY_FIRST; utype < INFANTRY_COUNT; utype++) {
+        InfantryType bestlist[INFANTRY_COUNT * 20];
+        for (InfantryType utype = INFANTRY_FIRST; utype < InfantryTypes.Count(); utype++) {
 
             if (utype != INFANTRY_DOG || !(IScan & INFANTRYF_DOG)) {
                 if (counter[utype] > 0 && Can_Build(&InfantryTypeClass::As_Reference(utype), Class->House)
@@ -6524,10 +6524,10 @@ int HouseClass::AI_Infantry(void)
         {
             InfantryType Type; // Infantry type.
             int Value;         // Relative value assigned.
-        } typetrack[INFANTRY_COUNT];
+        } typetrack[INFANTRY_COUNT * 20];
         int count = 0;
         int total = 0;
-        for (InfantryType index = INFANTRY_FIRST; index < INFANTRY_COUNT; index++) {
+        for (InfantryType index = INFANTRY_FIRST; index < InfantryTypes.Count(); index++) {
             if (Can_Build(&InfantryTypeClass::As_Reference(index), ActLike)
                 && InfantryTypeClass::As_Reference(index).Level <= (unsigned)Control.TechLevel) {
                 typetrack[count].Value = 0;
@@ -8265,16 +8265,16 @@ void HouseClass::Init_Unit_Trackers(void)
 {
     if (Session.Type == GAME_INTERNET || Session.Type == GAME_GLYPHX_MULTIPLAYER) {
         AircraftTotals = new UnitTrackerClass((int)AIRCRAFT_COUNT * 20);
-        InfantryTotals = new UnitTrackerClass((int)INFANTRY_COUNT);
+        InfantryTotals = new UnitTrackerClass((int)INFANTRY_COUNT * 20);
         UnitTotals = new UnitTrackerClass((int)UNIT_COUNT * 50);
         BuildingTotals = new UnitTrackerClass((int)STRUCT_COUNT);
-        VesselTotals = new UnitTrackerClass((int)VESSEL_COUNT);
+        VesselTotals = new UnitTrackerClass((int)VESSEL_COUNT * 20);
 
         DestroyedAircraft = new UnitTrackerClass((int)AIRCRAFT_COUNT * 20);
-        DestroyedInfantry = new UnitTrackerClass((int)INFANTRY_COUNT);
+        DestroyedInfantry = new UnitTrackerClass((int)INFANTRY_COUNT * 20);
         DestroyedUnits = new UnitTrackerClass((int)UNIT_COUNT * 20);
         DestroyedBuildings = new UnitTrackerClass((int)STRUCT_COUNT);
-        DestroyedVessels = new UnitTrackerClass((int)VESSEL_COUNT);
+        DestroyedVessels = new UnitTrackerClass((int)VESSEL_COUNT * 20);
 
         CapturedBuildings = new UnitTrackerClass((int)STRUCT_COUNT);
         TotalCrates = new UnitTrackerClass(CRATE_COUNT);

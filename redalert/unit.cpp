@@ -3669,7 +3669,7 @@ ActionType UnitClass::What_Action(ObjectClass const* object) const
     */
     if (House->Is_Ally(object) && House->IsPlayerControl && object->Is_Techno() && object->What_Am_I() == RTTI_VESSEL) {
 #ifdef FIXIT_CARRIER //	checked - ajw 9/28/98
-        if (*(VesselClass*)object != VESSEL_CARRIER) {
+        if (((VesselClass*)object)->Class->IsCarrier == false) {
 #endif
             switch (((UnitClass*)this)->Transmit_Message(RADIO_CAN_LOAD, (TechnoClass*)object)) {
             case RADIO_ROGER:

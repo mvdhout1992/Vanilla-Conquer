@@ -1575,7 +1575,7 @@ void TeamClass::Took_Damage(FootClass*, ResultType result, TechnoClass* source)
             ** Respond to the attack, but not if we're an aircraft or a LST.
             */
             if (source && !Is_A_Member(source) && Member && Member->What_Am_I() != RTTI_AIRCRAFT
-                && (Member->What_Am_I() != RTTI_VESSEL || *(VesselClass*)((FootClass*)Member) != VESSEL_TRANSPORT)) {
+                && (Member->What_Am_I() != RTTI_VESSEL || ((VesselClass*)((FootClass*)Member))->Class->IsLST == false)) {
                 if (Target != source->As_Target()) {
 
                     /*

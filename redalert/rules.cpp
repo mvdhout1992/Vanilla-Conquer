@@ -1003,8 +1003,9 @@ bool RulesClass::Objects(CCINIClass& ini)
         miss->Read_INI(ini);
     }
 
-        //UnitTypeClass::Debug_Dump_INI();
+    UnitTypeClass::Debug_Dump_INI();
     AircraftTypeClass::Debug_Dump_INI();
+    VesselTypeClass::Debug_Dump_INI();
 
     return (true);
 }

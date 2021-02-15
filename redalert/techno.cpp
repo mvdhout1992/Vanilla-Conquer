@@ -1697,7 +1697,7 @@ bool TechnoClass::Evaluate_Object(ThreatType method,
     ** If we're a sub and the subject is a structure, bail if the structure
     ** is other than a sub pen or shipyard.
     */
-    if (otype == RTTI_BUILDING && What_Am_I() == RTTI_VESSEL && *(VesselClass*)this == VESSEL_SS) {
+    if (otype == RTTI_BUILDING && What_Am_I() == RTTI_VESSEL && ((VesselClass*)this)->Class->IsSub) {
         StructType ostruc = *(BuildingClass*)object;
         if (ostruc != STRUCT_SUB_PEN && ostruc != STRUCT_SHIP_YARD) {
             BEnd(BENCH_EVAL_OBJECT);
@@ -2900,7 +2900,7 @@ bool TechnoClass::Evaluate_Object(ThreatType method,
 #ifdef FIXIT_CSII //	checked - ajw 9/28/98
         if (object != NULL && object->Height == 0
             && (object->What_Am_I() != RTTI_VESSEL
-                || (*((VesselClass*)object) != VESSEL_SS && *((VesselClass*)object) != VESSEL_MISSILESUB))
+                || (((VesselClass*)object)->Class->IsSub == false && ((VesselClass*)object)->Class->IsMissileSub))
             &&
 #else
     if (object != NULL && object->Height == 0
@@ -6062,7 +6062,7 @@ bool TechnoClass::Evaluate_Object(ThreatType method,
                         pip = ((InfantryClass*)object)->Class->Pip;
                     }
 #ifdef FIXIT_CARRIER //	checked - ajw 9/28/98
-                    if (What_Am_I() == RTTI_VESSEL && *(VesselClass*)this == VESSEL_CARRIER) {
+                    if (What_Am_I() == RTTI_VESSEL && ((VesselClass*)this)->Class->IsCarrier) {
                         if (object->What_Am_I() == RTTI_AIRCRAFT) {
                             AircraftClass* heli = (AircraftClass*)object;
                             if (heli->Ammo != heli->Techno_Type_Class()->MaxAmmo) {
