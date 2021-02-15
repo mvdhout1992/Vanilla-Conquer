@@ -1946,12 +1946,12 @@ void InfantryTypeClass::Debug_Dump_INI()
 {
     CCINIClass ini;
 
-    for (int i = 0; i < UnitTypes.Count(); i++) {
+    for (int i = 0; i < InfantryTypes.Count(); i++) {
         std::string entry = std::to_string(i);
-        UnitTypeClass& ut = UnitTypeClass::As_Reference((UnitType)i);
+        InfantryTypeClass& inf = InfantryTypeClass::As_Reference((InfantryType)i);
 
-        ini.Put_String("UnitTypes", entry.c_str(), ut.IniName);
-        ut.Write_INI(ini);
+        ini.Put_String("InfantryTypes", entry.c_str(), inf.IniName);
+        inf.Write_INI(ini);
     }
 
     ini.Save(CCFileClass("debug_infantrytypes.txt"), false);

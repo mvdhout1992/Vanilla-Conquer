@@ -450,11 +450,11 @@ void VesselTypeClass::Debug_Dump_INI()
 {
     CCINIClass ini;
 
-    for (int i = 0; i < AircraftTypes.Count(); i++) {
-        AircraftTypeClass& air = AircraftTypeClass::As_Reference((AircraftType)i);
+    for (int i = 0; i < VesselTypes.Count(); i++) {
+        VesselTypeClass& ves = VesselTypeClass::As_Reference((VesselType)i);
         std::string entry = std::to_string(i);
-        ini.Put_String("VesselTypes", entry.c_str(), air.IniName);
-        air.Write_INI(ini);
+        ini.Put_String("VesselTypes", entry.c_str(), ves.IniName);
+        ves.Write_INI(ini);
     }
 
     ini.Save(CCFileClass("debug_vesseltypes.txt"), false);
