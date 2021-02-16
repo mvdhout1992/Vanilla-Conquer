@@ -530,6 +530,49 @@ TheaterDataType const Theaters[THEATER_COUNT] = {
     {"INTERIOR", "INTERIOR", "INT"},
 };
 
+const char* RTTINames[RTTI_COUNT] = {"Aircraft",
+                                     "AircraftType",
+                                     "Anim",
+                                     "AnimType",
+                                     "Building",
+                                     "BuildingType",
+                                     "Bullet",
+                                     "BulletType",
+                                     "Cell",
+                                     "Factory,"
+                                     "House",
+                                     "HouseType",
+                                     "Infantry",
+                                     "InfantryType",
+                                     "Overlay",
+                                     "OverlayType",
+                                     "Smudge",
+                                     "SmudgeType",
+                                     "Special",
+                                     "Team",
+                                     "TeamType",
+                                     "Template",
+                                     "TemplateType",
+                                     "Terrain",
+                                     "TerrainType",
+                                     "Trigger",
+                                     "TriggerType",
+                                     "Unit",
+                                     "UnitType",
+                                     "Vessel",
+                                     "VesselType"};
+
+const char* FacingNames[FACING_COUNT] = {
+                                    "North",
+                                    "North East",
+                                    "East",
+                                    "South East",
+                                    "South",
+                                    "South West",
+                                    "West",
+                                    "North West",
+};
+
 unsigned char const RemapCiv2[256] = {
     0,   1,   2,   3,   4,   5,   6,   209, 8,   9,   10,  11,  12,  13,  12,  15,  // 0..15
     16,  17,  18,  19,  20,  21,  22,  23,  24,  25,  26,  27,  28,  29,  30,  31,  // 16..31

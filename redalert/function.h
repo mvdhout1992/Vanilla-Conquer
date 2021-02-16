@@ -196,6 +196,8 @@ void List_Copy(short const* source, int len, short* dest);
 int Get_CD_Index(int cd_drive, int timeout);
 int Owner_From_Name(char const* text);
 CrateType Crate_From_Name(char const* name);
+RTTIType RTTI_From_Name(char const* name);
+FacingType Facing_From_Name(char const* name);
 Rect const Shape_Dimensions(void const* shapedata, int shapenum);
 void IPX_Call_Back(void);
 bool Is_Demo(void);

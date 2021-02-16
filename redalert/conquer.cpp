@@ -4615,6 +4615,28 @@ CrateType Crate_From_Name(char const* name)
     return (CRATE_MONEY);
 }
 
+RTTIType RTTI_From_Name(char const* name)
+{
+    if (name != NULL) {
+        for (RTTIType rtti = (RTTIType)0; rtti < RTTI_COUNT; rtti) {
+            if (stricmp(name, RTTINames[rtti]) == 0)
+                return (rtti);
+        }
+    }
+    return RTTI_NONE;
+}
+
+FacingType Facing_From_Name(char const* name) {
+    if (name != NULL) {
+        for (FacingType f = FACING_FIRST; f < FACING_COUNT; f) {
+            if (stricmp(name, FacingNames[f]) == 0)
+                return (f);
+        }
+    }
+
+    return FACING_NONE;
+}
+
 /***********************************************************************************************
  * Owner_From_Name -- Convert an owner name into a bitfield.                                   *
  *                                                                                             *

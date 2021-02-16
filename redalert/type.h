@@ -842,6 +842,8 @@ public:
 
     virtual int Full_Name(void) const;
     virtual bool Read_INI(CCINIClass& ini);
+    virtual bool Write_INI(CCINIClass& ini);
+    static void Debug_Dump_INI();
     bool Flush_For_Placement(CELL cell, HouseClass* house) const;
     virtual int Cost_Of(void) const;
     virtual COORDINATE Coord_Fixup(COORDINATE coord) const;

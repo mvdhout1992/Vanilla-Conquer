@@ -80,7 +80,13 @@ public:
     CrateType Get_CrateType(char const* section, char const* entry, CrateType defvalue) const;
     MissionType Get_MissionType(char const* section, char const* entry, MissionType defvalue) const;
     StructType Get_StructType(char const* section, char const* entry, StructType defvalue) const;
+    COORDINATE Get_Coordinate_From_Pixels(char const* section, char const* entry, COORDINATE defvalue) const;
+    short const* Get_Cell_List(char const* section, char const* entry, short const* defvalue) const;
+    RTTIType Get_RTTIType(char const* section, char const* entry, RTTIType defvalue) const;
+    FacingType Get_FacingType(char const* section, char const* entry, FacingType defvalue) const;
 
+    bool Put_RTTIType(char const* section, char const* entry, RTTIType value);
+    bool Put_FacingType(char const* section, char const* entry, FacingType value);
     bool Put_StructType(char const* section, char const* entry, StructType value);
     bool Put_Buildings(char const* section, char const* entry, long value);
     bool Put_AnimType(char const* section, char const* entry, AnimType value);
@@ -101,8 +107,10 @@ public:
     bool Put_VocType(char const* section, char const* entry, VocType value);
     bool Put_WarheadType(char const* section, char const* entry, WarheadType value);
     bool Put_WeaponType(char const* section, char const* entry, const WeaponType value);
+    bool Put_Cell_List(char const* section, char const* entry, short const* value);
     bool Put_CrateType(char const* section, char const* entry, CrateType value);
     bool Put_MissionType(char const* section, char const* entry, MissionType value);
+    bool Put_Coordinate_Pixels(char const* section, char const* entry, COORDINATE value);
 
     int Get_Unique_ID(void) const;
 

@@ -691,6 +691,153 @@ bool CCINIClass::Put_WeaponType(char const* section, char const* entry, const We
     return (Put_String(section, entry, WeaponTypeClass::As_Pointer(value)->Name()));
 }
 
+short const* CCINIClass::Get_Cell_List(char const* section, char const* entry, short const* defvalue) const
+{
+    char buffer[512];
+    char str[512];
+
+    int number = 0;
+    std::string foundation = entry + std::string(".") + std::to_string(number);
+    DynamicVectorClass<short> dvc;
+
+    while (Get_String(section, foundation.c_str(), "", buffer, sizeof(buffer))) {
+        number++;
+        foundation = entry + std::string(".") + std::to_string(number);
+
+        char* t = buffer;
+        char* d = str;
+
+        // Remove spaces
+        do
+            while (isspace(*t))
+                t++;
+        while (*d++ = *t++);
+
+        int x = 0, y = 0;
+        switch (sscanf_s(str, "%d,%d", &x, &y)) {
+        case 0:
+            x = 0;
+            // fallthrough
+        case 1:
+            y = 0;
+        }
+
+        short cell = x + (y * MAP_CELL_W);
+        dvc.Add(cell);
+    }
+
+    if (dvc.Count() > 0) {
+        short* cells = new short[dvc.Count() + 1];
+        for (int i = 0; i < dvc.Count(); i++) {
+            cells[i] = dvc[i];
+        }
+        cells[dvc.Count() + 1] = REFRESH_EOL;
+        return cells;
+    }
+    else if (defvalue != NULL) {
+        // Find the size of the list
+
+        int size = 1; // one entry extra for REFRESH_EOL
+        short const* p = defvalue;
+        while (*p != REFRESH_EOL) {
+            size++;
+            p++;
+        }
+
+        short* cells = new short[size];
+        memcpy(cells, defvalue, size);
+        return (defvalue);
+    }
+}
+
+bool CCINIClass::Put_Cell_List(char const* section, char const* entry, short const* value)
+{
+    int number = 0;
+    std::string foundation = entry + std::string(".") + std::to_string(number);
+
+    while (*value != REFRESH_EOL) {
+        std::string entry = std::string(entry) + std::string(".") + std::to_string(number);
+        short cell = *value;
+        int x = cell % MAP_CELL_W;
+        int y = cell / MAP_CELL_W;
+        std::string str = std::to_string(x) + std::string(",") + std::to_string(y);
+
+        if (Put_String(section, entry.c_str(), str) == false) {
+            return false;
+        }
+
+        number++;
+        value++;
+    }
+    return true;
+}
+
+
+RTTIType CCINIClass::Get_RTTIType(char const* section, char const* entry, RTTIType defvalue) const
+{
+    char buf[512];
+    if (Get_String(section, entry, "<none>", buf, ARRAY_SIZE(buf))) {
+        return RTTI_From_Name(buf);
+    }
+
+    return defvalue;
+}
+
+bool CCINIClass::Put_RTTIType(char const* section, char const* entry, RTTIType value){
+
+    if (value == RTTI_NONE || value < 0 || value >= RTTI_COUNT) {
+        return Put_String(section, entry, "<none>");
+    }
+
+    return Put_String(section, entry, RTTINames[value]);
+}
+
+FacingType CCINIClass::Get_FacingType(char const* section, char const* entry, FacingType defvalue) const
+{
+    char buf[512];
+    if (Get_String(section, entry, "<none>", buf, ARRAY_SIZE(buf))) {
+        return Facing_From_Name(buf);
+    }
+
+    return defvalue;
+}
+
+bool CCINIClass::Put_FacingType(char const* section, char const* entry, FacingType value)
+{
+    if (value == FACING_NONE || value < 0 || value >= FACING_COUNT) {
+        return Put_String(section, entry, "<none>");
+    }
+
+    return Put_String(section, entry, FacingNames[value]);
+}
+
+
+COORDINATE CCINIClass::Get_Coordinate_From_Pixels(char const* section, char const* entry, COORDINATE defvalue) const
+{
+    char buf[512];
+
+    if (Get_String(section, entry, "<none>", buf, ARRAY_SIZE(buf))) {
+        int x, y;
+        if (sscanf(buf, "%d, %d", x, y) == 2) {
+            return XYP_COORD(x, y);
+        }
+    }
+
+   return defvalue;
+}
+
+bool CCINIClass::Put_Coordinate_Pixels(char const* section, char const* entry, COORDINATE value)
+{
+    int x = Coord_X(value);
+    int y = Coord_Y(value);
+
+    std::string str = std::to_string(x) + std::string(",") + std::to_string(y);
+
+    return Put_String(section, entry, str.c_str());
+}
+
+
+
 /***********************************************************************************************
  * CCINIClass::Get_WarheadType -- Fetch the warhead type from the INI database.                *
  *                                                                                             *

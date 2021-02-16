@@ -3647,6 +3647,20 @@ bool BuildingTypeClass::Read_INI(CCINIClass& ini)
         IsUnsellable = ini.Get_Bool(Name(), "Unsellable", IsUnsellable);
         IsBase = ini.Get_Bool(Name(), "BaseNormal", IsBase);
         Power = ini.Get_Int(Name(), "Power", (Power > 0) ? Power : -Drain);
+
+        // Todo deallocate this at start of init_heap();
+        OccupyList = ini.Get_Cell_List(Name(), "Foundation", (const short*)OccupyList);
+        OverlapList = ini.Get_Cell_List(Name(), "OverlapList", (short const*)OverlapList);
+
+        IsFake = ini.Get_Bool(Name(), "IsFake", IsBase);
+        IsWall = ini.Get_Bool(Name(), "IsWall", IsWall);
+        IsSimpleDamage = ini.Get_Bool(Name(), "BaseNormal", IsSimpleDamage);
+        IsRegulated = ini.Get_Bool(Name(), "IsRegulated", IsRegulated);
+        FoundationFace = ini.Get_FacingType(Name(), "FoundationFace", FoundationFace);
+        ToBuild = ini.Get_RTTIType(Name(), "ToBuild", ToBuild);
+        ExitCoordinate = ini.Get_Bool(Name(), "BaseNormal", IsBase);
+        ExitList = ini.Get_Cell_List(Name(), "ExitList", ExitList);
+
         if (Power < 0) {
             Drain = -Power;
             Power = 0;
@@ -3655,6 +3669,50 @@ bool BuildingTypeClass::Read_INI(CCINIClass& ini)
     }
     return (false);
 }
+
+bool BuildingTypeClass::Write_INI(CCINIClass& ini)
+{
+    if (TechnoTypeClass::Write_INI(ini)) {
+        ini.Put_Bool(Name(), "WaterBound", Speed);
+        ini.Put_Int(Name(), "Storage", Capacity);
+        ini.Put_Int(Name(), "Adjacent", Adjacent);
+        ini.Put_Bool(Name(), "Capturable", IsCaptureable);
+        ini.Put_Bool(Name(), "Powered", IsPowered);
+        ini.Put_Bool(Name(), "Bib", IsBibbed);
+        ini.Put_Bool(Name(), "Unsellable", IsUnsellable);
+        ini.Put_Bool(Name(), "BaseNormal", IsBase);
+        ini.Put_Int(Name(), "Power", (Power > 0) ? Power : -Drain);
+    
+        ini.Put_Cell_List(Name(), "Foundation", (const short*)OccupyList);
+        ini.Put_Cell_List(Name(), "OverlapList", (short const*)OverlapList);
+
+        ini.Put_Bool(Name(), "IsFake", IsBase);
+        ini.Put_Bool(Name(), "IsWall", IsWall);
+        ini.Put_Bool(Name(), "BaseNormal", IsSimpleDamage);
+        ini.Put_Bool(Name(), "IsRegulated", IsRegulated);
+        ini.Put_FacingType(Name(), "FoundationFace", FoundationFace);
+        ini.Put_RTTIType(Name(), "ToBuild", ToBuild);
+        ini.Put_Bool(Name(), "BaseNormal", IsBase);
+        ini.Put_Cell_List(Name(), "ExitList", ExitList);
+
+        return (true);
+    }
+    return (false);
+}
+
+void BuildingTypeClass::Debug_Dump_INI(){
+    CCINIClass ini;
+
+    for (int i = 0; i < BuildingTypes.Count(); i++) {
+        BuildingTypeClass& b = BuildingTypeClass::As_Reference((StructType)i);
+        std::string entry = std::to_string(i);
+        ini.Put_String("BuildingTypes", entry.c_str(), b.IniName);
+        b.Write_INI(ini);
+    }
+
+    ini.Save(CCFileClass("debug_buildingtypes.txt"), false);
+}
+
 
 /***********************************************************************************************
  * BuildingTypeClass::Coord_Fixup -- Adjusts coordinate to be legal for assignment.            *
