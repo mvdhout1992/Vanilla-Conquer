@@ -530,7 +530,8 @@ TheaterDataType const Theaters[THEATER_COUNT] = {
     {"INTERIOR", "INTERIOR", "INT"},
 };
 
-const char* RTTINames[RTTI_COUNT] = {"Aircraft",
+const char* RTTINames[RTTI_COUNT] = {"<none>",
+                                    "Aircraft",
                                      "AircraftType",
                                      "Anim",
                                      "AnimType",

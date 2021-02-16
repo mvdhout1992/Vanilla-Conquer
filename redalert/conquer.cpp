@@ -4617,8 +4617,8 @@ CrateType Crate_From_Name(char const* name)
 
 RTTIType RTTI_From_Name(char const* name)
 {
-    if (name != NULL) {
-        for (RTTIType rtti = (RTTIType)0; rtti < RTTI_COUNT; rtti) {
+    if (name != NULL && !(stricmp(name, "<none>") == 0)) {
+        for (RTTIType rtti = (RTTIType)0; rtti < RTTI_COUNT; rtti++) {
             if (stricmp(name, RTTINames[rtti]) == 0)
                 return (rtti);
         }
@@ -4628,7 +4628,7 @@ RTTIType RTTI_From_Name(char const* name)
 
 FacingType Facing_From_Name(char const* name) {
     if (name != NULL) {
-        for (FacingType f = FACING_FIRST; f < FACING_COUNT; f) {
+        for (FacingType f = FACING_FIRST; f < FACING_COUNT; f++) {
             if (stricmp(name, FacingNames[f]) == 0)
                 return (f);
         }

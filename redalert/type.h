@@ -830,7 +830,7 @@ public:
     };
     static void operator delete(void* ptr);
 
-    static void Init_Heap(void);
+    static void Init_Heap(CCINIClass& ini);
     static BuildingTypeClass& As_Reference(StructType type);
     static StructType From_Name(char const* name);
     static void Init(TheaterType theater);

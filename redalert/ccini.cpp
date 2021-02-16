@@ -697,7 +697,7 @@ short const* CCINIClass::Get_Cell_List(char const* section, char const* entry, s
     char str[512];
 
     int number = 0;
-    std::string foundation = entry + std::string(".") + std::to_string(number);
+    std::string foundation = std::string(entry) + std::string(".") + std::to_string(number);
     DynamicVectorClass<short> dvc;
 
     while (Get_String(section, foundation.c_str(), "", buffer, sizeof(buffer))) {
@@ -748,21 +748,26 @@ short const* CCINIClass::Get_Cell_List(char const* section, char const* entry, s
         memcpy(cells, defvalue, size);
         return (defvalue);
     }
+
+    return NULL;
 }
 
 bool CCINIClass::Put_Cell_List(char const* section, char const* entry, short const* value)
 {
     int number = 0;
-    std::string foundation = entry + std::string(".") + std::to_string(number);
+    std::string foundation = std::string(entry) + std::string(".") + std::to_string(number);
+
+    if (*value == NULL || *value == REFRESH_EOL) {
+        return Put_String(section, foundation.c_str(), "<none>");
+    }
 
     while (*value != REFRESH_EOL) {
-        std::string entry = std::string(entry) + std::string(".") + std::to_string(number);
         short cell = *value;
         int x = cell % MAP_CELL_W;
         int y = cell / MAP_CELL_W;
         std::string str = std::to_string(x) + std::string(",") + std::to_string(y);
 
-        if (Put_String(section, entry.c_str(), str) == false) {
+        if (Put_String(section, foundation.c_str(), str) == false) {
             return false;
         }
 
@@ -776,7 +781,7 @@ bool CCINIClass::Put_Cell_List(char const* section, char const* entry, short con
 RTTIType CCINIClass::Get_RTTIType(char const* section, char const* entry, RTTIType defvalue) const
 {
     char buf[512];
-    if (Get_String(section, entry, "<none>", buf, ARRAY_SIZE(buf))) {
+    if (Get_String(section, entry, "", buf, ARRAY_SIZE(buf))) {
         return RTTI_From_Name(buf);
     }
 
@@ -795,7 +800,7 @@ bool CCINIClass::Put_RTTIType(char const* section, char const* entry, RTTIType v
 FacingType CCINIClass::Get_FacingType(char const* section, char const* entry, FacingType defvalue) const
 {
     char buf[512];
-    if (Get_String(section, entry, "<none>", buf, ARRAY_SIZE(buf))) {
+    if (Get_String(section, entry, "<none>", NULL, ARRAY_SIZE(buf))) {
         return Facing_From_Name(buf);
     }
 
@@ -817,7 +822,8 @@ COORDINATE CCINIClass::Get_Coordinate_From_Pixels(char const* section, char cons
     char buf[512];
 
     if (Get_String(section, entry, "<none>", buf, ARRAY_SIZE(buf))) {
-        int x, y;
+        int x = -1;
+        int y = -1;
         if (sscanf(buf, "%d, %d", x, y) == 2) {
             return XYP_COORD(x, y);
         }

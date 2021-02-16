@@ -2840,103 +2840,149 @@ void BuildingTypeClass::operator delete(void* ptr)
  * HISTORY:                                                                                    *
  *   07/06/1996 JLB : Created.                                                                 *
  *=============================================================================================*/
-void BuildingTypeClass::Init_Heap(void)
+void BuildingTypeClass::Init_Heap(CCINIClass& ini)
 {
-    /*
-    **	These building type class objects must be allocated in the exact order that they
-    **	are specified in the StructType enumeration. This is necessary because the heap
-    **	allocation block index serves double duty as the type number index.
-    */
-    new BuildingTypeClass(ClassAdvancedTech);  // STRUCT_ADVANCED_TECH
-    new BuildingTypeClass(ClassIronCurtain);   // STRUCT_IRON_CURTAIN
-    new BuildingTypeClass(ClassWeapon);        //	STRUCT_WEAP
-    new BuildingTypeClass(ClassChronosphere);  // STRUCT_CHRONOSPHERE
-    new BuildingTypeClass(ClassPillbox);       //	STRUCT_PILLBOX
-    new BuildingTypeClass(ClassCamoPillbox);   //	STRUCT_CAMOPILLBOX
-    new BuildingTypeClass(ClassCommand);       //	STRUCT_RADAR
-    new BuildingTypeClass(ClassGapGenerator);  // STRUCT_GAP
-    new BuildingTypeClass(ClassTurret);        //	STRUCT_TURRET
-    new BuildingTypeClass(ClassAAGun);         // STRUCT_AAGUN
-    new BuildingTypeClass(ClassFlameTurret);   //	STRUCT_FLAME_TURRET
-    new BuildingTypeClass(ClassConst);         //	STRUCT_CONST
-    new BuildingTypeClass(ClassRefinery);      //	STRUCT_REFINERY
-    new BuildingTypeClass(ClassStorage);       //	STRUCT_STORAGE
-    new BuildingTypeClass(ClassHelipad);       //	STRUCT_HELIPAD
-    new BuildingTypeClass(ClassSAM);           //	STRUCT_SAM
-    new BuildingTypeClass(ClassAirStrip);      //	STRUCT_AIRSTRIP
-    new BuildingTypeClass(ClassPower);         //	STRUCT_POWER
-    new BuildingTypeClass(ClassAdvancedPower); //	STRUCT_ADVANCED_POWER
-    new BuildingTypeClass(ClassSovietTech);    // STRUCT_SOVIET_TECH
-    new BuildingTypeClass(ClassHospital);      //	STRUCT_HOSPITAL
-    new BuildingTypeClass(ClassBarracks);      //	STRUCT_BARRACKS
-    new BuildingTypeClass(ClassTent);          //	STRUCT_TENT
-    new BuildingTypeClass(ClassKennel);        // STRUCT_KENNEL
-    new BuildingTypeClass(ClassRepair);        //	STRUCT_REPAIR
-    new BuildingTypeClass(ClassBioLab);        //	STRUCT_BIO_LAB
-    new BuildingTypeClass(ClassMission);       //	STRUCT_MISSION
-    new BuildingTypeClass(ClassShipYard);      //	STRUCT_SHIP_YARD
-    new BuildingTypeClass(ClassSubPen);        //	STRUCT_SUB_PEN
-    new BuildingTypeClass(ClassMissileSilo);   // STRUCT_MSLO
-    new BuildingTypeClass(ClassForwardCom);    // STRUCT_FORWARD_COM
-    new BuildingTypeClass(ClassTesla);         //	STRUCT_TESLA
-    new BuildingTypeClass(ClassFakeWeapon);    // STRUCT_FAKEWEAP
-    new BuildingTypeClass(ClassFakeConst);     // STRUCT_FAKECONST
-    new BuildingTypeClass(ClassFakeShipYard);  // STRUCT_FAKE_YARD
-    new BuildingTypeClass(ClassFakeSubPen);    // STRUCT_FAKE_PEN
-    new BuildingTypeClass(ClassFakeCommand);   // STRUCT_FAKE_RADAR
-    new BuildingTypeClass(Sandbag);            // STRUCT_SANDBAG_WALL
-    new BuildingTypeClass(Cyclone);            //	STRUCT_CYCLONE_WALL
-    new BuildingTypeClass(Brick);              // STRUCT_BRICK_WALL
-    new BuildingTypeClass(Barbwire);           // STRUCT_BARBWIRE_WALL
-    new BuildingTypeClass(Wood);               //	STRUCT_WOOD_WALL
-    new BuildingTypeClass(Fence);              // STRUCT_FENCE
-    new BuildingTypeClass(ClassAVMine);        // STRUCT_AVMINE
-    new BuildingTypeClass(ClassAPMine);        // STRUCT_APMINE
-    new BuildingTypeClass(ClassV01);           //	STRUCT_V1
-    new BuildingTypeClass(ClassV02);           //	STRUCT_V2
-    new BuildingTypeClass(ClassV03);           //	STRUCT_V3
-    new BuildingTypeClass(ClassV04);           //	STRUCT_V4
-    new BuildingTypeClass(ClassV05);           //	STRUCT_V5
-    new BuildingTypeClass(ClassV06);           //	STRUCT_V6
-    new BuildingTypeClass(ClassV07);           //	STRUCT_V7
-    new BuildingTypeClass(ClassV08);           //	STRUCT_V8
-    new BuildingTypeClass(ClassV09);           //	STRUCT_V9
-    new BuildingTypeClass(ClassV10);           //	STRUCT_V10
-    new BuildingTypeClass(ClassV11);           //	STRUCT_V11
-    new BuildingTypeClass(ClassV12);           //	STRUCT_V12
-    new BuildingTypeClass(ClassV13);           //	STRUCT_V13
-    new BuildingTypeClass(ClassV14);           //	STRUCT_V14
-    new BuildingTypeClass(ClassV15);           //	STRUCT_V15
-    new BuildingTypeClass(ClassV16);           //	STRUCT_V16
-    new BuildingTypeClass(ClassV17);           //	STRUCT_V17
-    new BuildingTypeClass(ClassV18);           //	STRUCT_V18
-    new BuildingTypeClass(ClassV19);           //	STRUCT_PUMP
-    new BuildingTypeClass(ClassV20);           //	STRUCT_V20
-    new BuildingTypeClass(ClassV21);           //	STRUCT_V21
-    new BuildingTypeClass(ClassV22);           //	STRUCT_V22
-    new BuildingTypeClass(ClassV23);           //	STRUCT_V23
-    new BuildingTypeClass(ClassV24);           //	STRUCT_V24
-    new BuildingTypeClass(ClassV25);           //	STRUCT_V25
-    new BuildingTypeClass(ClassV26);           //	STRUCT_V26
-    new BuildingTypeClass(ClassV27);           //	STRUCT_V27
-    new BuildingTypeClass(ClassV28);           //	STRUCT_V28
-    new BuildingTypeClass(ClassV29);           //	STRUCT_V29
-    new BuildingTypeClass(ClassV30);           //	STRUCT_V30
-    new BuildingTypeClass(ClassV31);           //	STRUCT_V31
-    new BuildingTypeClass(ClassV32);           //	STRUCT_V32
-    new BuildingTypeClass(ClassV33);           //	STRUCT_V33
-    new BuildingTypeClass(ClassV34);           //	STRUCT_V34
-    new BuildingTypeClass(ClassV35);           //	STRUCT_V35
-    new BuildingTypeClass(ClassV36);           //	STRUCT_V36
-    new BuildingTypeClass(ClassV37);           //	STRUCT_V37
-    new BuildingTypeClass(ClassBarrel);        // STRUCT_BARREL
-    new BuildingTypeClass(ClassBarrel3);       // STRUCT_BARREL3
+    // Read_INI() calls Get_Cell_List() which allocates a list of short
+    // even for hardcoded BuildingTypes as it change the pointer value even for them
+    // so when re-initing this list will be filled
+    for (int i = STRUCT_FIRST; i < BuildingTypes.Count(); i++) {
+        BuildingTypeClass const& b = As_Reference((StructType)i);
 
-#ifdef FIXIT_ANTS
-    new BuildingTypeClass(ClassQueen);  // STRUCT_QUEEN
-    new BuildingTypeClass(ClassLarva1); // STRUCT_LARVA1
-    new BuildingTypeClass(ClassLarva2); // STRUCT_LARVA2
-#endif
+        delete b.OccupyList;
+        delete b.OverlapList;
+    }
+
+    int entries = ini.Entry_Count("BuildingTypes");
+    bool usehardcoded = ini.Get_Bool("General", "UseHardCodedBuildings", true);
+
+    // Set_Heap() also clears the existing list, if any (when calling ::Init_Heap()
+    // multiple times
+    BuildingTypes.Set_Heap((usehardcoded * STRUCT_COUNT) + entries);
+
+    if (usehardcoded) {
+        new BuildingTypeClass(ClassAdvancedTech);  // STRUCT_ADVANCED_TECH
+        new BuildingTypeClass(ClassIronCurtain);   // STRUCT_IRON_CURTAIN
+        new BuildingTypeClass(ClassWeapon);        //	STRUCT_WEAP
+        new BuildingTypeClass(ClassChronosphere);  // STRUCT_CHRONOSPHERE
+        new BuildingTypeClass(ClassPillbox);       //	STRUCT_PILLBOX
+        new BuildingTypeClass(ClassCamoPillbox);   //	STRUCT_CAMOPILLBOX
+        new BuildingTypeClass(ClassCommand);       //	STRUCT_RADAR
+        new BuildingTypeClass(ClassGapGenerator);  // STRUCT_GAP
+        new BuildingTypeClass(ClassTurret);        //	STRUCT_TURRET
+        new BuildingTypeClass(ClassAAGun);         // STRUCT_AAGUN
+        new BuildingTypeClass(ClassFlameTurret);   //	STRUCT_FLAME_TURRET
+        new BuildingTypeClass(ClassConst);         //	STRUCT_CONST
+        new BuildingTypeClass(ClassRefinery);      //	STRUCT_REFINERY
+        new BuildingTypeClass(ClassStorage);       //	STRUCT_STORAGE
+        new BuildingTypeClass(ClassHelipad);       //	STRUCT_HELIPAD
+        new BuildingTypeClass(ClassSAM);           //	STRUCT_SAM
+        new BuildingTypeClass(ClassAirStrip);      //	STRUCT_AIRSTRIP
+        new BuildingTypeClass(ClassPower);         //	STRUCT_POWER
+        new BuildingTypeClass(ClassAdvancedPower); //	STRUCT_ADVANCED_POWER
+        new BuildingTypeClass(ClassSovietTech);    // STRUCT_SOVIET_TECH
+        new BuildingTypeClass(ClassHospital);      //	STRUCT_HOSPITAL
+        new BuildingTypeClass(ClassBarracks);      //	STRUCT_BARRACKS
+        new BuildingTypeClass(ClassTent);          //	STRUCT_TENT
+        new BuildingTypeClass(ClassKennel);        // STRUCT_KENNEL
+        new BuildingTypeClass(ClassRepair);        //	STRUCT_REPAIR
+        new BuildingTypeClass(ClassBioLab);        //	STRUCT_BIO_LAB
+        new BuildingTypeClass(ClassMission);       //	STRUCT_MISSION
+        new BuildingTypeClass(ClassShipYard);      //	STRUCT_SHIP_YARD
+        new BuildingTypeClass(ClassSubPen);        //	STRUCT_SUB_PEN
+        new BuildingTypeClass(ClassMissileSilo);   // STRUCT_MSLO
+        new BuildingTypeClass(ClassForwardCom);    // STRUCT_FORWARD_COM
+        new BuildingTypeClass(ClassTesla);         //	STRUCT_TESLA
+        new BuildingTypeClass(ClassFakeWeapon);    // STRUCT_FAKEWEAP
+        new BuildingTypeClass(ClassFakeConst);     // STRUCT_FAKECONST
+        new BuildingTypeClass(ClassFakeShipYard);  // STRUCT_FAKE_YARD
+        new BuildingTypeClass(ClassFakeSubPen);    // STRUCT_FAKE_PEN
+        new BuildingTypeClass(ClassFakeCommand);   // STRUCT_FAKE_RADAR
+        new BuildingTypeClass(Sandbag);            // STRUCT_SANDBAG_WALL
+        new BuildingTypeClass(Cyclone);            //	STRUCT_CYCLONE_WALL
+        new BuildingTypeClass(Brick);              // STRUCT_BRICK_WALL
+        new BuildingTypeClass(Barbwire);           // STRUCT_BARBWIRE_WALL
+        new BuildingTypeClass(Wood);               //	STRUCT_WOOD_WALL
+        new BuildingTypeClass(Fence);              // STRUCT_FENCE
+        new BuildingTypeClass(ClassAVMine);        // STRUCT_AVMINE
+        new BuildingTypeClass(ClassAPMine);        // STRUCT_APMINE
+        new BuildingTypeClass(ClassV01);           //	STRUCT_V1
+        new BuildingTypeClass(ClassV02);           //	STRUCT_V2
+        new BuildingTypeClass(ClassV03);           //	STRUCT_V3
+        new BuildingTypeClass(ClassV04);           //	STRUCT_V4
+        new BuildingTypeClass(ClassV05);           //	STRUCT_V5
+        new BuildingTypeClass(ClassV06);           //	STRUCT_V6
+        new BuildingTypeClass(ClassV07);           //	STRUCT_V7
+        new BuildingTypeClass(ClassV08);           //	STRUCT_V8
+        new BuildingTypeClass(ClassV09);           //	STRUCT_V9
+        new BuildingTypeClass(ClassV10);           //	STRUCT_V10
+        new BuildingTypeClass(ClassV11);           //	STRUCT_V11
+        new BuildingTypeClass(ClassV12);           //	STRUCT_V12
+        new BuildingTypeClass(ClassV13);           //	STRUCT_V13
+        new BuildingTypeClass(ClassV14);           //	STRUCT_V14
+        new BuildingTypeClass(ClassV15);           //	STRUCT_V15
+        new BuildingTypeClass(ClassV16);           //	STRUCT_V16
+        new BuildingTypeClass(ClassV17);           //	STRUCT_V17
+        new BuildingTypeClass(ClassV18);           //	STRUCT_V18
+        new BuildingTypeClass(ClassV19);           //	STRUCT_PUMP
+        new BuildingTypeClass(ClassV20);           //	STRUCT_V20
+        new BuildingTypeClass(ClassV21);           //	STRUCT_V21
+        new BuildingTypeClass(ClassV22);           //	STRUCT_V22
+        new BuildingTypeClass(ClassV23);           //	STRUCT_V23
+        new BuildingTypeClass(ClassV24);           //	STRUCT_V24
+        new BuildingTypeClass(ClassV25);           //	STRUCT_V25
+        new BuildingTypeClass(ClassV26);           //	STRUCT_V26
+        new BuildingTypeClass(ClassV27);           //	STRUCT_V27
+        new BuildingTypeClass(ClassV28);           //	STRUCT_V28
+        new BuildingTypeClass(ClassV29);           //	STRUCT_V29
+        new BuildingTypeClass(ClassV30);           //	STRUCT_V30
+        new BuildingTypeClass(ClassV31);           //	STRUCT_V31
+        new BuildingTypeClass(ClassV32);           //	STRUCT_V32
+        new BuildingTypeClass(ClassV33);           //	STRUCT_V33
+        new BuildingTypeClass(ClassV34);           //	STRUCT_V34
+        new BuildingTypeClass(ClassV35);           //	STRUCT_V35
+        new BuildingTypeClass(ClassV36);           //	STRUCT_V36
+        new BuildingTypeClass(ClassV37);           //	STRUCT_V37
+        new BuildingTypeClass(ClassBarrel);        // STRUCT_BARREL
+        new BuildingTypeClass(ClassBarrel3);       // STRUCT_BARREL3
+        new BuildingTypeClass(ClassQueen);         // STRUCT_QUEEN
+        new BuildingTypeClass(ClassLarva1);        // STRUCT_LARVA1
+        new BuildingTypeClass(ClassLarva2);        // STRUCT_LARVA2
+    }
+
+    for (int i = 0; i < entries; i++) {
+        int id = (usehardcoded * STRUCT_COUNT) + i;
+        std::string entry = ini.Get_Entry("BuildingTypes", i);
+        std::string building = ini.Get_String("BuildingTypes", entry.c_str(), "<none>");
+
+        new BuildingTypeClass((StructType)id,
+                              5,                    // NAME:			Short name of the structure.
+                              building.c_str(),                // NAME:			Short name of the structure.
+                              FACING_NONE,           // Foundation direction from center of building.
+                              XYP_COORD(0, 0),       // Exit point for produced units.
+                              REMAP_ALTERNATE,       // Sidebar remap logic.
+                              0x0000,                //	Vertical offset.
+                              0x0000,                // Primary weapon offset along turret centerline.
+                              0x0000,                // Primary weapon lateral offset along turret centerline.
+                              false,                 // Is this building a fake (decoy?)
+                              true,                  // Animation rate is regulated for constant speed?
+                              false,                 // Always use the given name for the building?
+                              false,                 // Is this a wall type structure?
+                              false,                 // Simple (one frame) damage imagery?
+                              false,                 // Is it invisible to radar?
+                              true,                  // Can the player select this?
+                              true,                  // Is this a legal target for attack or move?
+                              false,                 // Is this an insignificant building?
+                              false,                 // Theater specific graphic image?
+                              false,                 // Does it have a rotating turret?
+                              true,                  // Can the building be color remapped to indicate owner?
+                              RTTI_NONE,             // The object type produced at this factory.
+                              DIR_N,                 // Starting idle frame to match construction.
+                              BSIZE_22,              // SIZE:			Building size.
+                              NULL,                  // Preferred exit cell list.
+                              (short const*)ComList, // OCCUPYLIST:	List of active foundation squares.
+                              (short const*)NULL     // OVERLAPLIST:List of overlap cell offset.
+        );
+    }
 }
 
 /***********************************************************************************************
@@ -3002,7 +3048,7 @@ void BuildingTypeClass::One_Time(void)
                   {STRUCT_TESLA, BSTATE_ACTIVE, 0, 10, 2},
                   {STRUCT_AIRSTRIP, BSTATE_IDLE, 0, 8, 3}};
 
-    for (int sindex = STRUCT_FIRST; sindex < STRUCT_COUNT; sindex++) {
+    for (int sindex = STRUCT_FIRST; sindex < BuildingTypes.Count(); sindex++) {
         char fullname[_MAX_FNAME + _MAX_EXT];
         char buffer[_MAX_FNAME];
         BuildingTypeClass const& building = As_Reference((StructType)sindex);
@@ -3011,7 +3057,7 @@ void BuildingTypeClass::One_Time(void)
         */
         if (building.Level != -1) {
             //		if (building.IsBuildable) {
-            sprintf(buffer, "%sICON", building.Graphic_Name());
+            sprintf(buffer, "%sICON", building.Cameo_Name());
 
             if (building.IsFake) {
                 buffer[3] = 'F';
@@ -3252,7 +3298,7 @@ void BuildingTypeClass::Init(TheaterType theater)
     if (theater != LastTheater) {
         char fullname[_MAX_FNAME + _MAX_EXT];
 
-        for (int sindex = STRUCT_FIRST; sindex < STRUCT_COUNT; sindex++) {
+        for (int sindex = STRUCT_FIRST; sindex < BuildingTypes.Count(); sindex++) {
             BuildingTypeClass const* classptr = &As_Reference((StructType)sindex);
 
             if (classptr->IsTheater) {
@@ -3652,13 +3698,13 @@ bool BuildingTypeClass::Read_INI(CCINIClass& ini)
         OccupyList = ini.Get_Cell_List(Name(), "Foundation", (const short*)OccupyList);
         OverlapList = ini.Get_Cell_List(Name(), "OverlapList", (short const*)OverlapList);
 
-        IsFake = ini.Get_Bool(Name(), "IsFake", IsBase);
+        IsFake = ini.Get_Bool(Name(), "IsFake", IsFake);
         IsWall = ini.Get_Bool(Name(), "IsWall", IsWall);
-        IsSimpleDamage = ini.Get_Bool(Name(), "BaseNormal", IsSimpleDamage);
+        IsSimpleDamage = ini.Get_Bool(Name(), "IsSimpleDamage", IsSimpleDamage);
         IsRegulated = ini.Get_Bool(Name(), "IsRegulated", IsRegulated);
         FoundationFace = ini.Get_FacingType(Name(), "FoundationFace", FoundationFace);
         ToBuild = ini.Get_RTTIType(Name(), "ToBuild", ToBuild);
-        ExitCoordinate = ini.Get_Bool(Name(), "BaseNormal", IsBase);
+        ExitCoordinate = ini.Get_Coordinate_From_Pixels(Name(), "ExitCoordinate", ExitCoordinate);
         ExitList = ini.Get_Cell_List(Name(), "ExitList", ExitList);
 
         if (Power < 0) {

@@ -236,7 +236,7 @@ bool Init_Game(int, char*[])
     SmudgeTypes.Set_Heap(SMUDGE_COUNT);
 
     HouseTypeClass::Init_Heap();
-    BuildingTypeClass::Init_Heap();
+    BuildingTypeClass::Init_Heap(RuleINI);
     AircraftTypeClass::Init_Heap(RuleINI);
     InfantryTypeClass::Init_Heap(RuleINI);
     BulletTypeClass::Init_Heap();
