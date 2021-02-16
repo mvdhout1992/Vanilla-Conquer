@@ -1549,6 +1549,10 @@ int DisplayClass::Cell_Shadow(CELL cell) const
  *=============================================================================================*/
 bool DisplayClass::Map_Cell(CELL cell, HouseClass* house, bool check_radar_spied, bool and_for_allies)
 {
+    if (house->ID != HOUSE_GREECE) {
+        DBG_LOG("SIGHT BY NON-GREECE HOUSE: HOUSE %s", house->Name());
+    }
+
     // OK for house not to be PlayerPtr. ST - 8/6/2019 10:05AM
     // if (house != PlayerPtr || !In_Radar(cell)) return(false);
     if (house == NULL || !In_Radar(cell))

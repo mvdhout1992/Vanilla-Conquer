@@ -535,6 +535,12 @@ void Keyboard_Process(KeyNumType& input)
     if (input & WWKEY_CTRL_BIT)
         action = 2;
 
+
+    if (plain == KN_F4) {
+            Debug_Unshroud = (Debug_Unshroud == false);
+            Map.Flag_To_Redraw(true);
+    }
+
     /*
     **	If the "N" key is pressed, then select the next object.
     */

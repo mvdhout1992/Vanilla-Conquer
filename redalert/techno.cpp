@@ -3428,7 +3428,14 @@ bool TechnoClass::Evaluate_Object(ThreatType method,
             }
 
 #else
-
+            // This code is needed, reveals undiscovered single player AI units shooting thru shroud
+            // PG forgot to include this when updating for client<->server
+            if ((!IsOwnedByPlayer && !IsDiscoveredByPlayer)
+                || (!Map[Center_Coord()].IsMapped && (What_Am_I() != RTTI_AIRCRAFT || !IsOwnedByPlayer))) {
+                if (Session.Type == GAME_NORMAL) {
+                    Map.Sight_From(Coord_Cell(Center_Coord()), 2, PlayerPtr, false);
+                }
+            }
         /*
         ** For client/server multiplayer, we need to reveal for any human player that is the target. ST - 3/13/2019
         *5:43PM
