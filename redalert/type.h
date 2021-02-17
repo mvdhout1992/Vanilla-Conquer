@@ -495,7 +495,7 @@ public:
     **	This specifies the building prerequisites required before an object
     **	of this type can be produced.
     */
-    long Prerequisite;
+    DynamicVectorClass<StructType> Prerequisite;
 
     /*
     **	The risk and reward values are used to determine targets and paths
@@ -576,6 +576,19 @@ public:
     ** points you lose if you lose an object of this type.
     */
     int Points;
+
+    bool IsAirfield;
+    bool IsAlliedTechCenter;
+    bool IsChronosphere;
+    bool IsConstructionYard;
+    bool IsIronCurtain;
+    bool IsMissileSilo;
+    bool IsPowerPlant;
+    bool IsRefinery;
+    bool IsRadarBuilding;
+    bool IsRepairFacility;
+    bool IsSovietTechCenter;
+    bool IsAdvancedPowerPlant;
 
     //--------------------------------------------------------------------
     TechnoTypeClass(NoInitClass const& x)

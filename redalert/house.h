@@ -567,7 +567,7 @@ private:
     **	building is in construction, it will be reflected in this total.
     */
 #ifdef FIXIT_ANTS
-    int BQuantity[STRUCT_COUNT - 3];
+    int BQuantity[STRUCT_COUNT * 20];
 #ifdef FIXIT_CSII //	checked - ajw 9/28/98
     int UQuantity[UNIT_COUNT * 20];
 #else
@@ -746,6 +746,22 @@ public:
     int Aircraft_Count() const;
     int Unit_Count() const;
 
+    bool Has_Soviet_Tech_Center() const;
+    bool Has_Structure(StructType s) const;
+    bool Has_Airfield() const;
+    bool Has_Allied_Tech_Center() const;
+    bool Has_Chronosphere() const;
+    bool Has_Construction_Yard() const;
+    bool Has_Iron_Curtain_Building() const;
+    bool Has_Missile_Silo() const;
+    bool Has_Power_Plant() const;
+    bool Has_Refinery() const;
+    bool Has_Radar_Building() const;
+    bool Has_Repair_Facility() const;
+    bool Has_A_Building() const;
+    bool Has_Advanced_Power_Plant() const;
+
+
     TechnoTypeClass const* Suggest_New_Object(RTTIType objectype, bool kennel = false) const;
     BuildingTypeClass const* Suggest_New_Building(void) const;
     void Recalc_Center(void);
@@ -797,7 +813,7 @@ public:
 
     bool Can_Make_Money(void) const
     {
-        return (Available_Money() > 300 || (BScan & STRUCTF_REFINERY));
+        return (Available_Money() > 300 || Has_Refinery());
     };
 
     static void Init(void);
@@ -813,6 +829,8 @@ public:
 
     void Init_Unit_Trackers(void);
     void Free_Unit_Trackers(void);
+
+    bool Has_Factory_Building() const;
 
     // MBL 09.08.2020 Mod support stub
     void Handle_Mod_Game_Command(CELL cell, int mod_command_index); // mod_command_index = 0-3

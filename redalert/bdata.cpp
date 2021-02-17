@@ -2947,6 +2947,20 @@ void BuildingTypeClass::Init_Heap(CCINIClass& ini)
         new BuildingTypeClass(ClassQueen);         // STRUCT_QUEEN
         new BuildingTypeClass(ClassLarva1);        // STRUCT_LARVA1
         new BuildingTypeClass(ClassLarva2);        // STRUCT_LARVA2
+
+
+        BuildingTypeClass::As_Reference(STRUCT_AIRSTRIP).IsAirfield = true;
+        BuildingTypeClass::As_Reference(STRUCT_ADVANCED_TECH).IsAlliedTechCenter = true;
+        BuildingTypeClass::As_Reference(STRUCT_CHRONOSPHERE).IsChronosphere = true;
+        BuildingTypeClass::As_Reference(STRUCT_CONST).IsConstructionYard = true;
+        BuildingTypeClass::As_Reference(STRUCT_IRON_CURTAIN).IsIronCurtain = true;
+        BuildingTypeClass::As_Reference(STRUCT_MSLO).IsMissileSilo = true;
+        BuildingTypeClass::As_Reference(STRUCT_POWER).IsPowerPlant = true;
+        BuildingTypeClass::As_Reference(STRUCT_REFINERY).IsRefinery = true;
+        BuildingTypeClass::As_Reference(STRUCT_RADAR).IsRadarBuilding = true;
+        BuildingTypeClass::As_Reference(STRUCT_REPAIR).IsRepairFacility = true;
+        BuildingTypeClass::As_Reference(STRUCT_SOVIET_TECH).IsSovietTechCenter = true;
+        BuildingTypeClass::As_Reference(STRUCT_ADVANCED_POWER).IsAdvancedPowerPlant = true;
     }
 
     for (int i = 0; i < entries; i++) {
@@ -3127,7 +3141,7 @@ void BuildingTypeClass::One_Time(void)
 StructType BuildingTypeClass::From_Name(char const* name)
 {
     if (name != NULL) {
-        for (int classid = STRUCT_FIRST; classid < STRUCT_COUNT; classid++) {
+        for (int classid = STRUCT_FIRST; classid < BuildingTypes.Count(); classid++) {
             if (stricmp(As_Reference((StructType)classid).IniName, name) == 0) {
                 return ((StructType)classid);
             }
@@ -3694,7 +3708,6 @@ bool BuildingTypeClass::Read_INI(CCINIClass& ini)
         IsBase = ini.Get_Bool(Name(), "BaseNormal", IsBase);
         Power = ini.Get_Int(Name(), "Power", (Power > 0) ? Power : -Drain);
 
-        // Todo deallocate this at start of init_heap();
         OccupyList = ini.Get_Cell_List(Name(), "Foundation", (const short*)OccupyList);
         OverlapList = ini.Get_Cell_List(Name(), "OverlapList", (short const*)OverlapList);
 

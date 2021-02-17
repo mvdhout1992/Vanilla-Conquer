@@ -869,7 +869,7 @@ void SidebarClass::AI(KeyNumType& input, int x, int y)
         **	If there are any buildings in the payer's inventory, then allow the repair
         **	option.
         */
-        if (PlayerPtr->BScan) {
+        if (PlayerPtr->Has_A_Building()) {
             Activate_Repair(true);
         } else {
             Activate_Repair(false);

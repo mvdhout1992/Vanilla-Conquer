@@ -58,7 +58,10 @@ public:
     int Save(FileClass& file, bool withdigest) const;
     int Save(Pipe& pipe, bool withdigest) const;
 
-    long Get_Buildings(char const* section, char const* entry, long defvalue) const;
+    void Get_Buildings(char const* section,
+                       char const* entry,
+                       DynamicVectorClass<StructType>& dest,
+                       const DynamicVectorClass<StructType> defvalue) const;
     UnitType Get_UnitType(char const* section, char const* entry, UnitType defvalue) const;
     AnimType Get_AnimType(char const* section, char const* entry, AnimType defvalue) const;
     ArmorType Get_ArmorType(char const* section, char const* entry, ArmorType defvalue) const;
@@ -85,10 +88,10 @@ public:
     RTTIType Get_RTTIType(char const* section, char const* entry, RTTIType defvalue) const;
     FacingType Get_FacingType(char const* section, char const* entry, FacingType defvalue) const;
 
+    bool Put_Buildings(char const* section, char const* entry, const DynamicVectorClass<StructType>& value);
     bool Put_RTTIType(char const* section, char const* entry, RTTIType value);
     bool Put_FacingType(char const* section, char const* entry, FacingType value);
     bool Put_StructType(char const* section, char const* entry, StructType value);
-    bool Put_Buildings(char const* section, char const* entry, long value);
     bool Put_AnimType(char const* section, char const* entry, AnimType value);
     bool Put_UnitType(char const* section, char const* entry, UnitType value);
     bool Put_ArmorType(char const* section, char const* entry, ArmorType value);

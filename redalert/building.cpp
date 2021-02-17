@@ -1069,6 +1069,17 @@ void BuildingClass::AI(void)
     }
 }
 
+// This check is used for the player 'has building' functions in HouseClass
+// in single player if a building has not been discovered yet (is in shroud) then it will not be
+// counted as a base building
+bool BuildingClass::Is_Part_Of_Base(const HouseClass *house)
+{
+    if (House == house && IsLocked && (Session.Type != GAME_NORMAL || !House->IsHuman || IsDiscoveredByPlayer)) {
+        return true;
+    }
+    return false;
+}
+
 /***********************************************************************************************
  * BuildingClass::Unlimbo -- Removes a building from limbo state.                              *
  *                                                                                             *
@@ -2385,7 +2396,7 @@ void BuildingClass::Update_Buildables(void)
             break;
 
         case RTTI_BUILDINGTYPE:
-            for (i = STRUCT_FIRST; i < STRUCT_COUNT; i++) {
+            for (i = STRUCT_FIRST; i < BuildingTypes.Count(); i++) {
                 if (PlayerPtr->Can_Build(&BuildingTypeClass::As_Reference((StructType)i), ActLike)) {
                     Map.Add(RTTI_BUILDINGTYPE, i);
                 }

@@ -2916,7 +2916,7 @@ int UnitClass::Mission_Harvest(void)
     /*
     **	If there are no more refineries, then drop into guard mode.
     */
-    if (!(House->ActiveBScan & STRUCTF_REFINERY)) {
+    if (!House->Has_Refinery()) {
         Assign_Mission(MISSION_GUARD);
         return (1);
     }
@@ -3032,7 +3032,8 @@ int UnitClass::Mission_Harvest(void)
             if (nearest != NULL && Transmit_Message(RADIO_HELLO, nearest) == RADIO_ROGER) {
                 Status = HEADINGHOME;
                 if (nearest->House == PlayerPtr && (PlayerPtr->Capacity - PlayerPtr->Tiberium) < 300
-                    && PlayerPtr->Capacity > 500 && (PlayerPtr->ActiveBScan & (STRUCTF_REFINERY | STRUCTF_CONST))) {
+                    && PlayerPtr->Capacity > 500
+                    && (PlayerPtr->Has_Construction_Yard() && PlayerPtr->Has_Refinery())) {
                     Speak(VOX_NEED_MO_CAPACITY);
                 }
             } else {
@@ -3061,7 +3062,7 @@ int UnitClass::Mission_Harvest(void)
     */
     case GOINGTOIDLE:
         if (IsUseless) {
-            if (House->ActiveBScan & STRUCTF_REPAIR) {
+            if (House->Has_Repair_Facility()) {
                 Assign_Mission(MISSION_REPAIR);
             } else {
                 Assign_Mission(MISSION_HUNT);
@@ -4192,7 +4193,7 @@ int UnitClass::Mission_Repair(void)
     **	into idle state.
     */
     if (nearest == NULL) {
-        if (!(House->ActiveBScan & STRUCTF_REFINERY)) {
+        if (!House->Has_Repair_Facility()) {
             Enter_Idle_Mode();
         }
     } else {

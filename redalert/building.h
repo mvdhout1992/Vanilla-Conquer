@@ -273,6 +273,7 @@ public:
     int Shape_Number(void) const;
     int Power_Output(void) const;
     CELL Check_Point(CheckPointType cp) const;
+    bool Is_Part_Of_Base(const HouseClass* house);
 
     /*
     **	Coordinate inquiry functions. These are used for both display and

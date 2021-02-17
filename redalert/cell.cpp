@@ -2363,7 +2363,7 @@ bool CellClass::Goodie_Check(FootClass* object)
                                     ucount += hptr->QuantityV(j);
                                 }
                                 int bcount = 0;
-                                for (j = 0; j < STRUCT_COUNT; j++) {
+                                for (j = 0; j < BuildingTypes.Count(); j++) {
                                     bcount += hptr->QuantityB(j);
                                 }
                                 ucount += bcount / 2; // weight buildings less
@@ -2385,7 +2385,7 @@ bool CellClass::Goodie_Check(FootClass* object)
             **	Possibly force it to be an MCV if there is
             **	sufficient money and no buildings left.
             */
-            if (object->House->BScan == 0
+            if (object->House->Has_A_Building() == false
                 && object->House->Available_Money() > ((BuildingTypeClass::As_Reference(STRUCT_REFINERY).Cost
                                                         + BuildingTypeClass::As_Reference(STRUCT_POWER).Cost)
                                                        * object->House->CostBias)
@@ -2398,7 +2398,7 @@ bool CellClass::Goodie_Check(FootClass* object)
             **	If the powerup is money but there is insufficient money to build a refinery but there is a construction
             **	yard available, then force the money to be enough to rebuild the refinery.
             */
-            if (powerup == CRATE_MONEY && (object->House->BScan & (STRUCTF_CONST | STRUCTF_REFINERY)) == STRUCTF_CONST
+            if (powerup == CRATE_MONEY && object->House->Has_Construction_Yard() && !object->House->Has_Refinery()
                 && object->House->Available_Money()
                        < BuildingTypeClass::As_Reference(STRUCT_REFINERY).Cost * object->House->CostBias) {
 
@@ -2514,7 +2514,7 @@ bool CellClass::Goodie_Check(FootClass* object)
             **	If the player has a base and a refinery, but no harvester, then give him
             **	a free one.
             */
-            if (utp == NULL && (object->House->BScan & STRUCTF_REFINERY) && object->House->Harvester_Count() == 0) {
+            if (utp == NULL && object->House->Has_Refinery() && object->House->Harvester_Count() == 0) {
                 utp = &UnitTypeClass::As_Reference(UNIT_HARVESTER);
             }
 

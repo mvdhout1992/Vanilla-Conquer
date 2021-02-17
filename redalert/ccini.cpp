@@ -733,8 +733,7 @@ short const* CCINIClass::Get_Cell_List(char const* section, char const* entry, s
         }
         cells[dvc.Count() + 1] = REFRESH_EOL;
         return cells;
-    }
-    else if (defvalue != NULL) {
+    } else if (defvalue != NULL) {
         // Find the size of the list
 
         int size = 1; // one entry extra for REFRESH_EOL
@@ -757,11 +756,12 @@ bool CCINIClass::Put_Cell_List(char const* section, char const* entry, short con
     int number = 0;
     std::string foundation = std::string(entry) + std::string(".") + std::to_string(number);
 
-    if (*value == NULL || *value == REFRESH_EOL) {
+    if (value == NULL || *value == REFRESH_EOL) {
         return Put_String(section, foundation.c_str(), "<none>");
     }
 
     while (*value != REFRESH_EOL) {
+        foundation = std::string(entry) + std::string(".") + std::to_string(number);
         short cell = *value;
         int x = cell % MAP_CELL_W;
         int y = cell / MAP_CELL_W;
@@ -777,7 +777,6 @@ bool CCINIClass::Put_Cell_List(char const* section, char const* entry, short con
     return true;
 }
 
-
 RTTIType CCINIClass::Get_RTTIType(char const* section, char const* entry, RTTIType defvalue) const
 {
     char buf[512];
@@ -788,7 +787,8 @@ RTTIType CCINIClass::Get_RTTIType(char const* section, char const* entry, RTTITy
     return defvalue;
 }
 
-bool CCINIClass::Put_RTTIType(char const* section, char const* entry, RTTIType value){
+bool CCINIClass::Put_RTTIType(char const* section, char const* entry, RTTIType value)
+{
 
     if (value == RTTI_NONE || value < 0 || value >= RTTI_COUNT) {
         return Put_String(section, entry, "<none>");
@@ -816,7 +816,6 @@ bool CCINIClass::Put_FacingType(char const* section, char const* entry, FacingTy
     return Put_String(section, entry, FacingNames[value]);
 }
 
-
 COORDINATE CCINIClass::Get_Coordinate_From_Pixels(char const* section, char const* entry, COORDINATE defvalue) const
 {
     char buf[512];
@@ -829,7 +828,7 @@ COORDINATE CCINIClass::Get_Coordinate_From_Pixels(char const* section, char cons
         }
     }
 
-   return defvalue;
+    return defvalue;
 }
 
 bool CCINIClass::Put_Coordinate_Pixels(char const* section, char const* entry, COORDINATE value)
@@ -841,8 +840,6 @@ bool CCINIClass::Put_Coordinate_Pixels(char const* section, char const* entry, C
 
     return Put_String(section, entry, str.c_str());
 }
-
-
 
 /***********************************************************************************************
  * CCINIClass::Get_WarheadType -- Fetch the warhead type from the INI database.                *
@@ -1502,27 +1499,31 @@ bool CCINIClass::Put_TerrainType(char const* section, char const* entry, Terrain
  * HISTORY:                                                                                    *
  *   07/11/1996 JLB : Created.                                                                 *
  *=============================================================================================*/
-long CCINIClass::Get_Buildings(char const* section, char const* entry, long defvalue) const
+
+void CCINIClass::Get_Buildings(char const* section,
+                               char const* entry,
+                               DynamicVectorClass<StructType> &dest,
+                               const DynamicVectorClass<StructType> defvalue) const
 {
-    char buffer[128];
-    long pre;
+    char buffer[1024];
 
     if (Get_String(section, entry, "", buffer, sizeof(buffer))) {
-
-        pre = 0;
+        // clear destination DynamicVectorClass 
+        dest.Clear();
         char* token = strtok(buffer, ",");
+        int i = 0;
+
         while (token != NULL && *token != '\0') {
             StructType building = BuildingTypeClass::From_Name(token);
             if (building != STRUCT_NONE) {
-                pre |= (1L << building);
+                dest.Add(building);
             }
             token = strtok(NULL, ",");
+            i++;
         }
     } else {
-        pre = defvalue;
+        dest = defvalue;
     }
-
-    return (pre);
 }
 
 /***********************************************************************************************
@@ -1547,22 +1548,22 @@ long CCINIClass::Get_Buildings(char const* section, char const* entry, long defv
  * HISTORY:                                                                                    *
  *   07/11/1996 JLB : Created.                                                                 *
  *=============================================================================================*/
-bool CCINIClass::Put_Buildings(char const* section, char const* entry, long value)
+bool CCINIClass::Put_Buildings(char const* section, char const* entry, const DynamicVectorClass<StructType>& value)
 {
-    char buffer[128] = "";
-    int maxi = (32 < STRUCT_COUNT) ? 32 : STRUCT_COUNT;
+    std::string buf = "";
 
-    for (StructType index = STRUCT_FIRST; index < maxi; index++) {
-        if ((value & (1L << index)) != 0) {
-
-            if (buffer[0] != '\0') {
-                strcat(buffer, ",");
-            }
-            strcat(buffer, BuildingTypeClass::As_Reference(index).IniName);
+    for (int i = 0; i < value.Count(); i++) {
+        StructType s = value[i];
+        if (s == STRUCT_NONE) {
+            continue;
         }
-    }
+        if (buf != "") {
+            buf += ",";
+        }
 
-    return (Put_String(section, entry, buffer));
+        buf += BuildingTypeClass::As_Reference(s).IniName;
+    }
+    return (Put_String(section, entry, buf));
 }
 
 /***********************************************************************************************

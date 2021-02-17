@@ -344,7 +344,8 @@ bool TEventClass::operator()(TDEventClass& td,
         **	Ensure that there are no more factories left.
         */
         case TEVENT_NOFACTORIES:
-            if (hptr->BScan & (STRUCTF_AIRSTRIP | STRUCTF_TENT | STRUCTF_WEAP | STRUCTF_BARRACKS | STRUCTF_CONST))
+            //if (hptr->BScan & (STRUCTF_AIRSTRIP | STRUCTF_TENT | STRUCTF_WEAP | STRUCTF_BARRACKS | STRUCTF_CONST))
+            if (hptr->Has_Factory_Building())
                 return (false);
             break;
 
@@ -370,7 +371,7 @@ bool TEventClass::operator()(TDEventClass& td,
         **	Verify that the structure has been built.
         */
         case TEVENT_BUILDING_EXISTS:
-            if ((hptr->ActiveBScan & (1 << Data.Structure)) == 0)
+            if (hptr->Has_Structure(Data.Structure) == false)
                 return (false);
             //				if (hptr->Get_Quantity(Data.Structure) == 0) return(false);
             break;
@@ -461,7 +462,7 @@ bool TEventClass::operator()(TDEventClass& td,
         **	Verify that all buildings have been destroyed.
         */
         case TEVENT_BUILDINGS_DESTROYED:
-            if (hptr->ActiveBScan)
+            if (PlayerPtr->Has_A_Building())
                 return (false);
             break;
 
