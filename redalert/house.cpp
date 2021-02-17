@@ -6193,7 +6193,7 @@ int HouseClass::AI_Unit(void)
     **	A computer controlled house will try to build a replacement
     **	harvester if possible.
     */
-    if (IQ >= Rule.IQHarvester && !IsTiberiumShort && !IsHuman && BQuantity[STRUCT_REFINERY] > UQuantity[UNIT_HARVESTER]
+    if (IQ >= Rule.IQHarvester && !IsTiberiumShort && !IsHuman && Refinery_Count() > Harvester_Count()
         && Difficulty != DIFF_HARD) {
         if (UnitTypeClass::As_Reference(UNIT_HARVESTER).Level <= (unsigned)Control.TechLevel) {
             BuildUnit = UNIT_HARVESTER;
@@ -8249,7 +8249,7 @@ void HouseClass::Check_Pertinent_Structures(void)
         BuildingClass* b = Buildings.Ptr(index);
 
         if (b && b->IsActive && b->House == this) {
-            if (!b->Class->IsWall && *b != STRUCT_APMINE && *b != STRUCT_AVMINE) {
+            if (!b->Class->IsWall && b->Class->IsAPMine == false && b->Class->IsAVMine == false) {
                 if (!Special.ModernBalance
                     || !b->Class->Is_Naval()) {
                     if (!b->IsInLimbo && b->Strength > 0) {
@@ -8627,11 +8627,23 @@ int HouseClass::Airfield_Count() const
         BuildingClass* b = Buildings.Ptr(i);
 
         if (b->Is_Part_Of_Base(this) && b->Class->IsAirfield) {
-            return true;
+            count++;
         }
     }
-    return false;
+    return count;
+}
 
+int HouseClass::Refinery_Count() const
+{
+    int count = 0;
+
+    for (int i = 0; i < Buildings.Count(); i++) {
+        BuildingClass* b = Buildings.Ptr(i);
+
+        if (b->Is_Part_Of_Base(this) && b->Class->IsRefinery) {
+            count++;
+        }
+    }
     return count;
 }
 

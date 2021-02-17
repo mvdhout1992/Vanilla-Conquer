@@ -764,6 +764,7 @@ public:
     bool Has_Tesla_Coil() const;
     bool Has_AA_Gun() const;
     int Airfield_Count() const;
+    int Refinery_Count() const;
 
     BuildingClass* Find_Missile_Silo(ZoneType zone = ZONE_NONE) const;
 

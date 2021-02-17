@@ -799,12 +799,14 @@ public:
     bool IsSovietBarracks;
     bool IsAlliedBarracks;
 
-    // Anti-Personell Mine
+    // Anti-Personnel Mine
     bool IsAPMine;
     // Anti-Vehicle Mine
     bool IsAVMine;
     bool IsOilPump;
     bool IsBarrel;
+
+    bool IsCamoPillbox;
 
 
     /**********************************************************************

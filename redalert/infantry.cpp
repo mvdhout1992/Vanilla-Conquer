@@ -700,7 +700,7 @@ void InfantryClass::Per_Cell_Process(PCPType why)
                         tech->Mark(MARK_OVERLAP_DOWN);
                         if (tech->What_Am_I() == RTTI_BUILDING) {
                             StructType build = *(BuildingClass*)tech;
-                            if (build == STRUCT_RADAR /* || build == STRUCT_EYE */) {
+                            if (((BuildingClass*)tech)->Class->IsRadarBuilding /* || build == STRUCT_EYE */) {
                                 tech->House->RadarSpied |= housespy;
                             }
 #ifdef REMASTER_BUILD
@@ -1429,12 +1429,12 @@ MoveType InfantryClass::Can_Enter_Cell(CELL cell, FacingType) const
             ** If object is a land mine, allow movement
             */
             if (obj->What_Am_I() == RTTI_BUILDING) {
-                if ((*(BuildingClass*)obj) == STRUCT_AVMINE) {
+                if ( ((BuildingClass*)obj)->Class->IsAVMine) {
                     obj = obj->Next;
                     continue;
                 } else {
                     if (!Rule.IsMineAware || !((BuildingClass*)obj)->House->Is_Ally(House)) {
-                        if ((*(BuildingClass*)obj) == STRUCT_APMINE) {
+                        if (((BuildingClass*)obj)->Class->IsAPMine ) {
                             obj = obj->Next;
                             continue;
                         }
@@ -3026,8 +3026,8 @@ ActionType InfantryClass::What_Action(ObjectClass const* object) const
     ** See if this infantry is trying to move onto where a land mine is.
     */
     if (action == ACTION_NONE && object->What_Am_I() == RTTI_BUILDING && House->IsPlayerControl) {
-        StructType blah = *((BuildingClass*)object);
-        if (blah == STRUCT_AVMINE || blah == STRUCT_APMINE)
+        BuildingClass* blah = ((BuildingClass*)object);
+        if (blah->Class->IsAVMine || blah->Class->IsAPMine)
             return (ACTION_MOVE);
     }
 

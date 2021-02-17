@@ -1866,7 +1866,7 @@ void UnitClass::Per_Cell_Process(PCPType why)
         ** If entering a cell with a land mine in it, blow up the mine.
         */
         BuildingClass* bldng = Map[cell].Cell_Building();
-        if (bldng != NULL && (*bldng == STRUCT_AVMINE || *bldng == STRUCT_APMINE) && !bldng->House->Is_Ally(this)) {
+        if (bldng != NULL && (bldng->Class->IsAVMine || bldng->Class->IsAPMine) && !bldng->House->Is_Ally(this)) {
 
             /*
             ** Special case: if it's a land mine deployer, and it ran over the
@@ -1884,7 +1884,7 @@ void UnitClass::Per_Cell_Process(PCPType why)
                 /*
                 ** Vehicles blow up both mines, but they only take significant damage from AV mines.
                 */
-                if (*bldng == STRUCT_AVMINE) {
+                if ( bldng->Class->IsAVMine) {
                     int damage = Rule.AVMineDamage;
                     Take_Damage(damage, 0, WARHEAD_HE);
                 } else {
@@ -3300,9 +3300,9 @@ MoveType UnitClass::Can_Enter_Cell(CELL cell, FacingType) const
             */
             if (obj->What_Am_I() == RTTI_BUILDING
                 && (!Rule.IsMineAware || !((BuildingClass*)obj)->House->Is_Ally(House))) {
-                if ((*(BuildingClass*)obj) == STRUCT_APMINE)
+                if ( ((BuildingClass*)obj)->Class->IsAPMine)
                     return (MOVE_OK);
-                if ((*(BuildingClass*)obj) == STRUCT_AVMINE)
+                if ( ((BuildingClass*)obj)->Class->IsAVMine)
                     return (MOVE_OK);
             }
 
@@ -3570,8 +3570,8 @@ ActionType UnitClass::What_Action(ObjectClass const* object) const
     ** Allow units to move onto land mines.
     */
     if (action == ACTION_NONE && object->What_Am_I() == RTTI_BUILDING) {
-        StructType blah = *((BuildingClass*)object);
-        if (blah == STRUCT_AVMINE || blah == STRUCT_APMINE)
+        BuildingClass* blah = ((BuildingClass*)object);
+        if (blah->Class->IsAVMine || blah->Class->IsAPMine)
             return (ACTION_MOVE);
     }
 
@@ -4197,12 +4197,12 @@ int UnitClass::Mission_Repair(void)
     IsHarvesting = false;
 
     /*
-    **	If there is no available repair facility, then check to see if there
-    **	are any repair facilities at all. If not, then enter this unit
+    **	If there is no available refinery, then check to see if there
+    **	are any refineries at all. If not, then enter this unit
     **	into idle state.
     */
     if (nearest == NULL) {
-        if (!House->Has_Repair_Facility()) {
+        if (!House->Has_Refinery()) {
             Enter_Idle_Mode();
         }
     } else {

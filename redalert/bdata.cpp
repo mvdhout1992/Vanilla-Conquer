@@ -2987,6 +2987,9 @@ void BuildingTypeClass::Init_Heap(CCINIClass& ini)
         BuildingTypeClass::As_Reference(STRUCT_PUMP).IsOilPump = true;
         BuildingTypeClass::As_Reference(STRUCT_BARREL).IsBarrel = true;
         BuildingTypeClass::As_Reference(STRUCT_BARREL3).IsBarrel = true;
+
+        BuildingTypeClass::As_Reference(STRUCT_CAMOPILLBOX).IsCamoPillbox = true;
+
     }
 
     for (int i = 0; i < entries; i++) {

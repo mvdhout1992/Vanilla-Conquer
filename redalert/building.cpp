@@ -597,7 +597,7 @@ int BuildingClass::Shape_Number(void) const
         **	If this is a camouflaged pill box and it is not owned by the player, then
         **	it is displayed with the MEGA-camouflaged imagery.
         */
-        if ((!IsOwnedByPlayer) && (*this == STRUCT_CAMOPILLBOX)) {
+        if ((!IsOwnedByPlayer) && (Class->IsCamoPillbox)) {
             shapenum += 1;
         }
 
@@ -2060,7 +2060,7 @@ int BuildingClass::Exit_Object(TechnoClass* base)
             if (Mission == MISSION_UNLOAD) {
                 for (int index = 0; index < Buildings.Count(); index++) {
                     BuildingClass* bldg = Buildings.Ptr(index);
-                    if (bldg->Owner() == Owner() && *bldg == STRUCT_WEAP && bldg != this
+                    if (bldg->Owner() == Owner() && bldg->Class->IsWeaponFactory && bldg != this
                         && bldg->Mission == MISSION_GUARD && !bldg->Factory) {
                         FactoryClass* temp = Factory;
                         bldg->Factory = Factory;

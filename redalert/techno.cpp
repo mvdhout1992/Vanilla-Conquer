@@ -1700,7 +1700,8 @@ bool TechnoClass::Evaluate_Object(ThreatType method,
     */
     if (otype == RTTI_BUILDING && What_Am_I() == RTTI_VESSEL && ((VesselClass*)this)->Class->IsSub) {
         StructType ostruc = *(BuildingClass*)object;
-        if (((BuildingClass*)object)->Class->IsSubPen == false && ((BuildingClass*)object)->Class->IsShipYard == false) {
+        if (((BuildingClass*)object)->Class->IsSubPen == false
+            && ((BuildingClass*)object)->Class->IsShipYard == false) {
             BEnd(BENCH_EVAL_OBJECT);
             return (false);
         }
@@ -2142,7 +2143,7 @@ bool TechnoClass::Evaluate_Object(ThreatType method,
             if (((InfantryClass*)this)->Class->IsDog || Combat_Damage() < 0) {
                 method = THREAT_INFANTRY | (method & (THREAT_RANGE | THREAT_AREA));
 #ifdef FIXIT_CSII //	checked - ajw 9/28/98
-                if ( ((InfantryClass*)this)->Class->IsMechanic) {
+                if (((InfantryClass*)this)->Class->IsMechanic) {
                     method = (THREAT_VEHICLES | THREAT_AIR) | (method & (THREAT_RANGE | THREAT_AREA));
                 }
 #endif
@@ -4214,7 +4215,7 @@ bool TechnoClass::Evaluate_Object(ThreatType method,
 #endif
         switch (What_Am_I()) {
         case RTTI_BUILDING: {
-            BuildingClass *bldg = (BuildingClass*)this;
+            BuildingClass* bldg = (BuildingClass*)this;
             if (bldg->Class->IsBarrel == false && bldg->Class->IsAPMine == false && bldg->Class->IsAVMine == false) {
                 if (((BuildingClass*)this)->WhoLastHurtMe != HOUSE_NONE) {
                     House->BuildingsLost++;
@@ -4571,7 +4572,7 @@ bool TechnoClass::Evaluate_Object(ThreatType method,
             */
             if (What_Am_I() == RTTI_INFANTRY) {
                 if (!IsOwnedByPlayer) {
-                    if ( ((InfantryClass*)this)->Class->IsSpy)
+                    if (((InfantryClass*)this)->Class->IsSpy)
                         remap = PlayerPtr->Remap_Table();
                 }
                 if (((InfantryClass*)this)->Class->IsRemapOverride) {
@@ -4800,7 +4801,7 @@ bool TechnoClass::Evaluate_Object(ThreatType method,
             */
             if (What_Am_I() == RTTI_INFANTRY) {
                 if (!IsOwnedByPlayer) {
-                    if ( ((InfantryClass*)this)->Class->IsSpy )
+                    if (((InfantryClass*)this)->Class->IsSpy)
                         remap = PlayerPtr->Remap_Table();
                 }
                 if (((InfantryClass*)this)->Class->IsRemapOverride) {
@@ -6039,9 +6040,10 @@ bool TechnoClass::Evaluate_Object(ThreatType method,
         **	Transporter type objects have a different graphic representation for the pips. The
         **	pip color represents the type of occupant.
         */
-        bool carrying_passengers = (Techno_Type_Class()->Max_Passengers() > 0)
-                                   && ((What_Am_I() != RTTI_AIRCRAFT) || (((AircraftClass*)this)->Class->IsBadger == false)
-                                       || (Mission != MISSION_HUNT));
+        bool carrying_passengers =
+            (Techno_Type_Class()->Max_Passengers() > 0)
+            && ((What_Am_I() != RTTI_AIRCRAFT) || (((AircraftClass*)this)->Class->IsBadger == false)
+                || (Mission != MISSION_HUNT));
         if (carrying_passengers) {
             ObjectClass const* object = Attached_Object();
             for (int index = 0; index < Class_Of().Max_Pips(); index++) {
@@ -6147,7 +6149,8 @@ bool TechnoClass::Evaluate_Object(ThreatType method,
                 bool building = false;
                 int pip = PIP_FULL; // green
                 if (!IsOwnedByPlayer && What_Am_I() == RTTI_BUILDING) {
-                    if (((BuildingClass*)this)->Class->IsPowerPlant || ((BuildingClass*)this)->Class->IsAdvancedPowerPlant) {
+                    if (((BuildingClass*)this)->Class->IsPowerPlant
+                        || ((BuildingClass*)this)->Class->IsAdvancedPowerPlant) {
                         building = true;
                         if (House->Power_Fraction() < 1) {
                             pip = PIP_ENGINEER; // gold
@@ -6374,63 +6377,72 @@ bool TechnoClass::Evaluate_Object(ThreatType method,
             if (!House->Has_Refinery()) {
                 return NULL;
             }
+            break;
         }
         case DOCK_HELIPAD: {
             if (!House->Has_Helipad()) {
                 return NULL;
             }
+            break;
         }
         case DOCK_REPAIR: {
             if (!House->Has_Repair_Facility()) {
                 return NULL;
             }
+            break;
         }
         }
-            int bestval = -1;
+        int bestval = -1;
 
-            /*
+        /*
             **	Loop through all the buildings and find the one that matches the specification
             **	and is willing to dock with this object.
             */
-            for (int index = 0; index < Buildings.Count(); index++) {
-                BuildingClass* building = Buildings.Ptr(index);
+        for (int index = 0; index < Buildings.Count(); index++) {
+            BuildingClass* building = Buildings.Ptr(index);
+            bool continue_iter = false;
 
-                switch (dock) {
-                case DOCK_REFINERY: {
-                    if (!building->Class->IsRefinery) {
-                        continue;
-                    }
+            switch (dock) {
+            case DOCK_REFINERY: {
+                if (!building->Class->IsRefinery) {
+                    continue_iter = true;
                 }
-                case DOCK_HELIPAD: {
-                    if (!building->Class->IsHelipad) {
-                        continue;
-                    }
+                break;
+            }
+            case DOCK_HELIPAD: {
+                if (!building->Class->IsHelipad) {
+                    continue_iter = true;
                 }
-                case DOCK_REPAIR: {
-                    if (!building->Class->IsRepairFacility)
-                        continue;
-                    }
+                break;
+            }
+            case DOCK_REPAIR: {
+                if (!building->Class->IsRepairFacility) {
+                    continue_iter = true;
+                }
+            }
+            }
+            if (continue_iter == true) {
+                continue;
+            }
 
-
-                /*
+            /*
                 **	Check to see if the building qualifies (preliminary scan).
                 */
-                if (building != NULL && (friendly ? building->House->Is_Ally(this) : building->House == House)
-                    && !building->IsInLimbo
-                    && (What_Am_I() == RTTI_AIRCRAFT
-                        || Map[building->Center_Coord()].Zones[Techno_Type_Class()->MZone]
-                               == Map[Center_Coord()].Zones[Techno_Type_Class()->MZone])
-                    && ((TechnoClass*)this)->Transmit_Message(RADIO_CAN_LOAD, building) == RADIO_ROGER) {
+            if (building != NULL && (friendly ? building->House->Is_Ally(this) : building->House == House)
+                && !building->IsInLimbo
+                && (What_Am_I() == RTTI_AIRCRAFT
+                    || Map[building->Center_Coord()].Zones[Techno_Type_Class()->MZone]
+                           == Map[Center_Coord()].Zones[Techno_Type_Class()->MZone])
+                && ((TechnoClass*)this)->Transmit_Message(RADIO_CAN_LOAD, building) == RADIO_ROGER) {
 
-                    /*
+                /*
                     **	If the building qualifies and this building is better than the
                     **	last qualifying building (as rated by distance), then record
                     **	this building and keep scanning.
                     */
-                    if (bestval == -1 || Distance(building) < bestval || building->IsLeader) {
-                        best = building;
-                        bestval = Distance(building);
-                    }
+                if (bestval == -1 || Distance(building) < bestval || building->IsLeader) {
+                    best = building;
+                    bestval = Distance(building);
                 }
             }
         }
@@ -7170,50 +7182,51 @@ bool TechnoClass::Evaluate_Object(ThreatType method,
         return (false);
     }
 
-       bool TechnoTypeClass::Write_INI(CCINIClass & ini)
+    bool TechnoTypeClass::Write_INI(CCINIClass & ini)
     {
-            ini.Put_String(Name(), "Name", Name());
-            ini.Put_Bool(Name(), "DoubleOwned", IsDoubleOwned);
-            ini.Get_Lepton(Name(), "GuardRange", ThreatRange);
-            ini.Get_Bool(Name(), "Explodes", IsExploding);
-            ini.Put_WeaponType(Name(), "Primary", PrimaryWeapon != NULL ? (WeaponType)PrimaryWeapon->ID : WEAPON_NONE);
-            ini.Put_WeaponType(Name(), "Secondary", SecondaryWeapon != NULL ? (WeaponType)SecondaryWeapon->ID : WEAPON_NONE);
+        ini.Put_String(Name(), "Name", Name());
+        ini.Put_Bool(Name(), "DoubleOwned", IsDoubleOwned);
+        ini.Get_Lepton(Name(), "GuardRange", ThreatRange);
+        ini.Get_Bool(Name(), "Explodes", IsExploding);
+        ini.Put_WeaponType(Name(), "Primary", PrimaryWeapon != NULL ? (WeaponType)PrimaryWeapon->ID : WEAPON_NONE);
+        ini.Put_WeaponType(
+            Name(), "Secondary", SecondaryWeapon != NULL ? (WeaponType)SecondaryWeapon->ID : WEAPON_NONE);
 
-            ini.Put_Bool(Name(), "Cloakable", IsCloakable);
-            ini.Put_Bool(Name(), "Crushable", IsCrushable);
-            ini.Put_Bool(Name(), "Sensors", IsScanner);
-            ini.Put_ArmorType(Name(), "Armor", Armor);
-            ini.Put_Buildings(Name(), "Prerequisite", Prerequisite);
-            ini.Put_Int(Name(), "Strength", MaxStrength);
-            ini.Put_Int(Name(), "Sight", SightRange);
-            ini.Put_Int(Name(), "TechLevel", Level);
+        ini.Put_Bool(Name(), "Cloakable", IsCloakable);
+        ini.Put_Bool(Name(), "Crushable", IsCrushable);
+        ini.Put_Bool(Name(), "Sensors", IsScanner);
+        ini.Put_ArmorType(Name(), "Armor", Armor);
+        ini.Put_Buildings(Name(), "Prerequisite", Prerequisite);
+        ini.Put_Int(Name(), "Strength", MaxStrength);
+        ini.Put_Int(Name(), "Sight", SightRange);
+        ini.Put_Int(Name(), "TechLevel", Level);
 
-            ini.Put_MPHType(Name(), "Speed", MaxSpeed);
-            ini.Put_Int(Name(), "Cost", Cost);
-            ini.Put_Int(Name(), "Ammo", MaxAmmo);
-            ini.Put_Int(Name(), "Points", Points);
-            ini.Put_Owners(Name(), "Owner", Ownable);
-            ini.Put_Bool(Name(), "Crewed", IsCrew);
-            ini.Put_Bool(Name(), "Repairable", IsRepairable);
-            ini.Put_Bool(Name(), "Invisible", IsInvisible);
-            ini.Put_Bool(Name(), "SelfHealing", IsSelfHealing);
-            ini.Put_Int(Name(), "ROT", ROT);
-            ini.Put_Int(Name(), "Passengers", MaxPassengers);
+        ini.Put_MPHType(Name(), "Speed", MaxSpeed);
+        ini.Put_Int(Name(), "Cost", Cost);
+        ini.Put_Int(Name(), "Ammo", MaxAmmo);
+        ini.Put_Int(Name(), "Points", Points);
+        ini.Put_Owners(Name(), "Owner", Ownable);
+        ini.Put_Bool(Name(), "Crewed", IsCrew);
+        ini.Put_Bool(Name(), "Repairable", IsRepairable);
+        ini.Put_Bool(Name(), "Invisible", IsInvisible);
+        ini.Put_Bool(Name(), "SelfHealing", IsSelfHealing);
+        ini.Put_Int(Name(), "ROT", ROT);
+        ini.Put_Int(Name(), "Passengers", MaxPassengers);
 
-            ini.Put_Int(Name(), "Facings", Rotation);
-            ini.Put_Int(Name(), "HorizontalOffset", HorizontalOffset);
-            ini.Put_Int(Name(), "VerticalOffset", VerticalOffset);
-            ini.Put_Int(Name(), "PrimaryOffset", PrimaryOffset);
-            ini.Put_Int(Name(), "PrimaryLateral", PrimaryLateral);
-            ini.Put_Int(Name(), "SecondaryOffset", SecondaryOffset);
-            ini.Put_Int(Name(), "SecondaryLateral", SecondaryLateral);
+        ini.Put_Int(Name(), "Facings", Rotation);
+        ini.Put_Int(Name(), "HorizontalOffset", HorizontalOffset);
+        ini.Put_Int(Name(), "VerticalOffset", VerticalOffset);
+        ini.Put_Int(Name(), "PrimaryOffset", PrimaryOffset);
+        ini.Put_Int(Name(), "PrimaryLateral", PrimaryLateral);
+        ini.Put_Int(Name(), "SecondaryOffset", SecondaryOffset);
+        ini.Put_Int(Name(), "SecondaryLateral", SecondaryLateral);
 
-            ini.Put_String(Name(), "Image", GraphicName);
-            ini.Put_String(Name(), "Cameo", CameoName);
+        ini.Put_String(Name(), "Image", GraphicName);
+        ini.Put_String(Name(), "Cameo", CameoName);
 
-            ini.Put_Bool(Name(), "IsTurretEquipped", IsTurretEquipped);
+        ini.Put_Bool(Name(), "IsTurretEquipped", IsTurretEquipped);
 
-            return (true);
+        return (true);
     }
 
     int TechnoTypeClass::Legal_Placement(CELL pos) const
