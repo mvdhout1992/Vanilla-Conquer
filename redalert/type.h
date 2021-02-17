@@ -791,7 +791,20 @@ public:
     bool IsTeslaCoil;
     bool IsWeaponFactory;
     bool IsSubPen;
-    bool IsNavalYard;
+    bool IsShipYard;
+
+    bool IsHelipad;
+    bool IsKennel;
+    bool IsOreSilo;
+    bool IsSovietBarracks;
+    bool IsAlliedBarracks;
+
+    // Anti-Personell Mine
+    bool IsAPMine;
+    // Anti-Vehicle Mine
+    bool IsAVMine;
+    bool IsOilPump;
+    bool IsBarrel;
 
 
     /**********************************************************************

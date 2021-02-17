@@ -760,6 +760,10 @@ public:
     bool Has_Repair_Facility() const;
     bool Has_A_Building() const;
     bool Has_Advanced_Power_Plant() const;
+    bool Has_Helipad() const;
+    bool Has_Tesla_Coil() const;
+    bool Has_AA_Gun() const;
+    int Airfield_Count() const;
 
     BuildingClass* Find_Missile_Silo(ZoneType zone = ZONE_NONE) const;
 

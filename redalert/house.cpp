@@ -1221,11 +1221,11 @@ void HouseClass::AI(void)
 
                 int text_id = -1;
                 char const* text = NULL;
-                if (BQuantity[STRUCT_AAGUN] > 0) {
+                if (Has_AA_Gun()) {
                     text = Text_String(TXT_POWER_AAGUN);
                     text_id = TXT_POWER_AAGUN;
                 }
-                if (BQuantity[STRUCT_TESLA] > 0) {
+                if (Has_Tesla_Coil()) {
                     text = Text_String(TXT_POWER_TESLA);
                     text_id = TXT_POWER_TESLA;
                 }
@@ -1773,7 +1773,7 @@ void HouseClass::Super_Weapon_Handler(void)
         bool powered = false;
         for (int q = 0; q < Buildings.Count() && !powered; q++) {
             BuildingClass* bldg = Buildings.Ptr(q);
-            if ((*bldg == STRUCT_SUB_PEN) && (bldg->House->Class->House != Class->House)
+            if ((bldg->Class->IsSubPen) && (bldg->House->Class->House != Class->House)
                 && (bldg->Spied_By() & usspy)) {
                 present = true;
                 powered = !(bldg->House->Power_Fraction() < 1);
@@ -2209,7 +2209,7 @@ void HouseClass::Silo_Redraw_Check(long oldtib, long oldcap)
     if (oldratio != newratio) {
         for (int index = 0; index < Buildings.Count(); index++) {
             BuildingClass* b = Buildings.Ptr(index);
-            if (b && !b->IsInLimbo && b->House == this && *b == STRUCT_STORAGE) {
+            if (b && !b->IsInLimbo && b->House == this && b->Class->IsOreSilo) {
                 b->Mark(MARK_CHANGE);
             }
         }
@@ -5850,7 +5850,7 @@ int HouseClass::AI_Building(void)
         StructType stype = STRUCT_NONE;
         int money = Available_Money();
         int level = Control.TechLevel;
-        bool hasincome = (BQuantity[STRUCT_REFINERY] > 0 && !IsTiberiumShort && UQuantity[UNIT_HARVESTER] > 0);
+        bool hasincome = (Has_Refinery() && !IsTiberiumShort && UQuantity[UNIT_HARVESTER] > 0);
         BuildingTypeClass const* b = NULL;
         HouseClass const* enemy = NULL;
         if (Enemy != HOUSE_NONE) {
@@ -6280,7 +6280,7 @@ int HouseClass::AI_Unit(void)
         **	The unit type to build is now known. Fetch a pointer to the techno type class.
         */
         if (bestcount) {
-            BuildUnit = bestlist[Random_Pick(0, UnitTypes.Count() - 1)];
+            BuildUnit = bestlist[Random_Pick(0, bestcount - 1)];
         }
     }
 
@@ -7672,7 +7672,7 @@ bool HouseClass::Is_No_Fixed_Wing_Buildable_Airplane(void) const
         }
     }
 
-    if (quantity >= BQuantity[STRUCT_AIRSTRIP]) {
+    if (quantity >= Airfield_Count()) {
         return (true);
     }
     return (false);
@@ -8007,7 +8007,7 @@ void HouseClass::Update_Spied_Power_Plants(void)
             ObjectClass const* tech = CurrentObject[index];
             if (tech && tech->What_Am_I() == RTTI_BUILDING) {
                 BuildingClass* bldg = (BuildingClass*)tech;
-                if (!bldg->IsOwnedByPlayer && *bldg == STRUCT_POWER || *bldg == STRUCT_ADVANCED_POWER) {
+                if (!bldg->IsOwnedByPlayer && bldg->Class->IsPowerPlant || bldg->Class->IsAdvancedPowerPlant) {
                     if (bldg->Spied_By() & (1 << (PlayerPtr->Class->House))) {
                         bldg->Mark(MARK_CHANGE);
                     }
@@ -8582,3 +8582,57 @@ bool HouseClass::Has_Advanced_Power_Plant() const
     }
     return false;
 }
+
+bool HouseClass::Has_Helipad() const
+{
+    for (int i = 0; i < Buildings.Count(); i++) {
+        BuildingClass* b = Buildings.Ptr(i);
+
+        if (b->Is_Part_Of_Base(this) && b->Class->IsHelipad) {
+            return true;
+        }
+    }
+    return false;
+}
+
+bool HouseClass::Has_AA_Gun() const
+{
+    for (int i = 0; i < Buildings.Count(); i++) {
+        BuildingClass* b = Buildings.Ptr(i);
+
+        if (b->Is_Part_Of_Base(this) && b->Class->IsAAGun) {
+            return true;
+        }
+    }
+    return false;
+}
+
+bool HouseClass::Has_Tesla_Coil() const
+{
+    for (int i = 0; i < Buildings.Count(); i++) {
+        BuildingClass* b = Buildings.Ptr(i);
+
+        if (b->Is_Part_Of_Base(this) && b->Class->IsTeslaCoil) {
+            return true;
+        }
+    }
+    return false;
+}
+
+int HouseClass::Airfield_Count() const
+{
+    int count = 0;
+
+    for (int i = 0; i < Buildings.Count(); i++) {
+        BuildingClass* b = Buildings.Ptr(i);
+
+        if (b->Is_Part_Of_Base(this) && b->Class->IsAirfield) {
+            return true;
+        }
+    }
+    return false;
+
+    return count;
+}
+
+

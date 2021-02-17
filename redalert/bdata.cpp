@@ -2968,13 +2968,25 @@ void BuildingTypeClass::Init_Heap(CCINIClass& ini)
         BuildingTypeClass::As_Reference(STRUCT_TESLA).IsTeslaCoil = true;
         BuildingTypeClass::As_Reference(STRUCT_WEAP).IsWeaponFactory = true;
         BuildingTypeClass::As_Reference(STRUCT_SUB_PEN).IsSubPen = true;
-        BuildingTypeClass::As_Reference(STRUCT_SHIP_YARD).IsNavalYard = true;
+        BuildingTypeClass::As_Reference(STRUCT_SHIP_YARD).IsShipYard = true;
+
+        BuildingTypeClass::As_Reference(STRUCT_HELIPAD).IsHelipad = true;
+        BuildingTypeClass::As_Reference(STRUCT_KENNEL).IsKennel = true;
+        BuildingTypeClass::As_Reference(STRUCT_STORAGE).IsOreSilo = true;
+        BuildingTypeClass::As_Reference(STRUCT_BARRACKS).IsSovietBarracks = true;
+        BuildingTypeClass::As_Reference(STRUCT_TENT).IsAlliedBarracks = true;
 
         BuildingTypeClass::As_Reference(STRUCT_FAKEWEAP).FakeOf = STRUCT_WEAP;
         BuildingTypeClass::As_Reference(STRUCT_FAKECONST).FakeOf = STRUCT_CONST;
         BuildingTypeClass::As_Reference(STRUCT_FAKE_YARD).FakeOf = STRUCT_SHIP_YARD;
         BuildingTypeClass::As_Reference(STRUCT_FAKE_PEN).FakeOf = STRUCT_SUB_PEN;
         BuildingTypeClass::As_Reference(STRUCT_FAKE_RADAR).FakeOf = STRUCT_RADAR;
+
+        BuildingTypeClass::As_Reference(STRUCT_APMINE).IsAPMine = true;
+        BuildingTypeClass::As_Reference(STRUCT_AVMINE).IsAVMine = true;
+        BuildingTypeClass::As_Reference(STRUCT_PUMP).IsOilPump = true;
+        BuildingTypeClass::As_Reference(STRUCT_BARREL).IsBarrel = true;
+        BuildingTypeClass::As_Reference(STRUCT_BARREL3).IsBarrel = true;
     }
 
     for (int i = 0; i < entries; i++) {
@@ -3618,12 +3630,12 @@ int BuildingTypeClass::Raw_Cost(void) const
 {
     int cost = TechnoTypeClass::Raw_Cost();
 
-    if (Type == STRUCT_HELIPAD && !Rule.IsSeparate) {
+    if (IsHelipad && !Rule.IsSeparate) {
         cost -=
             (AircraftTypeClass::As_Reference(AIRCRAFT_HIND).Cost + AircraftTypeClass::As_Reference(AIRCRAFT_HIND).Cost)
             / 2;
     }
-    if (Type == STRUCT_REFINERY) {
+    if (IsRefinery) {
         cost -= UnitTypeClass::As_Reference(UNIT_HARVESTER).Cost;
     }
     return (cost);
@@ -3645,7 +3657,7 @@ int BuildingTypeClass::Raw_Cost(void) const
  *=============================================================================================*/
 int BuildingTypeClass::Cost_Of(void) const
 {
-    if (Rule.IsSeparate && Type == STRUCT_HELIPAD) {
+    if (Rule.IsSeparate && IsHelipad) {
         return (Raw_Cost());
     }
     return (TechnoTypeClass::Cost_Of());

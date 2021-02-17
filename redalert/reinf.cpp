@@ -124,7 +124,7 @@ static bool _Pop_Group_Out_Of_Object(FootClass* group, TechnoClass* object)
 bool _Need_To_Take(AircraftClass const* air)
 {
     if (air->Class->IsFixedWing && air->Class->Level != -1) {
-        int deficit = air->House->Get_Quantity(STRUCT_AIRSTRIP);
+        int deficit = air->House->Airfield_Count();
         //		int deficit = air->House->Get_Quantity(STRUCT_AIRSTRIP) -
         //(air->House->Get_Quantity(AIRCRAFT_YAK)+air->House->Get_Quantity(AIRCRAFT_MIG));
 

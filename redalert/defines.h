@@ -1489,6 +1489,13 @@ inline StructType operator++(StructType& n)
 #define STRUCTF_FAKECONST      (1L << STRUCT_FAKECONST)
 #define STRUCTF_FAKEWEAP       (1L << STRUCT_FAKEWEAP)
 
+typedef enum DockType
+{
+    DOCK_HELIPAD,
+    DOCK_REPAIR,
+    DOCK_REFINERY,
+};
+
 /**********************************************************************
 **	The overlays are enumerated here. An overlay functions similarly to
 **	a transparent icon. It is placed over the terrain but usually falls

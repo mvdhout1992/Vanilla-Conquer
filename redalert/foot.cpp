@@ -1652,7 +1652,7 @@ RadioMessageType FootClass::Receive_Message(RadioClass* from, RadioMessageType m
     case RADIO_ON_DEPOT:
         if (Map[Center_Coord()].Cell_Building() != NULL) {
             BuildingClass const* building = Map[Center_Coord()].Cell_Building();
-            if (*building == STRUCT_REPAIR) {
+            if (building->Class->IsRepairFacility) {
                 return (RADIO_ROGER);
             }
         }
@@ -2188,21 +2188,27 @@ MoveType FootClass::Can_Enter_Cell(CELL, FacingType) const
 bool FootClass::Can_Demolish(void) const
 {
     assert(IsActive);
+    bool checksell = true;
+    bool checkrepfac = false;
+    bool checkairfield = false;
 
     StructType sell_struct = STRUCT_NONE;
     switch (What_Am_I()) {
     case RTTI_UNIT:
-        sell_struct = STRUCT_REPAIR;
+        checkrepfac = true;
         break;
     case RTTI_AIRCRAFT:
-        sell_struct = STRUCT_AIRSTRIP;
+        checkairfield = true;
         break;
     default:
+        checksell = false;
         break;
     }
-    if (sell_struct != STRUCT_NONE) {
+    if (checksell) {
         if (In_Radio_Contact() && Contact_With_Whom()->What_Am_I() == RTTI_BUILDING
-            && *((BuildingClass*)Contact_With_Whom()) == sell_struct && Distance(Contact_With_Whom()) < 0x0080) {
+            && ( ((BuildingClass*)Contact_With_Whom())->Class->IsRepairFacility && checkrepfac 
+                || ((BuildingClass*)Contact_With_Whom())->Class->IsAirfield && checkairfield)
+            && Distance(Contact_With_Whom()) < 0x0080) {
             return (true);
         }
     }

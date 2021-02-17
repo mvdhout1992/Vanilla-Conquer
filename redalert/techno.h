@@ -314,6 +314,7 @@ public:
     virtual ActionType What_Action(CELL cell) const;
     virtual ActionType What_Action(ObjectClass const* target) const;
     virtual BuildingClass* Find_Docking_Bay(StructType b, bool friendly) const;
+    virtual BuildingClass* Find_Docking_Bay(DockType dock, bool friendly) const;
     virtual CELL Find_Exit_Cell(TechnoClass const* techno) const;
     virtual FireDataType Fire_Data(int) const;
     virtual COORDINATE Fire_Coord(int which) const;

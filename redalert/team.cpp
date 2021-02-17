@@ -596,7 +596,7 @@ void TeamClass::AI(void)
                     int dist = ::Distance(b->Center_Coord(), As_Coord(Zone))
                                * (Map.Cell_Threat(cell, House->Class->House) + 1);
 
-                    if (*b == STRUCT_REPAIR) {
+                    if (b->Class->IsRepairFacility) {
                         dist /= 2;
                     }
                     if (dist < max) {

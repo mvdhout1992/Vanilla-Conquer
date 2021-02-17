@@ -1175,7 +1175,8 @@ void TechnoClass::Draw_It(int x, int y, WindowNumberType window) const
             y -= 6;
         }
 
-        if (What_Am_I() == RTTI_BUILDING && ((BuildingTypeClass const&)Class_Of()).Type == STRUCT_BARRACKS) {
+        // Iran: Shouldn't Allied Barracks have this extra logic too?
+        if (What_Am_I() == RTTI_BUILDING && ((BuildingTypeClass const&)Class_Of()).IsSovietBarracks) {
             y -= 5;
         }
 
@@ -1669,7 +1670,7 @@ bool TechnoClass::Evaluate_Object(ThreatType method,
     /*
     **	Special case so that SAM site doesn't fire on aircraft that are landed.
     */
-    if (otype == RTTI_AIRCRAFT && What_Am_I() == RTTI_BUILDING && *((BuildingClass*)this) == STRUCT_SAM) {
+    if (otype == RTTI_AIRCRAFT && What_Am_I() == RTTI_BUILDING && ((BuildingClass*)this)->Class->IsSamSite) {
         if (((AircraftClass*)object)->Height == 0) {
             BEnd(BENCH_EVAL_OBJECT);
             return (false);
@@ -1699,7 +1700,7 @@ bool TechnoClass::Evaluate_Object(ThreatType method,
     */
     if (otype == RTTI_BUILDING && What_Am_I() == RTTI_VESSEL && ((VesselClass*)this)->Class->IsSub) {
         StructType ostruc = *(BuildingClass*)object;
-        if (ostruc != STRUCT_SUB_PEN && ostruc != STRUCT_SHIP_YARD) {
+        if (((BuildingClass*)object)->Class->IsSubPen == false && ((BuildingClass*)object)->Class->IsShipYard == false) {
             BEnd(BENCH_EVAL_OBJECT);
             return (false);
         }
@@ -4213,8 +4214,8 @@ bool TechnoClass::Evaluate_Object(ThreatType method,
 #endif
         switch (What_Am_I()) {
         case RTTI_BUILDING: {
-            StructType bldg = *(BuildingClass*)this;
-            if (bldg != STRUCT_BARREL && bldg != STRUCT_BARREL3 && bldg != STRUCT_APMINE && bldg != STRUCT_AVMINE) {
+            BuildingClass *bldg = (BuildingClass*)this;
+            if (bldg->Class->IsBarrel == false && bldg->Class->IsAPMine == false && bldg->Class->IsAVMine == false) {
                 if (((BuildingClass*)this)->WhoLastHurtMe != HOUSE_NONE) {
                     House->BuildingsLost++;
                 }
@@ -6146,7 +6147,7 @@ bool TechnoClass::Evaluate_Object(ThreatType method,
                 bool building = false;
                 int pip = PIP_FULL; // green
                 if (!IsOwnedByPlayer && What_Am_I() == RTTI_BUILDING) {
-                    if (*(BuildingClass*)this == STRUCT_POWER || *(BuildingClass*)this == STRUCT_ADVANCED_POWER) {
+                    if (((BuildingClass*)this)->Class->IsPowerPlant || ((BuildingClass*)this)->Class->IsAdvancedPowerPlant) {
                         building = true;
                         if (House->Power_Fraction() < 1) {
                             pip = PIP_ENGINEER; // gold
@@ -6200,7 +6201,7 @@ bool TechnoClass::Evaluate_Object(ThreatType method,
             PipEnum prishape = PIP_PRIMARY;
 
             if (What_Am_I() == RTTI_BUILDING) {
-                if (*((BuildingClass*)this) == STRUCT_KENNEL) {
+                if (((BuildingClass*)this)->Class->IsKennel) {
                     prishape = PIP_PRI;
                 }
             }
@@ -6336,6 +6337,86 @@ bool TechnoClass::Evaluate_Object(ThreatType method,
                 */
                 if (building != NULL && (friendly ? building->House->Is_Ally(this) : building->House == House)
                     && !building->IsInLimbo && *building == b
+                    && (What_Am_I() == RTTI_AIRCRAFT
+                        || Map[building->Center_Coord()].Zones[Techno_Type_Class()->MZone]
+                               == Map[Center_Coord()].Zones[Techno_Type_Class()->MZone])
+                    && ((TechnoClass*)this)->Transmit_Message(RADIO_CAN_LOAD, building) == RADIO_ROGER) {
+
+                    /*
+                    **	If the building qualifies and this building is better than the
+                    **	last qualifying building (as rated by distance), then record
+                    **	this building and keep scanning.
+                    */
+                    if (bestval == -1 || Distance(building) < bestval || building->IsLeader) {
+                        best = building;
+                        bestval = Distance(building);
+                    }
+                }
+            }
+        }
+        return (best);
+    }
+
+    BuildingClass* TechnoClass::Find_Docking_Bay(DockType dock, bool friendly) const
+    {
+        assert(IsActive);
+
+        BuildingClass* best = 0;
+
+        /*
+        **	First check to see if there are ANY buildings of the specified
+        **	type in this house's inventory. If not, then don't bother to scan
+        **	for one.
+        */
+
+        switch (dock) {
+        case DOCK_REFINERY: {
+            if (!House->Has_Refinery()) {
+                return NULL;
+            }
+        }
+        case DOCK_HELIPAD: {
+            if (!House->Has_Helipad()) {
+                return NULL;
+            }
+        }
+        case DOCK_REPAIR: {
+            if (!House->Has_Repair_Facility()) {
+                return NULL;
+            }
+        }
+        }
+            int bestval = -1;
+
+            /*
+            **	Loop through all the buildings and find the one that matches the specification
+            **	and is willing to dock with this object.
+            */
+            for (int index = 0; index < Buildings.Count(); index++) {
+                BuildingClass* building = Buildings.Ptr(index);
+
+                switch (dock) {
+                case DOCK_REFINERY: {
+                    if (!building->Class->IsRefinery) {
+                        continue;
+                    }
+                }
+                case DOCK_HELIPAD: {
+                    if (!building->Class->IsHelipad) {
+                        continue;
+                    }
+                }
+                case DOCK_REPAIR: {
+                    if (!building->Class->IsRepairFacility)
+                        continue;
+                    }
+
+
+                /*
+                **	Check to see if the building qualifies (preliminary scan).
+                */
+                if (building != NULL && (friendly ? building->House->Is_Ally(this) : building->House == House)
+                    && !building->IsInLimbo
                     && (What_Am_I() == RTTI_AIRCRAFT
                         || Map[building->Center_Coord()].Zones[Techno_Type_Class()->MZone]
                                == Map[Center_Coord()].Zones[Techno_Type_Class()->MZone])

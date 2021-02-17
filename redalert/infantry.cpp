@@ -709,7 +709,7 @@ void InfantryClass::Per_Cell_Process(PCPType why)
                             if (Session.Type == GAME_NORMAL) {
 #endif
                                 // If they're spying on a sub pen, give 'em a sonar pulse
-                                if (build == STRUCT_SUB_PEN) {
+                                if ( ((BuildingClass*)tech)->Class->IsSubPen) {
                                     House->SuperWeapon[SPC_SONAR_PULSE].Enable(false, true, false);
                                     // Add to Glyphx multiplayer sidebar. ST - 8/7/2019 10:13AM
                                     if (Session.Type == GAME_GLYPHX_MULTIPLAYER) {
@@ -726,7 +726,7 @@ void InfantryClass::Per_Cell_Process(PCPType why)
                                     }
                                 }
                                 // If they're spying on an airfield, they get Parabombs
-                                if (build == STRUCT_AIRSTRIP) {
+                                if ( ((BuildingClass*)tech)->Class->IsAirfield) {
                                     House->SuperWeapon[SPC_PARA_BOMB].Enable(true, true, false);
                                     // Add to Glyphx multiplayer sidebar. ST - 8/7/2019 10:13AM
                                     if (Session.Type == GAME_GLYPHX_MULTIPLAYER) {

@@ -577,7 +577,7 @@ void DriveClass::Assign_Destination(TARGET target)
     **	If the player clicked on refinery but it is not busy, then assign
     **	it to unload at the refinery.
     */
-    if (b != NULL && *b == STRUCT_REFINERY && What_Am_I() == RTTI_UNIT
+    if (b != NULL && b->Class->IsRefinery && What_Am_I() == RTTI_UNIT
         && ((UnitTypeClass*)Techno_Type_Class())->IsToHarvest) {
         if (Contact_With_Whom() != b && !b->In_Radio_Contact()) {
             /*

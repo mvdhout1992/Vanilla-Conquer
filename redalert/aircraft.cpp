@@ -2415,7 +2415,7 @@ ActionType AircraftClass::What_Action(ObjectClass const* target) const
     */
     if (House->IsPlayerControl && action == ACTION_SELECT && target->What_Am_I() == RTTI_BUILDING) {
         BuildingClass* building = (BuildingClass*)target;
-        if (building->Class->Type == STRUCT_REPAIR && !building->In_Radio_Contact()
+        if (building->Class->IsRepairFacility && !building->In_Radio_Contact()
             && !building->Is_Something_Attached()) {
             action = ACTION_ENTER;
         }
@@ -3834,9 +3834,9 @@ int AircraftClass::Mission_Guard(void)
         if (!In_Radio_Contact()
             || (Height == 0
                 && (Contact_With_Whom()->What_Am_I() != RTTI_BUILDING
-                    || *((BuildingClass*)Contact_With_Whom()) != STRUCT_REPAIR))) {
+                    || ((BuildingClass*)Contact_With_Whom())->Class->IsRepairFacility == false))) {
 
-            BuildingClass* building = Find_Docking_Bay(STRUCT_REPAIR, true);
+            BuildingClass* building = Find_Docking_Bay(DOCK_REPAIR, true);
             if (building != NULL) {
                 Assign_Destination(building->As_Target());
                 Assign_Target(TARGET_NONE);
@@ -3853,7 +3853,7 @@ int AircraftClass::Mission_Guard(void)
     */
     if (Ammo == 0 && Is_Weapon_Equipped()) {
         if (!In_Radio_Contact()) {
-            BuildingClass* building = Find_Docking_Bay(STRUCT_HELIPAD, false);
+            BuildingClass* building = Find_Docking_Bay(DOCK_HELIPAD, false);
 #ifdef FIXIT_CARRIER //	checked - ajw 9/28/98
             if (!Class->IsFixedWing) {
                 int dist = 0x7FFFFFFF;

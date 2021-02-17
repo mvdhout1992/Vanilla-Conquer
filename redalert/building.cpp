@@ -177,39 +177,36 @@ RadioMessageType BuildingClass::Receive_Message(RadioClass* from, RadioMessageTy
         if (!House->Is_Ally(from))
             return (RADIO_STATIC);
         if (Mission == MISSION_CONSTRUCTION || Mission == MISSION_DECONSTRUCTION || BState == BSTATE_CONSTRUCTION
-            || (!ScenarioInit && Class->Type != STRUCT_REFINERY && In_Radio_Contact()))
+            || (!ScenarioInit && Class->IsRefinery == false && In_Radio_Contact()))
             return (RADIO_NEGATIVE);
-        switch (Class->Type) {
-        case STRUCT_AIRSTRIP:
+
+        if (Class->IsAirfield) {
             if (from->What_Am_I() == RTTI_AIRCRAFT && ((AircraftClass const*)from)->Class->IsFixedWing) {
                 return (RADIO_ROGER);
             }
-            break;
+        }
 
-        case STRUCT_HELIPAD:
+        else if (Class->IsHelipad) {
             if (from->What_Am_I() == RTTI_AIRCRAFT && !((AircraftClass const*)from)->Class->IsFixedWing) {
                 return (RADIO_ROGER);
             }
-            break;
+        }
 
-        case STRUCT_REPAIR:
+        else if (Class->IsRepairFacility) {
             if (from->What_Am_I() == RTTI_UNIT || (from->What_Am_I() == RTTI_AIRCRAFT)) {
                 if (Transmit_Message(RADIO_ON_DEPOT, from) != RADIO_ROGER) {
                     return (RADIO_ROGER);
                 }
             }
             return (RADIO_NEGATIVE);
+        }
 
-        case STRUCT_REFINERY:
+        else if (Class->IsRefinery) {
             if (from->What_Am_I() == RTTI_UNIT && ((UnitClass*)from)->Class->IsToHarvest
                 && (ScenarioInit || !Is_Something_Attached())) {
 
                 return ((Contact_With_Whom() != from) ? RADIO_ROGER : RADIO_NEGATIVE);
             }
-            break;
-
-        default:
-            break;
         }
         return (RADIO_STATIC);
 
@@ -221,28 +218,21 @@ RadioMessageType BuildingClass::Receive_Message(RadioClass* from, RadioMessageTy
         if (Mission == MISSION_DECONSTRUCTION) {
             return (RADIO_NEGATIVE);
         }
-        switch (Class->Type) {
-        case STRUCT_REPAIR:
+
+        if (Class->IsRepairFacility) {
             IsReadyToCommence = true;
             Assign_Mission(MISSION_REPAIR);
             from->Assign_Mission(MISSION_SLEEP);
             return (RADIO_ROGER);
-
-        case STRUCT_AIRSTRIP:
-        case STRUCT_HELIPAD:
+        } else if (Class->IsAirfield || Class->IsHelipad) {
             Assign_Mission(MISSION_REPAIR);
             from->Assign_Mission(MISSION_SLEEP);
             return (RADIO_ROGER);
-
-        case STRUCT_REFINERY:
+        } else if (Class->IsRefinery) {
             Mark(MARK_CHANGE);
             from->Assign_Mission(MISSION_UNLOAD);
             return (RADIO_ROGER);
-
-        default:
-            break;
         }
-        break;
 
     /*
     **	Docking maneuver maintenance message. See if new order should be given to the
@@ -255,7 +245,7 @@ RadioMessageType BuildingClass::Receive_Message(RadioClass* from, RadioMessageTy
         **	When in radio contact for loading, the refinery starts
         **	flashing the lights.
         */
-        if (*this == STRUCT_REFINERY && BState != BSTATE_FULL) {
+        if (Class->IsRefinery && BState != BSTATE_FULL) {
             Begin_Mode(BSTATE_FULL);
         }
 
@@ -264,7 +254,7 @@ RadioMessageType BuildingClass::Receive_Message(RadioClass* from, RadioMessageTy
         **	be able to satisfy the request to load by bumping off any
         **	preoccupying task.
         */
-        if (*this == STRUCT_REPAIR) {
+        if (Class->IsRepairFacility) {
             if (Contact_With_Whom() != from) {
                 if (Transmit_Message(RADIO_ON_DEPOT) == RADIO_ROGER) {
                     if (Transmit_Message(RADIO_NEED_REPAIR) == RADIO_NEGATIVE) {
@@ -285,23 +275,15 @@ RadioMessageType BuildingClass::Receive_Message(RadioClass* from, RadioMessageTy
         }
 
         if (Transmit_Message(RADIO_NEED_TO_MOVE) == RADIO_ROGER) {
-            switch (Class->Type) {
-            case STRUCT_AIRSTRIP:
+            if (Class->IsAirfield) {
                 param = As_Target();
-                break;
-
-            case STRUCT_HELIPAD:
+            } else if (Class->IsHelipad) {
                 param = As_Target();
-                break;
-
-            case STRUCT_REPAIR:
+            } else if (Class->IsRepairFacility) {
                 Transmit_Message(RADIO_TETHER);
                 param = ::As_Target(Coord_Cell(Center_Coord()));
-                break;
-
-            case STRUCT_REFINERY:
+            } else if (Class->IsRefinery) {
                 param = ::As_Target(Coord_Cell(Adjacent_Cell(Center_Coord(), DIR_S)));
-                break;
             }
 
             /*
@@ -314,7 +296,7 @@ RadioMessageType BuildingClass::Receive_Message(RadioClass* from, RadioMessageTy
                 **	procedure now. If it can't, then tell it to get outta here.
                 */
                 Transmit_Message(RADIO_TETHER);
-                if (*this == STRUCT_REFINERY && Transmit_Message(RADIO_BACKUP_NOW, from) != RADIO_ROGER) {
+                if (Class->IsRefinery && Transmit_Message(RADIO_BACKUP_NOW, from) != RADIO_ROGER) {
                     from->Scatter(NULL, true, true);
                 }
             }
@@ -328,7 +310,7 @@ RadioMessageType BuildingClass::Receive_Message(RadioClass* from, RadioMessageTy
     */
     case RADIO_ARE_REFINERY:
         if (Is_Something_Attached() || In_Radio_Contact() || IsInLimbo || House->Class->House != from->Owner()
-            || (*this != STRUCT_REFINERY /* && *this != STRUCT_REPAIR*/)) {
+            || (Class->IsRefinery == false /* && *this != STRUCT_REPAIR*/)) {
             return (RADIO_NEGATIVE);
         }
         return (RADIO_ROGER);
@@ -363,7 +345,7 @@ RadioMessageType BuildingClass::Receive_Message(RadioClass* from, RadioMessageTy
     */
     case RADIO_OVER_OUT:
         Begin_Mode(BSTATE_IDLE);
-        if (*this == STRUCT_REPAIR) {
+        if (Class->IsRepairFacility) {
             Assign_Mission(MISSION_GUARD);
         }
         TechnoClass::Receive_Message(from, message, param);
@@ -375,7 +357,7 @@ RadioMessageType BuildingClass::Receive_Message(RadioClass* from, RadioMessageTy
     **	this event occurs.
     */
     case RADIO_UNLOADED:
-        if (*this == STRUCT_REPAIR) {
+        if (Class->IsRepairFacility) {
             if (Distance(from) < 0x0180) {
                 return (RADIO_ROGER);
             }
@@ -643,7 +625,7 @@ int BuildingClass::Shape_Number(void) const
         if (Class->IsTurretEquipped) {
             shapenum = UnitClass::BodyShape[Dir_To_32(PrimaryFacing.Current())];
 
-            if (*this == STRUCT_SAM) {
+            if (Class->IsSamSite) {
 
                 /*
                 **	SAM sites that are free to rotate fetch their animation frame
@@ -682,7 +664,7 @@ int BuildingClass::Shape_Number(void) const
                 **	Special render stage for silos. The stage is dependent on the current
                 **	Tiberium collected as it relates to Tiberium capacity.
                 */
-                if (*this == STRUCT_STORAGE) {
+                if (Class->IsOreSilo) {
 
                     int level = 0;
                     if (House->Capacity) {
@@ -1049,7 +1031,7 @@ void BuildingClass::AI(void)
     ** Radar facilities and SAMs need to check for the proximity of a mobile
     ** radar jammer.
     */
-    if ((Class->IsRadarBuilding || *this == STRUCT_SAM) && (Frame % TICKS_PER_SECOND) == 0) {
+    if ((Class->IsRadarBuilding || Class->IsSamSite) && (Frame % TICKS_PER_SECOND) == 0) {
         IsJammed = false;
         for (int index = 0; index < Units.Count(); index++) {
             UnitClass* obj = Units.Ptr(index);
@@ -1073,7 +1055,7 @@ void BuildingClass::AI(void)
 // This check is used for the player 'has building' functions in HouseClass
 // in single player if a building has not been discovered yet (is in shroud) then it will not be
 // counted as a base building
-bool BuildingClass::Is_Part_Of_Base(const HouseClass *house)
+bool BuildingClass::Is_Part_Of_Base(const HouseClass* house)
 {
     if (House == house && IsLocked && (Session.Type != GAME_NORMAL || !House->IsHuman || IsDiscoveredByPlayer)) {
         return true;
@@ -1363,7 +1345,8 @@ ResultType BuildingClass::Take_Damage(int& damage, int distance, WarheadType war
             /*
             **	A force destruction will not generate survivors.
             */
-            if (forced || *this == STRUCT_KENNEL) {
+            // Iran: TODO make this configurable (also for Kennel)
+            if (forced || Class->IsKennel) {
                 IsSurvivorless = true;
             }
 
@@ -1390,7 +1373,7 @@ ResultType BuildingClass::Take_Damage(int& damage, int distance, WarheadType war
             ** Destruction of a shipyard or sub pen may cause attached ships
             ** who are repairing themselves to discontinue repairs.
             */
-            if (*this == STRUCT_SHIP_YARD || *this == STRUCT_SUB_PEN) {
+            if (Class->IsShipYard || Class->IsSubPen) {
                 for (int index = 0; index < Vessels.Count(); index++) {
                     VesselClass* obj = Vessels.Ptr(index);
                     if (obj && !obj->IsInLimbo && obj->House == House) {
@@ -1408,7 +1391,7 @@ ResultType BuildingClass::Take_Damage(int& damage, int distance, WarheadType war
             ** Destruction of a barrel will cause the surrounding squares to
             ** be hit with damage.
             */
-            if (*this == STRUCT_BARREL || *this == STRUCT_BARREL3) {
+            if (Class->IsBarrel) {
                 COORDINATE center = Center_Coord();
                 CELL cellcenter = Coord_Cell(center);
 
@@ -1462,7 +1445,7 @@ ResultType BuildingClass::Take_Damage(int& damage, int distance, WarheadType war
             break;
 
         case RESULT_HALF:
-            if (*this == STRUCT_PUMP) {
+            if (Class->IsOilPump) {
                 AnimClass* anim = new AnimClass(ANIM_OILFIELD_BURN, Coord_Add(Coord, 0x00400130L), 1);
                 if (anim) {
                     anim->Attach_To(this);
@@ -2044,9 +2027,7 @@ int BuildingClass::Exit_Object(TechnoClass* base)
         break;
 
     case RTTI_VESSEL:
-        switch (Class->Type) {
-        case STRUCT_SUB_PEN:
-        case STRUCT_SHIP_YARD:
+        if (Class->IsSubPen || Class->IsShipYard) {
             ScenarioInit++;
             cell = Find_Exit_Cell(base);
             if (cell != 0 && base->Unlimbo(Cell_Coord(cell), Direction(Cell_Coord(cell)))) {
@@ -2055,17 +2036,12 @@ int BuildingClass::Exit_Object(TechnoClass* base)
                 return (2);
             }
             ScenarioInit--;
-            break;
-
-        default:
-            break;
         }
         break;
 
     case RTTI_INFANTRY:
     case RTTI_UNIT:
-        switch (Class->Type) {
-        case STRUCT_REFINERY:
+        if (Class->IsRefinery) {
             if (base->What_Am_I() == RTTI_UNIT) {
                 cell = Coord_Cell(Center_Coord());
                 UnitClass* unit = (UnitClass*)base;
@@ -2080,9 +2056,7 @@ int BuildingClass::Exit_Object(TechnoClass* base)
             } else {
                 base->Scatter(0, true);
             }
-            break;
-
-        case STRUCT_WEAP:
+        } else if (Class->IsWeaponFactory) {
             if (Mission == MISSION_UNLOAD) {
                 for (int index = 0; index < Buildings.Count(); index++) {
                     BuildingClass* bldg = Buildings.Ptr(index);
@@ -2111,12 +2085,9 @@ int BuildingClass::Exit_Object(TechnoClass* base)
                 return (2);
             }
             ScenarioInit--;
-            break;
+        }
 
-        case STRUCT_BARRACKS:
-        case STRUCT_TENT:
-        case STRUCT_KENNEL:
-
+        else if (Class->IsAlliedBarracks || Class->IsSovietBarracks || Class->IsKennel) {
             cell = Find_Exit_Cell(base);
             if (cell != 0) {
                 DirType dir = Direction(cell);
@@ -2149,9 +2120,7 @@ int BuildingClass::Exit_Object(TechnoClass* base)
                 }
                 ScenarioInit--;
             }
-            break;
-
-        default:
+        } else {
             cell = Find_Exit_Cell(base);
             if (cell != 0) {
                 DirType dir = Direction(cell);
@@ -2176,7 +2145,6 @@ int BuildingClass::Exit_Object(TechnoClass* base)
                 }
                 ScenarioInit--;
             }
-            break;
         }
         break;
 
@@ -2415,11 +2383,11 @@ void BuildingClass::Update_Buildables(void)
             for (f = INFANTRY_FIRST; f < InfantryTypes.Count(); f++) {
                 if (PlayerPtr->Can_Build(&InfantryTypeClass::As_Reference((InfantryType)f), ActLike)) {
                     if (InfantryTypeClass::As_Reference((InfantryType)f).IsDog) {
-                        if (*this == STRUCT_KENNEL) {
+                        if (Class->IsKennel) {
                             Map.Add(RTTI_INFANTRYTYPE, f);
                         }
                     } else {
-                        if (*this != STRUCT_KENNEL) {
+                        if (Class->IsKennel == false) {
                             Map.Add(RTTI_INFANTRYTYPE, f);
                         }
                     }
@@ -2625,7 +2593,7 @@ void BuildingClass::Grand_Opening(bool captured)
         **	Tiberium Refineries get a free harvester. Add a harvester to the
         **	reinforcement list at this time.
         */
-        if (*this == STRUCT_REFINERY && !ScenarioInit && !captured && !Debug_Map
+        if (Class->IsRefinery && !ScenarioInit && !captured && !Debug_Map
             && (!House->IsHuman || PurchasePrice == 0 || PurchasePrice > Class->Raw_Cost())) {
             CELL cell = Coord_Cell(Adjacent_Cell(Center_Coord(), DIR_S));
 
@@ -2669,7 +2637,7 @@ void BuildingClass::Grand_Opening(bool captured)
         /*
         **	Helicopter pads get a free attack helicopter.
         */
-        if (!Rule.IsSeparate && *this == STRUCT_HELIPAD && !captured) {
+        if (!Rule.IsSeparate && Class->IsHelipad && !captured) {
             ScenarioInit++;
             AircraftClass* air = 0;
             if (House->ActLike == HOUSE_USSR || House->ActLike == HOUSE_BAD || House->ActLike == HOUSE_UKRAINE) {
@@ -2854,10 +2822,10 @@ ActionType BuildingClass::What_Action(ObjectClass const* object) const
             case RTTI_INFANTRYTYPE:
             case RTTI_INFANTRY:
                 action = ACTION_NONE;
-                if (*this == STRUCT_KENNEL) {
+                if (Class->IsKennel) {
                     for (index = 0; index < Buildings.Count(); index++) {
                         BuildingClass* bldg = Buildings.Ptr(index);
-                        if (bldg != this && bldg->Owner() == Owner() && *bldg == STRUCT_KENNEL) {
+                        if (bldg != this && bldg->Owner() == Owner() && bldg->Class->IsKennel) {
                             action = ACTION_TOGGLE_PRIMARY;
                             break;
                         }
@@ -2866,7 +2834,7 @@ ActionType BuildingClass::What_Action(ObjectClass const* object) const
                     for (index = 0; index < Buildings.Count(); index++) {
                         BuildingClass* bldg = Buildings.Ptr(index);
                         if (bldg != this && bldg->Owner() == Owner() && bldg->Class->ToBuild == RTTI_INFANTRYTYPE
-                            && *bldg != STRUCT_KENNEL) {
+                            && bldg->Class->IsKennel == false) {
                             action = ACTION_TOGGLE_PRIMARY;
                             break;
                         }
@@ -2877,10 +2845,10 @@ ActionType BuildingClass::What_Action(ObjectClass const* object) const
             case RTTI_AIRCRAFTTYPE:
             case RTTI_AIRCRAFT:
                 action = ACTION_NONE;
-                if (*this == STRUCT_AIRSTRIP) {
+                if (Class->IsAirfield) {
                     for (index = 0; index < Buildings.Count(); index++) {
                         BuildingClass* bldg = Buildings.Ptr(index);
-                        if (bldg != this && bldg->Owner() == Owner() && *bldg == STRUCT_AIRSTRIP) {
+                        if (bldg != this && bldg->Owner() == Owner() && bldg->Class->IsAirfield) {
                             action = ACTION_TOGGLE_PRIMARY;
                             break;
                         }
@@ -2889,7 +2857,7 @@ ActionType BuildingClass::What_Action(ObjectClass const* object) const
                     for (index = 0; index < Buildings.Count(); index++) {
                         BuildingClass* bldg = Buildings.Ptr(index);
                         if (bldg != this && bldg->Owner() == Owner() && bldg->Class->ToBuild == RTTI_AIRCRAFTTYPE
-                            && *bldg != STRUCT_AIRSTRIP) {
+                            && bldg->Class->IsAirfield == false) {
                             action = ACTION_TOGGLE_PRIMARY;
                             break;
                         }
@@ -2956,7 +2924,7 @@ ActionType BuildingClass::What_Action(CELL cell) const
 
     ActionType action = TechnoClass::What_Action(cell);
 
-    if (action == ACTION_MOVE && (Class->IsConstructionYard == false|| !Is_MCV_Deploy())) {
+    if (action == ACTION_MOVE && (Class->IsConstructionYard == false || !Is_MCV_Deploy())) {
         action = ACTION_NONE;
     }
 
@@ -3053,10 +3021,10 @@ COORDINATE BuildingClass::Docking_Coord(void) const
     assert(Buildings.ID(this) == ID);
     assert(IsActive);
 
-    if (*this == STRUCT_HELIPAD) {
+    if (Class->IsHelipad) {
         return (Coord_Add(Coord, XYP_COORD(24, 18)));
     }
-    if (*this == STRUCT_AIRSTRIP) {
+    if (Class->IsAirfield) {
         return (Coord_Add(Coord, XYP_COORD(ICON_PIXEL_W + ICON_PIXEL_W / 2, 28)));
     }
     return (TechnoClass::Docking_Coord());
@@ -3098,7 +3066,7 @@ FireErrorType BuildingClass::Can_Fire(TARGET target, int which) const
         if (Class->IsTurretEquipped) {
             int diff = PrimaryFacing.Difference(Direction(TarCom));
             diff = abs(diff);
-            if (ABS(diff) > (*this == STRUCT_SAM ? 64 : 8)) {
+            if (ABS(diff) > (Class->IsSamSite ? 64 : 8)) {
                 //			if (ABS(diff) > 8) {
                 return (FIRE_FACING);
             }
@@ -3156,18 +3124,18 @@ bool BuildingClass::Toggle_Primary(void)
 
             if (!building->IsInLimbo && building->Owner() == Owner() && building->Class->ToBuild == Class->ToBuild) {
                 if (Class->ToBuild == RTTI_INFANTRYTYPE) {
-                    if (*building == STRUCT_KENNEL && *this == STRUCT_KENNEL) {
+                    if (building->Class->IsKennel && this->Class->IsKennel) {
                         building->IsLeader = false;
                     } else {
-                        if (*building != STRUCT_KENNEL && *this != STRUCT_KENNEL) {
+                        if (building->Class->IsKennel == false && this->Class->IsKennel == false) {
                             building->IsLeader = false;
                         }
                     }
                 } else if (Class->ToBuild == RTTI_AIRCRAFTTYPE) {
-                    if (*building == STRUCT_AIRSTRIP && *this == STRUCT_AIRSTRIP) {
+                    if (building->Class->IsAirfield && this->Class->IsAirfield) {
                         building->IsLeader = false;
                     } else {
-                        if (*building != STRUCT_AIRSTRIP && *this != STRUCT_AIRSTRIP) {
+                        if (building->Class->IsAirfield == false && this->Class->IsAirfield == false) {
                             building->IsLeader = false;
                         }
                     }
@@ -3421,19 +3389,19 @@ COORDINATE BuildingClass::Sort_Y(void) const
     assert(Buildings.ID(this) == ID);
     assert(IsActive);
 
-    if (*this == STRUCT_REPAIR) {
+    if (Class->IsRepairFacility) {
         return (Coord);
     }
-    if (*this == STRUCT_HELIPAD) {
+    if (Class->IsHelipad) {
         return (Center_Coord());
     }
-    if (*this == STRUCT_AIRSTRIP) {
+    if (Class->IsAirfield) {
         return (Center_Coord());
     }
-    if (*this == STRUCT_BARRACKS /*|| *this == STRUCT_POWER*/) {
+    if (Class->IsSovietBarracks /*|| *this == STRUCT_POWER*/) {
         return (Center_Coord());
     }
-    if (*this == STRUCT_REFINERY) {
+    if (Class->IsRefinery) {
         return (Center_Coord());
     }
 
@@ -3441,7 +3409,7 @@ COORDINATE BuildingClass::Sort_Y(void) const
     **	Mines need to bias their sort location such that they are typically drawn
     **	before any objects that might overlap them.
     */
-    if (*this == STRUCT_AVMINE || *this == STRUCT_APMINE) {
+    if (Class->IsAPMine || Class->IsAVMine) {
         return (Coord_Move(Center_Coord(), DIR_N, CELL_LEPTON_H));
     }
 
@@ -3509,7 +3477,7 @@ bool BuildingClass::Can_Demolish(void) const
 
     if (Class->Get_Buildup_Data() && BState != BSTATE_CONSTRUCTION && Mission != MISSION_DECONSTRUCTION
         && Mission != MISSION_CONSTRUCTION) {
-        if (*this == STRUCT_REFINERY && Is_Something_Attached())
+        if (Class->IsRefinery && Is_Something_Attached())
             return (false);
         return (true);
     }
@@ -3518,7 +3486,7 @@ bool BuildingClass::Can_Demolish(void) const
 
 bool BuildingClass::Can_Demolish_Unit(void) const
 {
-    return ((*this == STRUCT_REPAIR || *this == STRUCT_AIRSTRIP) && In_Radio_Contact()
+    return ((Class->IsRepairFacility || Class->IsAirfield) && In_Radio_Contact()
             && Distance(Contact_With_Whom()) < 0x0080);
 }
 
@@ -3609,7 +3577,7 @@ int BuildingClass::Mission_Guard(void)
             **	Special case to break out of guard mode if this is a repair
             **	facility and there is a customer waiting at the grease pit.
             */
-            if (*this == STRUCT_REPAIR && In_Radio_Contact() && Contact_With_Whom()->Is_Techno()
+            if (Class->IsRepairFacility && In_Radio_Contact() && Contact_With_Whom()->Is_Techno()
                 && ((TechnoClass*)Contact_With_Whom())->Mission == MISSION_ENTER
                 && Distance(Contact_With_Whom()) < 0x0040 && Transmit_Message(RADIO_NEED_TO_MOVE) == RADIO_ROGER) {
 
@@ -3622,7 +3590,7 @@ int BuildingClass::Mission_Guard(void)
             break;
         }
 
-        if (*this == STRUCT_REPAIR) {
+        if (Class->IsRepairFacility) {
             return (MissionControl[Mission].Normal_Delay() + Random_Pick(0, 2));
         } else {
             return (MissionControl[Mission].Normal_Delay() * 3 + Random_Pick(0, 2));
@@ -3746,7 +3714,7 @@ int BuildingClass::Mission_Deconstruction(void)
         ** Selling off a shipyard or sub pen may cause attached ships
         ** who are repairing themselves to discontinue repairs.
         */
-        if (*this == STRUCT_SHIP_YARD || *this == STRUCT_SUB_PEN) {
+        if (Class->IsShipYard || Class->IsSubPen) {
             for (int index = 0; index < Vessels.Count(); index++) {
                 VesselClass* obj = Vessels.Ptr(index);
                 if (obj && !obj->IsInLimbo && obj->House == House) {
@@ -3988,7 +3956,7 @@ int BuildingClass::Mission_Attack(void)
     assert(Buildings.ID(this) == ID);
     assert(IsActive);
 
-    if (*this == STRUCT_SAM) {
+    if (Class->IsSamSite) {
         switch (Status) {
 
         /*
@@ -4221,7 +4189,7 @@ int BuildingClass::Mission_Repair(void)
         return (1);
     }
 
-    if (*this == STRUCT_REPAIR) {
+    if (Class->IsRepairFacility) {
         enum
         {
             INITIAL,
@@ -4383,7 +4351,7 @@ int BuildingClass::Mission_Repair(void)
         return (MissionControl[Mission].Normal_Delay());
     }
 
-    if (*this == STRUCT_HELIPAD || *this == STRUCT_AIRSTRIP) {
+    if (Class->IsHelipad || Class->IsAirfield) {
         enum
         {
             INITIAL,
@@ -5062,37 +5030,29 @@ InfantryType BuildingClass::Crew_Type(void) const
     assert(Buildings.ID(this) == ID);
     assert(IsActive);
 
-    switch (Class->Type) {
     // Iran: Civilians should spawn from Ore Silo 50% of the type but I don't think this happens
     // Leftover TD logic?
-    case STRUCT_STORAGE:
+    if (Class->IsOreSilo) {
         if (Percent_Chance(50)) {
             return (INFANTRY_C1);
         } else {
             return (INFANTRY_C7);
         }
-
-    case STRUCT_CONST:
+    } else if (Class->IsConstructionYard) {
         if (!IsCaptured && House->IsHuman && Percent_Chance(25)) {
             return (INFANTRY_RENOVATOR);
         }
-        break;
-
+    }
     // Iran: Dog should spawn from kennel 50% of the type but I don't think this happens
-     // Because STRUCT_KENNEL is set to be survivorless
-    case STRUCT_KENNEL:
+    // Because STRUCT_KENNEL is set to be survivorless
+    else if (Class->IsKennel) {
         if (Percent_Chance(50)) {
             return (INFANTRY_DOG);
         } else {
             return (INFANTRY_NONE);
         }
-
-    case STRUCT_TENT:
-    case STRUCT_BARRACKS:
+    } else if (Class->IsSovietBarracks || Class->IsAlliedBarracks) {
         return (INFANTRY_E1);
-
-    default:
-        break;
     }
     return (TechnoClass::Crew_Type());
 }
@@ -5368,7 +5328,7 @@ void BuildingClass::Update_Radar_Spied(void)
     for (int index = 0; index < Buildings.Count(); index++) {
         BuildingClass* obj = Buildings.Ptr(index);
         if (obj && !obj->IsInLimbo && obj->House == House) {
-            if (obj->Class->IsRadarBuilding/* || *obj == STRUCT_EYE */) {
+            if (obj->Class->IsRadarBuilding /* || *obj == STRUCT_EYE */) {
                 House->RadarSpied |= obj->Spied_By();
             }
         }
@@ -5692,13 +5652,15 @@ void BuildingClass::Factory_AI(void)
                 **	production can never complete -- don't bother starting it.
                 */
                 if (House->IsStarted && House->Available_Money() > 10) {
-                    TechnoTypeClass const* techno = House->Suggest_New_Object(Class->ToBuild, *this == STRUCT_KENNEL);
+                    TechnoTypeClass const* techno = House->Suggest_New_Object(Class->ToBuild, Class->IsKennel);
 
                     /*
                     **	If a suitable object type was selected for production, then start
                     **	producing it now.
                     */
                     if (techno != NULL) {
+                        DBG_LOG(
+                            "RTTI is unit: %d -- BuildUnit is: %d", Class->ToBuild == RTTI_UNITTYPE, House->BuildUnit);
                         Factory = new FactoryClass;
                         if (Factory.Is_Valid()) {
                             if (!Factory->Set(*techno, *House)) {
@@ -5835,7 +5797,8 @@ void BuildingClass::Repair_AI(void)
             } else {
                 if ((Session.Type != GAME_NORMAL || IsAllowedToSell) && IsTickedOff
                     && House->Control.TechLevel >= Rule.IQSellBack && Random_Pick(0, 50) < House->Control.TechLevel
-                    && !Trigger.Is_Valid() && Class->IsConstructionYard == false && Health_Ratio() < Rule.ConditionRed) {
+                    && !Trigger.Is_Valid() && Class->IsConstructionYard == false
+                    && Health_Ratio() < Rule.ConditionRed) {
                     Sell_Back(1);
                 }
             }
@@ -5892,7 +5855,7 @@ void BuildingClass::Animation_AI(void)
     /*
     **	Always refresh the SAM site if it has an animation change.
     */
-    if (*this == STRUCT_SAM && stagechange)
+    if (Class->IsSamSite && stagechange)
         Mark(MARK_CHANGE);
 
     if ((!Class->IsTurretEquipped && Class->IsTeslaCoil == false) || Mission == MISSION_CONSTRUCTION
@@ -6034,7 +5997,8 @@ void const* BuildingClass::Get_Image_Data(void) const
 int BuildingClass::Value(void) const
 {
     if (Class->IsFake) {
-        return (BuildingTypeClass::As_Reference(Class->FakeOf).Reward + BuildingTypeClass::As_Reference(Class->FakeOf).Risk);
+        return (BuildingTypeClass::As_Reference(Class->FakeOf).Reward
+                + BuildingTypeClass::As_Reference(Class->FakeOf).Risk);
     }
     return (TechnoClass::Value());
 }
@@ -6088,10 +6052,10 @@ void BuildingClass::Remove_Gap_Effect(void)
 short const* BuildingClass::Overlap_List(bool redraw) const
 {
     if ((Spied_By() & (1 << PlayerPtr->Class->House)) != 0 && Is_Selected_By_Player()) {
-        if (*this == STRUCT_BARRACKS || *this == STRUCT_TENT) {
+        if (Class->IsSovietBarracks || Class->IsAlliedBarracks) {
             static short const _list[] = {-1, 2, (MAP_CELL_W * 1) - 1, (MAP_CELL_W * 1) + 2, REFRESH_EOL};
             return (_list);
-        } else if (*this == STRUCT_REFINERY) {
+        } else if (Class->IsRefinery) {
             static short const _list[] = {
                 0, 2, (MAP_CELL_W * 2) + 0, (MAP_CELL_W * 2) + 1, (MAP_CELL_W * 2) + 2, REFRESH_EOL};
             return (_list);

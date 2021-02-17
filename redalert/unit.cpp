@@ -883,7 +883,7 @@ RadioMessageType UnitClass::Receive_Message(RadioClass* from, RadioMessageType m
     case RADIO_RUN_AWAY:
         if (Class->IsToHarvest && In_Radio_Contact() && Mission == MISSION_ENTER) {
             TechnoClass* contact = Contact_With_Whom();
-            if (contact->What_Am_I() == RTTI_BUILDING && *((BuildingClass*)contact) == STRUCT_REFINERY) {
+            if (contact->What_Am_I() == RTTI_BUILDING && ((BuildingClass*)contact)->Class->IsRefinery) {
                 // Slight hack; set a target so the harvest mission knows to skip to finding home state
                 Assign_Mission(MISSION_HARVEST);
                 TarCom = As_Target();
@@ -1179,7 +1179,7 @@ ResultType UnitClass::Take_Damage(int& damage, int distance, WarheadType warhead
                     /*
                     **	Find nearby refinery and head to it?
                     */
-                    BuildingClass* building = Find_Docking_Bay(STRUCT_REFINERY, false);
+                    BuildingClass* building = Find_Docking_Bay(DOCK_REFINERY, false);
 
                     /*
                     **	Since the refinery said it was ok to load, establish radio
@@ -1306,7 +1306,7 @@ void UnitClass::Player_Assign_Mission(MissionType mission, TARGET target, TARGET
         ArchiveTarget = TARGET_NONE;
     } else if (mission == MISSION_ENTER) {
         BuildingClass* building = As_Building(destination);
-        if (building != NULL && *building == STRUCT_REFINERY && building->In_Radio_Contact()) {
+        if (building != NULL && building->Class->IsRefinery && building->In_Radio_Contact()) {
             building->Transmit_Message(RADIO_OVER_OUT);
         }
     }
@@ -1742,7 +1742,7 @@ void UnitClass::Per_Cell_Process(PCPType why)
                 TechnoClass* contact = Contact_With_Whom();
                 if (Transmit_Message(RADIO_UNLOADED) == RADIO_RUN_AWAY) {
                     if (Class->IsToHarvest && contact && contact->What_Am_I() == RTTI_BUILDING
-                        && *((BuildingClass*)contact) != STRUCT_REPAIR) {
+                        && ((BuildingClass*)contact)->Class->IsRepairFacility == false) {
                         Assign_Mission(MISSION_HARVEST);
                     } else if (!Target_Legal(NavCom)) {
                         Scatter(0, true);
@@ -3311,7 +3311,8 @@ MoveType UnitClass::Can_Enter_Cell(CELL cell, FacingType) const
             **	authorization from the occupier.
             */
             if (obj == Contact_With_Whom()
-                && (IsTethered || (obj->What_Am_I() == RTTI_BUILDING && *((BuildingClass*)obj) == STRUCT_REPAIR))) {
+                && (IsTethered
+                    || (obj->What_Am_I() == RTTI_BUILDING && ((BuildingClass*)obj)->Class->IsRepairFacility))) {
                 return (MOVE_OK);
             }
 
@@ -3666,7 +3667,7 @@ ActionType UnitClass::What_Action(ObjectClass const* object) const
     */
     if (is_player_controlled && action == ACTION_SELECT && object->What_Am_I() == RTTI_BUILDING) {
         BuildingClass* building = (BuildingClass*)object;
-        if (building->Class->Type == STRUCT_REPAIR
+        if (building->Class->IsRepairFacility
             && ((UnitClass*)this)->Transmit_Message(RADIO_CAN_LOAD, building) == RADIO_ROGER
             && !building->In_Radio_Contact() && !building->Is_Something_Attached()) {
             action = ACTION_MOVE;
@@ -3817,7 +3818,7 @@ int UnitClass::Mission_Guard(void)
 {
     assert(Units.ID(this) == ID);
     assert(IsActive);
-    if (/*House->IsBaseBuilding &&*/ !House->IsHuman && Class->IsToHarvest && House->Get_Quantity(STRUCT_REFINERY) > 0
+    if (/*House->IsBaseBuilding &&*/ !House->IsHuman && Class->IsToHarvest && House->Has_Refinery()
         && !House->IsTiberiumShort) {
         Assign_Mission(MISSION_HARVEST);
         return (1);
@@ -3875,7 +3876,7 @@ int UnitClass::Mission_Enter(void)
         if (contact == NULL) {
             contact = As_Techno(ArchiveTarget);
         }
-        if (contact != NULL && contact->What_Am_I() == RTTI_BUILDING && *((BuildingClass*)contact) == STRUCT_REFINERY) {
+        if (contact != NULL && contact->What_Am_I() == RTTI_BUILDING && ((BuildingClass*)contact)->Class->IsRefinery) {
             TiberiumUnloadRefinery = contact->As_Target();
         }
     }
@@ -4191,7 +4192,7 @@ int UnitClass::Mission_Repair(void)
     assert(Units.ID(this) == ID);
     assert(IsActive);
 
-    BuildingClass* nearest = Find_Docking_Bay(STRUCT_REFINERY, true);
+    BuildingClass* nearest = Find_Docking_Bay(DOCK_REFINERY, true);
 
     IsHarvesting = false;
 
@@ -4475,7 +4476,7 @@ BuildingClass* UnitClass::Find_Best_Refinery(void) const
     if (Target_Legal(TiberiumUnloadRefinery)) {
         BuildingClass* refinery = As_Building(TiberiumUnloadRefinery);
         if (refinery != NULL && refinery->House == House && !refinery->IsInLimbo
-            && refinery->Mission != MISSION_DECONSTRUCTION && *refinery == STRUCT_REFINERY
+            && refinery->Mission != MISSION_DECONSTRUCTION && refinery->Class->IsRefinery
             && Map[refinery->Center_Coord()].Zones[Techno_Type_Class()->MZone]
                    == Map[Center_Coord()].Zones[Techno_Type_Class()->MZone]) {
             return refinery;
@@ -4487,7 +4488,7 @@ BuildingClass* UnitClass::Find_Best_Refinery(void) const
     /*
     **	Find nearby refinery and head to it?
     */
-    return Find_Docking_Bay(STRUCT_REFINERY, false);
+    return Find_Docking_Bay(DOCK_REFINERY, false);
 }
 
 /***********************************************************************************************
@@ -4729,17 +4730,17 @@ void UnitClass::Assign_Destination(TARGET target)
                     **	HACK ALERT: The repair bay is counting on the assignment of the NavCom by this routine.
                     **	The refinery must NOT have the navcom assigned by this routine.
                     */
-                    if (*b != STRUCT_REPAIR) {
+                    if (b->Class->IsRepairFacility == false) {
                         target = TARGET_NONE;
                     }
                 } else {
                     if (Transmit_Message(RADIO_DOCKING, b) != RADIO_ROGER) {
                         Transmit_Message(RADIO_OVER_OUT);
-                        if (*b == STRUCT_REPAIR) {
+                        if (b->Class->IsRepairFacility) {
                             ArchiveTarget = target;
                         }
                     }
-                    if (*b != STRUCT_REPAIR) {
+                    if (b->Class->IsRepairFacility == false) {
                         ArchiveTarget = target;
                         target = TARGET_NONE;
                     }
@@ -4779,7 +4780,7 @@ void UnitClass::Assign_Destination(TARGET target)
     **	If the player clicked on a friendly repair facility and the repair
     **	facility is currently not involved with some other unit (radio or unloading).
     */
-    if (b != NULL && *b == STRUCT_REPAIR) {
+    if (b != NULL && b->Class->IsRepairFacility) {
         if (b->In_Radio_Contact() && (b->Contact_With_Whom() != this)) {
             //			if (target != NULL) {
             ArchiveTarget = target;

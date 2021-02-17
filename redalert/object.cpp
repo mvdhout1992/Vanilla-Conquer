@@ -2415,13 +2415,13 @@ BuildingClass* ObjectTypeClass::Who_Can_Build_Me(bool intheory, bool legal, Hous
             if (What_Am_I() == RTTI_INFANTRYTYPE) {
                 InfantryTypeClass* me = (InfantryTypeClass*)this;
                 if (me->IsDog) {
-                    if (*building == STRUCT_KENNEL) {
+                    if (building->Class->IsKennel) {
                         if (building->IsLeader)
                             return (building);
                         anybuilding = building;
                     }
                 } else {
-                    if (*building != STRUCT_KENNEL) {
+                    if (building->Class->IsKennel == false) {
                         if (building->IsLeader)
                             return (building);
                         anybuilding = building;
@@ -2435,8 +2435,8 @@ BuildingClass* ObjectTypeClass::Who_Can_Build_Me(bool intheory, bool legal, Hous
                 */
                 if (What_Am_I() == RTTI_AIRCRAFTTYPE) {
                     AircraftTypeClass* air = (AircraftTypeClass*)this;
-                    if ((*building == STRUCT_HELIPAD && !air->IsFixedWing)
-                        || (*building == STRUCT_AIRSTRIP && air->IsFixedWing)) {
+                    if ((building->Class->IsHelipad && !air->IsFixedWing)
+                        || (building->Class->IsAirfield && air->IsFixedWing)) {
                         if (building->IsLeader)
                             return (building);
                         anybuilding = building;

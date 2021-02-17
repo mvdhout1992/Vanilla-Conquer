@@ -729,7 +729,7 @@ void EventClass::Execute(void)
                 techno->Assign_Destination(Data.MegaMission.Target.As_TARGET());
                 techno->ArchiveTarget = Data.MegaMission.Target.As_TARGET();
             } else if (Data.MegaMission.Mission == MISSION_ENTER && object != NULL
-                       && object->What_Am_I() == RTTI_BUILDING && *((BuildingClass*)object) == STRUCT_REFINERY) {
+                       && object->What_Am_I() == RTTI_BUILDING && ((BuildingClass*)object)->Class->IsRefinery) {
                 techno->Transmit_Message(RADIO_HELLO, (BuildingClass*)object);
                 techno->Assign_Destination(TARGET_NONE);
             } else {
@@ -758,8 +758,8 @@ void EventClass::Execute(void)
                     if (object != NULL) {
                         if (object->What_Am_I() == RTTI_BUILDING && ((BuildingClass*)object)->House->Is_Ally(techno) &&
                             //							if ((RTTIType)Data.MegaMission.Destination == RTTI_BUILDING &&
-                            (((BuildingClass*)object)->Class->Type == STRUCT_SHIP_YARD
-                             || ((BuildingClass*)object)->Class->Type == STRUCT_SUB_PEN)) {
+                            (((BuildingClass*)object)->Class->IsShipYard
+                             || ((BuildingClass*)object)->Class->IsSubPen)) {
                             ship->IsToSelfRepair = true;
                         } else {
                             ship->IsToSelfRepair = false;
