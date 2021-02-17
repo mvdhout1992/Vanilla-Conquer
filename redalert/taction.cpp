@@ -378,7 +378,7 @@ bool TActionClass::operator()(HousesType house, ObjectClass* object, int id, CEL
     case TACTION_LAUNCH_NUKES: {
         for (int index = 0; index < Buildings.Count(); index++) {
             BuildingClass* bldg = Buildings.Ptr(index);
-            if (*bldg == STRUCT_MSLO) {
+            if (bldg->Class->IsMissileSilo) {
                 bldg->Assign_Mission(MISSION_MISSILE);
             }
         }

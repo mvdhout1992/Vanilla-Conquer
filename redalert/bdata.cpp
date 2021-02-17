@@ -2961,6 +2961,20 @@ void BuildingTypeClass::Init_Heap(CCINIClass& ini)
         BuildingTypeClass::As_Reference(STRUCT_REPAIR).IsRepairFacility = true;
         BuildingTypeClass::As_Reference(STRUCT_SOVIET_TECH).IsSovietTechCenter = true;
         BuildingTypeClass::As_Reference(STRUCT_ADVANCED_POWER).IsAdvancedPowerPlant = true;
+
+        BuildingTypeClass::As_Reference(STRUCT_AAGUN).IsAAGun = true;
+        BuildingTypeClass::As_Reference(STRUCT_GAP).IsGapGenerator = true;
+        BuildingTypeClass::As_Reference(STRUCT_SAM).IsSamSite = true;
+        BuildingTypeClass::As_Reference(STRUCT_TESLA).IsTeslaCoil = true;
+        BuildingTypeClass::As_Reference(STRUCT_WEAP).IsWeaponFactory = true;
+        BuildingTypeClass::As_Reference(STRUCT_SUB_PEN).IsSubPen = true;
+        BuildingTypeClass::As_Reference(STRUCT_SHIP_YARD).IsNavalYard = true;
+
+        BuildingTypeClass::As_Reference(STRUCT_FAKEWEAP).FakeOf = STRUCT_WEAP;
+        BuildingTypeClass::As_Reference(STRUCT_FAKECONST).FakeOf = STRUCT_CONST;
+        BuildingTypeClass::As_Reference(STRUCT_FAKE_YARD).FakeOf = STRUCT_SHIP_YARD;
+        BuildingTypeClass::As_Reference(STRUCT_FAKE_PEN).FakeOf = STRUCT_SUB_PEN;
+        BuildingTypeClass::As_Reference(STRUCT_FAKE_RADAR).FakeOf = STRUCT_RADAR;
     }
 
     for (int i = 0; i < entries; i++) {
@@ -3698,6 +3712,7 @@ bool BuildingTypeClass::Flush_For_Placement(CELL cell, HouseClass* house) const
 bool BuildingTypeClass::Read_INI(CCINIClass& ini)
 {
     if (TechnoTypeClass::Read_INI(ini)) {
+        // Not a typo
         Speed = ini.Get_Bool(Name(), "WaterBound", (Speed == SPEED_FLOAT)) ? SPEED_FLOAT : SPEED_NONE;
         Capacity = ini.Get_Int(Name(), "Storage", Capacity);
         Adjacent = ini.Get_Int(Name(), "Adjacent", Adjacent);
@@ -3720,6 +3735,8 @@ bool BuildingTypeClass::Read_INI(CCINIClass& ini)
         ExitCoordinate = ini.Get_Coordinate_From_Pixels(Name(), "ExitCoordinate", ExitCoordinate);
         ExitList = ini.Get_Cell_List(Name(), "ExitList", ExitList);
 
+        FakeOf = ini.Get_StructType(Name(), "FakeOf", STRUCT_NONE);
+
         if (Power < 0) {
             Drain = -Power;
             Power = 0;
@@ -3732,7 +3749,7 @@ bool BuildingTypeClass::Read_INI(CCINIClass& ini)
 bool BuildingTypeClass::Write_INI(CCINIClass& ini)
 {
     if (TechnoTypeClass::Write_INI(ini)) {
-        ini.Put_Bool(Name(), "WaterBound", Speed);
+        ini.Put_Bool(Name(), "WaterBound", (Speed == SPEED_FLOAT ? true : false));
         ini.Put_Int(Name(), "Storage", Capacity);
         ini.Put_Int(Name(), "Adjacent", Adjacent);
         ini.Put_Bool(Name(), "Capturable", IsCaptureable);
@@ -3753,6 +3770,8 @@ bool BuildingTypeClass::Write_INI(CCINIClass& ini)
         ini.Put_RTTIType(Name(), "ToBuild", ToBuild);
         ini.Put_Bool(Name(), "BaseNormal", IsBase);
         ini.Put_Cell_List(Name(), "ExitList", ExitList);
+
+        ini.Put_StructType(Name(), "FakeOf", FakeOf);
 
         return (true);
     }

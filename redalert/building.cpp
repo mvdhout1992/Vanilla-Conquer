@@ -381,7 +381,7 @@ RadioMessageType BuildingClass::Receive_Message(RadioClass* from, RadioMessageTy
             }
         }
         TechnoClass::Receive_Message(from, message, param);
-        if (*this == STRUCT_WEAP || *this == STRUCT_AIRSTRIP || *this == STRUCT_REPAIR)
+        if (Class->IsWeaponFactory || Class->IsAirfield || Class->IsRepairFacility)
             return (RADIO_RUN_AWAY);
         return (RADIO_ROGER);
 
@@ -487,7 +487,7 @@ void BuildingClass::Draw_It(int x, int y, WindowNumberType window) const
         /*
         **	A Tethered object is always rendered AFTER the building.
         */
-        if (*this == STRUCT_WEAP && IsTethered && In_Radio_Contact() && !Contact_With_Whom()->IsInLimbo
+        if (Class->IsWeaponFactory && IsTethered && In_Radio_Contact() && !Contact_With_Whom()->IsInLimbo
             && Contact_With_Whom()->What_Am_I() != RTTI_BUILDING) {
             TechnoClass* contact = Contact_With_Whom();
 
@@ -505,7 +505,7 @@ void BuildingClass::Draw_It(int x, int y, WindowNumberType window) const
         /*
         **	Draw the weapon factory custom overlay graphic.
         */
-        if ((*this == STRUCT_WEAP || *this == STRUCT_FAKEWEAP)) {
+        if (stricmp(this->Class->Graphic_Name(), "WEAP") == 0) {
             int shapenum = Door_Stage();
             if (Health_Ratio() <= Rule.ConditionYellow)
                 shapenum += 4;
@@ -623,7 +623,7 @@ int BuildingClass::Shape_Number(void) const
         **	The Tesla Coil has a stage value that can be overridden by
         **	its current state.
         */
-        if (*this == STRUCT_TESLA) {
+        if (Class->IsTeslaCoil) {
             if (IsCharged) {
                 shapenum = 3;
             } else {
@@ -670,7 +670,7 @@ int BuildingClass::Shape_Number(void) const
             **	If it is a significantly damaged weapons factory, it is shown in
             **	the worst state possible.
             */
-            if (*this == STRUCT_WEAP || *this == STRUCT_FAKEWEAP) {
+            if (stricmp(this->Class->Graphic_Name(), "WEAP") == 0) {
                 shapenum = 0;
                 if (Health_Ratio() <= Rule.ConditionYellow) {
                     shapenum = 1;
@@ -701,7 +701,8 @@ int BuildingClass::Shape_Number(void) const
                     **	building.
                     */
                     if (Health_Ratio() <= Rule.ConditionYellow) {
-                        if (*this == STRUCT_CHRONOSPHERE) {
+                        //Frame for Chronosphere (PDOX)
+                        if (stricmp(Class->Graphic_Name(), "PDOX") == 0) {
                             shapenum += 29;
                         } else {
                             int last1 = Class->Anims[BSTATE_IDLE].Start + Class->Anims[BSTATE_IDLE].Count;
@@ -1025,7 +1026,7 @@ void BuildingClass::AI(void)
     ** the power has just come on enough so they can scan.  Also, they need
     ** to un-jam if the power has just dropped off.
     */
-    if (*this == STRUCT_GAP) {
+    if (Class->IsGapGenerator) {
         if (Arm == 0) {
             IsJamming = false;
             Arm = TICKS_PER_MINUTE * Rule.GapRegenInterval + Random_Pick(1, TICKS_PER_SECOND);
@@ -1048,7 +1049,7 @@ void BuildingClass::AI(void)
     ** Radar facilities and SAMs need to check for the proximity of a mobile
     ** radar jammer.
     */
-    if ((*this == STRUCT_RADAR || *this == STRUCT_SAM) && (Frame % TICKS_PER_SECOND) == 0) {
+    if ((Class->IsRadarBuilding || *this == STRUCT_SAM) && (Frame % TICKS_PER_SECOND) == 0) {
         IsJammed = false;
         for (int index = 0; index < Units.Count(); index++) {
             UnitClass* obj = Units.Ptr(index);
@@ -1064,7 +1065,7 @@ void BuildingClass::AI(void)
     /*
     ** Chronosphere active animation control.
     */
-    if (*this == STRUCT_CHRONOSPHERE && BState == BSTATE_ACTIVE && QueueBState == BSTATE_NONE && Scen.FadeTimer == 0) {
+    if (Class->IsChronosphere && BState == BSTATE_ACTIVE && QueueBState == BSTATE_NONE && Scen.FadeTimer == 0) {
         Begin_Mode(BSTATE_IDLE);
     }
 }
@@ -1372,8 +1373,7 @@ ResultType BuildingClass::Take_Damage(int& damage, int distance, WarheadType war
             */
             if (SpiedBy) {
                 SpiedBy = 0;
-                StructType struc = *this;
-                if (struc == STRUCT_RADAR /* || struc == STRUCT_EYE */) {
+                if (Class->IsRadarBuilding /* || struc == STRUCT_EYE */) {
                     Update_Radar_Spied();
                 }
             }
@@ -1382,7 +1382,7 @@ ResultType BuildingClass::Take_Damage(int& damage, int distance, WarheadType war
             ** Destruction of a gap generator will cause the cells it affects
             ** to stop being jammed.
             */
-            if (*this == STRUCT_GAP) {
+            if (Class->IsGapGenerator) {
                 Remove_Gap_Effect();
             }
 
@@ -1559,7 +1559,7 @@ ResultType BuildingClass::Take_Damage(int& damage, int distance, WarheadType war
             **	When certain buildings are hit, they "snap out of it" and
             **	return fire if they are able and allowed.
             */
-            if (*this != STRUCT_SAM && *this != STRUCT_AAGUN && !House->Is_Ally(source) && Class->PrimaryWeapon != NULL
+            if (!Class->IsSamSite && !Class->IsAAGun && !House->Is_Ally(source) && Class->PrimaryWeapon != NULL
                 && (!Target_Legal(TarCom) || !In_Range(TarCom))) {
 
                 if (source->What_Am_I() != RTTI_AIRCRAFT && (!House->IsHuman || Rule.IsSmartDefense)) {
@@ -1905,7 +1905,7 @@ void BuildingClass::Active_Click_With(ActionType action, CELL cell)
         Player_Assign_Mission(MISSION_ATTACK, ::As_Target(cell));
     }
 
-    if (action == ACTION_MOVE && *this == STRUCT_CONST) {
+    if (action == ACTION_MOVE && Class->IsConstructionYard) {
         OutList.Add(EventClass(EventClass::ARCHIVE, TargetClass(this), TargetClass(::As_Target(cell))));
         OutList.Add(EventClass(EventClass::SELL, TargetClass(this)));
 
@@ -1935,7 +1935,7 @@ void BuildingClass::Assign_Target(TARGET target)
     assert(Buildings.ID(this) == ID);
     assert(IsActive);
 
-    if (*this != STRUCT_SAM && *this != STRUCT_AAGUN && !In_Range(target, 0)) {
+    if (!Class->IsSamSite && !Class->IsAAGun && !In_Range(target, 0)) {
         target = TARGET_NONE;
     }
 
@@ -2922,7 +2922,7 @@ ActionType BuildingClass::What_Action(ObjectClass const* object) const
     **	is held down. Also don't allow targeting if the object is too
     **	far away.
     */
-    if (action == ACTION_ATTACK && (*this == STRUCT_SAM || *this == STRUCT_AAGUN || !In_Range(object, 0))) {
+    if (action == ACTION_ATTACK && (Class->IsSamSite || Class->IsAAGun || !In_Range(object, 0))) {
         action = ACTION_NONE;
     }
 
@@ -2956,7 +2956,7 @@ ActionType BuildingClass::What_Action(CELL cell) const
 
     ActionType action = TechnoClass::What_Action(cell);
 
-    if (action == ACTION_MOVE && (*this != STRUCT_CONST || !Is_MCV_Deploy())) {
+    if (action == ACTION_MOVE && (Class->IsConstructionYard == false|| !Is_MCV_Deploy())) {
         action = ACTION_NONE;
     }
 
@@ -3247,7 +3247,7 @@ bool BuildingClass::Captured(HouseClass* newowner)
         */
         if (SpiedBy & (1 << (newowner->Class->House))) {
             SpiedBy -= (1 << (newowner->Class->House));
-            if (*this == STRUCT_RADAR) {
+            if (Class->IsRadarBuilding) {
                 Update_Radar_Spied();
             }
         }
@@ -3257,7 +3257,7 @@ bool BuildingClass::Captured(HouseClass* newowner)
             Map.Flag_To_Redraw(false);
         }
 
-        if (*this == STRUCT_GAP) {
+        if (Class->IsGapGenerator) {
             Remove_Gap_Effect();
             IsJamming = false;
             Arm = 0;
@@ -3470,7 +3470,7 @@ MoveType BuildingClass::Can_Enter_Cell(CELL cell, FacingType) const
     assert(Buildings.ID(this) == ID);
     assert(IsActive);
 
-    if (*this == STRUCT_CONST && IsDown) {
+    if (Class->IsConstructionYard && IsDown) {
         return (Map[cell].Is_Clear_To_Build(Class->Speed) ? MOVE_OK : MOVE_NO);
     }
 
@@ -3773,7 +3773,7 @@ int BuildingClass::Mission_Deconstruction(void)
             **	members leaving is equal to the unrecovered cost of the building
             **	divided by 100 (the typical cost of a minigunner infantryman).
             */
-            if (!Target_Legal(ArchiveTarget) || !Is_MCV_Deploy() || *this != STRUCT_CONST) {
+            if (!Target_Legal(ArchiveTarget) || !Is_MCV_Deploy() || Class->IsConstructionYard == false) {
                 int count = How_Many_Survivors();
                 bool engine = false;
 
@@ -3869,7 +3869,7 @@ int BuildingClass::Mission_Deconstruction(void)
             **	Construction yards that deconstruct, really just revert back
             **	to an MCV.
             */
-            if (Target_Legal(ArchiveTarget) && *this == STRUCT_CONST && House->IsHuman && Strength > 0) {
+            if (Target_Legal(ArchiveTarget) && Class->IsConstructionYard && House->IsHuman && Strength > 0) {
                 ScenarioInit++;
                 UnitClass* unit = new UnitClass(UNIT_MCV, House->Class->House);
                 ScenarioInit--;
@@ -3919,7 +3919,7 @@ int BuildingClass::Mission_Deconstruction(void)
                 ** Selling off a gap generator will cause the cells it affects
                 ** to stop being jammed.
                 */
-                if (*this == STRUCT_GAP) {
+                if (Class->IsGapGenerator) {
                     Remove_Gap_Effect();
                 }
 
@@ -4197,7 +4197,7 @@ int BuildingClass::Mission_Repair(void)
     assert(Buildings.ID(this) == ID);
     assert(IsActive);
 
-    if (*this == STRUCT_CONST) {
+    if (Class->IsConstructionYard) {
         enum
         {
             INITIAL,
@@ -4458,7 +4458,7 @@ int BuildingClass::Mission_Missile(void)
     assert(Buildings.ID(this) == ID);
     assert(IsActive);
 
-    if (*this == STRUCT_ADVANCED_TECH) {
+    if (this->Class->IsAlliedTechCenter) {
         enum
         {
             DOOR_OPENING,
@@ -4524,7 +4524,7 @@ int BuildingClass::Mission_Missile(void)
         }
     }
 
-    if (*this == STRUCT_MSLO) {
+    if (Class->IsMissileSilo) {
         enum
         {
             INITIAL,
@@ -4866,7 +4866,7 @@ int BuildingClass::Mission_Unload(void)
     assert(Buildings.ID(this) == ID);
     assert(IsActive);
 
-    if (*this == STRUCT_WEAP) {
+    if (Class->IsWeaponFactory) {
         CELL cell = Coord_Cell(Coord) + Class->ExitList[0];
         COORDINATE coord = Cell_Coord(cell);
         CellClass* cellptr = &Map[cell];
@@ -5064,6 +5064,7 @@ InfantryType BuildingClass::Crew_Type(void) const
 
     switch (Class->Type) {
     // Iran: Civilians should spawn from Ore Silo 50% of the type but I don't think this happens
+    // Leftover TD logic?
     case STRUCT_STORAGE:
         if (Percent_Chance(50)) {
             return (INFANTRY_C1);
@@ -5078,6 +5079,7 @@ InfantryType BuildingClass::Crew_Type(void) const
         break;
 
     // Iran: Dog should spawn from kennel 50% of the type but I don't think this happens
+     // Because STRUCT_KENNEL is set to be survivorless
     case STRUCT_KENNEL:
         if (Percent_Chance(50)) {
             return (INFANTRY_DOG);
@@ -5268,7 +5270,7 @@ bool BuildingClass::Can_Player_Move(void) const
     assert(Buildings.ID(this) == ID);
     assert(IsActive);
 
-    return (*this == STRUCT_CONST && (Mission == MISSION_GUARD) && Special.IsMCVDeploy);
+    return (Class->IsConstructionYard && (Mission == MISSION_GUARD) && Special.IsMCVDeploy);
 }
 
 /***********************************************************************************************
@@ -5366,7 +5368,7 @@ void BuildingClass::Update_Radar_Spied(void)
     for (int index = 0; index < Buildings.Count(); index++) {
         BuildingClass* obj = Buildings.Ptr(index);
         if (obj && !obj->IsInLimbo && obj->House == House) {
-            if (*obj == STRUCT_RADAR /* || *obj == STRUCT_EYE */) {
+            if (obj->Class->IsRadarBuilding/* || *obj == STRUCT_EYE */) {
                 House->RadarSpied |= obj->Spied_By();
             }
         }
@@ -5471,7 +5473,7 @@ void BuildingClass::Read_INI(CCINIClass& ini)
                     }
                     b->IsAllowedToSell = sellable;
                     b->IsToRebuild = rebuild;
-                    b->IsToRepair = rebuild || *b == STRUCT_CONST;
+                    b->IsToRepair = rebuild || b->Class->IsConstructionYard;
 
                     if (b->Unlimbo(Cell_Coord(cell), facing)) {
                         strength = min(strength, 0x100);
@@ -5833,7 +5835,7 @@ void BuildingClass::Repair_AI(void)
             } else {
                 if ((Session.Type != GAME_NORMAL || IsAllowedToSell) && IsTickedOff
                     && House->Control.TechLevel >= Rule.IQSellBack && Random_Pick(0, 50) < House->Control.TechLevel
-                    && !Trigger.Is_Valid() && *this != STRUCT_CONST && Health_Ratio() < Rule.ConditionRed) {
+                    && !Trigger.Is_Valid() && Class->IsConstructionYard == false && Health_Ratio() < Rule.ConditionRed) {
                     Sell_Back(1);
                 }
             }
@@ -5893,7 +5895,7 @@ void BuildingClass::Animation_AI(void)
     if (*this == STRUCT_SAM && stagechange)
         Mark(MARK_CHANGE);
 
-    if ((!Class->IsTurretEquipped && *this != STRUCT_TESLA) || Mission == MISSION_CONSTRUCTION
+    if ((!Class->IsTurretEquipped && Class->IsTeslaCoil == false) || Mission == MISSION_CONSTRUCTION
         || Mission == MISSION_DECONSTRUCTION) {
         if (stagechange) {
 
@@ -5911,7 +5913,7 @@ void BuildingClass::Animation_AI(void)
             **	the loop.
             */
             if (Fetch_Stage() == ctrl->Start + ctrl->Count - 1
-                || (!Target_Legal(ArchiveTarget) /*Is_MCV_Deploy()*/ && *this == STRUCT_CONST
+                || (!Target_Legal(ArchiveTarget) /*Is_MCV_Deploy()*/ && Class->IsConstructionYard
                     && Mission == MISSION_DECONSTRUCTION && Fetch_Stage() == (42 - 19))) {
                 IsReadyToCommence = true;
             }
@@ -6032,30 +6034,7 @@ void const* BuildingClass::Get_Image_Data(void) const
 int BuildingClass::Value(void) const
 {
     if (Class->IsFake) {
-        switch (Class->Type) {
-        case STRUCT_FAKEWEAP:
-            return (BuildingTypeClass::As_Reference(STRUCT_WEAP).Reward
-                    + BuildingTypeClass::As_Reference(STRUCT_WEAP).Risk);
-
-        case STRUCT_FAKECONST:
-            return (BuildingTypeClass::As_Reference(STRUCT_CONST).Reward
-                    + BuildingTypeClass::As_Reference(STRUCT_CONST).Risk);
-
-        case STRUCT_FAKE_YARD:
-            return (BuildingTypeClass::As_Reference(STRUCT_SHIP_YARD).Reward
-                    + BuildingTypeClass::As_Reference(STRUCT_SHIP_YARD).Risk);
-
-        case STRUCT_FAKE_PEN:
-            return (BuildingTypeClass::As_Reference(STRUCT_SUB_PEN).Reward
-                    + BuildingTypeClass::As_Reference(STRUCT_SUB_PEN).Risk);
-
-        case STRUCT_FAKE_RADAR:
-            return (BuildingTypeClass::As_Reference(STRUCT_RADAR).Reward
-                    + BuildingTypeClass::As_Reference(STRUCT_RADAR).Risk);
-
-        default:
-            break;
-        }
+        return (BuildingTypeClass::As_Reference(Class->FakeOf).Reward + BuildingTypeClass::As_Reference(Class->FakeOf).Risk);
     }
     return (TechnoClass::Value());
 }
@@ -6098,7 +6077,7 @@ void BuildingClass::Remove_Gap_Effect(void)
     // and rejam any overlapping buildings' fields
     for (int index = 0; index < Buildings.Count(); index++) {
         BuildingClass* obj = Buildings.Ptr(index);
-        if (obj && !obj->IsInLimbo && obj->House == House && *obj == STRUCT_GAP && obj != this) {
+        if (obj && !obj->IsInLimbo && obj->House == House && obj->Class->IsGapGenerator && obj != this) {
             obj->IsJamming = false;
             obj->Arm = 0;
             //			Map.Jam_From(Coord_Cell(obj->Center_Coord()), Rule.GapShroudRadius, PlayerPtr);

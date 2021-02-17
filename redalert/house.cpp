@@ -896,15 +896,17 @@ bool HouseClass::Can_Build(ObjectTypeClass const* type, HousesType house) const
         if (s == STRUCT_NONE) {
             continue;
         }
+        BuildingTypeClass stype = BuildingTypeClass::As_Reference(s);
+
         // Advanced power also serves as a prerequisite for normal power.
-        if (s == STRUCT_POWER) {
+        if (stype.IsAdvancedPowerPlant) {
             if (Has_Power_Plant() || Has_Advanced_Power_Plant()) {
                 continue;
             }
         } 
         
         // Either tech center counts as a prerequisite.
-        else if (Session.Type != GAME_NORMAL && (s == STRUCT_SOVIET_TECH || s == STRUCT_ADVANCED_TECH)) {
+        else if (Session.Type != GAME_NORMAL && (stype.IsSovietTechCenter || s == stype.IsAlliedTechCenter)) {
             if (Has_Soviet_Tech_Center() || Has_Allied_Tech_Center()) {
                 continue;
             }
@@ -1382,7 +1384,7 @@ void HouseClass::AI(void)
 #else
                 if (building && building->House == PlayerPtr) {
 #endif
-                    if (*building == STRUCT_RADAR /* || *building == STRUCT_EYE */) {
+                    if (building->Class->IsRadarBuilding /* || *building == STRUCT_EYE */) {
                         if (!building->IsJammed) {
                             jammed = false;
                             break;
@@ -1589,7 +1591,7 @@ void HouseClass::Super_Weapon_Handler(void)
                 IsRecalcNeeded = true;
                 for (int index = 0; index < Buildings.Count(); index++) {
                     BuildingClass* bldg = Buildings.Ptr(index);
-                    if (*bldg == STRUCT_ADVANCED_TECH && bldg->House == this) {
+                    if (bldg->Class->IsAlliedTechCenter && bldg->House == this) {
                         bldg->HasFired = true;
                         bldg->Assign_Mission(MISSION_MISSILE);
                         break;
@@ -1608,7 +1610,7 @@ void HouseClass::Super_Weapon_Handler(void)
             bool canfire = false;
             for (int index = 0; index < Buildings.Count(); index++) {
                 BuildingClass* bldg = Buildings.Ptr(index);
-                if (*bldg == STRUCT_ADVANCED_TECH && bldg->House == this && !bldg->IsInLimbo) {
+                if (bldg->Class->IsAlliedTechCenter && bldg->House == this && !bldg->IsInLimbo) {
                     if (!bldg->HasFired) {
                         canfire = true;
                         break;
@@ -2916,7 +2918,7 @@ bool HouseClass::Place_Special_Blast(SpecialWeaponType id, CELL cell)
                 /*
                 **	Search for a suitable launch site for this missile.
                 */
-                launchsite = Find_Building(STRUCT_MSLO);
+                launchsite = Find_Missile_Silo();
 
                 /*
                 **	If a launch site was found, then proceed with the normal launch
@@ -3135,7 +3137,7 @@ bool HouseClass::Place_Special_Blast(SpecialWeaponType id, CELL cell)
                 for (int index = 0; index < Buildings.Count(); ++index) {
                     BuildingClass* building = Buildings.Ptr(index);
                     if (building != nullptr && building->IsActive && building->Owner() == Class->House
-                        && *building == STRUCT_CHRONOSPHERE) {
+                        && building->Class->IsChronosphere) {
                         building->Begin_Mode(BSTATE_ACTIVE);
                     }
                 }
@@ -4652,6 +4654,26 @@ BuildingTypeClass const* HouseClass::Suggest_New_Building(void) const
  *   09/27/1995 JLB : Created.                                                                 *
  *   10/02/1995 JLB : Allows for zone specifics.                                               *
  *=============================================================================================*/
+
+BuildingClass* HouseClass::Find_Missile_Silo(ZoneType zone) const
+{
+    assert(Houses.ID(this) == ID);
+
+    for (int index = 0; index < Buildings.Count(); index++) {
+        BuildingClass* b = Buildings.Ptr(index);
+
+        /*
+        **	Search for a suitable launch site for this missile.
+        */
+        if (b && !b->IsInLimbo && b->House == this && b->Class->IsMissileSilo) {
+            if (zone == ZONE_NONE || Which_Zone(b) == zone) {
+                return (b);
+            }
+        }
+    }
+    return (NULL);
+}
+
 BuildingClass* HouseClass::Find_Building(StructType type, ZoneType zone) const
 {
     assert(Houses.ID(this) == ID);
@@ -4662,9 +4684,6 @@ BuildingClass* HouseClass::Find_Building(StructType type, ZoneType zone) const
     */
     if (BQuantity[type] > 0) {
 
-        /*
-        **	Search for a suitable launch site for this missile.
-        */
         for (int index = 0; index < Buildings.Count(); index++) {
             BuildingClass* b = Buildings.Ptr(index);
             if (b && !b->IsInLimbo && b->House == this && *b == type) {
@@ -8232,8 +8251,7 @@ void HouseClass::Check_Pertinent_Structures(void)
         if (b && b->IsActive && b->House == this) {
             if (!b->Class->IsWall && *b != STRUCT_APMINE && *b != STRUCT_AVMINE) {
                 if (!Special.ModernBalance
-                    || (*b != STRUCT_SHIP_YARD && *b != STRUCT_FAKE_YARD && *b != STRUCT_SUB_PEN
-                        && *b != STRUCT_FAKE_PEN)) {
+                    || !b->Class->Is_Naval()) {
                     if (!b->IsInLimbo && b->Strength > 0) {
                         any_good_buildings = true;
                         break;

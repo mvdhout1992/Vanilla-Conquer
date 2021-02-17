@@ -1427,6 +1427,8 @@ bool UnitClass::Goto_Clear_Spot(void)
     assert(IsActive);
 
     Mark(MARK_UP);
+
+    // STRUCT_CONST needs to be DeploysInto structtype once I had support for that
     if (!Target_Legal(NavCom)
         && BuildingTypeClass::As_Reference(STRUCT_CONST)
                .Legal_Placement(Adjacent_Cell(Coord_Cell(Center_Coord()), FACING_NW))) {
@@ -1486,6 +1488,7 @@ bool UnitClass::Goto_Clear_Spot(void)
         while (*ptr) {
             CELL cell = Coord_Cell(Coord) + *ptr++;
             CELL check_cell = Adjacent_Cell(cell, FACING_NW);
+            // STRUCT_CONST needs to be DeploysInto structtype once I had support for that
             if (BuildingTypeClass::As_Reference(STRUCT_CONST).Legal_Placement(check_cell)) {
                 Assign_Destination(::As_Target(cell));
                 break;
@@ -1530,6 +1533,7 @@ bool UnitClass::Try_To_Deploy(void)
     assert(IsActive);
 
     if (!Target_Legal(NavCom) && !IsRotating) {
+        // IsMCV needs to be DeploysInto structtype once I had support for that
         if (this->Class->IsMCV) {
 
             /*
@@ -1538,11 +1542,13 @@ bool UnitClass::Try_To_Deploy(void)
             */
             Mark(MARK_UP);
             CELL cell = Coord_Cell(Adjacent_Cell(Center_Coord(), FACING_NW));
+            // STRUCT_CONST needs to be DeploysInto structtype once I had support for that
             if (!BuildingTypeClass::As_Reference(STRUCT_CONST).Legal_Placement(cell)) {
                 if (PlayerPtr == House) {
                     Speak(VOX_DEPLOY);
                 }
                 if (!House->IsHuman) {
+                    // STRUCT_CONST needs to be DeploysInto structtype once I had support for that
                     BuildingTypeClass::As_Reference(STRUCT_CONST).Flush_For_Placement(cell, House);
                 }
                 Mark(MARK_DOWN);
@@ -1569,6 +1575,7 @@ bool UnitClass::Try_To_Deploy(void)
             **	unit, just mark it as not deploying.
             */
             Mark(MARK_UP);
+            // STRUCT_CONST needs to be DeploysInto structtype once I had support for that
             BuildingClass* building = new BuildingClass(STRUCT_CONST, House->Class->House);
             if (building != NULL) {
                 if (building->Unlimbo(Adjacent_Cell(Coord, FACING_NW))) {
@@ -3583,6 +3590,7 @@ ActionType UnitClass::What_Action(ObjectClass const* object) const
     **	Don't allow special deploy action unless there is something to deploy.
     */
     if (action == ACTION_SELF) {
+        // Class->IsMCV needs to be DeploysInto structtype once I had support for that
         if (Class->IsMCV) {
 
             /*

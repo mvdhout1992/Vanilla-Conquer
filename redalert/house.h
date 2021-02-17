@@ -761,6 +761,8 @@ public:
     bool Has_A_Building() const;
     bool Has_Advanced_Power_Plant() const;
 
+    BuildingClass* Find_Missile_Silo(ZoneType zone = ZONE_NONE) const;
+
 
     TechnoTypeClass const* Suggest_New_Object(RTTIType objectype, bool kennel = false) const;
     BuildingTypeClass const* Suggest_New_Building(void) const;

@@ -1791,20 +1791,10 @@ bool TechnoClass::Evaluate_Object(ThreatType method,
             // The '!' in front of the expression means we are switching on a bool instead of the type. Going to remove
             // it so it compiles, but it might change behavior depending on what Watcom original made of this. Might be
             // better to remove this switch altogether ST - 5/9/2019
-            switch (((BuildingTypeClass const*)tclass)->Type) {
-            case STRUCT_FAKECONST:
-            case STRUCT_FAKEWEAP:
-            case STRUCT_FAKE_YARD:
-            case STRUCT_FAKE_PEN:
-            case STRUCT_FAKE_RADAR:
-                break;
 
-            /*
-            **	Ignore all non-fake buildings.
-            */
-            default:
+            // Ignore all non-fake buildings
+            if (!((BuildingTypeClass const*)tclass)->IsFake) {
                 value = 0;
-                break;
             }
         }
 

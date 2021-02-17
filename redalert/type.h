@@ -577,19 +577,6 @@ public:
     */
     int Points;
 
-    bool IsAirfield;
-    bool IsAlliedTechCenter;
-    bool IsChronosphere;
-    bool IsConstructionYard;
-    bool IsIronCurtain;
-    bool IsMissileSilo;
-    bool IsPowerPlant;
-    bool IsRefinery;
-    bool IsRadarBuilding;
-    bool IsRepairFacility;
-    bool IsSovietTechCenter;
-    bool IsAdvancedPowerPlant;
-
     //--------------------------------------------------------------------
     TechnoTypeClass(NoInitClass const& x)
         : ObjectTypeClass(x)
@@ -781,6 +768,32 @@ public:
     */
     BSizeType Size;
 
+    // What building is this a fake of? Needs IsFake
+    // TODO change IsFake to func that checks if FakeOf != STRUCT_NONE
+    StructType FakeOf;
+
+    bool IsAirfield;
+    bool IsAlliedTechCenter;
+    bool IsChronosphere;
+    bool IsConstructionYard;
+    bool IsIronCurtain;
+    bool IsMissileSilo;
+    bool IsPowerPlant;
+    bool IsRefinery;
+    bool IsRadarBuilding;
+    bool IsRepairFacility;
+    bool IsSovietTechCenter;
+    bool IsAdvancedPowerPlant;
+
+    bool IsAAGun;
+    bool IsGapGenerator;
+    bool IsSamSite;
+    bool IsTeslaCoil;
+    bool IsWeaponFactory;
+    bool IsSubPen;
+    bool IsNavalYard;
+
+
     /**********************************************************************
     **	For each stage that a building may be in, its animation is controlled
     **	by this structure. It dictates the starting and length of the animation
@@ -874,6 +887,10 @@ public:
     bool Is_Factory(void) const
     {
         return (ToBuild != RTTI_NONE);
+    }
+    bool Is_Naval()
+    {
+        return Speed == SPEED_FLOAT;
     }
     virtual int Raw_Cost(void) const;
     bool Bib_And_Offset(SmudgeType& bib, CELL& cell) const;

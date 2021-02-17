@@ -1270,7 +1270,7 @@ void AnimClass::Do_Atom_Damage(HousesType ownerhouse, CELL cell)
 
             if (obj != NULL && obj->Is_Techno() && obj->Owner() == ownerhouse) {
                 backup = (TechnoClass*)obj;
-                if (obj->What_Am_I() == RTTI_BUILDING && *((BuildingClass*)obj) == STRUCT_MSLO) {
+                if (obj->What_Am_I() == RTTI_BUILDING && ((BuildingClass*)obj)->Class->IsMissileSilo) {
                     building = (BuildingClass*)obj;
                     break;
                 }

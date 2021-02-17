@@ -641,7 +641,7 @@ void Keyboard_Process(KeyNumType& input)
                 BuildingClass* building = Buildings.Ptr(index);
 
                 if (building != NULL && !building->IsInLimbo && building->House == PlayerPtr
-                    && *building == STRUCT_CONST) {
+                    && building->Class->IsConstructionYard) {
                     Unselect_All();
                     building->Select();
                     if (building->IsLeader)
