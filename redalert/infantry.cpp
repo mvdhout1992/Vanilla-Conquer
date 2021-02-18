@@ -512,7 +512,7 @@ int InfantryClass::Shape_Number(WindowNumberType window) const
     ** The animation frame numbers may be different when rendering in legacy mode vs. exporting for render in GlyphX. ST
     *- 9/5/2019 12:34PM
     */
-    const DoInfoStruct* do_controls = (window == WINDOW_VIRTUAL) ? Class->DoControlsVirtual : Class->DoControls;
+    DynamicVectorClass<DoInfoStruct*> &do_controls = (window == WINDOW_VIRTUAL) ? Class->DoControlsVirtual : Class->DoControls;
     if (window != WINDOW_VIRTUAL && !IsOwnedByPlayer && Class->IsSpy) {
         do_controls = InfantryTypeClass::As_Reference(INFANTRY_E1).DoControls;
     }
@@ -521,21 +521,21 @@ int InfantryClass::Shape_Number(WindowNumberType window) const
     **	The infantry shape is always modulo the number of animation frames
     **	of the action stage that the infantry is doing.
     */
-    int shapenum = Fetch_Stage() % max(do_controls[doit].Count, 1);
+    int shapenum = Fetch_Stage() % max(do_controls[doit]->Count, 1);
 
     /*
     **	If facing makes a difference, then the shape number will be incremented
     **	by the facing accordingly.
     */
-    if (do_controls[doit].Jump) {
-        shapenum += HumanShape[Dir_To_32(PrimaryFacing.Current())] * do_controls[doit].Jump;
+    if (do_controls[doit]->Jump) {
+        shapenum += HumanShape[Dir_To_32(PrimaryFacing.Current())] * do_controls[doit]->Jump;
     }
 
     /*
     **	Finally, the shape number is biased according to the starting frame number for
     **	that action in the infantry shape file.
     */
-    shapenum += do_controls[doit].Frame;
+    shapenum += do_controls[doit]->Frame;
 
     /*
     **	Return with the final infantry shape number.
@@ -2129,7 +2129,7 @@ bool InfantryClass::Do_Action(DoType todo, bool force)
     assert(Infantry.ID(this) == ID);
     assert(IsActive);
 
-    if (todo == DO_NOTHING || Class->DoControls[todo].Count == 0) {
+    if (todo == DO_NOTHING || Class->DoControls[todo]->Count == 0) {
         return (false);
     }
 
@@ -3855,7 +3855,7 @@ void InfantryClass::Firing_AI(void)
  *=============================================================================================*/
 void InfantryClass::Doing_AI(void)
 {
-    if (Doing == DO_NOTHING || Fetch_Stage() >= Class->DoControls[Doing].Count) {
+    if (Doing == DO_NOTHING || Fetch_Stage() >= Class->DoControls[Doing]->Count) {
         switch (Doing) {
         default:
             if (IsDriving) {
@@ -3898,7 +3898,7 @@ void InfantryClass::Doing_AI(void)
         case DO_EXPLOSION2_DEATH:
         case DO_GRENADE_DEATH:
         case DO_FIRE_DEATH:
-            if (Fetch_Stage() >= Class->DoControls[Doing].Count) {
+            if (Fetch_Stage() >= Class->DoControls[Doing]->Count) {
                 AnimClass* anim = NULL;
                 LandType land = Map[Center_Coord()].Land_Type();
                 if (land != LAND_ROCK && land != LAND_WATER && land != LAND_RIVER) {

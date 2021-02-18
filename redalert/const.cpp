@@ -128,9 +128,9 @@ char const* const FormationName[FORMATION_COUNT] = {"None",
                                                     "Line E/W"};
 
 /***************************************************************************
-**	These are the text names for building state animations
+**	These are the HARDCODED text names for building state animations
 */
-char const* const BStateNames[BSTATE_COUNT] = {"Construction",
+char const* const HardCodedBStateNames[BSTATE_COUNT] = {"Construction",
                                                "Idle",
                                                "Active",
                                                "Full",
@@ -138,6 +138,35 @@ char const* const BStateNames[BSTATE_COUNT] = {"Construction",
                                                "Aux2",
 
 };
+
+/***************************************************************************
+**	These are the HARDCODED text names for the infantry do control animations
+*/
+
+char const* const HardcodedDoControlsName[DO_COUNT] = {
+        "Ready", // DO_STAND_READY 0 
+"Guard",        // DO_STAND_GUARD 1 
+"Prone",      // DO_PRONE 2 
+"Walk",        // DO_WALK 3
+"FireWeapon",     // DO_FIRE_WEAPON 4 
+"LieDown",        // DO_LIE_DOWN 5
+"Crawl",      //DO_CRAWL 6 
+"GetUp",        // DO_GET_UP 7
+"FireProne",     // DO_FIRE_PRONE 8
+"Idle1",      // DO_IDLE1 9 
+"Idle2",   // DO_IDLE2 10 
+"GunDeath",  // DO_GUN_DEATH 11
+"ExplosionDeath", // DO_EXPLOSION_DEATH 12 
+    "Explosion2Death", // DO_EXPLOSION2_DEATH 13
+"GrenadeDeath", // DO_GRENADE_DEATH 14
+ "FireDeath", // DO_FIRE_DEATH 15
+"Gesture1",   // DO_GESTURE1 16
+ "Salute1",  // DO_SALUTE1 17
+"Gesture2", // DO_GESTURE2 18
+ "Salute2",   //DO_SALUTE2 19
+ "DogMaul",// DO_DOG_MAUL 20
+};
+
 
 /***************************************************************************
 **	These are the ASCII names for the reinforcement sources.

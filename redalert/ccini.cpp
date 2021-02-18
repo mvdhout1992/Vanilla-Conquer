@@ -807,6 +807,53 @@ FacingType CCINIClass::Get_FacingType(char const* section, char const* entry, Fa
     return defvalue;
 }
 
+void CCINIClass::Get_Infantry_Do_Controls_List(char const* section, DynamicVectorClass<DoInfoStruct*>& vec)
+{
+    std::string anim_section = section;
+    int entries = Entry_Count(anim_section.c_str());
+
+    for (int i = 0; i < entries; i++) {
+        std::string entry = Get_Entry(anim_section.c_str(), i);
+        std::string value = Get_String(anim_section.c_str(), entry.c_str(), "<none>");
+
+        if (value != "<none>") {
+
+            // remove whitespace
+            while (!value.empty() && isspace((unsigned char)value.back()))
+                value.pop_back();
+
+            int frame = -1;
+            int count = -1;
+            int jump = -1;
+
+            sscanf(value.c_str(), "%d,%d,%d", frame, count, jump);
+
+            // entry is the name of the animation sequence, if it exists modify existing value else
+            // add the new animation sequence
+            bool found = false;
+
+            for (int i = 0; i < vec.Count(); i++) {
+                if (strcmp(vec[i]->Name, entry.c_str()) == 0) {
+                    vec[i]->Frame = frame;
+                    vec[i]->Count = count;
+                    vec[i]->Jump = jump;
+                    found = true;
+                    break;
+                }
+            }
+
+            if (!found) {
+                DoInfoStruct* info = new DoInfoStruct;
+                strcpy_s(info->Name, sizeof(info->Name), entry.c_str());
+                info->Frame = frame;
+                info->Count = count;
+                info->Jump = jump;
+                vec.Add(info);
+            }
+        }
+    }
+}
+
 bool CCINIClass::Put_FacingType(char const* section, char const* entry, FacingType value)
 {
     if (value == FACING_NONE || value < 0 || value >= FACING_COUNT) {
@@ -1105,6 +1152,23 @@ bool  CCINIClass::Put_Building_States_Anim_List(char const* section,
         sprintf(buf, "%d,%d,%d", anim->Start, anim->Count, anim->Rate);
 
         if (!Put_String(anim_section, anim->Name, buf)) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+bool CCINIClass::Put_Infantry_Do_Controls_List(char const* section, DynamicVectorClass<DoInfoStruct*>& vec)
+{
+    const char* anim_section = section;
+
+    for (int i = 0; i < vec.Count(); i++) {
+        char buf[512];
+        DoInfoStruct* info = vec[i];
+        sprintf(buf, "%d,%d,%d", info->Frame, info->Count, info->Jump);
+
+        if (!Put_String(anim_section, info->Name, buf)) {
             return false;
         }
     }

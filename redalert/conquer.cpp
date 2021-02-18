@@ -4615,11 +4615,23 @@ CrateType Crate_From_Name(char const* name)
     return (CRATE_MONEY);
 }
 
-BStateType Building_tate_From_Name(char const* name)
+DoType Hardcoded_DoType_From_Name(char const* name)
+{
+    if (name != NULL) {
+        for (int d = DO_FIRST; d < DO_COUNT; d++) {
+            if (stricmp(name, HardcodedDoControlsName[d]) == 0)
+                return ((DoType)d);
+        }
+    }
+    return DO_NOTHING;
+}
+
+
+BStateType Hardcoded_Building_State_From_Name(char const* name)
 {
     if (name != NULL) {
         for (BStateType b = (BStateType)0; b < BSTATE_COUNT; b++) {
-            if (stricmp(name, BStateNames[b]) == 0)
+            if (stricmp(name, HardCodedBStateNames[b]) == 0)
                 return (b);
         }
     }

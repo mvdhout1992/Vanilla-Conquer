@@ -2327,6 +2327,7 @@ typedef struct
     int Frame;           // Starting frame of the animation.
     unsigned char Count; // Number of frames of animation.
     unsigned char Jump;  // Frames to jump between facings.
+    char Name[64];
 } DoInfoStruct;
 
 /****************************************************************************

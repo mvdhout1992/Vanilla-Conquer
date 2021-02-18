@@ -1441,8 +1441,6 @@ InfantryTypeClass::InfantryTypeClass(InfantryType type,
     , IsRemapOverride(is_remap_override)
     , Type(type)
     , Pip(pip)
-    , DoControls(control)
-    , DoControlsVirtual(virtual_control)
     , FireLaunch(firelaunch)
     , ProneLaunch(pronelaunch)
     , OverrideRemap(override_remap)
@@ -1468,6 +1466,29 @@ InfantryTypeClass::InfantryTypeClass(InfantryType type,
     IsRepairable = false;
     IsCrew = false;
     Speed = SPEED_FOOT;
+    
+    for (int i = 0; i < DO_COUNT; i++) {
+        DoInfoStruct *newcontrolsvirtual = new DoInfoStruct();
+        newcontrolsvirtual->Name[0] = '\0';
+        const char* test = HardcodedDoControlsName[i];
+        strcpy_s(newcontrolsvirtual->Name, sizeof(newcontrolsvirtual->Name), HardcodedDoControlsName[i]);
+        newcontrolsvirtual->Count =virtual_control[i].Count;
+        newcontrolsvirtual->Jump = virtual_control[i].Jump;
+        newcontrolsvirtual->Frame = virtual_control[i].Frame;
+        DoControlsVirtual.Add(newcontrolsvirtual);
+
+        DoInfoStruct* newcontrols = new DoInfoStruct();
+        const DoInfoStruct testcontrols = *control;
+        newcontrols->Name[0] = '\0';
+        strcpy_s(newcontrols->Name, sizeof(newcontrols->Name), HardcodedDoControlsName[i]);
+        newcontrols->Count = (control)[i].Count;
+        newcontrols->Jump = (control)[i].Jump;
+        newcontrols->Frame = (control)[i].Frame;
+        DoControls.Add(newcontrols);
+
+    }
+
+    DoControlsIniName = "Sequence_" + std::string(Name());
 }
 
 /***********************************************************************************************
@@ -1527,6 +1548,19 @@ void InfantryTypeClass::operator delete(void* pointer)
  *=============================================================================================*/
 void InfantryTypeClass::Init_Heap(CCINIClass &ini)
 {
+    for (int i = 0; i < InfantryTypes.Count(); i++) {
+        InfantryTypeClass& inf = InfantryTypeClass::As_Reference((InfantryType)i);
+        for (int j = 0; j < inf.DoControls.Count(); j++) {
+            delete inf.DoControls[j];
+        }
+        for (int j = 0; j < inf.DoControlsVirtual.Count(); j++) {
+            delete inf.DoControlsVirtual[j];
+        }
+
+        inf.DoControls.Clear();
+        inf.DoControlsVirtual.Clear();
+    }
+
     int entries = ini.Entry_Count("InfantryTypes");
     bool usehardcoded = ini.Get_Bool("General", "UseHardCodedAInfantry", true);
     InfantryTypes.Set_Heap((usehardcoded * INFANTRY_COUNT) + entries);
@@ -1900,6 +1934,25 @@ bool InfantryTypeClass::Read_INI(CCINIClass& ini)
         FireLaunch = (char)ini.Get_Int(Name(), "FireLaunch", FireLaunch);
         ProneLaunch = (char)ini.Get_Int(Name(), "ProneLaunch", ProneLaunch);
 
+        IsEinstein = ini.Get_Bool(Name(), "IsEinstein", IsEinstein);
+        IsChan = ini.Get_Bool(Name(), "IsChan", IsChan);
+        IsDelphi = ini.Get_Bool(Name(), "IsDelphi", IsDelphi);
+        IsEngineer = ini.Get_Bool(Name(), "IsEngineer", IsEngineer);
+        IsSpy = ini.Get_Bool(Name(), "IsSpy", IsSpy);
+        IsThief = ini.Get_Bool(Name(), "IsThief", IsThief);
+        IsGeneral = ini.Get_Bool(Name(), "IsGeneral", IsGeneral);
+        IsMedic = ini.Get_Bool(Name(), "IsMedic", IsMedic);
+        IsMechanic = ini.Get_Bool(Name(), "IsMechanic", IsMechanic);
+        IsShockTrooper = ini.Get_Bool(Name(), "IsShockTrooper", IsShockTrooper);
+        IsMiniGunner = ini.Get_Bool(Name(), "IsMiniGunner", IsMiniGunner);
+        IsTanya = ini.Get_Bool(Name(), "IsTanya", IsTanya);
+        IsRocketSoldier = ini.Get_Bool(Name(), "IsRocketSoldier", IsRocketSoldier);
+        
+        DoControlsIniName = ini.Get_String(Name(), "DoControlsIniName", DoControlsIniName);
+        DoControlsVirtualIniName = ini.Get_String(Name(), "DoControlsVirtualIniName", DoControlsVirtualIniName);
+        ini.Get_Infantry_Do_Controls_List(DoControlsIniName.c_str(), DoControls);
+        ini.Get_Infantry_Do_Controls_List(DoControlsVirtualIniName.c_str(), DoControlsVirtual);
+
         ///PipEnum Pip;
 
         //DoInfoStruct const* DoControls;
@@ -1930,6 +1983,25 @@ bool InfantryTypeClass::Write_INI(CCINIClass& ini)
 
         ini.Put_Int(Name(), "FireLaunch", FireLaunch);
         ini.Put_Int(Name(), "ProneLaunch", ProneLaunch);
+
+        ini.Put_Bool(Name(), "IsEinstein", IsEinstein);
+        ini.Put_Bool(Name(), "IsChan", IsChan);
+        ini.Put_Bool(Name(), "IsDelphi", IsDelphi);
+        ini.Put_Bool(Name(), "IsEngineer", IsEngineer);
+        ini.Put_Bool(Name(), "IsSpy", IsSpy);
+        ini.Put_Bool(Name(), "IsThief", IsThief);
+        ini.Put_Bool(Name(), "IsGeneral", IsGeneral);
+        ini.Put_Bool(Name(), "IsMedic", IsMedic);
+        ini.Put_Bool(Name(), "IsMechanic", IsMechanic);
+        ini.Put_Bool(Name(), "IsShockTrooper", IsShockTrooper);
+        ini.Put_Bool(Name(), "IsMiniGunner", IsMiniGunner);
+        ini.Put_Bool(Name(), "IsTanya", IsTanya);
+        ini.Put_Bool(Name(), "IsRocketSoldier", IsRocketSoldier);
+
+        ini.Put_String(Name(), "DoControlsIniName", DoControlsIniName);
+        ini.Put_String(Name(), "DoControlsVirtualIniName", DoControlsVirtualIniName);
+        ini.Put_Infantry_Do_Controls_List(DoControlsIniName.c_str(), DoControls);
+        ini.Put_Infantry_Do_Controls_List(DoControlsVirtualIniName.c_str(), DoControlsVirtual);
 
         ///PipEnum Pip;
 

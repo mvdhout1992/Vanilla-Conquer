@@ -3032,7 +3032,7 @@ void BuildingTypeClass::Init_Heap(CCINIClass& ini)
         // Clear Anims DVC and then init the first BSTATE_COUNT values with name
         for (int j = 0; j < BSTATE_COUNT; j++) {
             AnimControlType* anim = new AnimControlType;
-            strcpy((char*)anim->Name, BStateNames[j]);
+            strcpy((char*)anim->Name, HardCodedBStateNames[j]);
             b.Anims.Add(anim);
         }
         b.AnimSequenceName = "Sequence_" + std::string(b.Name());

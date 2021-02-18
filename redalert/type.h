@@ -1342,7 +1342,8 @@ public:
     **	This is an array of the various animation frame data for the actions that
     **	the infantry may perform.
     */
-    DoInfoStruct const* DoControls;
+    //DoInfoStruct const* DoControls;
+    DynamicVectorClass<DoInfoStruct*> DoControls;
 
     /*
     **	Alternate animation info for the 'virtual' window which gets rendered on the GlyphX client.
@@ -1350,7 +1351,11 @@ public:
     *whether
     ** we are rendering in legacy mode or on the GlyphX client. ST - 9/5/2019 12:17PM
     */
-    DoInfoStruct const* DoControlsVirtual;
+    //DoInfoStruct const* DoControlsVirtual;
+    DynamicVectorClass<DoInfoStruct*> DoControlsVirtual;
+
+    std::string DoControlsIniName;
+    std::string DoControlsVirtualIniName;
 
     /*
     **	There are certain units with special animation sequences built into the

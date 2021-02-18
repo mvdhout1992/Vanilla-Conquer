@@ -876,8 +876,8 @@ void ScoreClass::Do_Nod_Buildings_Graph(void)
         ** Draw the Tanya character running away from the building
         */
         CC_Draw_Shape(rmboptr,
-                      (ramboclass->DoControls[DO_WALK].Frame + ramboclass->DoControls[DO_WALK].Jump * 6)
-                          + ((unsigned(i) >> 1) % ramboclass->DoControls[DO_WALK].Count),
+                      (ramboclass->DoControls[DO_WALK]->Frame + ramboclass->DoControls[DO_WALK]->Jump * 6)
+                          + ((unsigned(i) >> 1) % ramboclass->DoControls[DO_WALK]->Count),
                       i + 32,
                       40,
                       WINDOW_MAIN,
@@ -1466,7 +1466,7 @@ void Draw_InfantryMan(int index)
     if (InfantryMan[index].anim == -1)
         return;
 
-    stage = InfantryMan[index].stage + InfantryMan[index].Class->DoControls[InfantryMan[index].anim].Frame;
+    stage = InfantryMan[index].stage + InfantryMan[index].Class->DoControls[InfantryMan[index].anim]->Frame;
 
     CC_Draw_Shape(InfantryMan[index].shapefile,
                   stage,
@@ -1481,7 +1481,7 @@ void Draw_InfantryMan(int index)
     */
     if (--InfantryMan[index].delay <= 0) {
         InfantryMan[index].delay = 3;
-        if (++InfantryMan[index].stage >= InfantryMan[index].Class->DoControls[InfantryMan[index].anim].Count) {
+        if (++InfantryMan[index].stage >= InfantryMan[index].Class->DoControls[InfantryMan[index].anim]->Count) {
 
             /*
             ** was he playing a death anim? If so, and it's done, erase him
