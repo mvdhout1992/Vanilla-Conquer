@@ -243,9 +243,9 @@ public:
     static void Init(void);
 
     TARGET Target_Scan(void);
-    BuildingTypeClass::AnimControlType const* Fetch_Anim_Control(void)
+    AnimControlType const* Fetch_Anim_Control(void)
     {
-        return (&Class->Anims[BState]);
+        return (Class->Anims[BState]);
     };
 
     /*

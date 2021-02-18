@@ -2762,26 +2762,6 @@ BuildingTypeClass::BuildingTypeClass(StructType type,
     , OverlapList(overlap)
     , BuildupData(0)
 {
-
-    Anims[BSTATE_CONSTRUCTION].Start = 0;
-    Anims[BSTATE_CONSTRUCTION].Count = 1;
-    Anims[BSTATE_CONSTRUCTION].Rate = 0;
-
-    Anims[BSTATE_IDLE].Start = 0;
-    Anims[BSTATE_IDLE].Count = 1;
-    Anims[BSTATE_IDLE].Rate = 0;
-
-    Anims[BSTATE_ACTIVE].Start = 0;
-    Anims[BSTATE_ACTIVE].Count = 1;
-    Anims[BSTATE_ACTIVE].Rate = 0;
-
-    Anims[BSTATE_AUX1].Start = 0;
-    Anims[BSTATE_AUX1].Count = 1;
-    Anims[BSTATE_AUX1].Rate = 0;
-
-    Anims[BSTATE_AUX2].Start = 0;
-    Anims[BSTATE_AUX2].Count = 1;
-    Anims[BSTATE_AUX2].Rate = 0;
 }
 
 /***********************************************************************************************
@@ -2825,7 +2805,17 @@ void BuildingTypeClass::operator delete(void* ptr)
     BuildingTypes.Free((BuildingTypeClass*)ptr);
 }
 
-/***********************************************************************************************
+AnimControlType* BuildingTypeClass::Get_Anim_Control(const char* name) {
+    for (int i = 0; i < Anims.Count(); i++) {
+        if (strcmp(Anims[i]->Name, name) == 0) {
+            return Anims[i];
+        }
+    }
+
+    return NULL;
+}
+
+    /***********************************************************************************************
  * BuildingTypeClass::Init_Heap -- Initialize the heap as necessary for the building type obje *
  *                                                                                             *
  *    This routine performs the necessary heap initializations. Since we know exactly what     *
@@ -2846,10 +2836,15 @@ void BuildingTypeClass::Init_Heap(CCINIClass& ini)
     // even for hardcoded BuildingTypes as it change the pointer value even for them
     // so when re-initing this list will be filled
     for (int i = STRUCT_FIRST; i < BuildingTypes.Count(); i++) {
-        BuildingTypeClass const& b = As_Reference((StructType)i);
+        BuildingTypeClass & b = As_Reference((StructType)i);
 
         delete b.OccupyList;
         delete b.OverlapList;
+
+        for (int i = 0; i < b.Anims.Count(); i++) {
+            delete b.Anims[i];
+        }
+        b.Anims.Clear();
     }
 
     int entries = ini.Entry_Count("BuildingTypes");
@@ -2990,6 +2985,12 @@ void BuildingTypeClass::Init_Heap(CCINIClass& ini)
 
         BuildingTypeClass::As_Reference(STRUCT_CAMOPILLBOX).IsCamoPillbox = true;
 
+        BuildingTypeClass::As_Reference(STRUCT_SANDBAG_WALL).ToOverlay = OVERLAY_SANDBAG_WALL;
+        BuildingTypeClass::As_Reference(STRUCT_CYCLONE_WALL).ToOverlay = OVERLAY_CYCLONE_WALL;
+        BuildingTypeClass::As_Reference(STRUCT_BRICK_WALL).ToOverlay = OVERLAY_BRICK_WALL;
+        BuildingTypeClass::As_Reference(STRUCT_BARBWIRE_WALL).ToOverlay = OVERLAY_BARBWIRE_WALL;
+        BuildingTypeClass::As_Reference(STRUCT_WOOD_WALL).ToOverlay = OVERLAY_WOOD_WALL;
+        BuildingTypeClass::As_Reference(STRUCT_FENCE).ToOverlay = OVERLAY_FENCE;
     }
 
     for (int i = 0; i < entries; i++) {
@@ -3025,6 +3026,40 @@ void BuildingTypeClass::Init_Heap(CCINIClass& ini)
                               (short const*)ComList, // OCCUPYLIST:	List of active foundation squares.
                               (short const*)NULL     // OVERLAPLIST:List of overlap cell offset.
         );
+    }
+    for (int i = STRUCT_FIRST; i < BuildingTypes.Count(); i++) {
+        BuildingTypeClass& b = As_Reference((StructType)i);
+        // Clear Anims DVC and then init the first BSTATE_COUNT values with name
+        for (int j = 0; j < BSTATE_COUNT; j++) {
+            AnimControlType* anim = new AnimControlType;
+            strcpy((char*)anim->Name, BStateNames[j]);
+            b.Anims.Add(anim);
+        }
+        b.AnimSequenceName = "Sequence_" + std::string(b.Name());
+
+        b.Anims[BSTATE_CONSTRUCTION]->Start = 0;
+        b.Anims[BSTATE_CONSTRUCTION]->Count = 1;
+        b.Anims[BSTATE_CONSTRUCTION]->Rate = 0;
+
+        b.Anims[BSTATE_IDLE]->Start = 0;
+        b.Anims[BSTATE_IDLE]->Count = 1;
+        b.Anims[BSTATE_IDLE]->Rate = 0;
+
+        b.Anims[BSTATE_ACTIVE]->Start = 0;
+        b.Anims[BSTATE_ACTIVE]->Count = 1;
+        b.Anims[BSTATE_ACTIVE]->Rate = 0;
+
+        b.Anims[BSTATE_AUX1]->Start = 0;
+        b.Anims[BSTATE_AUX1]->Count = 1;
+        b.Anims[BSTATE_AUX1]->Rate = 0;
+
+        b.Anims[BSTATE_AUX2]->Start = 0;
+        b.Anims[BSTATE_AUX2]->Count = 1;
+        b.Anims[BSTATE_AUX2]->Rate = 0;
+
+        b.Anims[BSTATE_FULL]->Start = 0;
+        b.Anims[BSTATE_FULL]->Count = 0;
+        b.Anims[BSTATE_FULL]->Rate = 0;
     }
 }
 
@@ -3315,9 +3350,9 @@ ObjectClass* BuildingTypeClass::Create_One_Of(HouseClass* house) const
  *=============================================================================================*/
 void BuildingTypeClass::Init_Anim(BStateType state, int start, int count, int rate) const
 {
-    ((int&)Anims[state].Start) = start;
-    ((int&)Anims[state].Count) = count;
-    ((int&)Anims[state].Rate) = rate;
+    Anims[state]->Start = start;
+    Anims[state]->Count = count;
+    Anims[state]->Rate = rate;
 }
 
 /***********************************************************************************************
@@ -3752,6 +3787,48 @@ bool BuildingTypeClass::Read_INI(CCINIClass& ini)
 
         FakeOf = ini.Get_StructType(Name(), "FakeOf", STRUCT_NONE);
 
+        // For wall structure to overlay logic
+        ToOverlay = ini.Get_OverlayType(Name(), "ToOverlay", ToOverlay);
+
+        IsAirfield = ini.Get_Bool(Name(), "IsAirfield", IsAirfield);
+        IsAlliedTechCenter = ini.Get_Bool(Name(), "IsAlliedTechCenter", IsAlliedTechCenter);
+        IsChronosphere = ini.Get_Bool(Name(), "IsChronosphere", IsChronosphere);
+        IsConstructionYard = ini.Get_Bool(Name(), "IsConstructionYard", IsConstructionYard);
+        IsIronCurtain = ini.Get_Bool(Name(), "IsIronCurtain", IsIronCurtain);
+        IsMissileSilo = ini.Get_Bool(Name(), "IsMissileSilo", IsMissileSilo);
+        IsPowerPlant = ini.Get_Bool(Name(), "IsPowerPlant", IsPowerPlant);
+        IsRefinery = ini.Get_Bool(Name(), "IsRefinery", IsRefinery);
+        IsRadarBuilding = ini.Get_Bool(Name(), "IsRadarBuilding", IsRadarBuilding);
+        IsRepairFacility = ini.Get_Bool(Name(), "IsRepairFacility", IsRepairFacility);
+        IsSovietTechCenter = ini.Get_Bool(Name(), "IsSovietTechCenter", IsSovietTechCenter);
+        IsAdvancedPowerPlant = ini.Get_Bool(Name(), "IsAdvancedPowerPlant", IsAdvancedPowerPlant);
+
+        IsAAGun = ini.Get_Bool(Name(), "IsAAGun", IsAAGun);
+        IsGapGenerator = ini.Get_Bool(Name(), "IsGapGenerator", IsGapGenerator);
+        IsSamSite = ini.Get_Bool(Name(), "IsSamSite", IsSamSite);
+        IsTeslaCoil = ini.Get_Bool(Name(), "IsTeslaCoil", IsTeslaCoil);
+        IsWeaponFactory = ini.Get_Bool(Name(), "IsWeaponFactory", IsWeaponFactory);
+        IsSubPen = ini.Get_Bool(Name(), "IsSubPen", IsSubPen);
+        IsShipYard = ini.Get_Bool(Name(), "IsShipYard", IsShipYard);
+
+        IsHelipad = ini.Get_Bool(Name(), "IsHelipad", IsHelipad);
+        IsKennel = ini.Get_Bool(Name(), "IsKennel", IsKennel);
+        IsOreSilo = ini.Get_Bool(Name(), "IsOreSilo", IsOreSilo);
+        IsSovietBarracks = ini.Get_Bool(Name(), "IsSovietBarracks", IsSovietBarracks);
+        IsAlliedBarracks = ini.Get_Bool(Name(), "IsAlliedBarracks", IsAlliedBarracks);
+
+        // Anti-Personnel Mine
+        IsAPMine = ini.Get_Bool(Name(), "IsAPMine", IsAPMine);
+        // Anti-Vehicle Mine
+        IsAVMine = ini.Get_Bool(Name(), "IsAVMine", IsAVMine);
+        IsOilPump = ini.Get_Bool(Name(), "IsOilPump", IsOilPump);
+        IsBarrel = ini.Get_Bool(Name(), "IsBarrel", IsBarrel);
+
+        IsCamoPillbox = ini.Get_Bool(Name(), "IsCamoPillbox", IsCamoPillbox);
+
+        AnimSequenceName = ini.Get_String(Name(), "AnimSequenceName", AnimSequenceName);
+        ini.Get_Building_States_Anim_List(AnimSequenceName.c_str(), Anims);
+
         if (Power < 0) {
             Drain = -Power;
             Power = 0;
@@ -3787,6 +3864,47 @@ bool BuildingTypeClass::Write_INI(CCINIClass& ini)
         ini.Put_Cell_List(Name(), "ExitList", ExitList);
 
         ini.Put_StructType(Name(), "FakeOf", FakeOf);
+
+        ini.Put_OverlayType(Name(), "ToOverlay", ToOverlay);
+
+        ini.Put_Bool(Name(), "IsAirfield", IsAirfield);
+        ini.Put_Bool(Name(), "IsAlliedTechCenter", IsAlliedTechCenter);
+        ini.Put_Bool(Name(), "IsChronosphere", IsChronosphere);
+        ini.Put_Bool(Name(), "IsConstructionYard", IsConstructionYard);
+        ini.Put_Bool(Name(), "IsIronCurtain", IsIronCurtain);
+        ini.Put_Bool(Name(), "IsMissileSilo", IsMissileSilo);
+        ini.Put_Bool(Name(), "IsPowerPlant", IsPowerPlant);
+        ini.Put_Bool(Name(), "IsRefinery", IsRefinery);
+        ini.Put_Bool(Name(), "IsRadarBuilding", IsRadarBuilding);
+        ini.Put_Bool(Name(), "IsRepairFacility", IsRepairFacility);
+        ini.Put_Bool(Name(), "IsSovietTechCenter", IsSovietTechCenter);
+        ini.Put_Bool(Name(), "IsAdvancedPowerPlant", IsAdvancedPowerPlant);
+
+        ini.Put_Bool(Name(), "IsAAGun", IsAAGun);
+        ini.Put_Bool(Name(), "IsGapGenerator", IsGapGenerator);
+        ini.Put_Bool(Name(), "IsSamSite", IsSamSite);
+        ini.Put_Bool(Name(), "IsTeslaCoil", IsTeslaCoil);
+        ini.Put_Bool(Name(), "IsWeaponFactory", IsWeaponFactory);
+        ini.Put_Bool(Name(), "IsSubPen", IsSubPen);
+        ini.Put_Bool(Name(), "IsShipYard", IsShipYard);
+
+        ini.Put_Bool(Name(), "IsHelipad", IsHelipad);
+        ini.Put_Bool(Name(), "IsKennel", IsKennel);
+        ini.Put_Bool(Name(), "IsOreSilo", IsOreSilo);
+        ini.Put_Bool(Name(), "IsSovietBarracks", IsSovietBarracks);
+        ini.Put_Bool(Name(), "IsAlliedBarracks", IsAlliedBarracks);
+
+        // Anti-Personnel Mine
+        ini.Put_Bool(Name(), "IsAPMine", IsAPMine);
+        // Anti-Vehicle Mine
+        ini.Put_Bool(Name(), "IsAVMine", IsAVMine);
+        ini.Put_Bool(Name(), "IsOilPump", IsOilPump);
+        ini.Put_Bool(Name(), "IsBarrel", IsBarrel);
+
+        ini.Put_Bool(Name(), "IsCamoPillbox", IsCamoPillbox);
+
+        ini.Put_String(Name(), "AnimSequenceName", AnimSequenceName);
+        ini.Put_Building_States_Anim_List(AnimSequenceName.c_str(), Anims);
 
         return (true);
     }

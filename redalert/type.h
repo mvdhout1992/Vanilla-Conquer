@@ -772,6 +772,9 @@ public:
     // TODO change IsFake to func that checks if FakeOf != STRUCT_NONE
     StructType FakeOf;
 
+    // For wall structure to overlay logic
+    OverlayType ToOverlay;
+
     bool IsAirfield;
     bool IsAlliedTechCenter;
     bool IsChronosphere;
@@ -808,22 +811,8 @@ public:
 
     bool IsCamoPillbox;
 
-
-    /**********************************************************************
-    **	For each stage that a building may be in, its animation is controlled
-    **	by this structure. It dictates the starting and length of the animation
-    **	frames needed for the specified state. In addition it specifies how long
-    **	to delay between changes in animation. With this data it is possible to
-    **	control the appearance of all normal buildings. Turrets and SAM sites are
-    **	an exception since their animation is not merely cosmetic.
-    */
-    typedef struct
-    {
-        int Start; // Starting frame of animation.
-        int Count; // Number of frames in this animation.
-        int Rate;  // Number of ticks to delay between each frame.
-    } AnimControlType;
-    AnimControlType Anims[BSTATE_COUNT];
+    std::string AnimSequenceName;
+    DynamicVectorClass<AnimControlType*> Anims;
 
     /*---------------------------------------------------------------------------
     **	This is the building type explicit constructor.
@@ -909,6 +898,7 @@ public:
     }
     virtual int Raw_Cost(void) const;
     bool Bib_And_Offset(SmudgeType& bib, CELL& cell) const;
+    AnimControlType* Get_Anim_Control(const char* name);
 
 #ifdef SCENARIO_EDITOR
     virtual void Display(int x, int y, WindowNumberType window, HousesType house) const;

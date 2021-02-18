@@ -588,7 +588,7 @@ int BuildingClass::Shape_Number(void) const
         **	from the end to the beginning. Reverse the shape number accordingly.
         */
         if (Mission == MISSION_DECONSTRUCTION) {
-            shapenum = (Class->Anims[BState].Start + Class->Anims[BState].Count - 1) - shapenum;
+            shapenum = (Class->Anims[BState]->Start + Class->Anims[BState]->Count - 1) - shapenum;
         }
 
     } else {
@@ -687,12 +687,12 @@ int BuildingClass::Shape_Number(void) const
                         if (stricmp(Class->Graphic_Name(), "PDOX") == 0) {
                             shapenum += 29;
                         } else {
-                            int last1 = Class->Anims[BSTATE_IDLE].Start + Class->Anims[BSTATE_IDLE].Count;
-                            int last2 = Class->Anims[BSTATE_ACTIVE].Start + Class->Anims[BSTATE_ACTIVE].Count;
+                            int last1 = Class->Anims[BSTATE_IDLE]->Start + Class->Anims[BSTATE_IDLE]->Count;
+                            int last2 = Class->Anims[BSTATE_ACTIVE]->Start + Class->Anims[BSTATE_ACTIVE]->Count;
                             int largest = max(last1, last2);
-                            last2 = Class->Anims[BSTATE_AUX1].Start + Class->Anims[BSTATE_AUX1].Count;
+                            last2 = Class->Anims[BSTATE_AUX1]->Start + Class->Anims[BSTATE_AUX1]->Count;
                             largest = max(largest, last2);
-                            last2 = Class->Anims[BSTATE_AUX2].Start + Class->Anims[BSTATE_AUX2].Count;
+                            last2 = Class->Anims[BSTATE_AUX2]->Start + Class->Anims[BSTATE_AUX2]->Count;
                             largest = max(largest, last2);
                             shapenum += largest;
                         }
@@ -758,34 +758,8 @@ bool BuildingClass::Mark(MarkType mark)
             **	actual building object itself is destroyed.
             */
             if (Class->IsWall) {
-                switch (Class->Type) {
-                case STRUCT_BRICK_WALL:
-                    new OverlayClass(OVERLAY_BRICK_WALL, cell, House->Class->House);
-                    break;
-
-                case STRUCT_BARBWIRE_WALL:
-                    new OverlayClass(OVERLAY_BARBWIRE_WALL, cell, House->Class->House);
-                    break;
-
-                case STRUCT_SANDBAG_WALL:
-                    new OverlayClass(OVERLAY_SANDBAG_WALL, cell, House->Class->House);
-                    break;
-
-                case STRUCT_WOOD_WALL:
-                    new OverlayClass(OVERLAY_WOOD_WALL, cell, House->Class->House);
-                    break;
-
-                case STRUCT_CYCLONE_WALL:
-                    new OverlayClass(OVERLAY_CYCLONE_WALL, cell, House->Class->House);
-                    break;
-
-                case STRUCT_FENCE:
-                    new OverlayClass(OVERLAY_FENCE, cell, House->Class->House);
-                    break;
-
-                default:
-                    break;
-                }
+                new OverlayClass(Class->ToOverlay, cell, House->Class->House);
+                
                 Transmit_Message(RADIO_OVER_OUT);
                 delete this;
 
@@ -920,7 +894,7 @@ void BuildingClass::AI(void)
     if (QueueBState != BSTATE_NONE) {
         if (BState != QueueBState) {
             BState = QueueBState;
-            BuildingTypeClass::AnimControlType const* ctrl = Fetch_Anim_Control();
+            AnimControlType const* ctrl = Fetch_Anim_Control();
             if (BState == BSTATE_CONSTRUCTION || BState == BSTATE_IDLE) {
                 Set_Rate(Options.Normalize_Delay(ctrl->Rate));
             } else {
@@ -1097,35 +1071,8 @@ bool BuildingClass::Unlimbo(COORDINATE coord, DirType dir)
     if (Class->IsWall) {
         if (Can_Enter_Cell(Coord_Cell(coord), FACING_NONE) == MOVE_OK) {
             OverlayType otype = OVERLAY_NONE;
-            switch (Class->Type) {
-            case STRUCT_SANDBAG_WALL:
-                otype = OVERLAY_SANDBAG_WALL;
-                break;
+            otype = Class->ToOverlay;
 
-            case STRUCT_CYCLONE_WALL:
-                otype = OVERLAY_CYCLONE_WALL;
-                break;
-
-            case STRUCT_BRICK_WALL:
-                otype = OVERLAY_BRICK_WALL;
-                break;
-
-            case STRUCT_BARBWIRE_WALL:
-                otype = OVERLAY_BARBWIRE_WALL;
-                break;
-
-            case STRUCT_WOOD_WALL:
-                otype = OVERLAY_WOOD_WALL;
-                break;
-
-            case STRUCT_FENCE:
-                otype = OVERLAY_FENCE;
-                break;
-
-            default:
-                otype = OVERLAY_NONE;
-                break;
-            }
             if (otype != OVERLAY_NONE) {
                 ObjectClass* o = OverlayTypeClass::As_Reference(otype).Create_One_Of(House);
                 if (o && o->Unlimbo(coord)) {
@@ -2966,7 +2913,7 @@ void BuildingClass::Begin_Mode(BStateType bstate)
     if (BState == BSTATE_NONE || bstate == BSTATE_CONSTRUCTION || ScenarioInit) {
         BState = bstate;
         QueueBState = BSTATE_NONE;
-        BuildingTypeClass::AnimControlType const* ctrl = Fetch_Anim_Control();
+        AnimControlType const* ctrl = Fetch_Anim_Control();
 
         int rate = ctrl->Rate;
         if (Class->IsRegulated && bstate != BSTATE_CONSTRUCTION) {
@@ -5866,7 +5813,7 @@ void BuildingClass::Animation_AI(void)
             **	Check for animation end or if special case of MCV deconstructing when it is allowed
             **	to convert back into an MCV.
             */
-            BuildingTypeClass::AnimControlType const* ctrl = Fetch_Anim_Control();
+            AnimControlType const* ctrl = Fetch_Anim_Control();
 
             /*
             **	When the last frame of the current animation sequence is reached, flag that
@@ -5911,7 +5858,7 @@ void BuildingClass::Animation_AI(void)
     **	also signals that now is a good time to act on any pending mission.
     */
     if (toloop) {
-        BuildingTypeClass::AnimControlType const* ctrl = Fetch_Anim_Control();
+        AnimControlType const* ctrl = Fetch_Anim_Control();
         if (BState == BSTATE_CONSTRUCTION || BState == BSTATE_IDLE) {
             Set_Rate(Options.Normalize_Delay(ctrl->Rate));
         } else {

@@ -39,6 +39,7 @@
 #include "fixed.h"
 
 class TriggerTypeClass;
+class BuildingTypeClass;
 
 /*
 **	The advanced version of the INI database manager. It handles the C&C expansion types and
@@ -67,6 +68,7 @@ public:
     ArmorType Get_ArmorType(char const* section, char const* entry, ArmorType defvalue) const;
     BulletType Get_BulletType(char const* section, char const* entry, BulletType defvalue) const;
     HousesType Get_HousesType(char const* section, char const* entry, HousesType defvalue) const;
+    void Get_Building_States_Anim_List(char const* section, DynamicVectorClass<AnimControlType*>& vec);
     LEPTON Get_Lepton(char const* section, char const* entry, LEPTON defvalue) const;
     MPHType Get_MPHType(char const* section, char const* entry, MPHType defvalue) const;
     OverlayType Get_OverlayType(char const* section, char const* entry, OverlayType defvalue) const;
@@ -88,6 +90,7 @@ public:
     RTTIType Get_RTTIType(char const* section, char const* entry, RTTIType defvalue) const;
     FacingType Get_FacingType(char const* section, char const* entry, FacingType defvalue) const;
 
+    bool Put_Building_States_Anim_List(char const* section, DynamicVectorClass<AnimControlType*>& vec);
     bool Put_Buildings(char const* section, char const* entry, const DynamicVectorClass<StructType>& value);
     bool Put_RTTIType(char const* section, char const* entry, RTTIType value);
     bool Put_FacingType(char const* section, char const* entry, FacingType value);

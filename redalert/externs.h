@@ -371,6 +371,7 @@ extern char const* const SpecialWeaponFile[SPC_COUNT];
 extern char const* const ArmorName[ARMOR_COUNT];
 extern char const* const QuarryName[QUARRY_COUNT];
 extern char const* const FormationName[FORMATION_COUNT];
+extern char const* const BStateNames[BSTATE_COUNT];
 extern unsigned long const PlayCodes[];
 extern unsigned long const CheatCodes[];
 // extern char const * const					ProjectileNames[];

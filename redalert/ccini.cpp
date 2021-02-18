@@ -1045,6 +1045,74 @@ HousesType CCINIClass::Get_HousesType(char const* section, char const* entry, Ho
     return (defvalue);
 }
 
+void CCINIClass::Get_Building_States_Anim_List(char const* section,
+                                          DynamicVectorClass<AnimControlType*>& vec)
+{
+    std::string anim_section = section;
+    int entries = Entry_Count(anim_section.c_str());
+
+    for (int i = 0; i < entries; i++) {
+        std::string entry = Get_Entry(anim_section.c_str(), i);
+        std::string value = Get_String(anim_section.c_str(), entry.c_str(), "<none>");
+
+        if (value != "<none>") {
+
+            // remove whitespace
+            while (!value.empty() && isspace((unsigned char)value.back()))
+                value.pop_back();
+
+            int start = -1;
+            int count = -1;
+            int rate = -1;
+
+            sscanf(value.c_str(), "%d,%d,%d", start, count, rate);
+
+            // entry is the name of the animation sequence, if it exists modify existing value else
+            // add the new animation sequence
+            bool found = false;
+
+            for (int i = 0; i < vec.Count(); i++) {
+                if (strcmp(vec[i]->Name, entry.c_str()) == 0) {
+                    vec[i]->Start = start;
+                    vec[i]->Count = count;
+                    vec[i]->Rate = rate;
+                    found = true;
+                    break;
+                }
+            }
+
+            if (!found) {
+                AnimControlType* anim = new AnimControlType;
+                strcpy_s(anim->Name, sizeof(anim->Name), entry.c_str());
+                anim->Start = start;
+                anim->Count = count;
+                anim->Rate = rate;
+                vec.Add(anim);
+            }
+
+        }   
+    }
+}
+
+bool  CCINIClass::Put_Building_States_Anim_List(char const* section,
+                                          DynamicVectorClass<AnimControlType*>& vec)
+{
+    const char *anim_section = section;
+
+    for (int i = 0; i < vec.Count(); i++) {
+        char buf[512];
+        AnimControlType* anim = vec[i];
+        sprintf(buf, "%d,%d,%d", anim->Start, anim->Count, anim->Rate);
+
+        if (!Put_String(anim_section, anim->Name, buf)) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+
 /***********************************************************************************************
  * CCINIClass::Put_HousesType -- Store a house identifier to the INI database.                 *
  *                                                                                             *

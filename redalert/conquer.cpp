@@ -4615,6 +4615,17 @@ CrateType Crate_From_Name(char const* name)
     return (CRATE_MONEY);
 }
 
+BStateType Building_tate_From_Name(char const* name)
+{
+    if (name != NULL) {
+        for (BStateType b = (BStateType)0; b < BSTATE_COUNT; b++) {
+            if (stricmp(name, BStateNames[b]) == 0)
+                return (b);
+        }
+    }
+    return (BSTATE_NONE);
+}
+
 RTTIType RTTI_From_Name(char const* name)
 {
     if (name != NULL && !(stricmp(name, "<none>") == 0)) {

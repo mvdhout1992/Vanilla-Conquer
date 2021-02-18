@@ -128,6 +128,18 @@ char const* const FormationName[FORMATION_COUNT] = {"None",
                                                     "Line E/W"};
 
 /***************************************************************************
+**	These are the text names for building state animations
+*/
+char const* const BStateNames[BSTATE_COUNT] = {"Construction",
+                                               "Idle",
+                                               "Active",
+                                               "Full",
+                                               "Aux1",
+                                               "Aux2",
+
+};
+
+/***************************************************************************
 **	These are the ASCII names for the reinforcement sources.
 */
 char const* const SourceName[SOURCE_COUNT] = {"North", "East", "South", "West", "Air"};

@@ -3462,6 +3462,25 @@ typedef struct
     CELL LastFixup;         // stores position of last overlap
 } PathType;
 
+
+/**********************************************************************
+**	For each stage that a building may be in, its animation is controlled
+**	by this structure. It dictates the starting and length of the animation
+**	frames needed for the specified state. In addition it specifies how long
+**	to delay between changes in animation. With this data it is possible to
+**	control the appearance of all normal buildings. Turrets and SAM sites are
+**	an exception since their animation is not merely cosmetic.
+*/
+
+typedef struct AnimControlType
+{
+    char Name[64];
+    int Start; // Starting frame of animation.
+    int Count; // Number of frames in this animation.
+    int Rate;  // Number of ticks to delay between each frame.
+} AnimControlType;
+
+
 /**********************************************************************
 ** These are special indices into the Waypoint array; slots 0-25 are
 ** reserved for letter-designated Waypoints, the others are special.
