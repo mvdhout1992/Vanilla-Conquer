@@ -2942,8 +2942,14 @@ COORDINATE BuildingClass::Center_Coord(void) const
 {
     assert(Buildings.ID(this) == ID);
     assert(IsActive);
+    
+    bool width_uneven = Class->Width() % 2;
+    bool height_uneven = Class->Height() % 2;
 
-    return (Coord_Add(Coord, CenterOffset[Class->Size]));
+    int width_center = ((Class->Width() / 2) * ICON_PIXEL_W) + (width_uneven ? (ICON_PIXEL_W / 2) : 0);
+    int height_center = ((Class->Height() / 2) * ICON_PIXEL_H) + (height_uneven ? (ICON_PIXEL_H / 2) : 0); 
+
+    return Coord_Add(Coord, XYP_COORD(width_center, height_center));
 }
 
 /***********************************************************************************************

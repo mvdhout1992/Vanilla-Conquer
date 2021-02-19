@@ -2628,7 +2628,7 @@ void InfantryClass::Response_Select(void)
             size = ARRAY_SIZE(_thief_response);
         }
 
-        else if (Class->IsThief) {
+        else if (Class->IsEngineer) {
             response = _eng_response;
             size = ARRAY_SIZE(_eng_response);
         }

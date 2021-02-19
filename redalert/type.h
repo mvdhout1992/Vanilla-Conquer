@@ -762,12 +762,6 @@ public:
     int Power;
     int Drain;
 
-    /*
-    **	This is the size of the building. This size value is a rough indication
-    **	of the building's "footprint".
-    */
-    BSizeType Size;
-
     // What building is this a fake of? Needs IsFake
     // TODO change IsFake to func that checks if FakeOf != STRUCT_NONE
     StructType FakeOf;
@@ -929,6 +923,10 @@ private:
     **	pointed to by this element.
     */
     void const* BuildupData;
+
+    /* made private, use ::Width() and ::Height() instead to access */
+    int WidthInCells;
+    int HeightInCells;
 
     void Init_Anim(BStateType state, int start, int count, int rate) const;
 };

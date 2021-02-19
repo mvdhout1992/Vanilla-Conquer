@@ -2757,11 +2757,15 @@ BuildingTypeClass::BuildingTypeClass(StructType type,
     , Capacity(0)
     , Power(0)
     , Drain(0)
-    , Size(size)
     , OccupyList(sizelist)
     , OverlapList(overlap)
     , BuildupData(0)
 {
+    static int _width[BSIZE_COUNT] = {1, 2, 1, 2, 2, 3, 3, 4, 5};
+    static int _height[BSIZE_COUNT] = {1, 1, 2, 2, 3, 2, 3, 2, 5};
+
+    WidthInCells = _width[size];
+    HeightInCells = _height[size];
 }
 
 /***********************************************************************************************
@@ -3021,7 +3025,7 @@ void BuildingTypeClass::Init_Heap(CCINIClass& ini)
                               true,                  // Can the building be color remapped to indicate owner?
                               RTTI_NONE,             // The object type produced at this factory.
                               DIR_N,                 // Starting idle frame to match construction.
-                              BSIZE_22,              // SIZE:			Building size.
+                              BSIZE_33,              // SIZE:			Building size.
                               NULL,                  // Preferred exit cell list.
                               (short const*)ComList, // OCCUPYLIST:	List of active foundation squares.
                               (short const*)NULL     // OVERLAPLIST:List of overlap cell offset.
@@ -3548,8 +3552,7 @@ short const* BuildingTypeClass::Overlap_List(void) const
  *=============================================================================================*/
 int BuildingTypeClass::Width(void) const
 {
-    static int width[BSIZE_COUNT] = {1, 2, 1, 2, 2, 3, 3, 4, 5};
-    return (width[Size]);
+    return WidthInCells;
 }
 
 /***********************************************************************************************
@@ -3568,8 +3571,7 @@ int BuildingTypeClass::Width(void) const
  *=============================================================================================*/
 int BuildingTypeClass::Height(bool bib) const
 {
-    static int height[BSIZE_COUNT] = {1, 1, 2, 2, 3, 2, 3, 2, 5};
-    return (height[Size] + ((bib && IsBibbed) ? 1 : 0));
+    return (HeightInCells + ((bib && IsBibbed) ? 1 : 0));
 }
 
 /***********************************************************************************************
@@ -3826,6 +3828,9 @@ bool BuildingTypeClass::Read_INI(CCINIClass& ini)
 
         IsCamoPillbox = ini.Get_Bool(Name(), "IsCamoPillbox", IsCamoPillbox);
 
+        WidthInCells = ini.Get_Int(Name(), "WidthInCells", WidthInCells);
+        HeightInCells = ini.Get_Int(Name(), "HeightInCells", HeightInCells);
+
         AnimSequenceName = ini.Get_String(Name(), "AnimSequenceName", AnimSequenceName);
         ini.Get_Building_States_Anim_List(AnimSequenceName.c_str(), Anims);
 
@@ -3854,7 +3859,7 @@ bool BuildingTypeClass::Write_INI(CCINIClass& ini)
         ini.Put_Cell_List(Name(), "Foundation", (const short*)OccupyList);
         ini.Put_Cell_List(Name(), "OverlapList", (short const*)OverlapList);
 
-        ini.Put_Bool(Name(), "IsFake", IsBase);
+        ini.Put_Bool(Name(), "IsFake", IsFake);
         ini.Put_Bool(Name(), "IsWall", IsWall);
         ini.Put_Bool(Name(), "BaseNormal", IsSimpleDamage);
         ini.Put_Bool(Name(), "IsRegulated", IsRegulated);
@@ -3902,6 +3907,9 @@ bool BuildingTypeClass::Write_INI(CCINIClass& ini)
         ini.Put_Bool(Name(), "IsBarrel", IsBarrel);
 
         ini.Put_Bool(Name(), "IsCamoPillbox", IsCamoPillbox);
+
+        ini.Put_Int(Name(), "WidthInCells", WidthInCells);
+        ini.Put_Int(Name(), "HeightInCells", HeightInCells);
 
         ini.Put_String(Name(), "AnimSequenceName", AnimSequenceName);
         ini.Put_Building_States_Anim_List(AnimSequenceName.c_str(), Anims);

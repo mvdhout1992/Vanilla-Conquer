@@ -2220,6 +2220,12 @@ static void Init_One_Time_Systems(void)
     AnimTypeClass::One_Time();
     AircraftTypeClass::One_Time();
     HouseClass::One_Time();
+
+    UnitTypeClass::Debug_Dump_INI();
+    AircraftTypeClass::Debug_Dump_INI();
+    VesselTypeClass::Debug_Dump_INI();
+    InfantryTypeClass::Debug_Dump_INI();
+    BuildingTypeClass::Debug_Dump_INI();
 }
 
 /***********************************************************************************************

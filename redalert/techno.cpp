@@ -7156,8 +7156,8 @@ bool TechnoClass::Evaluate_Object(ThreatType method,
             SecondaryLateral = ini.Get_Int(Name(), "SecondaryLateral", SecondaryLateral);
 
             // Mono_Printf("before image=: %s\n",GraphicName);
-            ini.Get_String(Name(), "Image", GraphicName, GraphicName, sizeof(GraphicName));
-            ini.Get_String(Name(), "Cameo", GraphicName, CameoName, sizeof(CameoName));
+            ini.Get_String(Name(), "Image", Graphic_Name(), GraphicName, sizeof(GraphicName));
+            ini.Get_String(Name(), "Cameo", Cameo_Name(), CameoName, sizeof(CameoName));
             // Mono_Printf("after image=: %s\n",GraphicName);if(Random_Pick(0,4)) Keyboard->Get();
             IsTurretEquipped = ini.Get_Bool(Name(), "IsTurretEquipped", IsTurretEquipped);
 

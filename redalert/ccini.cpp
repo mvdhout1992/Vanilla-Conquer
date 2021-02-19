@@ -731,7 +731,7 @@ short const* CCINIClass::Get_Cell_List(char const* section, char const* entry, s
         for (int i = 0; i < dvc.Count(); i++) {
             cells[i] = dvc[i];
         }
-        cells[dvc.Count() + 1] = REFRESH_EOL;
+        cells[dvc.Count()] = REFRESH_EOL;
         return cells;
     } else if (defvalue != NULL) {
         // Find the size of the list
@@ -826,7 +826,7 @@ void CCINIClass::Get_Infantry_Do_Controls_List(char const* section, DynamicVecto
             int count = -1;
             int jump = -1;
 
-            sscanf(value.c_str(), "%d,%d,%d", frame, count, jump);
+            sscanf(value.c_str(), "%d,%d,%d", &frame, &count, &jump);
 
             // entry is the name of the animation sequence, if it exists modify existing value else
             // add the new animation sequence
@@ -1112,7 +1112,7 @@ void CCINIClass::Get_Building_States_Anim_List(char const* section,
             int count = -1;
             int rate = -1;
 
-            sscanf(value.c_str(), "%d,%d,%d", start, count, rate);
+            sscanf(value.c_str(), "%d,%d,%d", &start, &count, &rate);
 
             // entry is the name of the animation sequence, if it exists modify existing value else
             // add the new animation sequence

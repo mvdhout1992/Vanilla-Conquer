@@ -1489,6 +1489,7 @@ InfantryTypeClass::InfantryTypeClass(InfantryType type,
     }
 
     DoControlsIniName = "Sequence_" + std::string(Name());
+    DoControlsVirtualIniName = "SequenceVirtual_" + std::string(Name());
 }
 
 /***********************************************************************************************
