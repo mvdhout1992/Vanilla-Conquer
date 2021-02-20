@@ -89,7 +89,17 @@ static const char* ActionText[TACTION_COUNT] = {"-No Action-",
                                                 "Add 1-time special weapon...",
                                                 "Add repeating special weapon...",
                                                 "Preferred target...",
-                                                "Launch Nukes"};
+                                                "Launch Nukes",
+                                                "Clear all smudges"
+                                                "Enable trigger",
+                                                "Disable trigger", 
+                                                "Give Credits",
+                                                "Add vehicle to sidebar",
+                                                "Add infantry  to sidebar",
+                                                "Add building to sidebar",
+                                                "Add aircraft to sidebar",
+                                                "Add vessel to sidebar",
+                                                ""};
 
 ActionChoiceClass ActionChoices[TACTION_COUNT] = {{TACTION_NONE},
                                                   {TACTION_WIN},
@@ -127,7 +137,18 @@ ActionChoiceClass ActionChoices[TACTION_COUNT] = {{TACTION_NONE},
                                                   {TACTION_1_SPECIAL},
                                                   {TACTION_FULL_SPECIAL},
                                                   {TACTION_PREFERRED_TARGET},
-                                                  {TACTION_LAUNCH_NUKES}};
+                                                  {TACTION_LAUNCH_NUKES},
+                                                  {TACTION_CLEAR_ALL_SMUDGES},
+    {TACTION_ENABLE_TRIGGER},
+    {TACTION_DISABLE_TRIGGER},
+
+    {TACTION_GIVE_CREDITS},
+
+    {TACTION_ADD_VEHICLE_TO_SIDEBAR},
+    {TACTION_ADD_INFANTRY_TO_SIDEBAR},
+    {TACTION_ADD_BUILDINGS_TO_SIDEBAR},
+    {TACTION_ADD_AIRCRAFT_TO_SIDEBAR},
+    {TACTION_ADD_VESSEL_TO_SIDEBAR}};
 
 /***********************************************************************************************
  * ActionChoiceClass::Draw_It -- Display the action choice as part of a list box.              *
@@ -348,6 +369,8 @@ bool TActionClass::operator()(HousesType house, ObjectClass* object, int id, CEL
         trig = Triggers.Raw_Ptr(id);
     }
     bool success = true;
+    bool enabletrigger = false;
+    RTTIType rtti = RTTI_NONE;
     //	TeamTypeClass * ttype = Team;
 
     /*
@@ -756,6 +779,52 @@ bool TActionClass::operator()(HousesType house, ObjectClass* object, int id, CEL
             }
         }
         break;
+    case TACTION_ENABLE_TRIGGER:
+        enabletrigger = true;
+        //Fallthrough..
+    case TACTION_DISABLE_TRIGGER:
+        if (Trigger.Is_Valid()) {
+            for (int index = 0; index < Triggers.Count(); index++) {
+                if (Triggers.Ptr(index)->Class == Trigger) {
+                    if (enabletrigger) {
+                        Triggers.Ptr(index)->IsActive = true;
+                    }
+                    else {
+                        Triggers.Ptr(index)->IsActive = false;
+                    }
+                }
+            }
+        }
+        break;
+
+    case TACTION_CLEAR_ALL_SMUDGES:
+        for (int i = 0; i < Smudges.Count(); i++) {
+            SmudgeClass* smudge = Smudges.Ptr(i);
+            delete smudge;
+            i--;
+        }
+
+    case TACTION_GIVE_CREDITS:
+        if (hptr) {
+            hptr->Harvested(hptr->HarvestedCredits + Data.Value);
+        }
+        break;
+
+    case TACTION_ADD_BUILDINGS_TO_SIDEBAR:
+        rtti = rtti == RTTI_NONE ? RTTI_BUILDINGTYPE : RTTI_NONE;
+    case TACTION_ADD_INFANTRY_TO_SIDEBAR:
+        rtti = rtti == RTTI_NONE ? RTTI_INFANTRYTYPE : RTTI_NONE;
+    case TACTION_ADD_VEHICLE_TO_SIDEBAR:
+        rtti = rtti == RTTI_NONE ? RTTI_UNITTYPE : RTTI_NONE;
+    case TACTION_ADD_AIRCRAFT_TO_SIDEBAR:
+        rtti = rtti == RTTI_NONE ? RTTI_AIRCRAFTTYPE : RTTI_NONE;
+    // Falthrough..
+    case TACTION_ADD_VESSEL_TO_SIDEBAR:
+        rtti = rtti == RTTI_NONE ? RTTI_VESSELTYPE : RTTI_NONE;
+        if (hptr && hptr == PlayerPtr) {
+            Map.Add(rtti, Data.Value, false);
+        }
+        break;
 
     /*
     **	Do no action at all.
@@ -857,6 +926,8 @@ NeedType Action_Needs(TActionType action)
 
     case TACTION_FORCE_TRIGGER:
     case TACTION_DESTROY_TRIGGER:
+    case TACTION_ENABLE_TRIGGER:
+    case TACTION_DISABLE_TRIGGER:
         return (NEED_TRIGGER);
 
     case TACTION_DZ:
@@ -884,10 +955,22 @@ NeedType Action_Needs(TActionType action)
     case TACTION_SET_TIMER:
     case TACTION_SET_GLOBAL:
     case TACTION_CLEAR_GLOBAL:
+    case TACTION_GIVE_CREDITS:
         return (NEED_NUMBER);
 
     case TACTION_PREFERRED_TARGET:
         return (NEED_QUARRY);
+
+    case TACTION_ADD_VESSEL_TO_SIDEBAR:
+        return (NEED_VESSEL);
+    case TACTION_ADD_BUILDINGS_TO_SIDEBAR:
+        return (NEED_STRUCTURE);
+    case TACTION_ADD_INFANTRY_TO_SIDEBAR:
+        return (NEED_INFANTRY);
+    case TACTION_ADD_VEHICLE_TO_SIDEBAR:
+        return (NEED_UNIT);
+    case TACTION_ADD_AIRCRAFT_TO_SIDEBAR:
+        return (NEED_AIRCRAFT);
 
     default:
         break;

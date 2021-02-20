@@ -55,6 +55,7 @@
 #include "drop.h"
 #include "textbtn.h"
 #endif
+#include <common/framelimit.h>
 
 /***********************************************************************************************
  * TriggerTypeClass::TriggerTypeClass -- Constructor for trigger class object.                 *
@@ -1921,6 +1922,7 @@ bool TriggerTypeClass::Edit(void)
             }
             break;
         }
+        Frame_Limiter();
     }
     return (false);
 }

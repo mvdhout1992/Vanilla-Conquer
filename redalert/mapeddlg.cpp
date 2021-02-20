@@ -2754,6 +2754,7 @@ int MapEditClass::Load_Scenario(void)
         if (CurTrigger && !(CurTrigger->Attaches_To() & (ATTACH_OBJECT | ATTACH_CELL))) {
             CurTrigger = NULL;
         }
+        Frame_Limiter();
     }
 
     /***************************************************************************

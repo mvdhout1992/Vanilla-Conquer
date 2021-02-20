@@ -146,6 +146,7 @@ void MapEditClass::Handle_Teams(char const* caption)
                 }
             }
         }
+        Frame_Limiter();
     }
 }
 

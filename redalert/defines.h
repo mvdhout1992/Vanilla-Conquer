@@ -135,17 +135,17 @@
 **	If the scenario editor to to be active in this build then uncomment
 **	the following #define line.
 */
-#ifdef INTERNAL_VERSION
+
 #define SCENARIO_EDITOR
-#endif
+
 
 /**********************************************************************
 **	This define enables the full set of cheat keys and special
 **	command line options.
 */
-#if defined(INTERNAL_VERSION) || defined(PLAYTEST_VERSION)
+
 #define CHEAT_KEYS
-#endif
+
 
 /**********************************************************************
 **	If this is defined, the special Virgin limited cheat keys
@@ -2452,7 +2452,8 @@ typedef enum NeedType : unsigned char
     NEED_BOOL,      // Boolean value is needed.
     NEED_SPECIAL,   // Special weapon ability.
     NEED_MISSION,   // General unit mission type.
-    NEED_HEX_NUMBER // General number.
+    NEED_HEX_NUMBER,// General number.
+    NEED_VESSEL,   // naval unit
 } NeedType;
 
 /****************************************************************************
