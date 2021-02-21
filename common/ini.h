@@ -91,6 +91,7 @@ public:
     **	section is present.
     */
     int Section_Count(void) const;
+    const char* Get_Section(int index);
     bool Section_Present(char const* section) const
     {
         return (Find_Section(section) != NULL);

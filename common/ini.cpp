@@ -440,6 +440,22 @@ int INIClass::Section_Count(void) const
     return (SectionIndex.Count());
 }
 
+const char* INIClass::Get_Section(int index)
+{
+    int i = 0;
+    INISection* section = SectionList.First();
+    while (section != SectionList.Last()) {
+        if (i == index) {
+            return section->Section;
+        }
+
+        section = section->Next();
+        i++;
+    }
+
+    return "";
+}
+
 /***********************************************************************************************
  * INIClass::Entry_Count -- Fetches the number of entries in a specified section.              *
  *                                                                                             *

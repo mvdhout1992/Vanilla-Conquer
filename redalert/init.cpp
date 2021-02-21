@@ -262,6 +262,10 @@ bool Init_Game(int, char*[])
     CCFileClass rulesIniFile("RULES.INI");
     bool RulesLoad = RuleINI.Load(rulesIniFile, false);
 
+    for (int i = 0; i < RuleINI.Section_Count(); i++) {
+        DBG_LOG("RULES.INi section %d:[%s]", i + 1, RuleINI.Get_Section(i));
+    }
+
     /*
     **	This is a special hack to initialize the heaps that must be in place before the
     **	rules file is processed. These heaps should properly be allocated as a consequence
