@@ -207,7 +207,7 @@ public:
     **	User I/O.
     */
     virtual ActionType What_Action(CELL cell) const;
-    virtual ActionType What_Action(ObjectClass const* object) const;
+    virtual ActionType What_Action(ObjectClass const* object, bool intheory = false) const;
     virtual void Active_Click_With(ActionType action, ObjectClass* object);
     virtual void Active_Click_With(ActionType action, CELL cell);
     virtual void Player_Assign_Mission(MissionType mission, TARGET target, TARGET destination);

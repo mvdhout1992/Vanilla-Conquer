@@ -3550,12 +3550,12 @@ bool UnitClass::Start_Driver(COORDINATE& headto)
  * HISTORY:                                                                                    *
  *   01/11/1995 JLB : Created.                                                                 *
  *=============================================================================================*/
-ActionType UnitClass::What_Action(ObjectClass const* object) const
+ActionType UnitClass::What_Action(ObjectClass const* object, bool intheory) const
 {
     assert(Units.ID(this) == ID);
     assert(IsActive);
 
-    ActionType action = DriveClass::What_Action(object);
+    ActionType action = DriveClass::What_Action(object, intheory);
 
     /*
     ** Allow units to move onto land mines.

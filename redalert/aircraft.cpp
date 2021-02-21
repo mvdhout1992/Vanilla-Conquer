@@ -2382,12 +2382,12 @@ void AircraftClass::Player_Assign_Mission(MissionType mission, TARGET target, TA
  * HISTORY:                                                                                    *
  *   06/19/1995 JLB : Created.                                                                 *
  *=============================================================================================*/
-ActionType AircraftClass::What_Action(ObjectClass const* target) const
+ActionType AircraftClass::What_Action(ObjectClass const* target, bool intheory) const
 {
     assert(Aircraft.ID(this) == ID);
     assert(IsActive);
 
-    ActionType action = FootClass::What_Action(target);
+    ActionType action = FootClass::What_Action(target, intheory);
 
     if (action == ACTION_SELF && (!How_Many() || (Height > 0) || IsTethered)) {
         action = ACTION_NONE;

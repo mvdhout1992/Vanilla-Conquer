@@ -131,7 +131,7 @@ public:
     virtual FireErrorType Can_Fire(TARGET target, int which) const;
 
     virtual void Enter_Idle_Mode(bool initial = false);
-    virtual ActionType What_Action(ObjectClass const* object) const;
+    virtual ActionType What_Action(ObjectClass const* object, bool inteory = false) const;
     virtual ActionType What_Action(CELL cell) const;
     virtual void Active_Click_With(ActionType action, CELL cell);
     virtual void Active_Click_With(ActionType action, ObjectClass* object);

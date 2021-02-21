@@ -765,12 +765,12 @@ void VesselClass::Per_Cell_Process(PCPType why)
  * HISTORY:                                                                                    *
  *   04/16/1996 BWG : Created.                                                                 *
  *=============================================================================================*/
-ActionType VesselClass::What_Action(ObjectClass const* object) const
+ActionType VesselClass::What_Action(ObjectClass const* object, bool intheory) const
 {
     assert(Vessels.ID(this) == ID);
     assert(IsActive);
 
-    ActionType action = DriveClass::What_Action(object);
+    ActionType action = DriveClass::What_Action(object, intheory);
 
     if (action == ACTION_SELF) {
         if (Class->Max_Passengers() == 0 || !How_Many()) {

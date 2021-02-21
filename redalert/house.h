@@ -698,6 +698,7 @@ public:
     ProdFailType Abandon_Production(RTTIType type);
     bool Place_Object(RTTIType type, CELL cell);
     bool Manual_Place(BuildingClass* builder, BuildingClass* object);
+    bool Manual_Place_Beacon();
     void Special_Weapon_AI(SpecialWeaponType id);
     bool Place_Special_Blast(SpecialWeaponType id, CELL cell);
     bool Flag_Attach(CELL cell, bool set_home = false);

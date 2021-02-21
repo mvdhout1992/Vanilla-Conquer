@@ -790,14 +790,18 @@ void EventClass::Execute(void)
     */
     case IDLE:
         techno = Data.Target.Whom.As_Techno();
-        if (techno != NULL && techno->IsActive && !techno->IsInLimbo && !techno->IsTethered
-            && techno->What_Am_I() != RTTI_BUILDING) {
-            techno->Transmit_Message(RADIO_OVER_OUT);
-            techno->Assign_Destination(TARGET_NONE);
-            techno->Assign_Target(TARGET_NONE);
-            techno->Enter_Idle_Mode();
-            if (techno->Is_Foot()) {
-                ((FootClass*)techno)->Clear_Navigation_List();
+        if (techno != NULL && techno->IsActive && !techno->IsInLimbo && !techno->IsTethered) {
+            if (techno->What_Am_I() != RTTI_BUILDING) {
+                techno->Transmit_Message(RADIO_OVER_OUT);
+                techno->Assign_Destination(TARGET_NONE);
+                techno->Assign_Target(TARGET_NONE);
+                techno->Enter_Idle_Mode();
+                if (techno->Is_Foot()) {
+                    ((FootClass*)techno)->Clear_Navigation_List();
+                }
+            }
+            else if (techno->What_Am_I() == RTTI_BUILDING) {
+                techno->Assign_Target(TARGET_NONE);
             }
         }
         break;

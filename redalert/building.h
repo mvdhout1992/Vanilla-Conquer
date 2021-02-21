@@ -259,7 +259,7 @@ public:
     virtual InfantryType Crew_Type(void) const;
     virtual int Pip_Count(void) const;
     virtual bool Can_Player_Move(void) const;
-    virtual ActionType What_Action(ObjectClass const* target) const;
+    virtual ActionType What_Action(ObjectClass const* object, bool intheory) const;
     virtual ActionType What_Action(CELL cell) const;
     virtual bool Can_Demolish(void) const;
     virtual bool Can_Demolish_Unit(void) const;

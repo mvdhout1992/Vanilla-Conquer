@@ -2016,6 +2016,7 @@ static AnimTypeClass const Flag(ANIM_FLAG, // Animation number.
                                 VOC_NONE,  // Sound effect to play.
                                 ANIM_NONE);
 
+#ifdef REMASTER_BUILD
 static AnimTypeClass const Beacon(ANIM_BEACON, // Animation number.
                                   "MOVEFLSH",  // Data name of animation.
                                   21,          // Maximum dimension of animation.
@@ -2037,15 +2038,37 @@ static AnimTypeClass const Beacon(ANIM_BEACON, // Animation number.
                                   1,           // Number of animation stages.
                                   -1,          // Number of times the animation loops.
                                   VOC_NONE,    // Sound effect to play.
-                                  ANIM_NONE
-#ifdef REMASTER_BUILD
-                                  ,
+                                  ANIM_NONE,
                                   -1,                 // Virtual stages
                                   0x100,              // Virtual scale
                                   NULL,               // Virtual name
                                   ANIM_BEACON_VIRTUAL // Virtual anim
-#endif
+
 );
+#else
+static AnimTypeClass const Beacon(ANIM_BEACON, // Animation number.
+                                   "SMOKLAND",    // Data name of animation.
+                                   32,            // Maximum dimension of animation.
+                                   72,            // Biggest animation stage.
+                                   false,         // Theater specific art imagery?
+                                   true,          // Normalized animation rate?
+                                   false,         // Uses white translucent table?
+                                   false,         // Scorches the ground?
+                                   false,         // Forms a crater?
+                                   false,         // Sticks to unit in square?
+                                   true,          // Ground level animation?
+                                   false,         // Translucent colors in this animation?
+                                   false,         // Is this a flame thrower animation?
+                                   0,             // Damage to apply per tick (fixed point).
+                                   2,             // Delay between frames.
+                                   0,             // Starting frame number.
+                                   72,            // Loop start frame number.
+                                   91,            // Ending frame of loop back.
+                                   -1,            // Number of animation stages.
+                                   127,           // Number of times the animation loops.
+                                   VOC_NONE,      // Sound effect to play.
+                                   ANIM_NONE);
+#endif
 
 #ifdef REMASTER_BUILD
 static AnimTypeClass const BeaconVirtual(ANIM_BEACON_VIRTUAL, // Animation number.

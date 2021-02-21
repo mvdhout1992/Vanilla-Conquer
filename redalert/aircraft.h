@@ -108,7 +108,7 @@ public:
     {
         return *Class;
     };
-    virtual ActionType What_Action(ObjectClass const* target) const;
+    virtual ActionType What_Action(ObjectClass const* target, bool intheory = false) const;
     virtual ActionType What_Action(CELL cell) const;
     virtual DirType Desired_Load_Dir(ObjectClass* passenger, CELL& moveto) const;
     virtual int Pip_Count(void) const;

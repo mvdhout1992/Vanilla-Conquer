@@ -169,6 +169,7 @@ DisplayClass::DisplayClass(void)
     , ProximityCheck(false)
     , PendingObjectPtr(0)
     , PendingObject(0)
+    , PendingBeacon(false)
     , PendingHouse(HOUSE_NONE)
     , TacPixelX(0)
     , TacPixelY(0)
@@ -902,7 +903,12 @@ CELL DisplayClass::Set_Cursor_Pos(CELL pos)
         }
     }
     ZoneCell = pos;
-    ProximityCheck = Passes_Proximity_Check(PendingObject, PendingHouse, CursorSize, ZoneCell + ZoneOffset);
+
+    if (PendingBeacon) {
+        ProximityCheck = true;
+    } else {
+        ProximityCheck = Passes_Proximity_Check(PendingObject, PendingHouse, CursorSize, ZoneCell + ZoneOffset);
+    }
 
     return (prevpos);
 }
@@ -3203,7 +3209,7 @@ int DisplayClass::TacticalClass::Action(unsigned flags, KeyNumType& key)
 #endif
             }
 
-            if (Map.PendingObject) {
+            if (Map.PendingObject || Map.PendingBeacon) {
                 action = ACTION_NONE;
             }
         }
@@ -3442,6 +3448,7 @@ void DisplayClass::Mouse_Right_Press(void)
         // PendingObjectPtr->Transmit_Message(RADIO_OVER_OUT);
         PendingObjectPtr = 0;
         PendingObject = 0;
+        PendingBeacon = false;
         PendingHouse = HOUSE_NONE;
         Set_Cursor_Shape(0);
     } else {
@@ -3817,12 +3824,24 @@ void DisplayClass::Mouse_Left_Up(CELL cell, bool shadow, ObjectClass* object, Ac
  *=============================================================================================*/
 void DisplayClass::Mouse_Left_Release(CELL cell, int x, int y, ObjectClass* object, ActionType action, bool wsmall)
 {
-    if (PendingObjectPtr) {
+    if (PendingObjectPtr || PendingBeacon) {
         /*
         **	Try to place the pending object onto the map.
         */
         if (ProximityCheck) {
-            OutList.Add(EventClass(EventClass::PLACE, PendingObjectPtr->What_Am_I(), cell + ZoneOffset));
+            if (PendingBeacon) {
+                OutList.Add(EventClass(ANIM_BEACON,
+                                       PlayerPtr->Class->House,
+                                       Map.Pixel_To_Coord(x, y),
+                            PlayerPtr->Get_Allies()));
+               // OutList.Add(EventClass(Anim_From_Name("ANIM_BEACON"),(HousesType)PlayerPtr->ID, cell + ZoneOffset);
+                Map.Set_Cursor_Shape(0);
+                Map.PendingBeacon = false;
+            } 
+            else {
+                OutList.Add(EventClass(EventClass::PLACE, PendingObjectPtr->What_Am_I(), cell + ZoneOffset));
+            }
+
         } else {
             Speak(VOX_DEPLOY);
         }
@@ -4093,7 +4112,7 @@ void DisplayClass::Mouse_Left_Release(CELL cell, int x, int y, ObjectClass* obje
  *=============================================================================================*/
 void DisplayClass::Mouse_Left_Press(int x, int y)
 {
-    if (!IsRepairMode && !IsSellMode && IsTargettingMode == SPC_NONE && !PendingObject) {
+    if (!IsRepairMode && !IsSellMode && IsTargettingMode == SPC_NONE && !PendingObject && !PendingBeacon) {
         IsTentative = true;
         BandX = x;
         BandY = y;
@@ -4332,7 +4351,7 @@ void DisplayClass::Sell_Mode_Control(int control)
         break;
     }
 
-    if (mode != IsSellMode && !PendingObject) {
+    if (mode != IsSellMode && !PendingObject && !PendingBeacon) {
         IsRepairMode = false;
         if (mode && PlayerPtr->BScan) {
             IsSellMode = true;
@@ -4378,7 +4397,7 @@ void DisplayClass::Repair_Mode_Control(int control)
         break;
     }
 
-    if (mode != IsRepairMode && !PendingObject) {
+    if (mode != IsRepairMode && !PendingObject && !PendingBeacon) {
         IsSellMode = false;
         if (mode && PlayerPtr->BScan) {
             IsRepairMode = true;

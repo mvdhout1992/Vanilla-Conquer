@@ -513,6 +513,7 @@ bool Select_Game(bool fade)
     Map.Set_Cursor_Shape(0);
     Map.PendingObjectPtr = 0;
     Map.PendingObject = 0;
+    Map.PendingBeacon = false;
     Map.PendingHouse = HOUSE_NONE;
 
     Session.ProcessTicks = 0;

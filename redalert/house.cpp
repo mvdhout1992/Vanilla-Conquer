@@ -3319,7 +3319,7 @@ bool HouseClass::Manual_Place(BuildingClass* builder, BuildingClass* object)
 {
     assert(Houses.ID(this) == ID);
 
-    if (this == PlayerPtr && !Map.PendingObject && builder && object) {
+    if (this == PlayerPtr && !Map.PendingObject && builder && object && !Map.PendingBeacon) {
         /*
         **	Ensures that object selection doesn't remain when
         **	building placement takes place.
@@ -3336,6 +3336,31 @@ bool HouseClass::Manual_Place(BuildingClass* builder, BuildingClass* object)
         Map.Set_Cursor_Shape(object->Occupy_List(true));
         Map.Set_Cursor_Pos(Coord_Cell(builder->Coord));
         builder->Mark(MARK_CHANGE);
+        return (true);
+    }
+    return (false);
+}
+
+bool HouseClass::Manual_Place_Beacon()
+{
+    assert(Houses.ID(this) == ID);
+
+    if (this == PlayerPtr && !Map.PendingObject && !Map.PendingBeacon) {
+        /*
+        **	Ensures that object selection doesn't remain when
+        **	building placement takes place.
+        */
+        Unselect_All();
+
+        Map.Repair_Mode_Control(0);
+        Map.Sell_Mode_Control(0);
+
+        Map.PendingBeacon = true;
+
+        static const short _beacon_occupy_list[] = {0, REFRESH_EOL};
+        Map.Set_Cursor_Shape(_beacon_occupy_list);
+        //Map.Set_Cursor_Pos(Coord_Cell(builder->Coord));
+        //builder->Mark(MARK_CHANGE);
         return (true);
     }
     return (false);

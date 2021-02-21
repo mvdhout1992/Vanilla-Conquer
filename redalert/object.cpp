@@ -280,7 +280,7 @@ void ObjectClass::AI(void)
  * HISTORY:                                                                                    *
  *   07/19/1995 JLB : Created.                                                                 *
  *=============================================================================================*/
-ActionType ObjectClass::What_Action(ObjectClass const*) const
+ActionType ObjectClass::What_Action(ObjectClass const*, bool intheory) const
 {
     assert(this != 0);
     assert(IsActive);
@@ -1225,7 +1225,7 @@ bool ObjectClass::Select(bool allow_mixed)
     /*
     **	Don't allow selection of object when in building placement mode.
     */
-    if (Map.PendingObject) {
+    if (Map.PendingObject || Map.PendingBeacon) {
         return (false);
     }
 

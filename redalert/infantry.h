@@ -172,7 +172,7 @@ public:
     /*
     **	Combat related.
     */
-    virtual ActionType What_Action(ObjectClass const* object) const;
+    virtual ActionType What_Action(ObjectClass const* object, bool intheory = false) const;
     virtual ActionType What_Action(CELL cell) const;
     virtual BulletClass* Fire_At(TARGET target, int which);
     virtual ResultType

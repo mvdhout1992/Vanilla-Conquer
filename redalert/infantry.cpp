@@ -2922,13 +2922,13 @@ void InfantryClass::Response_Attack(void)
  * HISTORY:                                                                                    *
  *   03/01/1995 JLB : Created.                                                                 *
  *=============================================================================================*/
-ActionType InfantryClass::What_Action(ObjectClass const* object) const
+ActionType InfantryClass::What_Action(ObjectClass const* object, bool intheory) const
 {
     assert(Infantry.ID(this) == ID);
     assert(IsActive);
     assert(object != NULL);
 
-    ActionType action = FootClass::What_Action(object);
+    ActionType action = FootClass::What_Action(object, intheory);
 
     /*
     ** If this is an engineer/renovator, we have to make some adjustments.

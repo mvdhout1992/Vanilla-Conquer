@@ -312,7 +312,7 @@ public:
     int Anti_Infantry(void) const;
     int What_Weapon_Should_I_Use(TARGET target) const;
     virtual ActionType What_Action(CELL cell) const;
-    virtual ActionType What_Action(ObjectClass const* target) const;
+    virtual ActionType What_Action(ObjectClass const* target, bool intheory = false) const;
     virtual BuildingClass* Find_Docking_Bay(StructType b, bool friendly) const;
     virtual CELL Find_Exit_Cell(TechnoClass const* techno) const;
     virtual FireDataType Fire_Data(int) const;

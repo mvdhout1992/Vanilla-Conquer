@@ -576,8 +576,7 @@ void Keyboard_Process(KeyNumType& input)
             for (index = 0; index < CurrentObject.Count(); index++) {
                 ObjectClass const* tech = CurrentObject[index];
 
-                if (tech != NULL
-                    && (tech->Can_Player_Move() || (tech->Can_Player_Fire() && tech->What_Am_I() != RTTI_BUILDING))) {
+                if (tech != NULL && (tech->Can_Player_Move() || tech->Can_Player_Fire())) {
                     OutList.Add(EventClass(EventClass::IDLE, TargetClass(tech)));
                 }
             }
@@ -586,7 +585,44 @@ void Keyboard_Process(KeyNumType& input)
     }
 
     /*
-    **	All selected units will attempt to go into guard area mode.
+    **	All selected units will attempt to go into (un)deploy
+    */
+    if (key != 0 && key == KN_F4) {
+        if (CurrentObject.Count()) {
+            for (index = 0; index < CurrentObject.Count(); index++) {
+                ObjectClass const* tech = CurrentObject[index];
+
+                if (tech != NULL && tech->Can_Player_Move() && tech->What_Action(tech, true) == ACTION_SELF) {
+                    OutList.Add(EventClass(TargetClass(tech), MISSION_UNLOAD));
+                }
+            }
+        }
+        input = KN_NONE;
+    }
+
+    /*
+     **	Enter building placement mode if building construction is completed
+    */
+    if (key != 0 && key == KN_F3) {
+        if (Map.IsSidebarActive == true) {
+            FactoryClass* factory = PlayerPtr->Fetch_Factory(RTTI_BUILDING);
+            if (factory)
+                if (factory->Has_Completed()) {
+                    TechnoClass* pending = factory->Get_Object();
+                    PlayerPtr->Manual_Place(pending->Who_Can_Build_Me(false, false), (BuildingClass*)pending);
+                }
+        }
+        input = KN_NONE;
+    }
+
+
+        if (key != 0 && key == KN_F5) {
+            PlayerPtr->Manual_Place_Beacon();
+        input = KN_NONE;
+    }
+
+    /*
+     **	All selected units will attempt to go into guard area mode.
     */
     if (key != 0 && key == Options.KeyGuard) {
         if (CurrentObject.Count()) {

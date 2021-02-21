@@ -3552,7 +3552,7 @@ bool TechnoClass::Evaluate_Object(ThreatType method,
      *   01/19/1995 JLB : Created.                                                                 *
      *   03/21/1995 JLB : Special target control for trees.                                        *
      *=============================================================================================*/
-    ActionType TechnoClass::What_Action(ObjectClass const* object) const
+    ActionType TechnoClass::What_Action(ObjectClass const* object, bool intheory) const
     {
         assert(IsActive);
 
@@ -3563,7 +3563,7 @@ bool TechnoClass::Evaluate_Object(ThreatType method,
             **	object cannot do anything special with itself, then just return with
             **	the no action flag.
             */
-            if (object == this && CurrentObject.Count() == 1 && House->IsPlayerControl) {
+            if (object == this && (CurrentObject.Count() == 1 || intheory) && House->IsPlayerControl) {
                 return (ACTION_SELF);
             }
 #ifdef REMASTER_BUILD

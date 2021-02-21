@@ -101,6 +101,7 @@ public:
     */
     ObjectClass* PendingObjectPtr;
     ObjectTypeClass const* PendingObject;
+    bool PendingBeacon;
     HousesType PendingHouse;
 
     static unsigned char FadingBrighten[256];
