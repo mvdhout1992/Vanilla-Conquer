@@ -467,6 +467,10 @@ bool Do_The_Internet_Menu_Thang(void);
 bool Server_Remote_Connect(void);
 bool Client_Remote_Connect(void);
 extern int UnitBuildPenalty;
+extern SoundEffectNameStruct _SoundEffectName_Hardcoded[VOC_COUNT];
+extern DynamicVectorClass<SoundEffectNameStruct*> SoundEffectName;
+extern const char* _Speech_Hardcoded[VOX_COUNT];
+extern DynamicVectorClass<std::string> Speech;
 
 /*
 ** From SENDFILE.CPP - externs for scenario file transfers

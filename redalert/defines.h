@@ -32,6 +32,7 @@
  * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 #ifndef DEFINES_H
 #define DEFINES_H
+#include <string>
 
 /**********************************************************************
 **	Language control: define the desired language for this build.
@@ -3089,6 +3090,20 @@ typedef enum SpeedType : char
     SPEED_COUNT,
     SPEED_FIRST = SPEED_FOOT
 } SpeedType;
+
+/**Controls what special effects may occur on the sound effect. */ 
+typedef enum {
+    IN_NOVAR, // No variation or alterations allowed.
+    IN_VAR    // Infantry variance response modification.
+} ContextType;
+
+
+typedef struct
+{
+    std::string Name;  // Digitized voice file name.
+    int Priority;      // Playback priority of this sample.
+    ContextType Where; // In what game context does this sample exist.
+} SoundEffectNameStruct;
 
 /**********************************************************************
 **	These are the sound effect digitized sample file names.

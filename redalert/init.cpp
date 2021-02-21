@@ -145,6 +145,52 @@ static void Load_Prolog_Page(void)
     Show_Mouse();
 }
 
+void VocTypes_List_Init(CCINIClass& ini)
+{
+    int vocentries = ini.Entry_Count("VocTypes");
+    bool usehardcoded = ini.Get_Bool("General", "UseHardCodedVocTypes", true);
+
+    if (usehardcoded) {
+        for (int i = 0; i < VOC_COUNT; i++) {
+            SoundEffectNameStruct* se = new SoundEffectNameStruct;
+            se->Name = _SoundEffectName_Hardcoded[i].Name;
+            se->Priority = _SoundEffectName_Hardcoded[i].Priority;
+            se->Where = _SoundEffectName_Hardcoded[i].Where;
+
+            SoundEffectName.Add(se);
+        }
+    }
+    for (int i = 0; i < vocentries; i++) {
+        std::string entry = ini.Get_Entry("VocTypes", i);
+        std::string vocsection = ini.Get_String("VocTypes", entry.c_str(), "<none>");
+
+        SoundEffectNameStruct* se = new SoundEffectNameStruct;
+        se->Name = ini.Get_String("vocsection", "Name", "<none>");
+        se->Priority = ini.Get_Int("vocsection", "Priority", 0);
+        se->Where = (ContextType)ini.Get_Bool("vocsection", "IsSideSpecific", 0);
+
+        SoundEffectName.Add(se);
+    }
+}
+
+void VoxTypes_List_Init(CCINIClass& ini)
+{
+    int voxentries = ini.Entry_Count("VoxTypes");
+    bool usehardcoded = ini.Get_Bool("General", "UseHardCodedVoxTypes", true);
+
+    if (usehardcoded) {
+        for (int i = 0; i < VOX_COUNT; i++) {
+            Speech.Add(_Speech_Hardcoded[i]);
+        }
+    }
+    for (int i = 0; i < voxentries; i++) {
+        std::string entry = ini.Get_Entry("VoxTypes", i);
+        std::string vox = ini.Get_String("VoxTypes", entry.c_str(), "<none>");
+
+        Speech.Add(vox);
+    }
+}
+
 /***********************************************************************************************
  * Init_Game -- Main game initialization routine.                                              *
  *                                                                                             *
@@ -234,6 +280,9 @@ bool Init_Game(int, char*[])
     TerrainTypes.Set_Heap(TERRAIN_COUNT);
     OverlayTypes.Set_Heap(OVERLAY_COUNT);
     SmudgeTypes.Set_Heap(SMUDGE_COUNT);
+
+    VocTypes_List_Init(RuleINI);
+    VoxTypes_List_Init(RuleINI);
 
     HouseTypeClass::Init_Heap();
     BuildingTypeClass::Init_Heap(RuleINI);

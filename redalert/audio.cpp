@@ -43,23 +43,11 @@
 
 #include "function.h"
 
-/***************************************************************************
-**	Controls what special effects may occur on the sound effect.
-*/
-typedef enum
-{
-    IN_NOVAR, // No variation or alterations allowed.
-    IN_VAR    // Infantry variance response modification.
-} ContextType;
+/***************************************************************************/
 
 // static struct { // MBL 02.21.2019
-// Had to name the struct for VS 2017 distributed build. ST - 4/10/2019 3:59PM
-struct SoundEffectNameStruct
-{
-    char const* Name;  // Digitized voice file name.
-    int Priority;      // Playback priority of this sample.
-    ContextType Where; // In what game context does this sample exist.
-} SoundEffectName[VOC_COUNT] = {
+// Had to name the struct for VS 2017 distributed build. ST - 4/10/2019 3:59PM 
+SoundEffectNameStruct _SoundEffectName_Hardcoded[VOC_COUNT] = {
 
     /*
     **	Civilian voices (technicians too).
@@ -278,7 +266,7 @@ VocType Voc_From_Name(char const* name)
         return (VOC_NONE);
 
     for (VocType voc = VOC_FIRST; voc < VOC_COUNT; voc++) {
-        if (stricmp(name, SoundEffectName[voc].Name) == 0) {
+        if (stricmp(name, SoundEffectName[voc]->Name.c_str()) == 0) {
             return (voc);
         }
     }
@@ -305,7 +293,7 @@ char const* Voc_Name(VocType voc)
 {
     if (voc == VOC_NONE)
         return ("none");
-    return (SoundEffectName[voc].Name);
+    return (SoundEffectName[voc]->Name.c_str());
 }
 
 /***********************************************************************************************
@@ -431,7 +419,7 @@ int Sound_Effect(VocType voc, fixed volume, int variation, signed short pan_valu
 	**	Fetch a pointer to the sound effect data. Modify the sound as appropriate and desired.
 	*/
     char const* ext = ".AUD";
-    if (SoundEffectName[voc].Where == IN_VAR) {
+    if (SoundEffectName[voc]->Where == IN_VAR) {
 
         /*
 		**	If there is no forced house, then use the current player
@@ -479,7 +467,7 @@ int Sound_Effect(VocType voc, fixed volume, int variation, signed short pan_valu
             }
         }
     }
-    _makepath(name, NULL, NULL, SoundEffectName[voc].Name, ext);
+    _makepath(name, NULL, NULL, SoundEffectName[voc]->Name.c_str(), ext);
     void const* ptr = MFCD::Retrieve(name);
 
     /*
@@ -487,7 +475,7 @@ int Sound_Effect(VocType voc, fixed volume, int variation, signed short pan_valu
 	*/
     if (ptr != NULL) {
         volume.Sub_Saturate(1);
-        return (Play_Sample(ptr, SoundEffectName[voc].Priority * volume, volume * 256, pan_value));
+        return (Play_Sample(ptr, SoundEffectName[voc]->Priority * volume, volume * 256, pan_value));
     }
 #endif
 
@@ -497,7 +485,7 @@ int Sound_Effect(VocType voc, fixed volume, int variation, signed short pan_valu
 /*
 **	This elaborates all the EVA speech voices.
 */
-/*static PG*/ char const* Speech[VOX_COUNT] = {
+/*static PG*/ char const* _Speech_Hardcoded[VOX_COUNT] = {
     "MISNWON1",   //	VOX_ACCOMPLISHED					mission accomplished
     "MISNLST1",   //	VOX_FAIL								your mission has failed
     "PROGRES1",   //	VOX_NO_FACTORY						unable to comply, building in progress
@@ -644,7 +632,7 @@ char const* Speech_Name(VoxType speech)
 {
     if (speech == VOX_NONE)
         return ("none");
-    return (Speech[speech]);
+    return (Speech[speech].c_str());
 }
 
 /***********************************************************************************************
@@ -736,7 +724,7 @@ void Speak_AI(void)
 
                 char name[_MAX_FNAME + _MAX_EXT];
 
-                _makepath(name, NULL, NULL, Speech[SpeakQueue], ".AUD");
+                _makepath(name, NULL, NULL, Speech[SpeakQueue].c_str(), ".AUD");
                 CCFileClass file(name);
                 if (file.Is_Available() && file.Read(SpeechBuffer[_index], SPEECH_BUFFER_SIZE)) {
                     speech = SpeechBuffer[_index];

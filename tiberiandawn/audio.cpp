@@ -52,12 +52,7 @@ typedef enum
 
 // static struct { // MBL 02.21.2019
 // Had to name the struct for VS 2017 distributed build. ST - 4/10/2019 3:59PM
-struct SoundEffectNameStruct
-{
-    char const* Name;  // Digitized voice file name.
-    int Priority;      // Playback priority of this sample.
-    ContextType Where; // In what game context does this sample exist.
-} SoundEffectName[VOC_COUNT] = {
+SoundEffectStruct _soundEffectName[VOC_COUNT] = {
 
     /*
     **	Special voices (typically associated with the commando).

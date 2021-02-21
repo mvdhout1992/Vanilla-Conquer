@@ -713,3 +713,6 @@ bool bAutoSonarPulse = false;
 // ST - 5/14/2019
 bool RunningAsDLL = false;
 bool RunningFromEditor = false;
+
+DynamicVectorClass<SoundEffectNameStruct*> SoundEffectName;
+DynamicVectorClass<std::string> Speech;

@@ -803,7 +803,7 @@ ActionType VesselClass::What_Action(ObjectClass const* object) const
         }
     }
 #ifdef FIXIT_CSII //	checked - ajw 9/28/98
-    if (action == ACTION_ATTACK && object->What_Am_I() == RTTI_VESSEL && (Class->IsMissileSub || Class->IsDestroyer)) {
+    if (action == ACTION_ATTACK && object->What_Am_I() == RTTI_VESSEL && (Class->IsMissileSub || Class->IsCruiser)) {
         action = ACTION_NOMOVE;
     }
 #endif
