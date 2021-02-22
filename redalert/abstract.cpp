@@ -202,7 +202,7 @@ int AbstractTypeClass::Full_Name(void) const
  * HISTORY:                                                                                    *
  *   09/21/1995 JLB : Created.                                                                 *
  *=============================================================================================*/
-int AbstractTypeClass::Get_Ownable(void) const
+bool AbstractTypeClass::Get_Ownable(HousesType house) const
 {
-    return (HOUSEF_ALLIES | HOUSEF_SOVIET | HOUSEF_OTHERS);
+    return true;
 }

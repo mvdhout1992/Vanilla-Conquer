@@ -1134,13 +1134,14 @@ bool BuildingClass::Unlimbo(COORDINATE coord, DirType dir)
             Map.Flag_To_Redraw(false);
         }
 
-        if ((Class->Ownable & (HOUSEF_GOOD | HOUSEF_BAD)) != (HOUSEF_GOOD | HOUSEF_BAD)) {
+        ActLike = House->ActLike;
+    /*    if ((Class->Ownable & (HOUSEF_GOOD | HOUSEF_BAD)) != (HOUSEF_GOOD | HOUSEF_BAD)) {
             if (Class->Ownable & HOUSEF_GOOD) {
                 ActLike = HOUSE_GREECE;
             } else {
                 ActLike = HOUSE_USSR;
             }
-        }
+        } */
 
         return (true);
     }

@@ -334,7 +334,7 @@ public:
     virtual int Risk(void) const;
     virtual int Threat_Range(int control) const;
     virtual int Value(void) const;
-    virtual int Get_Ownable(void) const;
+    virtual bool Get_Ownable(HousesType house) const;
 
     /*
     **	User I/O.

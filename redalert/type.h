@@ -96,7 +96,7 @@ public:
         strncpy((char*)IniName, buf, sizeof(IniName));
         ((char&)IniName[sizeof(IniName) - 1]) = '\0';
     };
-    virtual int Get_Ownable(void) const;
+    virtual bool Get_Ownable(HousesType house) const;
 
     void Code_Pointers(void)
     {
@@ -144,6 +144,8 @@ public:
     **	character long.
     */
     char Prefix;
+
+    std::string SideName;
 
     /*
     **	This controls the various general adjustments to the house owned
@@ -524,13 +526,13 @@ public:
     int MaxAmmo;
 
     /*
-    **	This is a bit field representing the houses that are allowed to
+    **	This is a dynamic vector representing the houses that are allowed to
     **	own (by normal means) this particular object type. This value is
     **	typically used in production contexts. It is possible for a side
     **	to take possession of an object type otherwise not normally allowed.
     **	This event usually occurs as a result of capture.
     */
-    long Ownable;
+    DynamicVectorClass<std::string> Ownable;
 
     /*
     **	This is the small icon image that is used to display the object in
@@ -618,7 +620,7 @@ public:
     virtual void const* Get_Cameo_Data(void) const;
     virtual int Cost_Of(void) const;
     virtual int Time_To_Build(HousesType house) const;
-    virtual int Get_Ownable(void) const;
+    virtual bool Get_Ownable(HousesType house) const;
     virtual bool Read_INI(CCINIClass& ini);
     virtual bool Write_INI(CCINIClass& ini);
 

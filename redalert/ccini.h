@@ -82,6 +82,10 @@ public:
     WarheadType Get_WarheadType(char const* section, char const* entry, WarheadType defvalue) const;
     WeaponType Get_WeaponType(char const* section, char const* entry, WeaponType defvalue) const;
     long Get_Owners(char const* section, char const* entry, long defvalue) const;
+    void Get_Owners(char const* section,
+                    char const* entry,
+                    DynamicVectorClass<std::string>& vec,
+                    DynamicVectorClass<std::string> defvalue) const;
     CrateType Get_CrateType(char const* section, char const* entry, CrateType defvalue) const;
     MissionType Get_MissionType(char const* section, char const* entry, MissionType defvalue) const;
     StructType Get_StructType(char const* section, char const* entry, StructType defvalue) const;
@@ -108,7 +112,7 @@ public:
     bool Put_MPHType(char const* section, char const* entry, MPHType value);
     bool Put_VQType(char const* section, char const* entry, VQType value);
     bool Put_OverlayType(char const* section, char const* entry, OverlayType value);
-    bool Put_Owners(char const* section, char const* entry, long value);
+    bool Put_Owners(char const* section, char const* entry, DynamicVectorClass<std::string> Owners);
     bool Put_SourceType(char const* section, char const* entry, SourceType value);
     bool Put_TerrainType(char const* section, char const* entry, TerrainType value);
     bool Put_TheaterType(char const* section, char const* entry, TheaterType value);

@@ -394,6 +394,26 @@ long CCINIClass::Get_Owners(char const* section, char const* entry, long defvalu
     return (ownable);
 }
 
+void CCINIClass::Get_Owners(char const* section,
+                            char const* entry,
+                            DynamicVectorClass<std::string> &vec,
+                            DynamicVectorClass<std::string> defvalue) const
+{
+    vec.Clear();
+    std::string str = Get_String(section, entry, "");
+
+    if (str != "") {
+        char* name = strtok((char*)str.c_str(), ",");
+        while (name) {
+
+            vec.Add(std::string(name));
+            name = strtok(NULL, ",");
+        }
+    } else {
+        vec = defvalue;
+    }
+}
+
 /***********************************************************************************************
  * CCINIClass::Put_Owners -- Store the house bitfield to the INI database.                     *
  *                                                                                             *
@@ -414,36 +434,18 @@ long CCINIClass::Get_Owners(char const* section, char const* entry, long defvalu
  * HISTORY:                                                                                    *
  *   07/03/1996 JLB : Created.                                                                 *
  *=============================================================================================*/
-bool CCINIClass::Put_Owners(char const* section, char const* entry, long value)
+bool CCINIClass::Put_Owners(char const* section, char const* entry, DynamicVectorClass<std::string> Owners)
 {
-    char buffer[128];
+    std::string str = "";
 
-    buffer[0] = '\0';
-
-    if ((value & HOUSEF_ALLIES) == HOUSEF_ALLIES) {
-        strcat(buffer, "allies");
-        value &= ~HOUSEF_ALLIES;
+    for (int i = 0; i < Owners.Count(); i++) {
+        str += Owners[i];
+        str += ",";
     }
-    if ((value & HOUSEF_SOVIET) == HOUSEF_SOVIET) {
-        if (buffer[0] != '\0') {
-            strcat(buffer, ",");
-        }
-        strcat(buffer, "soviet");
-        value &= ~HOUSEF_SOVIET;
+    if (Owners.Count() > 0) {
+        str.erase(str.size() - 1); // remove "," at end
     }
-
-    for (HousesType house = HOUSE_FIRST; house < HOUSE_COUNT; house++) {
-        if ((value & (1 << house)) != 0) {
-            if (buffer[0] != '\0') {
-                strcat(buffer, ",");
-            }
-            strcat(buffer, HouseTypeClass::As_Reference(house).Name());
-        }
-    }
-
-    if (buffer[0] != '\0') {
-        return (Put_String(section, entry, buffer));
-    }
+ 
     return (true);
 }
 

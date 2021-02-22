@@ -356,12 +356,12 @@ LayerType ObjectClass::In_Which_Layer(void) const
  * HISTORY:                                                                                    *
  *   08/13/1995 JLB : Created.                                                                 *
  *=============================================================================================*/
-int ObjectClass::Get_Ownable(void) const
+bool ObjectClass::Get_Ownable(HousesType House) const
 {
     assert(this != 0);
     assert(IsActive);
 
-    return (HOUSEF_ALLIES | HOUSEF_SOVIET | HOUSEF_OTHERS);
+    return true;
 }
 
 /***********************************************************************************************
@@ -2382,7 +2382,7 @@ BuildingClass* ObjectTypeClass::Who_Can_Build_Me(bool intheory, bool legal, Hous
 
             if (!building->IsInLimbo && building->House->Class->House == house && building->Class->ToBuild == RTTI
                 && building->Mission != MISSION_DECONSTRUCTION && building->MissionQueue != MISSION_DECONSTRUCTION
-                && ((1L << building->ActLike) & Get_Ownable())
+                && Get_Ownable(building->ActLike)
                 && (!legal || building->House->Can_Build(this, building->ActLike))) {
                 num_builders++;
             }
@@ -2406,7 +2406,7 @@ BuildingClass* ObjectTypeClass::Who_Can_Build_Me(bool intheory, bool legal, Hous
 
         if (!building->IsInLimbo && building->House->Class->House == house && building->Class->ToBuild == RTTI
             && building->Mission != MISSION_DECONSTRUCTION && building->MissionQueue != MISSION_DECONSTRUCTION
-            && ((1L << building->ActLike) & Get_Ownable())
+            && Get_Ownable(building->ActLike)
             && (!legal || building->House->Can_Build(this, building->ActLike))
             && (intheory || !building->In_Radio_Contact())) {
 

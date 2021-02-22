@@ -357,6 +357,18 @@ void HouseTypeClass::Init_Heap(void)
     new HouseTypeClass(HouseMulti6);
     new HouseTypeClass(HouseMulti7);
     new HouseTypeClass(HouseMulti8);
+
+    HouseTypeClass::As_Reference(HOUSE_BAD).SideName = "Soviet";
+    HouseTypeClass::As_Reference(HOUSE_UKRAINE).SideName = "Soviet";
+    HouseTypeClass::As_Reference(HOUSE_USSR).SideName = "Soviet";
+
+    HouseTypeClass::As_Reference(HOUSE_SPAIN).SideName = "Allies";
+    HouseTypeClass::As_Reference(HOUSE_GREECE).SideName = "Allies";
+    HouseTypeClass::As_Reference(HOUSE_ENGLAND).SideName = "Allies";
+    HouseTypeClass::As_Reference(HOUSE_GERMANY).SideName = "Allies";
+    HouseTypeClass::As_Reference(HOUSE_FRANCE).SideName = "Allies";
+    HouseTypeClass::As_Reference(HOUSE_TURKEY).SideName = "Allies";
+    HouseTypeClass::As_Reference(HOUSE_ENGLAND).SideName = "Allies";
 }
 
 /***********************************************************************************************

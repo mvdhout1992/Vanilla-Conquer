@@ -2540,8 +2540,7 @@ bool CellClass::Goodie_Check(FootClass* object)
 #endif
                 if (&UnitTypeClass::As_Reference(utype).IsMCV == false || Session.Options.Bases) {
                     utp = &UnitTypeClass::As_Reference(utype);
-                    if (utp->IsCrateGoodie
-                        && (utp->Ownable & (1 << HouseClass::As_Pointer(object->Owner())->ActLike))) {
+                    if (utp->IsCrateGoodie && utp->Get_Ownable(HouseClass::As_Pointer(object->Owner())->ActLike)) {
                         break;
                     }
                     utp = NULL;

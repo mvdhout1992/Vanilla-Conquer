@@ -183,7 +183,7 @@ public:
         return (RTTI == RTTI_BUILDING || RTTI == RTTI_UNIT || RTTI == RTTI_INFANTRY || RTTI == RTTI_VESSEL
                 || RTTI == RTTI_AIRCRAFT);
     };
-    virtual int Get_Ownable(void) const;
+    virtual bool Get_Ownable(HousesType House) const;
     virtual ObjectTypeClass const& Class_Of(void) const = 0;
     virtual char const* Name(void) const;
     virtual int Full_Name(void) const;

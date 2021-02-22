@@ -5686,11 +5686,11 @@ bool TechnoClass::Evaluate_Object(ThreatType method,
      * HISTORY:                                                                                    *
      *   07/29/1995 JLB : Created.                                                                 *
      *=============================================================================================*/
-    int TechnoClass::Get_Ownable(void) const
+    bool TechnoClass::Get_Ownable(HousesType house) const
     {
         assert(IsActive);
 
-        return ((TechnoTypeClass const&)Class_Of()).Get_Ownable();
+        return ((TechnoTypeClass const&)Class_Of()).Get_Ownable(house);
         //	return ((TechnoTypeClass const &)Class_Of()).Ownable;
     }
 
@@ -6814,12 +6814,25 @@ bool TechnoClass::Evaluate_Object(ThreatType method,
      * HISTORY:                                                                                    *
      *   07/29/1995 JLB : Created.                                                                 *
      *=============================================================================================*/
-    int TechnoTypeClass::Get_Ownable(void) const
+    bool TechnoTypeClass::Get_Ownable(HousesType house) const
     {
+        std::string sidename = Houses.Ptr(house)->Class->SideName;
+        std::string housename = Houses.Ptr(house)->Class->IniName;
         if (IsDoubleOwned && Session.Type != GAME_NORMAL) {
-            return (Ownable | HOUSEF_SOVIET | HOUSEF_ALLIES);
+            if (stricmp(sidename.c_str(),"allies") == 0 || stricmp(sidename.c_str(),"soviet") == 0) {
+                return true;
+            }
         }
-        return (Ownable);
+
+        for (int i = 0; i < Ownable.Count(); i++) {
+            if (stricmp(sidename.c_str(), Ownable[i].c_str()) ==0) {
+                return true;
+            }
+            if (stricmp(housename.c_str(), Ownable[i].c_str()) == 0) {
+                return true;
+            }
+        }
+        return (false);
     }
 
     /***********************************************************************************************
@@ -7138,7 +7151,7 @@ bool TechnoClass::Evaluate_Object(ThreatType method,
             Cost = ini.Get_Int(Name(), "Cost", Cost);
             MaxAmmo = ini.Get_Int(Name(), "Ammo", MaxAmmo);
             Risk = Reward = Points = ini.Get_Int(Name(), "Points", Points);
-            Ownable = ini.Get_Owners(Name(), "Owner", Ownable);
+            ini.Get_Owners(Name(), "Owner", Ownable, Ownable);
             IsCrew = ini.Get_Bool(Name(), "Crewed", IsCrew);
             IsRepairable = ini.Get_Bool(Name(), "Repairable", IsRepairable);
             IsInvisible = ini.Get_Bool(Name(), "Invisible", IsInvisible);
