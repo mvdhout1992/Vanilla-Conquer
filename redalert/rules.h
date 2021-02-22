@@ -73,6 +73,9 @@ public:
     bool IQ(CCINIClass& ini);
     bool Objects(CCINIClass& ini);
     bool Difficulty(CCINIClass& ini);
+    void Init_Warhead_Types(CCINIClass& ini);
+    void Init_Weapon_Types(CCINIClass& ini);
+    void Init_Bullet_Types(CCINIClass& ini);
 
     /*
     **	This specifies the turbo boost speed for missiles when they are fired upon

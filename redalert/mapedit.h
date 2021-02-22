@@ -46,6 +46,8 @@
 #define MAPEDIT_H
 
 #include "mouse.h"
+#include "externs.h"
+#include "vector.h"
 
 class ListClass;
 class ListClass;
@@ -57,13 +59,10 @@ class TriColorGaugeClass;
 /*
 **	This is the maximum # of ObjectTypeClasses the editor has to deal with.
 */
+
 enum MapEdit1Enum
 {
-    MAX_EDIT_OBJECTS = // max # of ObjectTypeClasses allowed
-    (int)TEMPLATE_COUNT + (int)OVERLAY_COUNT + (int)SMUDGE_COUNT + (int)TERRAIN_COUNT + (int)UNIT_COUNT
-    + (int)INFANTRY_COUNT + (int)VESSEL_COUNT + (int)STRUCT_COUNT,
-
-    MAX_TEAM_CLASSES = // max # ObjectTypeClasses for a team
+   MAX_TEAM_CLASSES = // max # ObjectTypeClasses for a team
     (int)UNIT_COUNT + (int)INFANTRY_COUNT + (int)AIRCRAFT_COUNT,
 
     NUM_EDIT_MISSIONS = 9, // # missions that can be assigned an object
@@ -271,8 +270,7 @@ private:
     **	Array of all TypeClasses the user can add to the map; cleared by
     **	Clear_List(), added to by Add_To_List()
     */
-    ObjectTypeClass const* Objects[MAX_EDIT_OBJECTS];
-    int ObjCount; // # of objects in the Objects array
+    DynamicVectorClass<ObjectTypeClass const*> Objects;
 
     /*
     **	Last-selected object to place, and last-selected house of object

@@ -353,7 +353,7 @@ void HouseClass::Debug_Dump(MonoClass* mono) const
     mono->Printf("%5d", (long)RepairTimer);
 
     mono->Set_Cursor(1, 3);
-    mono->Printf("%08X", AScan);
+//    mono->Printf("%08X", AScan);
     mono->Set_Cursor(10, 3);
     mono->Printf("%8.8s",
                  (BuildAircraft == AIRCRAFT_NONE) ? " "
@@ -393,7 +393,7 @@ void HouseClass::Debug_Dump(MonoClass* mono) const
     mono->Printf("%5d", (long)BorrowedTime);
 
     mono->Set_Cursor(1, 7);
-    mono->Printf("%08X", UScan);
+//    mono->Printf("%08X", UScan);
     mono->Set_Cursor(10, 7);
     mono->Printf("%8.8s", (BuildUnit == UNIT_NONE) ? " " : UnitTypeClass::As_Reference(BuildUnit).Graphic_Name());
     mono->Set_Cursor(21, 7);

@@ -1729,7 +1729,7 @@ public:
 
     static void Init_Heap(void);
     static BulletTypeClass& As_Reference(BulletType type);
-    static void Init(TheaterType){};
+    static void Init(TheaterType);
     static void One_Time(void);
 
     virtual bool Read_INI(CCINIClass& ini);
@@ -1773,6 +1773,11 @@ public:
     **	Does this terrain object get placed on the water instead of the ground?
     */
     unsigned IsWaterBased : 1;
+
+    // If these are set, means a custom list was allocated
+    // and we need to deallocate it
+    bool CustomOverlapList;
+    bool CustomOccupyList;
 
     //----------------------------------------------------------------
     TerrainTypeClass(NoInitClass const& x)

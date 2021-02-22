@@ -200,6 +200,7 @@ DoType Hardcoded_DoType_From_Name(char const* name);
 BStateType Hardcoded_Building_State_From_Name(char const* name);
 RTTIType RTTI_From_Name(char const* name);
 FacingType Facing_From_Name(char const* name);
+LandType Land_From_Name(char const* name);
 Rect const Shape_Dimensions(void const* shapedata, int shapenum);
 void IPX_Call_Back(void);
 bool Is_Demo(void);

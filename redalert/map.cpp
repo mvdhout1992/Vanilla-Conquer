@@ -1606,7 +1606,7 @@ int MapClass::Validate(void)
         */
         ttype = (*this)[cell].TType;
         ticon = (*this)[cell].TIcon;
-        if (ttype >= TEMPLATE_COUNT && ttype != TEMPLATE_NONE)
+        if (ttype >= TemplateTypes.Count() && ttype != TEMPLATE_NONE)
             return (false);
 
         /*
@@ -1628,7 +1628,7 @@ int MapClass::Validate(void)
         **	Validate Overlay
         */
         overlay = (*this)[cell].Overlay;
-        if (overlay < OVERLAY_NONE || overlay >= OVERLAY_COUNT) {
+        if (overlay < OVERLAY_NONE || overlay >= OverlayTypes.Count()) {
             return (false);
         }
 
@@ -1636,7 +1636,7 @@ int MapClass::Validate(void)
         **	Validate Smudge
         */
         smudge = (*this)[cell].Smudge;
-        if (smudge < SMUDGE_NONE || smudge >= SMUDGE_COUNT) {
+        if (smudge < SMUDGE_NONE || smudge >= SmudgeTypes.Count()) {
             return (false);
         }
 

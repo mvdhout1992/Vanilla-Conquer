@@ -199,9 +199,7 @@ bool GameInFocus = false;
 **	Encryption keys.
 */
 PKey FastKey;
-#ifdef CHEAT_KEYS
 PKey SlowKey;
-#endif
 
 #ifdef FIXIT_NAME_OVERRIDE
 /***************************************************************************

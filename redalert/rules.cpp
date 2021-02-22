@@ -627,75 +627,9 @@ bool RulesClass::Heap_Maximums(CCINIClass& ini)
     */
     AnimMax = max(AnimMax, 200);
 
-    /*
-    **	Any heaps that use the maximums that were just loaded, must
-    **	be initialized as necessary.
-    */
-    Warheads.Set_Heap(WarheadMax);
-    new WarheadTypeClass("SA");
-    new WarheadTypeClass("HE");
-    new WarheadTypeClass("AP");
-    new WarheadTypeClass("Fire");
-    new WarheadTypeClass("HollowPoint");
-    new WarheadTypeClass("Super");
-    new WarheadTypeClass("Organic");
-    new WarheadTypeClass("Nuke");
-#ifdef FIXIT_CSII //	checked - ajw 9/28/98
-    new WarheadTypeClass("Mechanical");
-#endif
-
-    Weapons.Set_Heap(WeaponMax);
-    new WeaponTypeClass("Colt45");
-    new WeaponTypeClass("ZSU-23");
-    new WeaponTypeClass("Vulcan");
-    new WeaponTypeClass("Maverick");
-    new WeaponTypeClass("Camera");
-    new WeaponTypeClass("FireballLauncher");
-    new WeaponTypeClass("Sniper");
-    new WeaponTypeClass("ChainGun");
-    new WeaponTypeClass("Pistol");
-    new WeaponTypeClass("M1Carbine");
-    new WeaponTypeClass("Dragon");
-    new WeaponTypeClass("Hellfire");
-    new WeaponTypeClass("Grenade");
-    new WeaponTypeClass("75mm");
-    new WeaponTypeClass("90mm");
-    new WeaponTypeClass("105mm");
-    new WeaponTypeClass("120mm");
-    new WeaponTypeClass("TurretGun");
-    new WeaponTypeClass("MammothTusk");
-    new WeaponTypeClass("155mm");
-    new WeaponTypeClass("M60mg");
-    new WeaponTypeClass("Napalm");
-    new WeaponTypeClass("TeslaZap");
-    new WeaponTypeClass("Nike");
-    new WeaponTypeClass("8Inch");
-    new WeaponTypeClass("Stinger");
-    new WeaponTypeClass("TorpTube");
-    new WeaponTypeClass("2Inch");
-    new WeaponTypeClass("DepthCharge");
-    new WeaponTypeClass("ParaBomb");
-    new WeaponTypeClass("DogJaw");
-    new WeaponTypeClass("Heal");
-    new WeaponTypeClass("SCUD");
-    new WeaponTypeClass("Flamer");
-    new WeaponTypeClass("RedEye");
-
-#ifdef FIXIT_ANTS
-    new WeaponTypeClass("Mandible");
-#endif
-
-#ifdef FIXIT_CSII //	checked - ajw 9/28/98
-    new WeaponTypeClass("PortaTesla");
-    new WeaponTypeClass("GoodWrench");
-    new WeaponTypeClass("SubSCUD");
-    new WeaponTypeClass("TTankZap");
-    new WeaponTypeClass("APTusk");
-    new WeaponTypeClass("Democharge");
-#endif
-#ifdef FIXIT_CARRIER //	checked - ajw 9/28/98
-    new WeaponTypeClass("AirAssault");
-#endif
+    Init_Bullet_Types(ini);
+    Init_Warhead_Types(ini);
+    Init_Weapon_Types(ini);
 
     return (true);
 }
@@ -933,6 +867,132 @@ bool RulesClass::IQ(CCINIClass& ini)
         return (true);
     }
     return (false);
+}
+
+void RulesClass::Init_Warhead_Types(CCINIClass& ini)
+{
+    bool append = false;
+    if (this != &Rule) {
+        append = true;
+    }
+
+    bool usehardcodedlist = ini.Get_Bool("General", "UseHardcodedWarheads", true);
+    int entries = ini.Entry_Count("WarheadTypes");
+
+    Warheads.Set_Heap((WARHEAD_COUNT * usehardcodedlist) + entries);
+
+    if (usehardcodedlist && !append) {
+        new WarheadTypeClass("SA");
+        new WarheadTypeClass("HE");
+        new WarheadTypeClass("AP");
+        new WarheadTypeClass("Fire");
+        new WarheadTypeClass("HollowPoint");
+        new WarheadTypeClass("Super");
+        new WarheadTypeClass("Organic");
+        new WarheadTypeClass("Nuke");
+        new WarheadTypeClass("Mechanical");
+    }
+
+    for (int i = 0; i < entries; i++) {
+        std::string entry = ini.Get_Entry("WarheadTypes", i);
+        std::string warhead = ini.Get_String("WarheadTypes", entry.c_str(), "<none>");
+        std::string ininame = warhead;
+
+        new WarheadTypeClass(ininame.c_str());
+    }
+}
+
+void RulesClass::Init_Weapon_Types(CCINIClass& ini)
+{
+    bool append = false;
+    if (this != &Rule) {
+        append = true;
+    }
+
+    bool usehardcodedlist = ini.Get_Bool("General", "UseHardcodedWeapons", true);
+    int entries = ini.Entry_Count("WeaponTypes");
+
+    Weapons.Set_Heap((WEAPON_COUNT * usehardcodedlist) + entries);
+
+    if (usehardcodedlist && !append) {
+        new WeaponTypeClass("Colt45");
+        new WeaponTypeClass("ZSU-23");
+        new WeaponTypeClass("Vulcan");
+        new WeaponTypeClass("Maverick");
+        new WeaponTypeClass("Camera");
+        new WeaponTypeClass("FireballLauncher");
+        new WeaponTypeClass("Sniper");
+        new WeaponTypeClass("ChainGun");
+        new WeaponTypeClass("Pistol");
+        new WeaponTypeClass("M1Carbine");
+        new WeaponTypeClass("Dragon");
+        new WeaponTypeClass("Hellfire");
+        new WeaponTypeClass("Grenade");
+        new WeaponTypeClass("75mm");
+        new WeaponTypeClass("90mm");
+        new WeaponTypeClass("105mm");
+        new WeaponTypeClass("120mm");
+        new WeaponTypeClass("TurretGun");
+        new WeaponTypeClass("MammothTusk");
+        new WeaponTypeClass("155mm");
+        new WeaponTypeClass("M60mg");
+        new WeaponTypeClass("Napalm");
+        new WeaponTypeClass("TeslaZap");
+        new WeaponTypeClass("Nike");
+        new WeaponTypeClass("8Inch");
+        new WeaponTypeClass("Stinger");
+        new WeaponTypeClass("TorpTube");
+        new WeaponTypeClass("2Inch");
+        new WeaponTypeClass("DepthCharge");
+        new WeaponTypeClass("ParaBomb");
+        new WeaponTypeClass("DogJaw");
+        new WeaponTypeClass("Heal");
+        new WeaponTypeClass("SCUD");
+        new WeaponTypeClass("Flamer");
+        new WeaponTypeClass("RedEye");
+        new WeaponTypeClass("Mandible");
+        new WeaponTypeClass("PortaTesla");
+        new WeaponTypeClass("GoodWrench");
+        new WeaponTypeClass("SubSCUD");
+        new WeaponTypeClass("TTankZap");
+        new WeaponTypeClass("APTusk");
+        new WeaponTypeClass("Democharge");
+        new WeaponTypeClass("AirAssault");
+    }
+
+    for (int i = 0; i < entries; i++) {
+        std::string entry = ini.Get_Entry("WeaponTypes", i);
+        std::string weapon = ini.Get_String("WeaponTypes", entry.c_str(), "<none>");
+        std::string ininame = weapon;
+
+        new WeaponTypeClass(ininame.c_str());
+    }
+}
+
+void RulesClass::Init_Bullet_Types(CCINIClass& ini)
+{
+    bool append = false;
+    if (this != &Rule) {
+        append = true;
+    }
+
+    bool usehardcodedlist = ini.Get_Bool("General", "UseHardcodedBullets", true);
+    int entries = ini.Entry_Count("BulletTypes");
+    BulletTypes.Set_Heap((BULLET_COUNT * usehardcodedlist) + entries);
+
+    if (usehardcodedlist && !append) {
+        BulletTypeClass::Init_Heap();
+    }
+
+    for (int i = 0; i < entries; i++) {
+        std::string entry = ini.Get_Entry("BulletTypes", i);
+        std::string bullet = ini.Get_String("BulletTypes", entry.c_str(), "<none>");
+        std::string ininame = bullet;
+
+        new BulletTypeClass(ininame.c_str());
+    }
+
+    BulletTypeClass::Init(THEATER_NONE);
 }
 
 /***********************************************************************************************

@@ -912,7 +912,7 @@ WarheadType CCINIClass::Get_WarheadType(char const* section, char const* entry, 
     char buffer[128];
 
     if (Get_String(section, entry, "", buffer, sizeof(buffer))) {
-        for (WarheadType wh = WARHEAD_FIRST; wh < WARHEAD_COUNT; wh++) {
+        for (WarheadType wh = WARHEAD_FIRST; wh < Warheads.Count(); wh++) {
             if (stricmp(WarheadTypeClass::As_Pointer(wh)->Name(), buffer) == 0) {
                 return (wh);
             }
@@ -1025,7 +1025,7 @@ BulletType CCINIClass::Get_BulletType(char const* section, char const* entry, Bu
     char buffer[128];
 
     if (Get_String(section, entry, "", buffer, sizeof(buffer))) {
-        for (BulletType proj = BULLET_FIRST; proj < BULLET_COUNT; proj++) {
+        for (BulletType proj = BULLET_FIRST; proj < BulletTypes.Count(); proj++) {
             if (stricmp(BulletTypeClass::As_Reference(proj).Name(), buffer) == 0) {
                 //			if (stricmp(ProjectileNames[proj], buffer) == 0) {
                 return (proj);
@@ -1506,15 +1506,27 @@ MissionType MissionType_From_Name(char const* name)
     return (MISSION_NONE);
 }
 
-MissionType CCINIClass::Get_MissionType(char const* section, char const* entry, MissionType defvalue) const
+
+LandType CCINIClass::Get_LandType(char const* section, char const* entry, LandType defvalue) const
 {
     char buffer[128];
 
     if (Get_String(section, entry, "", buffer, sizeof(buffer))) {
-        return (MissionType_From_Name(buffer));
+        return (Land_From_Name(buffer));
+
     }
     return (defvalue);
 }
+
+MissionType CCINIClass::Get_MissionType(char const* section, char const* entry, MissionType defvalue) const
+{
+    char buffer[128];
+    if (Get_String(section, entry, "", buffer, sizeof(buffer))) {
+        return (MissionType_From_Name(buffer));
+    }
+    return defvalue;
+}
+
 
 StructType CCINIClass::Get_StructType(char const* section, char const* entry, StructType defvalue) const
 {
@@ -1532,6 +1544,58 @@ bool CCINIClass::Put_StructType(char const* section, char const* entry, StructTy
         return (Put_String(section, entry, "<none>"));
     }
     return (Put_String(section, entry, BuildingTypeClass::As_Reference(value).Name()));
+}
+
+// Horrible hard-coded building foundations code
+short const* CCINIClass::Get_Cell_List(char const* section, char const* entry, short const* defvalue, int defvaluesize)
+{
+    char buffer[512];
+    char str[512];
+
+    int number = 0;
+    std::string foundation = entry + std::string(".") + std::to_string(number);
+    DynamicVectorClass<short> dvc;
+
+    while (Get_String(section, foundation.c_str(), "", buffer, sizeof(buffer))) {
+        number++;
+        foundation = entry + std::string(".") + std::to_string(number);
+
+        char* t = buffer;
+        char* d = str;
+        
+        // Remove spaces
+        do
+            while (isspace(*t))
+                t++;
+        while (*d++ = *t++);
+
+        int x = 0, y = 0;
+        switch (sscanf_s(str, "%d,%d", &x, &y)) {
+        case 0:
+            x = 0;
+            // fallthrough
+        case 1:
+            y = 0;
+        }
+
+        short cell = x + (y * MAP_CELL_W);
+        dvc.Add(cell);
+    }
+
+    if (dvc.Count() > 0) {
+        short* cells = new short[dvc.Count()+1];
+        for (int i = 0; i < dvc.Count(); i++) {
+            cells[i] = dvc[i];
+        }
+        cells[dvc.Count() + 1] = REFRESH_EOL;
+        return cells;
+    }
+    
+    if (defvalue != NULL) {
+        short* cells = new short[defvaluesize];
+        memcpy(cells, defvalue, defvaluesize);
+    }
+    return (defvalue);
 }
 
 /***********************************************************************************************

@@ -51,9 +51,9 @@
 **	Playtest version -- no editor but does have minimal cheat keys.
 **	Release version -- no editor or cheat keys -- all debugging info removed.
 */
-//#define	INTERNAL_VERSION
+#define	INTERNAL_VERSION
 //#define	PLAYTEST_VERSION
-#define RELEASE_VERSION
+//#define RELEASE_VERSION
 
 // Enable 640x400 VQ movie capability in WIN32 mode
 #define MOVIE640

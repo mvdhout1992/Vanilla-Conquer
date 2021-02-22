@@ -4649,15 +4649,27 @@ RTTIType RTTI_From_Name(char const* name)
     return RTTI_NONE;
 }
 
-FacingType Facing_From_Name(char const* name) {
+FacingType Facing_From_Name(char const* name)
+{
     if (name != NULL) {
         for (FacingType f = FACING_FIRST; f < FACING_COUNT; f++) {
             if (stricmp(name, FacingNames[f]) == 0)
                 return (f);
         }
     }
-
     return FACING_NONE;
+}
+
+static char const* _lands[LAND_COUNT] = {"Clear", "Road", "Water", "Rock", "Wall", "Ore", "Beach", "Rough", "River"};
+
+LandType Land_From_Name(char const* name) {
+    if (name != NULL) {
+        for (LandType land = LAND_FIRST; land < LAND_COUNT; land++) {
+            if (stricmp(name, _lands[land]) == 0)
+                return (land);
+        }
+    }
+    return (LAND_NONE);
 }
 
 /***********************************************************************************************

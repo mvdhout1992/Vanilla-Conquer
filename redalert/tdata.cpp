@@ -453,6 +453,8 @@ TerrainTypeClass::TerrainTypeClass(TerrainType terrain,
 {
     MaxStrength = 800;
     Armor = ARMOR_WOOD;
+    CustomOverlapList = false;
+    CustomOccupyList = false;
 }
 
 /***********************************************************************************************
@@ -592,33 +594,91 @@ void TerrainTypeClass::One_Time(void)
  *=============================================================================================*/
 void TerrainTypeClass::Init(TheaterType theater)
 {
-    if (theater != LastTheater) {
+    if (theater == LastTheater) {
+        return;
+    }
 
-        for (TerrainType index = TERRAIN_FIRST; index < TERRAIN_COUNT; index++) {
-            TerrainTypeClass const& terrain = As_Reference(index);
-            char fullname[_MAX_FNAME + _MAX_EXT];
+    // Deallocate custom allocated occupy&overlap list
 
-            /*
+    for (TerrainType index = TERRAIN_FIRST; index < TerrainTypes.Count(); index++) {
+        TerrainTypeClass const& terrain = As_Reference(index);
+        if (terrain.CustomOverlapList) {
+            delete terrain.Overlap;
+        } else if (terrain.CustomOccupyList) {
+            delete terrain.Occupy;
+        }
+    }
+
+
+    bool usehardcodedlist = true;
+
+    std::string filename = Theaters[theater].Root;
+    filename += ".INI";
+
+    CCFileClass file(filename.c_str());
+    CCINIClass ini;
+
+    if (ini.Load(file, false)) {
+
+        usehardcodedlist = ini.Get_Bool("General", "UseHardCodedTerrains", true);
+        int entries = ini.Entry_Count("TerrainTypes");
+
+        TerrainTypes.Set_Heap((TERRAIN_COUNT * usehardcodedlist) + entries);
+        if (usehardcodedlist) {
+            TerrainTypeClass::Init_Heap();
+        }
+
+        for (int i = 0; i < entries; i++) {
+            std::string entry = ini.Get_Entry("TerrainTypes", i);
+            std::string terrain = ini.Get_String("TerrainTypes", entry.c_str(), "<none>");
+            int ID = (TERRAIN_COUNT * usehardcodedlist) + i;
+            std::string ininame = terrain;
+            int namestringid = ini.Get_Int(terrain.c_str(), "Name", -1); // display name ingme, string table value
+            int centerbasex = ini.Get_Int(terrain.c_str(), "CenterBaseX", 0);
+            int centerbasey = ini.Get_Int(terrain.c_str(), "CenterBaseY", 0);
+
+            bool iswater = ini.Get_Bool(terrain.c_str(), "IsWater", false);
+            bool isimmune = ini.Get_Bool(terrain.c_str(), "IsImmune", true);
+
+            const short* occupy = ini.Get_Cell_List(terrain.c_str(), "OccupyList", _List10, ARRAY_SIZE(_List10));
+            const short* overlap = ini.Get_Cell_List(terrain.c_str(), "OverlapList", _List10, ARRAY_SIZE(_List10));
+
+            TerrainTypeClass *t = new TerrainTypeClass((TerrainType)ID,
+                                 theater,
+                                 XYP_COORD(centerbasex, centerbasey),
+                                 isimmune,
+                                 iswater,
+                                 ininame.c_str(),
+                                 namestringid,
+                                 occupy,
+                                 overlap);
+            t->CustomOccupyList = true;
+            t->CustomOverlapList = true;
+        }
+
+    }
+
+    for (TerrainType index = TERRAIN_FIRST; index < TerrainTypes.Count(); index++) {
+        TerrainTypeClass const& terrain = As_Reference(index);
+        char fullname[_MAX_FNAME + _MAX_EXT];
+
+        /*
             **	Clear any existing shape pointer. All terrain is theater specific, thus if
             **	it isn't loaded in this routine, it shouldn't exist at all.
             */
-            ((void const*&)terrain.ImageData) = NULL;
+        ((void const*&)terrain.ImageData) = NULL;
 
-            if (terrain.Theater & (1 << theater)) {
-
-                /*
+        /*
                 **	Load in the appropriate object shape data.
                 */
-                _makepath(fullname, NULL, NULL, terrain.IniName, Theaters[theater].Suffix);
-                ((void const*&)terrain.ImageData) = MFCD::Retrieve(fullname);
+        _makepath(fullname, NULL, NULL, terrain.IniName, Theaters[theater].Suffix);
+        ((void const*&)terrain.ImageData) = MFCD::Retrieve(fullname);
 
-                IsTheaterShape = true; // Let Build_Frame know that this is a theater specific shape
-                if (terrain.RadarIcon != NULL)
-                    delete[](char*) terrain.RadarIcon;
-                ((void const*&)terrain.RadarIcon) = Get_Radar_Icon(terrain.Get_Image_Data(), 0, 1, 3);
-                IsTheaterShape = false;
-            }
-        }
+        IsTheaterShape = true; // Let Build_Frame know that this is a theater specific shape
+        if (terrain.RadarIcon != NULL)
+            delete[](char*) terrain.RadarIcon;
+        ((void const*&)terrain.RadarIcon) = Get_Radar_Icon(terrain.Get_Image_Data(), 0, 1, 3);
+        IsTheaterShape = false;
     }
 }
 
@@ -643,7 +703,7 @@ TerrainType TerrainTypeClass::From_Name(char const* name)
     TerrainType index;
 
     if (name != NULL) {
-        for (index = TERRAIN_FIRST; index < TERRAIN_COUNT; index++) {
+        for (index = TERRAIN_FIRST; index < TerrainTypes.Count(); index++) {
             if (stricmp(name, As_Reference(index).IniName) == 0) {
                 return (index);
             }
@@ -695,7 +755,7 @@ void TerrainTypeClass::Display(int x, int y, WindowNumberType window, HousesType
  *=============================================================================================*/
 void TerrainTypeClass::Prep_For_Add(void)
 {
-    for (TerrainType index = TERRAIN_FIRST; index < TERRAIN_COUNT; index++) {
+    for (TerrainType index = TERRAIN_FIRST; index < TerrainTypes.Count(); index++) {
         if (As_Reference(index).Get_Image_Data()) {
             Map.Add_To_List(&As_Reference(index));
         }

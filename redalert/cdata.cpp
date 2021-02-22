@@ -1060,7 +1060,7 @@ LandType TemplateTypeClass::Land_Type(int icon) const
 TemplateType TemplateTypeClass::From_Name(char const* name)
 {
     if (name != NULL) {
-        for (TemplateType index = TEMPLATE_FIRST; index < TEMPLATE_COUNT; index++) {
+        for (TemplateType index = TEMPLATE_FIRST; index < TemplateTypes.Count(); index++) {
             if (stricmp(As_Reference(index).IniName, name) == 0) {
                 return (index);
             }
@@ -1127,20 +1127,61 @@ short const* TemplateTypeClass::Occupy_List(bool) const
  *=============================================================================================*/
 void TemplateTypeClass::Init(TheaterType theater)
 {
-    char fullname[_MAX_FNAME + _MAX_EXT]; // Fully constructed iconset name.
-    void const* ptr;                      // Working loaded iconset pointer.
+    // TODO ADD theater check to not reload if not needed, it's missing 
+    // in this ::Init() function while the other terrain related types  do have it
 
-    for (TemplateType index = TEMPLATE_FIRST; index < TEMPLATE_COUNT; index++) {
+    bool usehardcodedlist = true;
+
+    std::string filename = Theaters[theater].Root;
+    filename += ".INI";
+
+    CCFileClass file(filename.c_str());
+    CCINIClass ini;
+
+    if (ini.Load(file, false)) {
+
+        usehardcodedlist = ini.Get_Bool("General", "UseHardCodedTemplates", true);
+        int entries = ini.Entry_Count("TemplateTypes");
+
+        TemplateTypes.Set_Heap((TEMPLATE_COUNT * usehardcodedlist) + entries);
+        if (usehardcodedlist) {
+            TemplateTypeClass::Init_Heap();
+        }
+
+        for (int i = 0; i < entries; i++) {
+            std::string entry = ini.Get_Entry("TemplateTypes", i);
+            std::string templ = ini.Get_String("TemplateTypes", entry.c_str(), "<none>");
+            int ID = (TEMPLATE_COUNT * usehardcodedlist) + i;
+            std::string ininame = templ;
+            int namestringid = ini.Get_Int(templ.c_str(), "Name", 0); // display name ingme, string table value
+            int width = ini.Get_Int(templ.c_str(), "Width", 0);
+            int height = ini.Get_Int(templ.c_str(), "Height", 0);
+
+            TemplateTypeClass* t = new TemplateTypeClass((TemplateType)ID, theater, ininame.c_str(), namestringid);
+
+            t->Width = width;
+            t->Height = height;
+        }
+
+    }
+    
+
+    for (TemplateType index = TEMPLATE_FIRST; index < TemplateTypes.Count(); index++) {
+        char fullname[_MAX_FNAME + _MAX_EXT]; // Fully constructed iconset name.
+        void const* ptr;                      // Working loaded iconset pointer.
         TemplateTypeClass const& tplate = As_Reference(index);
 
         ((void const*&)tplate.ImageData) = NULL;
-        if (tplate.Theater & (1 << theater)) {
             _makepath(fullname, NULL, NULL, tplate.IniName, Theaters[theater].Suffix);
             ptr = MFCD::Retrieve(fullname);
             ((void const*&)tplate.ImageData) = ptr;
-            ((unsigned char&)tplate.Width) = Get_IconSet_MapWidth(ptr);
-            ((unsigned char&)tplate.Height) = Get_IconSet_MapHeight(ptr);
-        }
+            if (tplate.Width == 0) {
+                ((unsigned char&)tplate.Width) = Get_IconSet_MapWidth(ptr);
+            }
+            if (tplate.Height == 0) {
+
+                ((unsigned char&)tplate.Height) = Get_IconSet_MapHeight(ptr);
+            }
     }
 }
 
@@ -1234,7 +1275,7 @@ void TemplateTypeClass::Display(int x, int y, WindowNumberType window, HousesTyp
  *=============================================================================================*/
 void TemplateTypeClass::Prep_For_Add(void)
 {
-    for (TemplateType index = TEMPLATE_CLEAR1; index < TEMPLATE_COUNT; index++) {
+    for (TemplateType index = TEMPLATE_CLEAR1; index < TemplateTypes.Count(); index++) {
         if (As_Reference(index).Get_Image_Data()) {
             Map.Add_To_List(&As_Reference(index));
         }

@@ -90,6 +90,8 @@ public:
     RTTIType Get_RTTIType(char const* section, char const* entry, RTTIType defvalue) const;
     FacingType Get_FacingType(char const* section, char const* entry, FacingType defvalue) const;
     void Get_Infantry_Do_Controls_List(char const* section, DynamicVectorClass<DoInfoStruct*>& vec);
+    LandType Get_LandType(char const* section, char const* entry, LandType defvalue) const;
+    short const* Get_Cell_List(char const* section, char const* entry, short const* defvalue, int defvaluesize);
 
     bool Put_Building_States_Anim_List(char const* section, DynamicVectorClass<AnimControlType*>& vec);
     bool Put_Infantry_Do_Controls_List(char const* section, DynamicVectorClass<DoInfoStruct*>& vec);
