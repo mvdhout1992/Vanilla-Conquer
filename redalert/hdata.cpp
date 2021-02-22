@@ -389,9 +389,9 @@ void HouseTypeClass::Init_Heap(CCINIClass& ini)
         std::string entry = ini.Get_Entry("HouseTypes", i);
         std::string house = ini.Get_String("HouseTypes", entry.c_str(), "<none>");
 
-        new HouseTypeClass(HOUSE_MULTI8,
-                           "Multi8",     //	NAME:			House name.
-                           TXT_CIVILIAN, // FULLNAME:	Translated house name.
+        new HouseTypeClass((HousesType)id,
+                           house.c_str(),     //	NAME:			House name.
+                           5, // FULLNAME:	Translated house name.
                            "MP8",        // SUFFIX:		House file suffix.
                            0,            // LEMON:		Lemon vehicle frequency.
                            PCOLOR_BROWN, // Remap color ID number.
@@ -506,6 +506,11 @@ unsigned char const* HouseTypeClass::Remap_Table(void) const
 bool HouseTypeClass::Read_INI(CCINIClass& ini)
 {
     if (ini.Is_Present(Name())) {
+        Lemon = ini.Get_Int(Name(), "Lemon", Lemon);
+        std::string temp = ini.Get_String(Name(), "Prefix", std::string{Prefix});
+        Prefix = temp[0];
+        RemapColor = (PlayerColorType)ini.Get_Int(Name(), "RemapColor", RemapColor);
+
         FirepowerBias = ini.Get_Fixed(Name(), "Firepower", FirepowerBias);
         GroundspeedBias = ini.Get_Fixed(Name(), "Groundspeed", GroundspeedBias);
         AirspeedBias = ini.Get_Fixed(Name(), "Airspeed", AirspeedBias);
@@ -522,3 +527,39 @@ bool HouseTypeClass::Read_INI(CCINIClass& ini)
     }
     return (false);
 }
+
+bool HouseTypeClass::Write_INI(CCINIClass& ini)
+{
+    ini.Put_Int(Name(), "Lemon", Lemon);
+    std::string str = "";
+    str += Prefix;
+    ini.Put_String(Name(), "Prefix", str);
+    ini.Put_Int(Name(), "RemapColor", RemapColor);
+
+    ini.Put_Fixed(Name(), "Firepower", FirepowerBias);
+    ini.Put_Fixed(Name(), "Groundspeed", GroundspeedBias);
+    ini.Put_Fixed(Name(), "Airspeed", AirspeedBias);
+
+    ini.Put_Fixed(Name(), "ArmorBias", ArmorBias);
+    ini.Put_Fixed(Name(), "ROFBias", ROFBias);
+
+    ini.Put_Fixed(Name(), "Cost", CostBias);
+    ini.Put_Fixed(Name(), "BuildTime", BuildSpeedBias);
+    return (true);
+}
+
+void HouseTypeClass::Debug_Dump_INI()
+{
+    CCINIClass ini;
+
+    for (int i = 0; i < HouseTypes.Count(); i++) {
+        std::string entry = std::to_string(i);
+        HouseTypeClass& house = HouseTypeClass::As_Reference((HousesType)i);
+
+        ini.Put_String("HouseTypes", entry.c_str(), house.IniName);
+        house.Write_INI(ini);
+    }
+
+    ini.Save(CCFileClass("debug_housetypes.txt"), false);
+}
+

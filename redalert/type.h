@@ -189,6 +189,8 @@ public:
     static void One_Time(void);
     static void Init_Heap(CCINIClass& ini);
     virtual bool Read_INI(CCINIClass& ini);
+    virtual bool Write_INI(CCINIClass& ini);
+    static void Debug_Dump_INI();
 };
 
 /***************************************************************************

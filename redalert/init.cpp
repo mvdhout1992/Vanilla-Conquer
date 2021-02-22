@@ -2316,6 +2316,7 @@ static void Init_One_Time_Systems(void)
     VesselTypeClass::Debug_Dump_INI();
     InfantryTypeClass::Debug_Dump_INI();
     BuildingTypeClass::Debug_Dump_INI();
+    HouseTypeClass::Debug_Dump_INI();
 }
 
 /***********************************************************************************************
