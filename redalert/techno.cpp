@@ -2519,6 +2519,12 @@ bool TechnoClass::Evaluate_Object(ThreatType method,
 
         DoorClass::AI();
 
+        if (Techno_Type_Class()->ProvidesCredits && ProvidesCreditsTimer == 0) {
+            ProvidesCreditsTimer = TICKS_PER_SECOND * Techno_Type_Class()->ProvideCreditsTime;
+            HouseClass::As_Pointer(this->Owner())->Refund_Money(Techno_Type_Class()->ProvidesCreditsAmount);
+        }
+
+
         /*
         **	If this is a vehicle that heals itself (e.g., Mammoth Tank), then it will perform
         **	the heal logic here.
@@ -6693,6 +6699,9 @@ bool TechnoClass::Evaluate_Object(ThreatType method,
         , SecondaryLateral(secondarylateral)
         , Points(0)
     {
+        bool ProvidesCredits = false;
+        int ProvidesCreditsAmount = 0;
+        int ProvideCreditsTime = 0;
     }
 
     /***********************************************************************************************
@@ -7063,6 +7072,11 @@ bool TechnoClass::Evaluate_Object(ThreatType method,
             IsSelfHealing = ini.Get_Bool(Name(), "SelfHealing", IsSelfHealing);
             ROT = ini.Get_Int(Name(), "ROT", ROT);
             MaxPassengers = ini.Get_Int(Name(), "Passengers", MaxPassengers);
+
+            ProvidesCredits = ini.Get_Bool(Name(), "ProvidesCredits", ProvidesCredits);
+            ProvidesCreditsAmount = ini.Get_Int(Name(), "ProvidesCreditsAmount", ProvidesCreditsAmount);
+            ProvideCreditsTime = ini.Get_Int(Name(), "ProvideCreditsTime", ProvideCreditsTime);
+
             // Mono_Printf("before image=: %s\n",GraphicName);
             ini.Get_String(Name(), "Image", GraphicName, GraphicName, sizeof(GraphicName));
             // Mono_Printf("after image=: %s\n",GraphicName);if(Random_Pick(0,4)) Keyboard->Get();

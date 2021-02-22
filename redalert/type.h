@@ -567,6 +567,10 @@ public:
     */
     int Points;
 
+    bool ProvidesCredits;
+    int ProvidesCreditsAmount;
+    int ProvideCreditsTime;
+
     //--------------------------------------------------------------------
     TechnoTypeClass(NoInitClass const& x)
         : ObjectTypeClass(x)

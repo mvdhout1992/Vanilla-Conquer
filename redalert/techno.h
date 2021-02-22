@@ -173,6 +173,8 @@ public:
     */
     CDTimerClass<FrameTimerClass> IronCurtainCountDown;
 
+     CDTimerClass<FrameTimerClass> ProvidesCreditsTimer;
+
     /*
     ** This is a list of bits of which houses are spying on this building,
     ** if in fact this is a building.
