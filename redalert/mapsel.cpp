@@ -113,9 +113,9 @@ char const* Map_Selection(void)
 
 #endif
     char _filename[] = "MSAA.WSA";
-    int house = (PlayerPtr->Class->House == HOUSE_USSR || PlayerPtr->Class->House == HOUSE_UKRAINE);
+    bool is_soviet = HouseClass::As_Pointer(PlayerPtr->ActLike)->Class->SideName == "Soviet";
 
-    _filename[2] = house ? 'S' : 'A';
+    _filename[2] = is_soviet ? 'S' : 'A';
     _filename[3] = Scen.Scenario + 'A';
     PaletteClass mappalette;
 
@@ -201,7 +201,7 @@ char const* Map_Selection(void)
             CopyType = 0;
         }
         Cycle_Call_Back_Delay(1, mappalette);
-        int choice = Mouse_Over_Spot(house, scenario);
+        int choice = Mouse_Over_Spot(is_soviet, scenario);
         if (choice == -1) {
             shape = MOUSE_NORMAL;
         } else {

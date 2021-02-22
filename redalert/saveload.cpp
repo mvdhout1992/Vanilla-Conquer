@@ -199,7 +199,7 @@ static void Put_All(Pipe& pipe, int save_net)
     }
     if (!save_net)
         Call_Back();
-    for (HousesType h = HOUSE_FIRST; h < HOUSE_COUNT; h++) {
+    for (HousesType h = HOUSE_FIRST; h < HouseTypes.Count(); h++) {
         count = HouseTriggers[h].Count();
         pipe.Put(&count, sizeof(count));
         for (index = 0; index < HouseTriggers[h].Count(); index++) {
@@ -734,7 +734,7 @@ bool Load_Game(const char* file_name)
         LogicTriggers.Add(As_Trigger(target));
     }
 
-    for (HousesType h = HOUSE_FIRST; h < HOUSE_COUNT; h++) {
+    for (HousesType h = HOUSE_FIRST; h < HouseTypes.Count(); h++) {
         straw.Get(&count, sizeof(count));
         HouseTriggers[h].Clear();
         for (index = 0; index < count; index++) {
@@ -821,7 +821,7 @@ bool Load_Game(const char* file_name)
     /*
     ** Re-init unit trackers. They will be garbage pointers after the load
     */
-    for (HousesType house = HOUSE_FIRST; house < HOUSE_COUNT; house++) {
+    for (HousesType house = HOUSE_FIRST; house < HouseTypes.Count(); house++) {
         HouseClass* hptr = HouseClass::As_Pointer(house);
         if (hptr && hptr->IsActive) {
             hptr->Init_Unit_Trackers();
@@ -867,7 +867,7 @@ bool Load_Game(const char* file_name)
 #endif
             } else {
 #endif // FIXIT_ANTS
-                if (PlayerPtr->Class->House != HOUSE_USSR && PlayerPtr->Class->House != HOUSE_UKRAINE) {
+                if (PlayerPtr->Class->SideName != "Soviet") {
                     RequiredCD = 0;
                 } else {
                     RequiredCD = 1;
@@ -1528,10 +1528,10 @@ static int Reconcile_Players(void)
     */
     for (i = 0; i < Session.Players.Count(); i++) {
         found = 0;
-        for (house = HOUSE_MULTI1; house < HOUSE_MULTI1 + Session.MaxPlayers; house++) {
+        for (house = HOUSE_FIRST; house < HouseTypes.Count(); house++) {
 
             housep = HouseClass::As_Pointer(house);
-            if (!housep) {
+            if (!housep || !housep->Class->IsMultiplayer) {
                 continue;
             }
 
@@ -1548,9 +1548,9 @@ static int Reconcile_Players(void)
     // Loop through all Houses; if we find a human-owned house that we're
     // not connected to, turn it over to the computer.
     //
-    for (house = HOUSE_MULTI1; house < HOUSE_MULTI1 + Session.MaxPlayers; house++) {
+    for (house = HOUSE_FIRST; house < HouseTypes.Count(); house++) {
         housep = HouseClass::As_Pointer(house);
-        if (!housep) {
+        if (!housep || !housep->Class->IsMultiplayer) {
             continue;
         }
 

@@ -248,16 +248,16 @@ extern QueueClass<EventClass, (MAX_EVENTS * 64)> DoList;
 extern QueueClass<EventClass, (MAX_EVENTS * 64)> MirrorList;
 #endif
 
-typedef DynamicVectorArrayClass<ObjectClass*, HOUSE_COUNT, HOUSE_FIRST> SelectedObjectsType;
+typedef DynamicVectorArrayClass<ObjectClass*, HOUSE_COUNT * 20, HOUSE_FIRST> SelectedObjectsType;
 extern SelectedObjectsType CurrentObject;
 extern DynamicVectorClass<TriggerClass*> LogicTriggers;
 extern DynamicVectorClass<TriggerClass*> MapTriggers;
-extern DynamicVectorClass<TriggerClass*> HouseTriggers[HOUSE_COUNT];
+extern DynamicVectorClass<TriggerClass*> HouseTriggers[HOUSE_COUNT * 10];
 
 extern BaseClass Base;
 
 /* These variables are used to keep track of the slowest speed of a team */
-extern TeamFormDataStruct TeamFormData[HOUSE_COUNT];
+extern TeamFormDataStruct TeamFormData[HOUSE_COUNT * 20];
 extern bool FormMove;
 extern SpeedType FormSpeed;
 extern MPHType FormMaxSpeed;

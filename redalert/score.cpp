@@ -361,7 +361,7 @@ void ScoreClass::Presentation(void)
     struct Fame hallfame[NUMFAMENAMES];
     void* oldfont;
     int oldfontxspacing = FontXSpacing;
-    int house = (PlayerPtr->Class->House == HOUSE_USSR || PlayerPtr->Class->House == HOUSE_UKRAINE); // 0 or 1
+    bool is_soviet = PlayerPtr->Class->SideName == "Soviet";
     char inter_pal[15];
     sprintf(inter_pal, "SCORPAL1.PAL");
 
@@ -382,7 +382,7 @@ void ScoreClass::Presentation(void)
     void const* sfx4 = MFCD::Retrieve("SFX4.AUD");
     Beepy6 = MFCD::Retrieve("BEEPY6.AUD");
 
-    void* anim = Open_Animation(AnimNames[house],
+    void* anim = Open_Animation(AnimNames[is_soviet],
                                 NULL,
                                 0L,
                                 (WSAOpenType)(WSA_OPEN_FROM_MEM | WSA_OPEN_TO_PAGE),
@@ -420,7 +420,7 @@ void ScoreClass::Presentation(void)
     Call_Back();
     Close_Animation(anim);
 
-    Load_Title_Screen(ScreenNames[house], &HidPage, (unsigned char*)ScorePalette.Get_Data());
+    Load_Title_Screen(ScreenNames[is_soviet], &HidPage, (unsigned char*)ScorePalette.Get_Data());
     Increase_Palette_Luminance((unsigned char*)ScorePalette.Get_Data(), 30, 30, 30, 63);
     ScorePalette.Set(0, nullptr);
     HidPage.Blit(SeenPage);
@@ -461,10 +461,10 @@ void ScoreClass::Presentation(void)
     for (int index = 0; index < Logic.Count(); index++) {
         ObjectClass* object = Logic[index];
         HousesType owner = object->Owner();
-        if ((house) && (owner == HOUSE_USSR || owner == HOUSE_BAD || owner == HOUSE_UKRAINE)) {
+        if ((is_soviet) && (HouseClass::As_Pointer(owner)->Class->SideName == "Soviet")) {
             leadership++;
         } else {
-            if ((!house) && (object->Owner() == HOUSE_GREECE)) {
+            if ((!is_soviet) && (object->Owner() == HOUSE_GREECE)) {
                 leadership++;
             }
         }
@@ -473,7 +473,7 @@ void ScoreClass::Presentation(void)
 
     for (HousesType hous = HOUSE_SPAIN; hous <= HOUSE_BAD; hous++) {
         HouseClass* hows = HouseClass::As_Pointer(hous);
-        if (hous == HOUSE_USSR || hous == HOUSE_BAD || hous == HOUSE_UKRAINE) {
+        if (HouseClass::As_Pointer(hous)->Class->SideName == "Soviet") {
             NKilled += hows->UnitsLost;
             NBKilled += hows->BuildingsLost;
         } else {
@@ -506,7 +506,7 @@ void ScoreClass::Presentation(void)
 
     if (!leadership)
         leadership++;
-    leadership = 100 * fixed(leadership, (house ? NKilled + NBKilled + leadership : GKilled + GBKilled + leadership));
+    leadership = 100 * fixed(leadership, (is_soviet ? NKilled + NBKilled + leadership : GKilled + GBKilled + leadership));
     leadership = min(150, leadership);
 
     /*
@@ -560,8 +560,8 @@ void ScoreClass::Presentation(void)
     Call_Back_Delay(60);
     // BG	}
 
-    if (house)
-        Show_Credits(house, (const char*)_greenpal);
+    if (is_soviet)
+        Show_Credits(is_soviet, (const char*)_greenpal);
 
     /*BG	if (!Keyboard->Check()) */ Call_Back_Delay(60);
 
@@ -573,7 +573,7 @@ void ScoreClass::Presentation(void)
     int indx = 0;
     Alloc_Object(new ScorePrintClass(TXT_SCORE_CASU, _casuax[indx], _casuay[indx], _greenpal));
     Call_Back_Delay(9);
-    if (house) {
+    if (is_soviet) {
         Alloc_Object(new ScorePrintClass(TXT_SOVIET, _nodtxx[indx], _gditxy[indx], _redpal));
         Alloc_Object(new ScorePrintClass(TXT_ALLIES, _gditxx[indx], _nodtxy[indx], _bluepal));
     } else {
@@ -593,7 +593,7 @@ void ScoreClass::Presentation(void)
     Play_Sample(sfx4, 255, Options.Normalize_Volume(150));
     Alloc_Object(new ScorePrintClass(TXT_SCORE_BUIL, 144, 126, _greenpal));
     Call_Back_Delay(9);
-    if (house) {
+    if (is_soviet) {
         Alloc_Object(new ScorePrintClass(TXT_SOVIET, _gditxx[indx], _bldggy[indx], _redpal));
         Alloc_Object(new ScorePrintClass(TXT_ALLIES, _gditxx[indx], _bldgny[indx], _bluepal));
     } else {
@@ -610,8 +610,8 @@ void ScoreClass::Presentation(void)
 
     Keyboard->Clear();
 
-    if (!house)
-        Show_Credits(house, (const char*)_greenpal);
+    if (!is_soviet)
+        Show_Credits(is_soviet, (const char*)_greenpal);
     /*
         ** Hall of fame display and processing
         */
@@ -659,7 +659,7 @@ void ScoreClass::Presentation(void)
             hallfame[index].score = total;
             hallfame[index].level = Scen.Scenario;
             hallfame[index].name[0] = 0; // blank out the name
-            hallfame[index].side = house;
+            hallfame[index].side = is_soviet;
             break;
         }
     }
@@ -924,8 +924,8 @@ void ScoreClass::Do_GDI_Graph(void const* yellowptr, void const* redptr, int gki
 {
     int i, maxval;
     int xpos = 174;
-    int house = (PlayerPtr->Class->House == HOUSE_USSR || PlayerPtr->Class->House == HOUSE_UKRAINE); // 0 or 1
-    if (house) {
+    bool is_soviet = PlayerPtr->Class->SideName == "Soviet";
+    if (is_soviet) {
         int temp = gkilled;
         gkilled = nkilled;
         nkilled = temp;
@@ -955,7 +955,7 @@ void ScoreClass::Do_GDI_Graph(void const* yellowptr, void const* redptr, int gki
     HidPage.Fill_Rect(0, 0, 124 * RESFACTOR, 9 * RESFACTOR, TBLACK);
     CC_Draw_Shape(redptr, 119, 0, 0, WINDOW_MAIN, SHAPE_WIN_REL, 0, 0);
     Set_Logic_Page(SeenBuff);
-    Set_Font_Palette(house ? _redpal : _bluepal);
+    Set_Font_Palette(is_soviet ? _redpal : _bluepal);
 
     for (i = 1; i <= gdikilled; i++) {
         if (i != gdikilled) {
@@ -983,7 +983,7 @@ void ScoreClass::Do_GDI_Graph(void const* yellowptr, void const* redptr, int gki
     Count_Up_Print("%d", gkilled, gkilled, 297, ypos + 2);
     /*BG	if (!Keyboard->Check()) */ Call_Back_Delay(40);
 
-    Set_Font_Palette(house ? _bluepal : _redpal);
+    Set_Font_Palette(is_soviet ? _bluepal : _redpal);
     for (i = 1; i <= nodkilled; i++) {
         if (i != nodkilled) {
             Set_Logic_Page(*PseudoSeenBuff);
@@ -1162,8 +1162,8 @@ void ScoreClass::Show_Credits(int house, char const pal[])
         Count_Up_Print("%d", i, PlayerPtr->Available_Money(), _credpx[house], _credpy[house]);
         Call_Back_Delay(2);
         /*BG		if (Keyboard->Check()) {
-                    Count_Up_Print("%d", PlayerPtr->Available_Money(), PlayerPtr->Available_Money(), _credpx[house],
-           _credpy[house]); Keyboard->Clear(); break;
+                    Count_Up_Print("%d", PlayerPtr->Available_Money(), PlayerPtr->Available_Money(), _credpx[is_soviet],
+           _credpy[is_soviet]); Keyboard->Clear(); break;
                 }*/
     } while (i < PlayerPtr->Available_Money());
 

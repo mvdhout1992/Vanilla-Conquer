@@ -681,7 +681,7 @@ void LoadOptionsClass::Fill_List(ListClass* list)
             if (!ok) {
                 strcpy(fdata->Descr, Text_String(TXT_OLD_GAME));
             } else {
-                if (house == HOUSE_USSR || house == HOUSE_UKRAINE) {
+                if (HouseClass::As_Pointer(house)->Class->SideName != "Soviet") {
                     sprintf(fdata->Descr, "(%s) ", Text_String(TXT_SOVIET));
                 } else {
                     sprintf(fdata->Descr, "(%s) ", Text_String(TXT_ALLIES));

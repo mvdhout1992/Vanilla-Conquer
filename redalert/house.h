@@ -492,9 +492,9 @@ public:
     ** For multiplayer games, each house needs to keep track of how many
     ** objects of each other house they've killed.
     */
-    unsigned UnitsKilled[HOUSE_COUNT];
+    unsigned UnitsKilled[HOUSE_COUNT * 10];
     unsigned UnitsLost;
-    unsigned BuildingsKilled[HOUSE_COUNT];
+    unsigned BuildingsKilled[HOUSE_COUNT * 10];
     unsigned BuildingsLost;
 
     /*

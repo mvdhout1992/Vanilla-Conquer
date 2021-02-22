@@ -862,6 +862,9 @@ bool HouseClass::Can_Build(ObjectTypeClass const* type, HousesType house) const
     /*
     **	Special hack to get certain objects to exist for both sides in the game.
     */
+    if (stricmp(type->IniName, "e7") == 0) {
+        bool own = type->Get_Ownable(house);
+    }
     bool own = type->Get_Ownable(house);
 
     /*
@@ -885,8 +888,6 @@ bool HouseClass::Can_Build(ObjectTypeClass const* type, HousesType house) const
     }
 
     DynamicVectorClass<StructType> pre = ((TechnoTypeClass const*)type)->Prerequisite;
-
-
 
     bool satisfiedpre = true;
 
@@ -957,7 +958,7 @@ void HouseClass::Init(void)
 {
     Houses.Free_All();
 
-    for (HousesType index = HOUSE_FIRST; index < HOUSE_COUNT; index++) {
+    for (HousesType index = HOUSE_FIRST; index < HouseTypes.Count(); index++) {
         HouseTriggers[index].Clear();
     }
 }
@@ -1738,7 +1739,7 @@ void HouseClass::Super_Weapon_Handler(void)
         **	facility available, then make the iron curtain available as well.
         */
         if (Has_Iron_Curtain_Building()
-            && (ActLike == HOUSE_USSR || ActLike == HOUSE_UKRAINE || Session.Type != GAME_NORMAL)
+            && (HouseClass::As_Pointer(ActLike)->Class->SideName == "Soviet" || Session.Type != GAME_NORMAL)
             && (IsHuman || IQ >= Rule.IQSuperWeapons)) {
 
             SuperWeapon[SPC_IRON_CURTAIN].Enable(false, this == PlayerPtr, Power_Fraction() < 1);
@@ -1830,7 +1831,7 @@ void HouseClass::Super_Weapon_Handler(void)
         **	silo available, then make the missile available as well.
         */
         if (Has_Missile_Silo()
-            && ((ActLike != HOUSE_USSR && ActLike != HOUSE_UKRAINE) || Session.Type != GAME_NORMAL)
+            && (HouseClass::As_Pointer(ActLike)->Class->SideName == "Soviet" || Session.Type != GAME_NORMAL)
             && (IsHuman || IQ >= Rule.IQSuperWeapons)) {
 
             SuperWeapon[SPC_NUCLEAR_BOMB].Enable(false, this == PlayerPtr, Power_Fraction() < 1);
@@ -3545,7 +3546,7 @@ bool HouseClass::Does_Enemy_Building_Exist(StructType btype) const
     assert(Houses.ID(this) == ID);
 
     int bflag = 1L << btype;
-    for (HousesType index = HOUSE_FIRST; index < HOUSE_COUNT; index++) {
+    for (HousesType index = HOUSE_FIRST; index < HouseTypes.Count(); index++) {
         HouseClass* house = HouseClass::As_Pointer(index);
 
         if (house && !Is_Ally(house) && house->Has_Structure(btype) > 0) {
@@ -3982,9 +3983,9 @@ void HouseClass::MPlayer_Defeated(void)
     */
     num_alive = 0;
     num_humans = 0;
-    for (i = 0; i < Session.MaxPlayers; i++) {
-        hptr = HouseClass::As_Pointer((HousesType)(HOUSE_MULTI1 + i));
-        if (hptr && !hptr->IsDefeated) {
+    for (i = 0; i < HouseTypes.Count(); i++) {
+        hptr = HouseClass::As_Pointer((HousesType)i);
+        if (hptr && hptr->Class->IsMultiplayer && !hptr->IsDefeated) {
             if (hptr->IsHuman) {
                 num_humans++;
             }
@@ -3997,22 +3998,22 @@ void HouseClass::MPlayer_Defeated(void)
     **	there's only one player left:
     */
     all_allies = 1;
-    for (i = 0; i < Session.MaxPlayers; i++) {
+    for (i = 0; i < HouseTypes.Count(); i++) {
 
         /*
         **	Get a pointer to this house
         */
-        hptr = HouseClass::As_Pointer((HousesType)(HOUSE_MULTI1 + i));
-        if (!hptr || hptr->IsDefeated)
+        hptr = HouseClass::As_Pointer((HousesType)i);
+        if (!hptr || hptr->IsDefeated || !hptr->Class->IsMultiplayer)
             continue;
 
         /*
         **	Loop through all houses; if there's one left alive that this house
         **	isn't allied with, then all_allies will be false
         */
-        for (j = 0; j < Session.MaxPlayers; j++) {
-            hptr2 = HouseClass::As_Pointer((HousesType)(HOUSE_MULTI1 + j));
-            if (!hptr2) {
+        for (j = 0; j < HouseTypes.Count(); j++) {
+            hptr2 = HouseClass::As_Pointer((HousesType)j);
+            if (!hptr2 || !hptr2->Class->IsMultiplayer) {
                 continue;
             }
 
@@ -4097,7 +4098,7 @@ void HouseClass::Tally_Score(void)
     /*
     ** Loop through all houses, tallying up each player's score
     */
-    for (house = HOUSE_FIRST; house < HOUSE_COUNT; house++) {
+    for (house = HOUSE_FIRST; house < HouseTypes.Count(); house++) {
         hptr = HouseClass::As_Pointer(house);
         /*
         ** Skip this house if it's not human.
@@ -4185,7 +4186,7 @@ void HouseClass::Tally_Score(void)
         /*
         **	Tally up all kills for this player
         */
-        for (house2 = HOUSE_FIRST; house2 < HOUSE_COUNT; house2++) {
+        for (house2 = HOUSE_FIRST; house2 < HouseTypes.Count(); house2++) {
             Session.Score[score_index].Kills[Session.CurGame] += hptr->UnitsKilled[house2];
             Session.Score[score_index].Kills[Session.CurGame] += hptr->BuildingsKilled[house2];
         }
@@ -5003,7 +5004,7 @@ int HouseClass::Expert_AI(void)
         int maxbuilding = 0;
         int enemycount = 0;
 
-        for (HousesType house = HOUSE_FIRST; house < HOUSE_COUNT; house++) {
+        for (HousesType house = HOUSE_FIRST; house < HouseTypes.Count(); house++) {
             HouseClass* h = HouseClass::As_Pointer(house);
             if (h != NULL && h->IsActive && !h->IsDefeated && !Is_Ally(h)) {
 
@@ -5833,7 +5834,7 @@ int HouseClass::AI_Building(void)
         **	Don't suggest anything to build if the base is already big enough.
         */
         unsigned int quant = 0;
-        for (HousesType h = HOUSE_FIRST; h < HOUSE_COUNT; h++) {
+        for (HousesType h = HOUSE_FIRST; h < HouseTypes.Count(); h++) {
             HouseClass const* hptr = HouseClass::As_Pointer(h);
 
             if (hptr != NULL && hptr->IsActive && hptr->IsHuman && quant < hptr->CurBuildings) {
@@ -6014,7 +6015,7 @@ int HouseClass::AI_Building(void)
                 threat_quantity = enemy->CurAircraft;
             }
             if (!airthreat) {
-                for (HousesType house = HOUSE_FIRST; house < HOUSE_COUNT; house++) {
+                for (HousesType house = HOUSE_FIRST; house < HouseTypes.Count(); house++) {
                     HouseClass* h = HouseClass::As_Pointer(house);
                     if (h != NULL && !Is_Ally(house) && h->Aircraft_Count() != 0) {
                         airthreat = true;
@@ -7527,7 +7528,7 @@ void HouseClass::Read_INI(CCINIClass& ini)
     HouseClass* p;     // Pointer to current player data.
     char const* hname; //	Pointer to house name.
 
-    for (HousesType index = HOUSE_FIRST; index < HOUSE_COUNT; index++) {
+    for (HousesType index = HOUSE_FIRST; index < HouseTypes.Count(); index++) {
         hname = HouseTypeClass::As_Reference(index).IniName;
 
         p = new HouseClass(index);
@@ -7552,7 +7553,7 @@ void HouseClass::Read_INI(CCINIClass& ini)
         int owners = ini.Get_Owners(hname, "Allies", (1 << HOUSE_NEUTRAL));
         p->Make_Ally(index);
         p->Make_Ally(HOUSE_NEUTRAL);
-        for (HousesType h = HOUSE_FIRST; h < HOUSE_COUNT; h++) {
+        for (HousesType h = HOUSE_FIRST; h < HouseTypes.Count(); h++) {
             if ((owners & (1 << h)) != 0) {
                 p->Make_Ally(h);
             }
@@ -7584,14 +7585,14 @@ void HouseClass::Write_INI(CCINIClass& ini)
     */
     HouseStaticClass control;
 
-    for (HousesType i = HOUSE_FIRST; i < HOUSE_COUNT; i++) {
+    for (HousesType i = HOUSE_FIRST; i < HouseTypes.Count(); i++) {
         HouseClass* p = As_Pointer(i);
 
         if (p != NULL) {
             char const* name = p->Class->IniName;
 
             ini.Clear(name);
-            if (i >= HOUSE_MULTI1)
+            if (p->Class->IsMultiplayer)
                 continue;
 
             if (p->Control.InitialCredits != control.InitialCredits) {
@@ -7874,9 +7875,9 @@ bool HouseClass::Is_Allowed_To_Ally(HousesType house) const
     */
     int housecount = 0;
     int allycount = 0;
-    for (HousesType house2 = HOUSE_MULTI1; house2 < HOUSE_COUNT; house2++) {
+    for (HousesType house2 = HOUSE_FIRST; house2 < HouseTypes.Count(); house2++) {
         HouseClass* hptr = HouseClass::As_Pointer(house2);
-        if (hptr != NULL && hptr->IsActive && !hptr->IsDefeated) {
+        if (hptr != NULL && hptr->Class->IsMultiplayer && hptr->IsActive && !hptr->IsDefeated) {
             housecount++;
             if (Is_Ally(hptr)) {
                 allycount++;
@@ -7920,18 +7921,18 @@ void HouseClass::Computer_Paranoid(void)
         **	Loop through every computer controlled house and make allies with all other computer
         **	controlled houses and then make enemies with all other human controlled houses.
         */
-        for (HousesType house = HOUSE_MULTI1; house < HOUSE_COUNT; house++) {
+        for (HousesType house = HOUSE_FIRST; house < HouseTypes.Count(); house++) {
             HouseClass* hptr = HouseClass::As_Pointer(house);
-            if (hptr != NULL && hptr->IsActive && !hptr->IsDefeated && !hptr->IsHuman) {
+            if (hptr != NULL && hptr->Class->IsMultiplayer && hptr->IsActive && !hptr->IsDefeated && !hptr->IsHuman) {
                 hptr->IsParanoid = true;
 
                 /*
                 **	Break alliance with every human it is allied with and make friends with
                 **	any other computer players.
                 */
-                for (HousesType house2 = HOUSE_MULTI1; house2 < HOUSE_COUNT; house2++) {
+                for (HousesType house2 = HOUSE_FIRST; house2 < HOUSE_COUNT; house2++) {
                     HouseClass* hptr2 = HouseClass::As_Pointer(house2);
-                    if (hptr2 != NULL && hptr2->IsActive && !hptr2->IsDefeated) {
+                    if (hptr2 != NULL && hptr->Class->IsMultiplayer && hptr2->IsActive && !hptr2->IsDefeated) {
                         if (hptr2->IsHuman) {
                             hptr->Make_Enemy(house2);
                         } else {

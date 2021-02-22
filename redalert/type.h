@@ -147,6 +147,8 @@ public:
 
     std::string SideName;
 
+    bool IsMultiplayer;
+
     /*
     **	This controls the various general adjustments to the house owned
     **	unit and building ratings. The default value for these ratings is
@@ -185,8 +187,7 @@ public:
     static HousesType From_Name(char const* name);
     static HouseTypeClass& As_Reference(HousesType house);
     static void One_Time(void);
-    static void Init_Heap(void);
-
+    static void Init_Heap(CCINIClass& ini);
     virtual bool Read_INI(CCINIClass& ini);
 };
 

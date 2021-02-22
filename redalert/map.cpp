@@ -2125,7 +2125,7 @@ CELL MapClass::Nearby_Location(CELL cell,
 bool MapClass::Base_Region(CELL cell, HousesType& house, ZoneType& zone) const
 {
     if ((unsigned)cell < MAP_CELL_TOTAL && In_Radar(cell)) {
-        for (house = HOUSE_FIRST; house < HOUSE_COUNT; house++) {
+        for (house = HOUSE_FIRST; house < HouseTypes.Count(); house++) {
             HouseClass* h = HouseClass::As_Pointer(house);
 
             if (h && h->IsActive && !h->IsDefeated && h->Center) {

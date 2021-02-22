@@ -59,6 +59,16 @@ void FlasherClass::Debug_Dump(MonoClass* mono) const
 }
 #endif
 
+
+FlasherClass::FlasherClass()
+{
+    FlashCount = 0;
+    IsBlushing = false;
+
+    for (int i = 0; i < HouseTypes.Count(); ++i) {
+        FlashCountPerPlayer[i] = 0;
+    }
+}
 /***********************************************************************************************
  * FlasherClass::Process -- Performs the logic processing for the flashing ability.            *
  *                                                                                             *
@@ -78,7 +88,7 @@ void FlasherClass::Debug_Dump(MonoClass* mono) const
 bool FlasherClass::Process(void)
 {
     // 2019/09/20 JAS - Flashing info needs to exist per player
-    for (int i = 0; i < HOUSE_COUNT; i++) {
+    for (int i = 0; i < HouseTypes.Count(); i++) {
         if (FlashCountPerPlayer[i]) {
             FlashCountPerPlayer[i]--;
         }
@@ -113,7 +123,7 @@ bool FlasherClass::Process(void)
 unsigned int FlasherClass::Get_Flashing_Flags() const
 {
     unsigned flags = 0;
-    for (int i = 0; i < HOUSE_COUNT; ++i) {
+    for (int i = 0; i < HouseTypes.Count(); ++i) {
         if (FlashCountPerPlayer[i] > 0) {
             flags |= (1 << i);
         }

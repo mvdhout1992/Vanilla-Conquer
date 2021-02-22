@@ -3754,10 +3754,10 @@ static void Print_CRCs(EventClass* ev)
     //
     // Houses
     //
-    for (house = HOUSE_MULTI1; house <= HOUSE_MULTI8; house++) {
+    for (house = HOUSE_FIRST; house <= HouseTypes.Count(); house++) {
         GameCRC = 0;
         housep = HouseClass::As_Pointer(house);
-        if (housep) {
+        if (housep && housep->Class->IsMultiplayer) {
             HousesType actlike = housep->ActLike;
             color = housep->RemapColor;
             fprintf(fp,
@@ -3775,9 +3775,9 @@ static void Print_CRCs(EventClass* ev)
     //
     // Infantry
     //
-    for (house = HOUSE_MULTI1; house <= HOUSE_MULTI8; house++) {
+    for (house = HOUSE_FIRST; house <= HouseTypes.Count(); house++) {
         housep = HouseClass::As_Pointer(house);
-        if (housep) {
+        if (housep && housep->Class->IsMultiplayer) {
             GameCRC = 0;
             fprintf(fp, "-------------------- %s Infantry -------------------\n", housep->Class->Name());
             for (i = 0; i < Infantry.Count(); i++) {
@@ -3804,9 +3804,9 @@ static void Print_CRCs(EventClass* ev)
     //
     // Units
     //
-    for (house = HOUSE_MULTI1; house <= HOUSE_MULTI8; house++) {
+    for (house = HOUSE_FIRST; house <= HouseTypes.Count(); house++) {
         housep = HouseClass::As_Pointer(house);
-        if (housep) {
+        if (housep && housep->Class->IsMultiplayer) {
             GameCRC = 0;
             fprintf(fp, "-------------------- %s Units -------------------\n", housep->Class->Name());
             for (i = 0; i < Units.Count(); i++) {
@@ -3830,9 +3830,9 @@ static void Print_CRCs(EventClass* ev)
     //
     // Vessels
     //
-    for (house = HOUSE_MULTI1; house <= HOUSE_MULTI8; house++) {
+    for (house = HOUSE_FIRST; house <= HouseTypes.Count(); house++) {
         housep = HouseClass::As_Pointer(house);
-        if (housep) {
+        if (housep && housep->Class->IsMultiplayer) {
             GameCRC = 0;
             fprintf(fp, "-------------------- %s Vessels -------------------\n", housep->Class->Name());
             for (i = 0; i < Vessels.Count(); i++) {
@@ -3859,9 +3859,9 @@ static void Print_CRCs(EventClass* ev)
     //
     // Buildings
     //
-    for (house = HOUSE_MULTI1; house <= HOUSE_MULTI8; house++) {
+    for (house = HOUSE_FIRST; house <= HouseTypes.Count(); house++) {
         housep = HouseClass::As_Pointer(house);
-        if (housep) {
+        if (housep && housep->Class->IsMultiplayer) {
             GameCRC = 0;
             fprintf(fp, "-------------------- %s Buildings -------------------\n", housep->Class->Name());
             for (i = 0; i < Buildings.Count(); i++) {

@@ -481,7 +481,7 @@ void Keyboard_Process(KeyNumType& input)
         case int(int(KN_M) | int(KN_SHIFT_BIT)):
         case int(int(KN_M) | int(KN_ALT_BIT)):
         case int(int(KN_M) | int(KN_CTRL_BIT)):
-            for (h = HOUSE_FIRST; h < HOUSE_COUNT; h++) {
+            for (h = HOUSE_FIRST; h < HouseTypes.Count(); h++) {
                 Houses.Ptr(h)->Refund_Money(10000);
             }
             break;
@@ -4699,7 +4699,7 @@ int Owner_From_Name(char const* text)
             ownable |= HOUSEF_ALLIES;
         } else {
             HousesType h = HouseTypeClass::From_Name(text);
-            if (h != HOUSE_NONE && (h < HOUSE_MULTI1 || h > HOUSE_MULTI8)) {
+            if (h != HOUSE_NONE) {
                 ownable |= (1 << h);
             }
         }

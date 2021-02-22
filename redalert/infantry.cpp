@@ -963,7 +963,7 @@ void InfantryClass::Per_Cell_Process(PCPType why)
         */
         if (IsTethered) {
             Transmit_Message(RADIO_UNLOADED);
-            if (House->ActLike == HOUSE_USSR || House->ActLike == HOUSE_UKRAINE) {
+            if (HouseClass::As_Pointer(House->ActLike)->Class->SideName != "Soviet" ) {
                 Do_Action(DO_GESTURE1);
             } else {
                 Do_Action(DO_GESTURE2);
@@ -2574,14 +2574,14 @@ void InfantryClass::Response_Select(void)
         HousesType house = PlayerPtr->ActLike;
         
         if (Class->IsGeneral) {
-            if (house != HOUSE_USSR && house != HOUSE_BAD) {
+            if (HouseClass::As_Pointer(house)->Class->SideName != "Soviet") {
                 response = _stavros;
                 size = ARRAY_SIZE(_stavros);
             } else {
                 response = _default_response;
                 size = ARRAY_SIZE(_default_response);
             }
-            house = HOUSE_USSR;
+           // house = HOUSE_USSR;
         }
 
         else if (Class->IsDog) {
@@ -2598,7 +2598,7 @@ void InfantryClass::Response_Select(void)
             response = _spy_response;
             size = ARRAY_SIZE(_spy_response);
 
-            if (house == HOUSE_USSR) {
+            if (HouseClass::As_Pointer(House->ActLike)->Class->SideName == "Soviet") {
                 response = _default_response;
                 size = ARRAY_SIZE(_default_response);
             }
@@ -2700,14 +2700,14 @@ void InfantryClass::Response_Move(void)
         HousesType house = PlayerPtr->ActLike;
 
         if (Class->IsGeneral) {
-            if (house != HOUSE_USSR && house != HOUSE_BAD) {
+            if (HouseClass::As_Pointer(house)->Class->SideName != "Soviet") {
                 response = _stavros;
                 size = ARRAY_SIZE(_stavros);
             } else {
                 response = _default_response;
                 size = ARRAY_SIZE(_default_response);
             }
-        house = HOUSE_USSR;
+       // house = HOUSE_USSR;
     }
 
     else if (Class->IsDog) {
@@ -2729,7 +2729,7 @@ void InfantryClass::Response_Move(void)
         response = _spy_response;
         size = ARRAY_SIZE(_spy_response);
 
-        if (house == HOUSE_USSR) {
+        if (HouseClass::As_Pointer(house)->Class->SideName != "Soviet") {
             response = _default_response;
             size = ARRAY_SIZE(_default_response);
         }
@@ -2828,14 +2828,14 @@ void InfantryClass::Response_Attack(void)
         HousesType house = PlayerPtr->ActLike;
 
         if (Class->IsGeneral) {
-            if (house != HOUSE_USSR && house != HOUSE_BAD) {
+            if (HouseClass::As_Pointer(house)->Class->SideName != "Soviet") {
                 response = _stavros;
                 size = ARRAY_SIZE(_stavros);
             } else {
                 response = _default_response;
                 size = ARRAY_SIZE(_default_response);
             }
-            house = HOUSE_USSR;
+          //  house = HOUSE_USSR;
         }
 
         else if (Class->IsDog) {
@@ -2847,7 +2847,7 @@ void InfantryClass::Response_Attack(void)
             response = _spy_response;
             size = ARRAY_SIZE(_spy_response);
 
-            if (house == HOUSE_USSR) {
+            if (HouseClass::As_Pointer(House->ActLike)->Class->SideName == "Soviet") {
                 response = _default_response;
                 size = ARRAY_SIZE(_default_response);
             }

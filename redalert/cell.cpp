@@ -2082,7 +2082,7 @@ void CellClass::Adjust_Threat(HousesType house, int threat_value)
 
     int region = Map.Cell_Region(Cell_Number());
 
-    for (HousesType lp = HOUSE_FIRST; lp < HOUSE_COUNT; lp++) {
+    for (HousesType lp = HOUSE_FIRST; lp < HouseTypes.Count(); lp++) {
         if (lp == house)
             continue;
 
@@ -2345,10 +2345,10 @@ bool CellClass::Goodie_Check(FootClass* object)
                     if (minutes > 100)
                         minutes = 100;
                     if (Random_Pick(0, 100 - (int)minutes) == 0) {
-                        for (i = 0; i < (Session.Players.Count() + Session.Options.AIPlayers); i++) {
+                        for (i = 0; i < HouseTypes.Count(); i++) {
                             ucount = 0;
-                            HouseClass* hptr = Houses.Ptr(i + HOUSE_MULTI1);
-                            if (hptr != NULL && !hptr->IsDefeated) {
+                            HouseClass* hptr = Houses.Ptr(i);
+                            if (hptr != NULL && hptr->Class->IsMultiplayer && !hptr->IsDefeated) {
                                 int j;
                                 for (j = 0; j < UnitTypes.Count(); j++) {
                                     ucount += hptr->QuantityU(j);

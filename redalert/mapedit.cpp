@@ -162,7 +162,7 @@ void MapEditClass::One_Time(void)
                               TPF_EFNT | TPF_NOSHADOW,
                               MFCD::Retrieve("EBTN-UP.SHP"),
                               MFCD::Retrieve("EBTN-DN.SHP"));
-    for (HousesType house = HOUSE_FIRST; house < HOUSE_COUNT; house++) {
+    for (HousesType house = HOUSE_FIRST; house < HouseTypes.Count(); house++) {
         HouseList->Add_Item(HouseTypeClass::As_Reference(house).IniName);
     }
 
@@ -964,9 +964,9 @@ void MapEditClass::AI(KeyNumType& input, int x, int y)
             **	Loop through flag home values; if this cell is one of them, clear
             **	that waypoint.
             */
-            for (i = 0; i < MAX_PLAYERS; i++) {
-                house = (HousesType)(HOUSE_MULTI1 + i);
-                if (HouseClass::As_Pointer(house) && CurrentCell == HouseClass::As_Pointer(house)->FlagHome)
+            for (i = 0; i < HouseTypes.Count(); i++) {
+                house = (HousesType)(i);
+                if (HouseClass::As_Pointer(house) && HouseClass::As_Pointer(house)->Class->IsMultiplayer && CurrentCell == HouseClass::As_Pointer(house)->FlagHome)
                     HouseClass::As_Pointer(house)->Flag_Remove(As_Target(CurrentCell), true);
             }
 
@@ -1831,7 +1831,7 @@ HousesType MapEditClass::Cycle_House(HousesType curhouse, ObjectTypeClass const*
         **	Go to next house
         */
         curhouse++;
-        if (curhouse == HOUSE_COUNT) {
+        if (curhouse == HouseTypes.Count()) {
             curhouse = HOUSE_FIRST;
         }
 
@@ -1839,7 +1839,7 @@ HousesType MapEditClass::Cycle_House(HousesType curhouse, ObjectTypeClass const*
         **	Count # iterations; don't go forever
         */
         count++;
-        if (count == HOUSE_COUNT) {
+        if (count == HouseTypes.Count()) {
             curhouse = HOUSE_NONE;
             break;
         }

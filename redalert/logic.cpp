@@ -408,17 +408,13 @@ void LogicClass::AI(void)
     **	House processing is performed.
     */
 #ifdef FIXIT_VERSION_3
-    if (Session.Type != GAME_NORMAL) {
-        for (HousesType house = HOUSE_MULTI1; house < HOUSE_COUNT; house++) {
-            HouseClass* hptr = HouseClass::As_Pointer(house);
-            if (hptr && hptr->IsActive) {
+
+        for (HousesType house = HOUSE_FIRST; house < HouseTypes.Count(); house++) {
+        HouseClass* hptr = HouseClass::As_Pointer(house);
+        if (hptr && hptr->IsActive) {
+            if (Session.Type != GAME_NORMAL && hptr->Class->IsMultiplayer) {
                 hptr->AI();
-            }
-        }
-    } else {
-        for (HousesType house = HOUSE_FIRST; house < HOUSE_COUNT; house++) {
-            HouseClass* hptr = HouseClass::As_Pointer(house);
-            if (hptr && hptr->IsActive) {
+            } else if (!hptr->Class->IsMultiplayer) {
                 hptr->AI();
             }
         }

@@ -128,7 +128,7 @@ template <> FixedIHeapClass* CCPtr<SmudgeTypeClass>::Heap = &SmudgeTypes;
 #endif
 
 /* These variables are used to keep track of the slowest speed of a team */
-TeamFormDataStruct TeamFormData[HOUSE_COUNT];
+TeamFormDataStruct TeamFormData[HOUSE_COUNT * 20];
 bool FormMove;
 SpeedType FormSpeed;
 MPHType FormMaxSpeed;
@@ -521,7 +521,7 @@ QueueClass<EventClass, (MAX_EVENTS * 64)> MirrorList;
 /***************************************************************************
 **	These are arrays/lists of trigger pointers for each cell & the houses.
 */
-DynamicVectorClass<TriggerClass*> HouseTriggers[HOUSE_COUNT];
+DynamicVectorClass<TriggerClass*> HouseTriggers[HOUSE_COUNT * 10];
 DynamicVectorClass<TriggerClass*> MapTriggers;
 int MapTriggerID;
 DynamicVectorClass<TriggerClass*> LogicTriggers;

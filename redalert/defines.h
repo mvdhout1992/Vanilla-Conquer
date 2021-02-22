@@ -1134,8 +1134,8 @@ typedef enum HousesType : char
     HOUSE_GERMANY, // Grey
     HOUSE_FRANCE,  // Blue
     HOUSE_TURKEY,  // Brown
-    HOUSE_GOOD,    // Global Defense Initiative
-    HOUSE_BAD,     // Brotherhood of Nod
+    HOUSE_GOOD,    // Allies
+    HOUSE_BAD,     // Soviet
     HOUSE_NEUTRAL, // Civilians
     HOUSE_JP,      // Disaster Containment Team
     HOUSE_MULTI1,  // Multi-Player house #1

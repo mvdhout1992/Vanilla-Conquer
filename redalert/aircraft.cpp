@@ -139,7 +139,7 @@ static bool _Counts_As_Civ_Evac(ObjectClass const* candidate)
     **	Consider Tanya to be part of the civilian evacuation logic if the scenario is
     **	specially flagged for this.
     */
-    if (Scen.IsTanyaEvac && *inf == INFANTRY_TANYA)
+    if (Scen.IsTanyaEvac && inf->Class->IsTanya)
         return (true);
 
     /*

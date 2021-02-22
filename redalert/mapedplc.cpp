@@ -249,7 +249,7 @@ int MapEditClass::Placement_Dialog(void)
                        TPF_EFNT | TPF_NOSHADOW,
                        MFCD::Retrieve("EBTN-UP.SHP"),
                        MFCD::Retrieve("EBTN-DN.SHP"));
-    for (house = HOUSE_FIRST; house < HOUSE_COUNT; house++) {
+    for (house = HOUSE_FIRST; house < HouseTypes.Count(); house++) {
         housebtn.Add_Item(HouseTypeClass::As_Reference(house).IniName);
     }
     house = HOUSE_FIRST;

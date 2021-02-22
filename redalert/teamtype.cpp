@@ -755,7 +755,7 @@ bool TeamTypeClass::Edit(void)
                            8 * 5,
                            MFCD::Retrieve("EBTN-UP.SHP"),
                            MFCD::Retrieve("EBTN-DN.SHP"));
-    for (HousesType house = HOUSE_FIRST; house < HOUSE_COUNT; house++) {
+    for (HousesType house = HOUSE_FIRST; house < HouseTypes.Count(); house++) {
         housebtn.Add_Item(HouseTypeClass::As_Reference(house).IniName);
     }
     if (House == HOUSE_NONE)

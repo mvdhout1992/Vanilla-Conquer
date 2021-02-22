@@ -2380,10 +2380,10 @@ void RadarClass::Draw_Names(void)
     LogicPage->Draw_Line(RadX + RadOffX, y, RadX + RadOffX + RadIWidth - 1, y, LTGREY);
     y += 2 * RESFACTOR;
 
-    for (house = HOUSE_MULTI1; house < (HOUSE_MULTI1 + Session.MaxPlayers); house++) {
+    for (house = HOUSE_FIRST; house < HouseTypes.Count(); house++) {
         ptr = HouseClass::As_Pointer(house);
 
-        if (!ptr)
+        if (!ptr || !ptr->Class->IsMultiplayer)
             continue;
 
         /*
@@ -2420,7 +2420,7 @@ void RadarClass::Draw_Names(void)
         Fancy_Text_Print(txt, RadX + RadOffX, y, color, TBLACK, style);
 
         kills = 0;
-        for (h = HOUSE_FIRST; h < HOUSE_COUNT; h++) {
+        for (h = HOUSE_FIRST; h < HouseTypes.Count(); h++) {
             kills += ptr->UnitsKilled[h];
             kills += ptr->BuildingsKilled[h];
         }

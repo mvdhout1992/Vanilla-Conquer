@@ -321,7 +321,7 @@ bool Init_Game(int, char*[])
     VocTypes_List_Init(RuleINI);
     VoxTypes_List_Init(RuleINI);
 
-    HouseTypeClass::Init_Heap();
+    HouseTypeClass::Init_Heap(RuleINI);
     BuildingTypeClass::Init_Heap(RuleINI);
     AircraftTypeClass::Init_Heap(RuleINI);
     InfantryTypeClass::Init_Heap(RuleINI);
@@ -2179,7 +2179,8 @@ static void Init_Heaps(void)
     Triggers.Set_Heap(Rule.TriggerMax);
     TeamTypes.Set_Heap(Rule.TeamTypeMax);
     Teams.Set_Heap(Rule.TeamMax);
-    Houses.Set_Heap(HOUSE_MAX);
+    //Houses.Set_Heap(HOUSE_MAX);
+    Houses.Set_Heap(HouseTypes.Count() + 1);
     TriggerTypes.Set_Heap(Rule.TrigTypeMax);
     //	Weapons.Set_Heap(Rule.WeaponMax);
 

@@ -133,7 +133,7 @@ int MapEditClass::New_Scenario(void)
     /*
     **	Create houses
     */
-    for (house = HOUSE_FIRST; house < HOUSE_COUNT; house++) {
+    for (house = HOUSE_FIRST; house < HouseTypes.Count(); house++) {
         new HouseClass(house);
     }
 
@@ -1652,12 +1652,12 @@ int MapEditClass::Load_Scenario(void)
         TheaterType orig_theater = Scen.Theater; // original theater
         HousesType house = PlayerPtr->Class->House;
         HousesType newhouse = house;
-        HouseStaticClass hdata[HOUSE_COUNT];
+        HouseStaticClass hdata[HOUSE_COUNT * 10];
 
         /*
         **	Fill in the house data for each house that exists.
         */
-        for (HousesType h = HOUSE_FIRST; h < HOUSE_COUNT; h++) {
+        for (HousesType h = HOUSE_FIRST; h < HouseTypes.Count(); h++) {
             HouseClass* hptr = HouseClass::As_Pointer(h);
             if (hptr) {
                 hdata[h] = hptr->Control;
@@ -1971,7 +1971,7 @@ int MapEditClass::Load_Scenario(void)
                            TPF_EFNT | TPF_NOSHADOW,
                            MFCD::Retrieve("EBTN-UP.SHP"),
                            MFCD::Retrieve("EBTN-DN.SHP"));
-        for (HousesType h = HOUSE_FIRST; h < HOUSE_COUNT; h++) {
+        for (HousesType h = HOUSE_FIRST; h < HouseTypes.Count(); h++) {
             housebtn.Add_Item(HouseTypeClass::As_Reference(h).IniName);
         }
         housebtn.Set_Selected_Index(PlayerPtr->Class->House);
@@ -1990,7 +1990,7 @@ int MapEditClass::Load_Scenario(void)
                               7 * 10,
                               MFCD::Retrieve("EBTN-UP.SHP"),
                               MFCD::Retrieve("EBTN-DN.SHP"));
-        for (HousesType h = HOUSE_FIRST; h < HOUSE_COUNT; h++) {
+        for (HousesType h = HOUSE_FIRST; h < HouseTypes.Count(); h++) {
             basebtn.Add_Item(HouseTypeClass::As_Reference(h).IniName);
         }
         if (Base.House != HOUSE_NONE) {
@@ -2088,7 +2088,7 @@ int MapEditClass::Load_Scenario(void)
                               TPF_EFNT | TPF_NOSHADOW,
                               MFCD::Retrieve("EBTN-UP.SHP"),
                               MFCD::Retrieve("EBTN-DN.SHP"));
-        for (HousesType h = HOUSE_FIRST; h < HOUSE_COUNT; h++) {
+        for (HousesType h = HOUSE_FIRST; h < HouseTypes.Count(); h++) {
             allies.Add_Item(HouseTypeClass::As_Reference(h).IniName);
             if (hdata[house].Allies & (1L << h)) {
                 allies.Check_Item(h, true);
@@ -2107,7 +2107,7 @@ int MapEditClass::Load_Scenario(void)
                                TPF_EFNT | TPF_NOSHADOW,
                                MFCD::Retrieve("EBTN-UP.SHP"),
                                MFCD::Retrieve("EBTN-DN.SHP"));
-        for (HousesType h = HOUSE_FIRST; h < HOUSE_COUNT; h++) {
+        for (HousesType h = HOUSE_FIRST; h < HouseTypes.Count(); h++) {
             control.Add_Item(HouseTypeClass::As_Reference(h).IniName);
             if (HouseClass::As_Pointer(h)->IsPlayerControl) {
                 control.Check_Item(h, true);
@@ -2187,7 +2187,7 @@ int MapEditClass::Load_Scenario(void)
                 techlevel.Set_Value(hstatic->TechLevel);
                 sourcebtn.Set_Selected_Index(hstatic->Edge);
                 maxunit.Set_Value(hstatic->MaxUnit + hstatic->MaxInfantry);
-                for (HousesType h = HOUSE_FIRST; h < HOUSE_COUNT; h++) {
+                for (HousesType h = HOUSE_FIRST; h < HouseTypes.Count(); h++) {
                     allies.Check_Item(h, hstatic->Allies & (1L << h));
                 }
                 smarties.Set_Value(hstatic->IQ);
@@ -2507,7 +2507,7 @@ int MapEditClass::Load_Scenario(void)
                 hstatic->MaxUnit = maxunit.Get_Value() / 2;
                 hstatic->MaxInfantry = maxunit.Get_Value() / 2;
                 hstatic->IQ = smarties.Get_Value();
-                for (HousesType h = HOUSE_FIRST; h < HOUSE_COUNT; h++) {
+                for (HousesType h = HOUSE_FIRST; h < HouseTypes.Count(); h++) {
                     if (allies.Is_Checked(h)) {
                         hstatic->Allies |= (1L << h);
                     } else {
@@ -2536,7 +2536,7 @@ int MapEditClass::Load_Scenario(void)
         /*
         **	Copy the dialog data back into the appropriate game data locations.
         */
-        for (HousesType h = HOUSE_FIRST; h < HOUSE_COUNT; h++) {
+        for (HousesType h = HOUSE_FIRST; h < HouseTypes.Count(); h++) {
             HouseClass* hptr = HouseClass::As_Pointer(h);
             if (hptr != NULL) {
                 hptr->Control = hdata[h];

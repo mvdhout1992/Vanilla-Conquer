@@ -2451,11 +2451,11 @@ bool TechnoClass::Evaluate_Object(ThreatType method,
         FlashCount = count;
 
         // 2019/09/20 JAS - Flashing info needs to exist per player
-        if (house < HOUSE_COUNT) {
+        if (house < HouseTypes.Count()) {
             FlashCountPerPlayer[house] = count;
         } else {
             // receiving HOUSE_COUNT means do it for every player
-            for (int i = 0; i < HOUSE_COUNT; ++i) {
+            for (int i = 0; i < HouseTypes.Count(); ++i) {
                 FlashCountPerPlayer[i] = count;
             }
         }
@@ -6825,7 +6825,7 @@ bool TechnoClass::Evaluate_Object(ThreatType method,
         }
 
         for (int i = 0; i < Ownable.Count(); i++) {
-            if (stricmp(sidename.c_str(), Ownable[i].c_str()) ==0) {
+            if (stricmp(sidename.c_str(), Ownable[i].c_str()) == 0) {
                 return true;
             }
             if (stricmp(housename.c_str(), Ownable[i].c_str()) == 0) {

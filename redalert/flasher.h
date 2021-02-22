@@ -35,6 +35,7 @@
 #ifndef FLASHER_H
 #define FLASHER_H
 
+
 class FlasherClass
 {
 public:
@@ -54,18 +55,10 @@ public:
 
     // 2019/09/20 JAS - Flashing info needs to exist per player
     unsigned int Get_Flashing_Flags() const;
-    unsigned int FlashCountPerPlayer[HOUSE_COUNT];
+    unsigned int FlashCountPerPlayer[HOUSE_COUNT * 10];
 
     // 2019/09/20 JAS - Flashing info needs to exist per player
-    FlasherClass(void)
-    {
-        FlashCount = 0;
-        IsBlushing = false;
-
-        for (int i = 0; i < HOUSE_COUNT; ++i) {
-            FlashCountPerPlayer[i] = 0;
-        }
-    }
+    FlasherClass(void);
 
     FlasherClass(NoInitClass const&){};
     ~FlasherClass(void){};

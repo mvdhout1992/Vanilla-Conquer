@@ -676,7 +676,7 @@ void Fill_In_Data(void)
     **	Move available money to silos, if the scenario flag so indicates.
     */
     if (Scen.IsMoneyTiberium) {
-        for (HousesType house = HOUSE_FIRST; house < HOUSE_COUNT; house++) {
+        for (HousesType house = HOUSE_FIRST; house < HouseTypes.Count(); house++) {
             HouseClass* hptr = HouseClass::As_Pointer(house);
             if (hptr != NULL) {
                 int tomove = hptr->Capacity - hptr->Tiberium;
@@ -783,7 +783,7 @@ void Clear_Scenario(void)
     MapTriggers.Clear();
     LogicTriggers.Clear();
 
-    for (HousesType house = HOUSE_FIRST; house < HOUSE_COUNT; house++) {
+    for (HousesType house = HOUSE_FIRST; house < HouseTypes.Count(); house++) {
         HouseTriggers[house].Clear();
     }
 
@@ -963,7 +963,7 @@ void Do_Win(void)
         */
 #ifndef REMASTER_BUILD
         if (Scen.IsEndOfGame) {
-            if (PlayerPtr->ActLike == HOUSE_USSR) {
+            if (PlayerPtr->Class->SideName == "Soviet") {
                 Play_Movie(VQ_SOVFINAL);
             } else {
                 Play_Movie(VQ_ALLYEND);
@@ -1572,7 +1572,7 @@ int BGMessageBox(char const* msg, int btn1, int btn2)
 
     PaletteClass temp;
     char* filename = "SOVPAPER.PCX";
-    if (PlayerPtr->Class->House != HOUSE_USSR && PlayerPtr->Class->House != HOUSE_UKRAINE) {
+    if (PlayerPtr->Class->SideName != "Soviet") {
         filename = "ALIPAPER.PCX";
     }
     Load_Title_Screen(filename, &HidPage, (unsigned char*)temp.Get_Data());
@@ -2487,7 +2487,7 @@ bool Read_Scenario_INI(char* fname, bool)
     }
 
     if (_stricmp(Scen.ScenarioName, "scg08ea.ini") == 0) {
-        for (int house = HOUSE_FIRST; house < HOUSE_COUNT; ++house) {
+        for (int house = HOUSE_FIRST; house < HouseTypes.Count(); ++house) {
             HouseClass* ptr = Houses.Ptr(house);
             if (ptr != NULL && ptr->IsActive) {
                 if (ptr->Class->House == HOUSE_GREECE || ptr->Class->House == HOUSE_GERMANY) {
@@ -2917,10 +2917,10 @@ static void Remove_AI_Players(void)
     HouseClass* housep;
 
 #ifndef REMASTER_BUILD
-    for (i = 0; i < MAX_PLAYERS; i++) {
-        house = (HousesType)(i + (int)HOUSE_MULTI1);
+    for (i = 0; i < HouseTypes.Count(); i++) {
+        house = (HousesType)(i);
         housep = HouseClass::As_Pointer(house);
-        if (housep->IsHuman == false) {
+        if (housep && housep->Class->IsMultiplayer && housep->IsHuman == false) {
             aicount++;
             if (aicount > Session.Options.AIPlayers) {
                 housep->Clobber_All();
@@ -3161,19 +3161,14 @@ static void Create_Units(bool official)
         }
     }
 
-    /*
-    **	Loop through all houses.  Computer-controlled houses, with Session.Options.Bases
-    **	ON, are treated as though bases are OFF (since we have no base-building
-    **	AI logic.)
-    */
     int numtaken = 0;
-    for (HousesType house = HOUSE_MULTI1; house < (HOUSE_MULTI1 + Session.MaxPlayers); house++) {
+    for (HousesType house = HOUSE_FIRST; house < HouseTypes.Count(); house++) {
 
         /*
         **	Get a pointer to this house; if there is none, go to the next house
         */
         HouseClass* hptr = HouseClass::As_Pointer(house);
-        if (hptr == NULL) {
+        if (hptr == NULL || !hptr->Class->IsMultiplayer) {
             continue;
         }
 
@@ -3258,9 +3253,6 @@ static void Create_Units(bool official)
         */
         hptr->Center = Cell_Coord(centroid);
 
-        /*
-        **	If Bases are ON, human & computer houses are treated differently
-        */
         if (Session.Options.Bases) {
 
             /*
@@ -3319,7 +3311,7 @@ static void Create_Units(bool official)
                 /*
                 **	Create an Ally unit
                 */
-                if (hptr->ActLike != HOUSE_USSR && hptr->ActLike != HOUSE_UKRAINE) {
+                if (HouseClass::As_Pointer(hptr->ActLike)->Class->SideName != "Soviet") {
                     for (k = 0; k < 2; k++)
                         if (utable[i].AllyType[k] != UNIT_NONE) {
                             Reserve_Unit();
@@ -3376,7 +3368,7 @@ static void Create_Units(bool official)
                 **	assigns the infantry to HUNT; we must use Set_Mission() to override
                 **	this state.)
                 */
-                if (hptr->ActLike != HOUSE_USSR && hptr->ActLike != HOUSE_UKRAINE) {
+                if (HouseClass::As_Pointer(hptr->ActLike)->Class->SideName != "Soviet") {
                     for (k = 0; k < itable[i].AllyCount; k++) {
                         Reserve_Infantry();
                         obj = new InfantryClass(itable[i].AllyType, house);

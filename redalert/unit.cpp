@@ -2758,7 +2758,7 @@ int UnitClass::Mission_Unload(void)
                 if (!Map[Center_Coord()].Cell_Building()) {
                     Mark(MARK_UP);
                     BuildingClass* building = new BuildingClass(
-                        (House->ActLike == HOUSE_USSR || House->ActLike == HOUSE_UKRAINE || House->ActLike == HOUSE_BAD)
+                        (HouseClass::As_Pointer(House->ActLike)->Class->SideName == "Soviet")
                             ? STRUCT_APMINE
                             : STRUCT_AVMINE,
                         House->Class->House);

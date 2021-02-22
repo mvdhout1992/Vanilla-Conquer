@@ -1066,7 +1066,7 @@ bool TriggerTypeClass::Edit(void)
                              MFCD::Retrieve("EBTN-UP.SHP"),
                              MFCD::Retrieve("EBTN-DN.SHP"));
 
-    for (HousesType hh = HOUSE_FIRST; hh < HOUSE_COUNT; hh++) {
+    for (HousesType hh = HOUSE_FIRST; hh < HouseTypes.Count(); hh++) {
         htype1list.Add_Item(HouseTypeClass::As_Reference(hh).IniName);
         htype2list.Add_Item(HouseTypeClass::As_Reference(hh).IniName);
         htype3list.Add_Item(HouseTypeClass::As_Reference(hh).IniName);
@@ -1203,7 +1203,7 @@ bool TriggerTypeClass::Edit(void)
                            8 * 5,
                            MFCD::Retrieve("EBTN-UP.SHP"),
                            MFCD::Retrieve("EBTN-DN.SHP"));
-    for (HousesType house = HOUSE_FIRST; house < HOUSE_COUNT; house++) {
+    for (HousesType house = HOUSE_FIRST; house < HouseTypes.Count(); house++) {
         housebtn.Add_Item(HouseTypeClass::As_Reference(house).IniName);
     }
     if (House == HOUSE_NONE)

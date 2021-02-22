@@ -330,45 +330,74 @@ void HouseTypeClass::operator delete(void* ptr)
  * HISTORY:                                                                                    *
  *   09/04/1996 JLB : Created.                                                                 *
  *=============================================================================================*/
-void HouseTypeClass::Init_Heap(void)
+void HouseTypeClass::Init_Heap(CCINIClass& ini)
 {
+    int entries = ini.Entry_Count("HouseTypes");
+    bool usehardcoded = ini.Get_Bool("General", "UseHardCodedHouses", true);
+    HouseTypes.Set_Heap((usehardcoded * HOUSE_COUNT) + entries);
     /*
     **	These house type class objects must be allocated in the exact order that they
     **	are specified in the HousesType enumeration. This is necessary because the heap
     **	allocation block index serves double duty as the type number index.
     */
-    new HouseTypeClass(HouseSpain);
-    new HouseTypeClass(HouseGreece);
-    new HouseTypeClass(HouseUSSR);
-    new HouseTypeClass(HouseEngland);
-    new HouseTypeClass(HouseUkraine);
-    new HouseTypeClass(HouseGermany);
-    new HouseTypeClass(HouseFrance);
-    new HouseTypeClass(HouseTurkey);
-    new HouseTypeClass(HouseGood);
-    new HouseTypeClass(HouseBad);
-    new HouseTypeClass(HouseCivilian);
-    new HouseTypeClass(HouseJP);
-    new HouseTypeClass(HouseMulti1);
-    new HouseTypeClass(HouseMulti2);
-    new HouseTypeClass(HouseMulti3);
-    new HouseTypeClass(HouseMulti4);
-    new HouseTypeClass(HouseMulti5);
-    new HouseTypeClass(HouseMulti6);
-    new HouseTypeClass(HouseMulti7);
-    new HouseTypeClass(HouseMulti8);
+    if (usehardcoded) {
+        new HouseTypeClass(HouseSpain);
+        new HouseTypeClass(HouseGreece);
+        new HouseTypeClass(HouseUSSR);
+        new HouseTypeClass(HouseEngland);
+        new HouseTypeClass(HouseUkraine);
+        new HouseTypeClass(HouseGermany);
+        new HouseTypeClass(HouseFrance);
+        new HouseTypeClass(HouseTurkey);
+        new HouseTypeClass(HouseGood);
+        new HouseTypeClass(HouseBad);
+        new HouseTypeClass(HouseCivilian);
+        new HouseTypeClass(HouseJP);
+        new HouseTypeClass(HouseMulti1);
+        new HouseTypeClass(HouseMulti2);
+        new HouseTypeClass(HouseMulti3);
+        new HouseTypeClass(HouseMulti4);
+        new HouseTypeClass(HouseMulti5);
+        new HouseTypeClass(HouseMulti6);
+        new HouseTypeClass(HouseMulti7);
+        new HouseTypeClass(HouseMulti8);
 
-    HouseTypeClass::As_Reference(HOUSE_BAD).SideName = "Soviet";
-    HouseTypeClass::As_Reference(HOUSE_UKRAINE).SideName = "Soviet";
-    HouseTypeClass::As_Reference(HOUSE_USSR).SideName = "Soviet";
+        HouseTypeClass::As_Reference(HOUSE_BAD).SideName = "Soviet";
+        HouseTypeClass::As_Reference(HOUSE_UKRAINE).SideName = "Soviet";
+        HouseTypeClass::As_Reference(HOUSE_USSR).SideName = "Soviet";
 
-    HouseTypeClass::As_Reference(HOUSE_SPAIN).SideName = "Allies";
-    HouseTypeClass::As_Reference(HOUSE_GREECE).SideName = "Allies";
-    HouseTypeClass::As_Reference(HOUSE_ENGLAND).SideName = "Allies";
-    HouseTypeClass::As_Reference(HOUSE_GERMANY).SideName = "Allies";
-    HouseTypeClass::As_Reference(HOUSE_FRANCE).SideName = "Allies";
-    HouseTypeClass::As_Reference(HOUSE_TURKEY).SideName = "Allies";
-    HouseTypeClass::As_Reference(HOUSE_ENGLAND).SideName = "Allies";
+        HouseTypeClass::As_Reference(HOUSE_SPAIN).SideName = "Allies";
+        HouseTypeClass::As_Reference(HOUSE_GREECE).SideName = "Allies";
+        HouseTypeClass::As_Reference(HOUSE_ENGLAND).SideName = "Allies";
+        HouseTypeClass::As_Reference(HOUSE_GERMANY).SideName = "Allies";
+        HouseTypeClass::As_Reference(HOUSE_FRANCE).SideName = "Allies";
+        HouseTypeClass::As_Reference(HOUSE_TURKEY).SideName = "Allies";
+        HouseTypeClass::As_Reference(HOUSE_ENGLAND).SideName = "Allies";
+
+        HouseTypeClass::As_Reference(HOUSE_MULTI1).IsMultiplayer = true;
+        HouseTypeClass::As_Reference(HOUSE_MULTI2).IsMultiplayer = true;
+        HouseTypeClass::As_Reference(HOUSE_MULTI3).IsMultiplayer = true;
+        HouseTypeClass::As_Reference(HOUSE_MULTI4).IsMultiplayer = true;
+        HouseTypeClass::As_Reference(HOUSE_MULTI5).IsMultiplayer = true;
+        HouseTypeClass::As_Reference(HOUSE_MULTI6).IsMultiplayer = true;
+        HouseTypeClass::As_Reference(HOUSE_MULTI7).IsMultiplayer = true;
+        HouseTypeClass::As_Reference(HOUSE_MULTI8).IsMultiplayer = true;
+    }
+
+    for (int i = 0; i < entries; i++) {
+        int id = (usehardcoded * HOUSE_COUNT) + i;
+        std::string entry = ini.Get_Entry("HouseTypes", i);
+        std::string house = ini.Get_String("HouseTypes", entry.c_str(), "<none>");
+
+        new HouseTypeClass(HOUSE_MULTI8,
+                           "Multi8",     //	NAME:			House name.
+                           TXT_CIVILIAN, // FULLNAME:	Translated house name.
+                           "MP8",        // SUFFIX:		House file suffix.
+                           0,            // LEMON:		Lemon vehicle frequency.
+                           PCOLOR_BROWN, // Remap color ID number.
+                           'M'           // VOICE:		Voice prefix character.
+        );
+    }
 }
 
 /***********************************************************************************************
@@ -392,7 +421,7 @@ void HouseTypeClass::Init_Heap(void)
 HousesType HouseTypeClass::From_Name(char const* name)
 {
     if (name != NULL) {
-        for (HousesType house = HOUSE_FIRST; house < HOUSE_COUNT; house++) {
+        for (HousesType house = HOUSE_FIRST; house < HouseTypes.Count(); house++) {
             if (stricmp(As_Reference(house).IniName, name) == 0) {
                 //			if (stricmp(Pointers[house]->IniName, name) == 0) {
                 return (house);

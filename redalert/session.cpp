@@ -345,10 +345,10 @@ bool SessionClass::Am_I_Master(void)
     // Check every house; if PlayerPtr points to the first human house, we're
     // the master.
     //------------------------------------------------------------------------
-    for (i = 0; i < Session.MaxPlayers; i++) {
-        house = (HousesType)((int)HOUSE_MULTI1 + i);
+    for (i = 0; i < HouseTypes.Count(); i++) {
+        house = (HousesType)((int)i);
         hptr = HouseClass::As_Pointer(house);
-        if (hptr->IsHuman) {
+        if (hptr && hptr->Class->IsMultiplayer && hptr->IsHuman) {
             if (PlayerPtr == hptr) {
                 return (true);
             } else {
