@@ -1563,7 +1563,7 @@ void InfantryTypeClass::Init_Heap(CCINIClass &ini)
     }
 
     int entries = ini.Entry_Count("InfantryTypes");
-    bool usehardcoded = ini.Get_Bool("General", "UseHardCodedAInfantry", true);
+    bool usehardcoded = ini.Get_Bool("General", "UseHardCodedInfantry", true);
     InfantryTypes.Set_Heap((usehardcoded * INFANTRY_COUNT) + entries);
 
     if (usehardcoded) {

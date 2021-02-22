@@ -78,7 +78,7 @@ AnimType Anim_From_Name(char const* name)
     if (name == NULL)
         return (ANIM_NONE);
 
-    for (int anim = ANIM_FIRST; anim < ANIM_COUNT; anim++) {
+    for (int anim = ANIM_FIRST; anim < AnimTypes.Count(); anim++) {
         if (stricmp(AnimTypeClass::As_Reference((AnimType)anim).IniName, name) == 0) {
             return ((AnimType)anim);
         }

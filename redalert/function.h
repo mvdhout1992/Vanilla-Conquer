@@ -381,6 +381,9 @@ bool Select_Game(bool fade = false);
 bool Parse_Command_Line(int argc, char* argv[]);
 void Parse_INI_File(void);
 void VocTypes_List_Init(CCINIClass& ini);
+void VoxTypes_List_Init(CCINIClass& ini);
+void VocTypes_Debug_Dump_INI(void);
+void VoxTypes_Debug_Dump_INI(void);
 
 /*
 ** JSHELL.CPP

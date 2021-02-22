@@ -2277,106 +2277,138 @@ void AnimTypeClass::operator delete(void* pointer)
  * HISTORY:                                                                                    *
  *   07/09/1996 JLB : Created.                                                                 *
  *=============================================================================================*/
-void AnimTypeClass::Init_Heap(void)
+void AnimTypeClass::Init_Heap(CCINIClass& ini)
 {
-    /*
-    **	These anim type class objects must be allocated in the exact order that they
-    **	are specified in the AnimType enumeration. This is necessary because the heap
-    **	allocation block index serves double duty as the type number index.
-    */
-    new AnimTypeClass(FBall1);
-    new AnimTypeClass(FireBallFade);
-    new AnimTypeClass(Frag1);
-    new AnimTypeClass(VehHit1);
-    new AnimTypeClass(VehHit2);
-    new AnimTypeClass(VehHit3);
-    new AnimTypeClass(ArtExp1);
-    new AnimTypeClass(Napalm1);
-    new AnimTypeClass(Napalm2);
-    new AnimTypeClass(Napalm3);
-    new AnimTypeClass(SmokePuff);
-    new AnimTypeClass(Piff);
-    new AnimTypeClass(PiffPiff);
-    new AnimTypeClass(Fire3);
-    new AnimTypeClass(Fire2);
-    new AnimTypeClass(Fire1);
-    new AnimTypeClass(Fire4);
-    new AnimTypeClass(Gunfire);
-    new AnimTypeClass(SmokeM);
-    new AnimTypeClass(BurnSmall);
-    new AnimTypeClass(BurnMed);
-    new AnimTypeClass(BurnBig);
-    new AnimTypeClass(OnFireSmall);
-    new AnimTypeClass(OnFireMed);
-    new AnimTypeClass(OnFireBig);
-    new AnimTypeClass(SAMN);
-    new AnimTypeClass(SAMNE);
-    new AnimTypeClass(SAME);
-    new AnimTypeClass(SAMSE);
-    new AnimTypeClass(SAMS);
-    new AnimTypeClass(SAMSW);
-    new AnimTypeClass(SAMW);
-    new AnimTypeClass(SAMNW);
-    new AnimTypeClass(GUNN);
-    new AnimTypeClass(GUNNE);
-    new AnimTypeClass(GUNE);
-    new AnimTypeClass(GUNSE);
-    new AnimTypeClass(GUNS);
-    new AnimTypeClass(GUNSW);
-    new AnimTypeClass(GUNW);
-    new AnimTypeClass(GUNNW);
-    new AnimTypeClass(LZSmoke);
-    new AnimTypeClass(CDeviator);
-    new AnimTypeClass(CDollar);
-    new AnimTypeClass(CEarth);
-    new AnimTypeClass(CEmpulse);
-    new AnimTypeClass(CInvun);
-    new AnimTypeClass(CMine);
-    new AnimTypeClass(CRapid);
-    new AnimTypeClass(CStealth);
-    new AnimTypeClass(CMissile);
-    new AnimTypeClass(MoveFlash);
-    new AnimTypeClass(OilFieldBurn);
-    new AnimTypeClass(ElectricDie);
-    new AnimTypeClass(Parachute);
-    new AnimTypeClass(DogElectricDie);
-    new AnimTypeClass(Corpse1);
-    new AnimTypeClass(Corpse2);
-    new AnimTypeClass(Corpse3);
-    new AnimTypeClass(SputDoor);
-    new AnimTypeClass(AtomBomb);
-    new AnimTypeClass(ChronoBox);
-    new AnimTypeClass(GPSBox);
-    new AnimTypeClass(InvulBox);
-    new AnimTypeClass(ParaBox);
-    new AnimTypeClass(SonarBox);
-    new AnimTypeClass(Twinkle1);
-    new AnimTypeClass(Twinkle2);
-    new AnimTypeClass(Twinkle3);
-    new AnimTypeClass(Flak);
-    new AnimTypeClass(WaterExp1);
-    new AnimTypeClass(WaterExp2);
-    new AnimTypeClass(WaterExp3);
-    new AnimTypeClass(CrateArmor);
-    new AnimTypeClass(CrateSpeed);
-    new AnimTypeClass(CrateFPower);
-    new AnimTypeClass(CrateTQuake);
-    new AnimTypeClass(ParaBomb);
-    new AnimTypeClass(MineExp1);
-    new AnimTypeClass(Flag);
-    new AnimTypeClass(Beacon);
+    int entries = ini.Entry_Count("AnimTypes");
+    bool usehardcoded = ini.Get_Bool("General", "UseHardCodedAnims", true);
+    AnimTypes.Set_Heap((usehardcoded * ANIM_COUNT) + entries);
+
+    if (usehardcoded) {
+
+        new AnimTypeClass(FBall1);
+        new AnimTypeClass(FireBallFade);
+        new AnimTypeClass(Frag1);
+        new AnimTypeClass(VehHit1);
+        new AnimTypeClass(VehHit2);
+        new AnimTypeClass(VehHit3);
+        new AnimTypeClass(ArtExp1);
+        new AnimTypeClass(Napalm1);
+        new AnimTypeClass(Napalm2);
+        new AnimTypeClass(Napalm3);
+        new AnimTypeClass(SmokePuff);
+        new AnimTypeClass(Piff);
+        new AnimTypeClass(PiffPiff);
+        new AnimTypeClass(Fire3);
+        new AnimTypeClass(Fire2);
+        new AnimTypeClass(Fire1);
+        new AnimTypeClass(Fire4);
+        new AnimTypeClass(Gunfire);
+        new AnimTypeClass(SmokeM);
+        new AnimTypeClass(BurnSmall);
+        new AnimTypeClass(BurnMed);
+        new AnimTypeClass(BurnBig);
+        new AnimTypeClass(OnFireSmall);
+        new AnimTypeClass(OnFireMed);
+        new AnimTypeClass(OnFireBig);
+        new AnimTypeClass(SAMN);
+        new AnimTypeClass(SAMNE);
+        new AnimTypeClass(SAME);
+        new AnimTypeClass(SAMSE);
+        new AnimTypeClass(SAMS);
+        new AnimTypeClass(SAMSW);
+        new AnimTypeClass(SAMW);
+        new AnimTypeClass(SAMNW);
+        new AnimTypeClass(GUNN);
+        new AnimTypeClass(GUNNE);
+        new AnimTypeClass(GUNE);
+        new AnimTypeClass(GUNSE);
+        new AnimTypeClass(GUNS);
+        new AnimTypeClass(GUNSW);
+        new AnimTypeClass(GUNW);
+        new AnimTypeClass(GUNNW);
+        new AnimTypeClass(LZSmoke);
+        new AnimTypeClass(CDeviator);
+        new AnimTypeClass(CDollar);
+        new AnimTypeClass(CEarth);
+        new AnimTypeClass(CEmpulse);
+        new AnimTypeClass(CInvun);
+        new AnimTypeClass(CMine);
+        new AnimTypeClass(CRapid);
+        new AnimTypeClass(CStealth);
+        new AnimTypeClass(CMissile);
+        new AnimTypeClass(MoveFlash);
+        new AnimTypeClass(OilFieldBurn);
+        new AnimTypeClass(ElectricDie);
+        new AnimTypeClass(Parachute);
+        new AnimTypeClass(DogElectricDie);
+        new AnimTypeClass(Corpse1);
+        new AnimTypeClass(Corpse2);
+        new AnimTypeClass(Corpse3);
+        new AnimTypeClass(SputDoor);
+        new AnimTypeClass(AtomBomb);
+        new AnimTypeClass(ChronoBox);
+        new AnimTypeClass(GPSBox);
+        new AnimTypeClass(InvulBox);
+        new AnimTypeClass(ParaBox);
+        new AnimTypeClass(SonarBox);
+        new AnimTypeClass(Twinkle1);
+        new AnimTypeClass(Twinkle2);
+        new AnimTypeClass(Twinkle3);
+        new AnimTypeClass(Flak);
+        new AnimTypeClass(WaterExp1);
+        new AnimTypeClass(WaterExp2);
+        new AnimTypeClass(WaterExp3);
+        new AnimTypeClass(CrateArmor);
+        new AnimTypeClass(CrateSpeed);
+        new AnimTypeClass(CrateFPower);
+        new AnimTypeClass(CrateTQuake);
+        new AnimTypeClass(ParaBomb);
+        new AnimTypeClass(MineExp1);
+        new AnimTypeClass(Flag);
+        new AnimTypeClass(Beacon);
 #ifdef FIXIT_ANTS
-    new AnimTypeClass(Ant1Death);
-    new AnimTypeClass(Ant2Death);
-    new AnimTypeClass(Ant3Death);
+        new AnimTypeClass(Ant1Death);
+        new AnimTypeClass(Ant2Death);
+        new AnimTypeClass(Ant3Death);
 #endif
 #ifdef REMASTER_BUILD
-    new AnimTypeClass(Fire3Virtual);
-    new AnimTypeClass(Fire2Virtual);
-    new AnimTypeClass(Fire1Virtual);
-    new AnimTypeClass(Fire4Virtual);
-    new AnimTypeClass(BeaconVirtual);
+        new AnimTypeClass(Fire3Virtual);
+        new AnimTypeClass(Fire2Virtual);
+        new AnimTypeClass(Fire1Virtual);
+        new AnimTypeClass(Fire4Virtual);
+        new AnimTypeClass(BeaconVirtual);
 #endif
+    }
+
+        for (int i = 0; i < entries; i++) {
+        int id = (usehardcoded * ANIM_COUNT) + i;
+        std::string entry = ini.Get_Entry("AnimTypes", i);
+        std::string anim = ini.Get_String("AnimTypes", entry.c_str(), "<none>");
+        new AnimTypeClass((AnimType)id, // Animation number.
+                          anim.c_str(), // Data name of animation.
+                          45,           // Maximum dimension of animation.
+                          3,            // Biggest animation stage.
+                          false,        // Theater specific art imagery?
+                          true,         // Normalized animation rate?
+                          false,        // Uses white translucent table?
+                          false,        // Scorches the ground?
+                          true,         // Forms a crater?
+                          true,         // Sticks to unit in square?
+                          true,         // Ground level animation?
+                          false,        // Translucent colors in this animation?
+                          false,        // Is this a flame thrower animation?
+                          0,            // Damage to apply per tick (fixed point).
+                          1,            // Delay between frames.
+                          0,            // Starting frame number.
+                          0,            // Loop start frame number.
+                          -1,           // Ending frame of loop back.
+                          -1,           // Number of animation stages.
+                          1,            // Number of times the animation loops.
+                          VOC_KABOOM30, // Sound effect to play.
+                          ANIM_NONE,
+                          29 // Virtual stages
+        );
+    }
 }
 
 /***********************************************************************************************
@@ -2396,7 +2428,7 @@ void AnimTypeClass::Init_Heap(void)
  *=============================================================================================*/
 void AnimTypeClass::One_Time(void)
 {
-    for (int index = ANIM_FIRST; index < ANIM_COUNT; index++) {
+    for (int index = ANIM_FIRST; index < AnimTypes.Count(); index++) {
         char fullname[_MAX_FNAME + _MAX_EXT];
 
         AnimTypeClass const& anim = As_Reference((AnimType)index);
@@ -2437,7 +2469,7 @@ void AnimTypeClass::One_Time(void)
 void AnimTypeClass::Init(TheaterType theater)
 {
     if (theater != LastTheater) {
-        for (int index = ANIM_FIRST; index < ANIM_COUNT; index++) {
+        for (int index = ANIM_FIRST; index < AnimTypes.Count(); index++) {
             AnimTypeClass const& anim = As_Reference((AnimType)index);
 
             if (anim.IsTheater) {
@@ -2496,4 +2528,82 @@ char const* Anim_Name(AnimType anim)
 AnimTypeClass& AnimTypeClass::As_Reference(AnimType type)
 {
     return (*AnimTypes.Ptr(type));
+}
+
+
+bool AnimTypeClass::Read_INI(CCINIClass& ini)
+{
+    IsNormalized = ini.Get_Bool(Name(), "IsNormalized", IsNormalized);
+    IsGroundLayer = ini.Get_Bool(Name(), "IsGroundLayer", IsGroundLayer);
+    IsTranslucent = ini.Get_Bool(Name(), "IsTranslucent", IsTranslucent);
+    IsWhiteTrans = ini.Get_Bool(Name(), "IsWhiteTrans", IsWhiteTrans);
+    IsFlameThrower = ini.Get_Bool(Name(), "IsFlameThrower", IsFlameThrower);
+    IsScorcher = ini.Get_Bool(Name(), "IsScorcher", IsScorcher);
+    IsCraterForming = ini.Get_Bool(Name(), "IsCraterForming", IsCraterForming);
+    IsSticky = ini.Get_Bool(Name(), "IsSticky", IsSticky);
+    IsTheater = ini.Get_Bool(Name(), "IsTheater", IsTheater);
+    ini.Get_Int(Name(), "Size", Size);
+    ini.Get_Int(Name(), "Biggest", Biggest);
+    ini.Get_Fixed(Name(), "Damage", Damage);
+    ini.Get_Int(Name(), "Delay", Delay);
+    ini.Get_Int(Name(), "Start", Start);
+    ini.Get_Int(Name(), "LoopStart", LoopStart);
+    ini.Get_Int(Name(), "LoopEnd", LoopEnd);
+    ini.Get_Int(Name(), "Stages", Stages);
+    ini.Get_Int(Name(), "Loops", Loops);
+
+    ini.Get_VocType(Name(), "Sound", Sound);
+    ini.Get_AnimType(Name(), "ChainTo", ChainTo);
+
+    ini.Get_Int(Name(), "VirtualStages", VirtualStages);
+    ini.Get_Int(Name(), "VirtualScale", VirtualScale);
+
+    ini.Get_AnimType(Name(), "VirtualAnim", VirtualAnim);
+    return (true);
+}
+
+bool AnimTypeClass::Write_INI(CCINIClass& ini)
+{
+    ini.Put_Bool(Name(), "IsNormalized", IsNormalized);
+    ini.Put_Bool(Name(), "IsGroundLayer", IsGroundLayer);
+    ini.Put_Bool(Name(), "IsTranslucent", IsTranslucent);
+    ini.Put_Bool(Name(), "IsWhiteTrans", IsWhiteTrans);
+    ini.Put_Bool(Name(), "IsFlameThrower", IsFlameThrower);
+    ini.Put_Bool(Name(), "IsScorcher", IsScorcher);
+    ini.Put_Bool(Name(), "IsCraterForming", IsCraterForming);
+    ini.Put_Bool(Name(), "IsSticky", IsSticky);
+    ini.Put_Bool(Name(), "IsTheater", IsTheater);
+    ini.Put_Int(Name(), "Size", Size);
+    ini.Put_Int(Name(), "Biggest", Biggest);
+    ini.Put_Fixed(Name(), "Damage", Damage);
+    ini.Put_Int(Name(), "Delay", Delay);
+    ini.Put_Int(Name(), "Start", Start);
+    ini.Put_Int(Name(), "LoopStart", LoopStart);
+    ini.Put_Int(Name(), "LoopEnd", LoopEnd);
+    ini.Put_Int(Name(), "Stages", Stages);
+    ini.Put_Int(Name(), "Loops", Loops);
+
+    ini.Put_VocType(Name(), "Sound", Sound);
+    ini.Put_AnimType(Name(), "ChainTo", ChainTo);
+
+    ini.Put_Int(Name(), "VirtualStages", VirtualStages);
+    ini.Put_Int(Name(), "VirtualScale", VirtualScale);
+
+    ini.Put_AnimType(Name(), "VirtualAnim", VirtualAnim);
+    return true;
+}
+
+void AnimTypeClass::Debug_Dump_INI()
+{
+    CCINIClass ini;
+
+    for (int i = 0; i < AnimTypes.Count(); i++) {
+        std::string entry = std::to_string(i);
+        AnimTypeClass& anim = AnimTypeClass::As_Reference((AnimType)i);
+
+        ini.Put_String("AnimTypes", entry.c_str(), anim.IniName);
+        anim.Write_INI(ini);
+    }
+
+    ini.Save(CCFileClass("debug_animtypes.txt"), false);
 }

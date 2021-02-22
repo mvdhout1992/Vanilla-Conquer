@@ -165,7 +165,7 @@ void VocTypes_List_Init(CCINIClass& ini)
         std::string vocsection = ini.Get_String("VocTypes", entry.c_str(), "<none>");
 
         SoundEffectNameStruct* se = new SoundEffectNameStruct;
-        se->Name = ini.Get_String("vocsection", "Name", "<none>");
+        se->Name = entry;
         se->Priority = ini.Get_Int("vocsection", "Priority", 0);
         se->Where = (ContextType)ini.Get_Bool("vocsection", "IsSideSpecific", 0);
 
@@ -190,6 +190,39 @@ void VoxTypes_List_Init(CCINIClass& ini)
         Speech.Add(vox);
     }
 }
+
+
+void VocTypes_Debug_Dump_INI(void)
+{
+    CCINIClass ini;
+
+    for (int i = 0; i < SoundEffectName.Count(); i++) {
+        std::string entry = std::to_string(i);
+        SoundEffectNameStruct* voc = SoundEffectName[i];
+
+        ini.Put_String("VocTypes", entry.c_str(), voc->Name.c_str());
+        
+        ini.Put_Int(voc->Name.c_str(), "Priority", voc->Priority);
+        ini.Put_Bool(voc->Name.c_str(), "IsSideSpecific", (bool)voc->Priority);
+    }
+
+    ini.Save(CCFileClass("debug_voctypes.txt"), false);
+}
+
+void VoxTypes_Debug_Dump_INI(void)
+{
+    CCINIClass ini;
+
+    for (int i = 0; i < Speech.Count(); i++) {
+        std::string entry = std::to_string(i);
+        std::string vox = Speech[i];
+
+        ini.Put_String("VoxTypes", entry.c_str(), vox);
+    }
+
+    ini.Save(CCFileClass("debug_voxtypes.txt"), false);
+}
+
 
 /***********************************************************************************************
  * Init_Game -- Main game initialization routine.                                              *
@@ -293,7 +326,7 @@ bool Init_Game(int, char*[])
     AircraftTypeClass::Init_Heap(RuleINI);
     InfantryTypeClass::Init_Heap(RuleINI);
     BulletTypeClass::Init_Heap();
-    AnimTypeClass::Init_Heap();
+    AnimTypeClass::Init_Heap(RuleINI);
     UnitTypeClass::Init_Heap(RuleINI);
     VesselTypeClass::Init_Heap(RuleINI);
     TemplateTypeClass::Init_Heap();
@@ -2274,6 +2307,9 @@ static void Init_One_Time_Systems(void)
     AircraftTypeClass::One_Time();
     HouseClass::One_Time();
 
+    AnimTypeClass::Debug_Dump_INI();
+    VocTypes_Debug_Dump_INI();
+    VoxTypes_Debug_Dump_INI();
     UnitTypeClass::Debug_Dump_INI();
     AircraftTypeClass::Debug_Dump_INI();
     VesselTypeClass::Debug_Dump_INI();

@@ -955,6 +955,11 @@ bool RulesClass::Objects(CCINIClass& ini)
     /*
     **	Fetch the game object values from the rules file.
     */
+
+    for (int index = 0; index < AnimTypes.Count(); index++) {
+        AnimTypes.Ptr(index)->Read_INI(ini);
+    }
+
     for (int index = 0; index < Warheads.Count(); index++) {
         Warheads.Ptr(index)->Read_INI(ini);
     }

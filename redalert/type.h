@@ -2074,7 +2074,7 @@ public:
                   char const* virtualname = NULL,
                   AnimType virtualanim = ANIM_NONE);
 
-    static void Init_Heap(void);
+    static void Init_Heap(CCINIClass& ini);
     static void* operator new(size_t);
     static void* operator new(size_t, void* ptr)
     {
@@ -2083,6 +2083,9 @@ public:
     static void operator delete(void* ptr);
 
     static AnimTypeClass& As_Reference(AnimType type);
+    bool Read_INI(CCINIClass& ini);
+    bool Write_INI(CCINIClass& ini);
+    static void Debug_Dump_INI();
     static void Init(TheaterType theater);
     static void One_Time(void);
 
