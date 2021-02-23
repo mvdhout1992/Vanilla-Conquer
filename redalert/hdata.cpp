@@ -365,7 +365,31 @@ void HouseTypeClass::Init_Heap(CCINIClass& ini)
         HouseTypeClass::As_Reference(HOUSE_BAD).SideName = "Soviet";
         HouseTypeClass::As_Reference(HOUSE_UKRAINE).SideName = "Soviet";
         HouseTypeClass::As_Reference(HOUSE_USSR).SideName = "Soviet";
+        // "stripus.shp"
 
+        HouseTypeClass::As_Reference(HOUSE_BAD).StripName = "stripus.shp";
+        HouseTypeClass::As_Reference(HOUSE_UKRAINE).StripName = "stripus.shp";
+        HouseTypeClass::As_Reference(HOUSE_USSR).StripName = "stripus.shp";
+
+        HouseTypeClass::As_Reference(HOUSE_BAD).SidebarName = "SIDE?US.SHP";
+        HouseTypeClass::As_Reference(HOUSE_UKRAINE).SidebarName = "SIDE?US.SHP";
+        HouseTypeClass::As_Reference(HOUSE_USSR).SidebarName = "SIDE?US.SHP";
+
+        HouseTypeClass::As_Reference(HOUSE_BAD).BriefingBackground = "SOVPAPER.PCX";
+        HouseTypeClass::As_Reference(HOUSE_UKRAINE).BriefingBackground = "SOVPAPER.PCX";
+        HouseTypeClass::As_Reference(HOUSE_USSR).BriefingBackground = "SOVPAPER.PCX";
+
+        HouseTypeClass::As_Reference(HOUSE_BAD).SideAudioLetter = "R";
+        HouseTypeClass::As_Reference(HOUSE_UKRAINE).SideAudioLetter = "R";
+        HouseTypeClass::As_Reference(HOUSE_USSR).SideAudioLetter = "R";
+
+        HouseTypeClass::As_Reference(HOUSE_BAD).ScoreScreenAnimationName = "SOV-TRAN.WSA";
+        HouseTypeClass::As_Reference(HOUSE_UKRAINE).ScoreScreenAnimationName = "SOV-TRAN.WSA";
+        HouseTypeClass::As_Reference(HOUSE_USSR).ScoreScreenAnimationName = "SOV-TRAN.WSA";
+
+        HouseTypeClass::As_Reference(HOUSE_BAD).ScoreScreenBackgroundName = "SOVBACKH.PCX";
+        HouseTypeClass::As_Reference(HOUSE_UKRAINE).ScoreScreenBackgroundName = "SOVBACKH.PCX";
+        HouseTypeClass::As_Reference(HOUSE_USSR).ScoreScreenBackgroundName = "SOVBACKH.PCX";
 
         HouseTypeClass::As_Reference(HOUSE_SPAIN).SideName = "Allies";
         HouseTypeClass::As_Reference(HOUSE_GREECE).SideName = "Allies";
@@ -524,6 +548,18 @@ bool HouseTypeClass::Read_INI(CCINIClass& ini)
 
         CostBias = ini.Get_Fixed(Name(), "Cost", CostBias);
         BuildSpeedBias = ini.Get_Fixed(Name(), "BuildTime", BuildSpeedBias);
+
+        IsMultiplayer = ini.Get_Bool(Name(), "IsMultiplayer", IsMultiplayer);
+        SideAudioLetter = ini.Get_String(Name(), "SideAudioLetter", SideAudioLetter);
+        BriefingBackground = ini.Get_String(Name(), "BriefingBackground", BriefingBackground);
+        SidebarName = ini.Get_String(Name(), "SidebarName", SidebarName);
+        StripName = ini.Get_String(Name(), "StripName", StripName);
+        EvaSpeechExtension = ini.Get_String(Name(), "EvaSpeechExtension", EvaSpeechExtension);
+        ScoreScreenAnimationName = ini.Get_String(Name(), "ScoreScreenAnimationName", ScoreScreenAnimationName);
+        ScoreScreenBackgroundName = ini.Get_String(Name(), "ScoreScreenBackgroundName", ScoreScreenBackgroundName);
+        RadarName = ini.Get_String(Name(), "RadarName", RadarName);
+        RadarFramesName = ini.Get_String(Name(), "RadarFramesName", RadarFramesName);
+
         return (true);
     }
     return (false);
@@ -546,6 +582,17 @@ bool HouseTypeClass::Write_INI(CCINIClass& ini)
 
     ini.Put_Fixed(Name(), "Cost", CostBias);
     ini.Put_Fixed(Name(), "BuildTime", BuildSpeedBias);
+
+    ini.Put_Bool(Name(), "IsMultiplayer", IsMultiplayer);
+    ini.Put_String(Name(), "SideAudioLetter", SideAudioLetter);
+    ini.Put_String(Name(), "BriefingBackground", BriefingBackground);
+    ini.Put_String(Name(), "SidebarName", SidebarName);
+    ini.Put_String(Name(), "StripName", StripName);
+    ini.Put_String(Name(), "EvaSpeechExtension", EvaSpeechExtension);
+    ini.Put_String(Name(), "ScoreScreenAnimationName", ScoreScreenAnimationName);
+    ini.Put_String(Name(), "ScoreScreenBackgroundName", ScoreScreenBackgroundName);
+    ini.Put_String(Name(), "RadarName", RadarName);
+    ini.Put_String(Name(), "RadarFramesName", RadarFramesName);
     return (true);
 }
 

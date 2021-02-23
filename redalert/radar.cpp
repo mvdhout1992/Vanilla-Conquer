@@ -423,13 +423,13 @@ void RadarClass::Draw_It(bool forced)
             RadarFrame = MFCD::Retrieve(framesname.c_str());
         }
 #else
-        RadarAnim = MFCD::Retrieve(name);
-        strcpy(name, "PULSE.SHP");
-        RawFileClass file3(name);
+        RadarAnim = MFCD::Retrieve(radarname.c_str());
+        std::string pulsename = "PULSE.SHP";
+        RawFileClass file3(pulsename.c_str());
         if (file3.Is_Available()) {
             RadarPulse = Load_Alloc_Data(file3);
         } else {
-            RadarPulse = MFCD::Retrieve(name);
+            RadarPulse = MFCD::Retrieve(pulsename.c_str());
         }
         RadarFrame = MFCD::Retrieve(_frames[PlayerPtr->ActLike]);
 #endif

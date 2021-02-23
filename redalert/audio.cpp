@@ -432,7 +432,11 @@ int Sound_Effect(VocType voc, fixed volume, int variation, signed short pan_valu
         /*
 		**	Change the extension based on the variation and house accent requested.
 		*/
-        ext = "." + HouseTypeClass::As_Reference(house).SideAudioLetter;
+        std::string letter = HouseTypeClass::As_Reference(house).SideAudioLetter;
+        if (letter == "") {
+            letter = "v";
+        }
+        ext = "." + letter;
 
         /*
 			**	For infantry, use a variation on the response. For vehicles, always
