@@ -391,32 +391,36 @@ void RadarClass::Draw_It(bool forced)
     static HousesType _house = HOUSE_NONE;
 
     if (PlayerPtr->ActLike != _house) {
-        char name[_MAX_FNAME + _MAX_EXT];
+        std::string radarname;
 
-        //		strcpy(name, "NATORADR.SHP" );
-        //		if (Session.Type == GAME_NORMAL) {
-        strcpy(name, _hiresradarnames[PlayerPtr->ActLike]);
-        //		}
+        radarname = HouseTypeClass::As_Reference(PlayerPtr->ActLike).RadarName;
+        if (radarname == "") {
+            radarname = "natoradr.shp";
+        }
+       // strcpy(name, _hiresradarnames[PlayerPtr->ActLike]);
 #ifndef NDEBUG
-        RawFileClass file(name);
+        RawFileClass file(radarname.c_str());
         if (file.Is_Available()) {
             RadarAnim = Load_Alloc_Data(file);
         } else {
-            RadarAnim = MFCD::Retrieve(name);
+            RadarAnim = MFCD::Retrieve(radarname.c_str());
         }
-        strcpy(name, "PULSE.SHP");
-        RawFileClass file2(name);
+        const char* pulsename = "PULSE.SHP";
+        RawFileClass file2(pulsename);
         if (file2.Is_Available()) {
             RadarPulse = Load_Alloc_Data(file2);
         } else {
-            RadarPulse = MFCD::Retrieve(name);
+            RadarPulse = MFCD::Retrieve(pulsename);
         }
-        strcpy(name, _frames[PlayerPtr->ActLike]);
-        RawFileClass file3(name);
+        std::string framesname = HouseTypeClass::As_Reference(PlayerPtr->ActLike).RadarFramesName;
+        if (framesname == "") {
+            framesname = "nradrfrm.shp";
+        }
+        RawFileClass file3(framesname.c_str());
         if (file3.Is_Available()) {
             RadarFrame = Load_Alloc_Data(file3);
         } else {
-            RadarFrame = MFCD::Retrieve(_frames[PlayerPtr->ActLike]);
+            RadarFrame = MFCD::Retrieve(framesname.c_str());
         }
 #else
         RadarAnim = MFCD::Retrieve(name);

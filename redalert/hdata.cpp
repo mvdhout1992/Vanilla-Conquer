@@ -366,6 +366,7 @@ void HouseTypeClass::Init_Heap(CCINIClass& ini)
         HouseTypeClass::As_Reference(HOUSE_UKRAINE).SideName = "Soviet";
         HouseTypeClass::As_Reference(HOUSE_USSR).SideName = "Soviet";
 
+
         HouseTypeClass::As_Reference(HOUSE_SPAIN).SideName = "Allies";
         HouseTypeClass::As_Reference(HOUSE_GREECE).SideName = "Allies";
         HouseTypeClass::As_Reference(HOUSE_ENGLAND).SideName = "Allies";

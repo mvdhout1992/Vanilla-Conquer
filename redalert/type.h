@@ -145,8 +145,10 @@ public:
     */
     char Prefix;
 
+    // E.g. Allies, or Soviet
     std::string SideName;
 
+    // Multiplayer only house?
     bool IsMultiplayer;
 
     /*
@@ -161,6 +163,58 @@ public:
     fixed ROFBias;
     fixed CostBias;
     fixed BuildSpeedBias;
+
+    std::string SideAudioLetter;
+
+    //    char* filename = "SOVPAPER.PCX";
+    //if (PlayerPtr->Class->SideName != "Soviet") {
+    //    filename = "ALIPAPER.PCX";
+    //}
+    std::string BriefingBackground;
+
+  /*      static char sidebarnames[10][12] = {
+        "SIDE?NA.SHP", // NATO
+        "SIDE?NA.SHP",
+        "SIDE?US.SHP", // USSR
+        "SIDE?NA.SHP",
+        "SIDE?US.SHP", // UKRAINE
+        "SIDE?NA.SHP",
+        "SIDE?NA.SHP",
+        "SIDE?NA.SHP",
+        "SIDE?NA.SHP", // HOUSE_GOOD
+        "SIDE?US.SHP"  // HOUSE_BAD
+    }; */
+
+    std::string SidebarName;
+
+    /*    static char* stripnames[] = {
+        "stripna.shp", // Nato
+        "stripna.shp",
+        "stripus.shp", // USSR
+        "stripna.shp",
+        "stripus.shp", // UKRAINE
+        "stripna.shp",
+        "stripna.shp",
+        "stripna.shp",
+        "stripna.shp", // HOUSE_GOOD
+        "stripus.shp", // HOUSE_BAD
+    };*/
+
+    std::string StripName;
+
+    // e.g. .AUD
+    std::string EvaSpeechExtension;
+
+
+    //char* ScreenNames[2] = {"ALIBACKH.PCX", "SOVBACKH.PCX"};
+    //char* AnimNames[2] = {"ALI-TRAN.WSA", "SOV-TRAN.WSA"};
+    std::string ScoreScreenAnimationName;
+    std::string ScoreScreenBackgroundName;
+
+    // "ussrradr.shp"
+    std::string RadarName;
+    // uradrfrm.shp
+    std::string RadarFramesName;
 
     //------------------------------------------------------------------------
     HouseTypeClass(NoInitClass const& x)

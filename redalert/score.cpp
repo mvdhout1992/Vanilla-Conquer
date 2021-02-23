@@ -382,7 +382,12 @@ void ScoreClass::Presentation(void)
     void const* sfx4 = MFCD::Retrieve("SFX4.AUD");
     Beepy6 = MFCD::Retrieve("BEEPY6.AUD");
 
-    void* anim = Open_Animation(AnimNames[is_soviet],
+    std::string animname = PlayerPtr->Class->ScoreScreenAnimationName;
+    if (animname == "") {
+        animname = "ALI-TRAN.WSA";
+    }
+
+    void* anim = Open_Animation((char*)animname.c_str(),
                                 NULL,
                                 0L,
                                 (WSAOpenType)(WSA_OPEN_FROM_MEM | WSA_OPEN_TO_PAGE),
@@ -420,7 +425,11 @@ void ScoreClass::Presentation(void)
     Call_Back();
     Close_Animation(anim);
 
-    Load_Title_Screen(ScreenNames[is_soviet], &HidPage, (unsigned char*)ScorePalette.Get_Data());
+    std::string backgroundname = PlayerPtr->Class->ScoreScreenBackgroundName;
+    if (backgroundname == "") {
+        backgroundname = "ALIBACKH.PCX";
+    }
+    Load_Title_Screen((char*)backgroundname.c_str(), &HidPage, (unsigned char*)ScorePalette.Get_Data());
     Increase_Palette_Luminance((unsigned char*)ScorePalette.Get_Data(), 30, 30, 30, 63);
     ScorePalette.Set(0, nullptr);
     HidPage.Blit(SeenPage);

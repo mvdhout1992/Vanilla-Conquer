@@ -46,7 +46,7 @@
 /***************************************************************************/
 
 // static struct { // MBL 02.21.2019
-// Had to name the struct for VS 2017 distributed build. ST - 4/10/2019 3:59PM 
+// Had to name the struct for VS 2017 distributed build. ST - 4/10/2019 3:59PM
 SoundEffectNameStruct _SoundEffectName_Hardcoded[VOC_COUNT] = {
 
     /*
@@ -418,7 +418,7 @@ int Sound_Effect(VocType voc, fixed volume, int variation, signed short pan_valu
     /*
 	**	Fetch a pointer to the sound effect data. Modify the sound as appropriate and desired.
 	*/
-    char const* ext = ".AUD";
+    std::string ext = ".AUD";
     if (SoundEffectName[voc]->Where == IN_VAR) {
 
         /*
@@ -432,42 +432,27 @@ int Sound_Effect(VocType voc, fixed volume, int variation, signed short pan_valu
         /*
 		**	Change the extension based on the variation and house accent requested.
 		*/
-        if (((1 << house) & HOUSEF_ALLIES) != 0) {
+        ext = "." + HouseTypeClass::As_Reference(house).SideAudioLetter;
 
-            /*
+        /*
 			**	For infantry, use a variation on the response. For vehicles, always
 			**	use the vehicle response table.
 			*/
-            if (variation < 0) {
-                if (ABS(variation) % 2) {
-                    ext = ".V00";
-                } else {
-                    ext = ".V02";
-                }
+        if (variation < 0) {
+            if (ABS(variation) % 2) {
+                ext += "00";
             } else {
-                if (variation % 2) {
-                    ext = ".V01";
-                } else {
-                    ext = ".V03";
-                }
+                ext += "02";
             }
         } else {
-            if (variation < 0) {
-                if (ABS(variation) % 2) {
-                    ext = ".R00";
-                } else {
-                    ext = ".R02";
-                }
+            if (variation % 2) {
+                ext += "01";
             } else {
-                if (variation % 2) {
-                    ext = ".R01";
-                } else {
-                    ext = ".R03";
-                }
+                ext += "03";
             }
         }
     }
-    _makepath(name, NULL, NULL, SoundEffectName[voc]->Name.c_str(), ext);
+    _makepath(name, NULL, NULL, SoundEffectName[voc]->Name.c_str(), ext.c_str());
     void const* ptr = MFCD::Retrieve(name);
 
     /*
@@ -724,7 +709,12 @@ void Speak_AI(void)
 
                 char name[_MAX_FNAME + _MAX_EXT];
 
-                _makepath(name, NULL, NULL, Speech[SpeakQueue].c_str(), ".AUD");
+                std::string ext = PlayerPtr ? HouseTypeClass::As_Reference(PlayerPtr->ActLike).EvaSpeechExtension : ".AUD";
+
+                if (ext == "") {
+                    ext = ".AUD";
+                }
+                _makepath(name, NULL, NULL, Speech[SpeakQueue].c_str(), ext.c_str());
                 CCFileClass file(name);
                 if (file.Is_Available() && file.Read(SpeechBuffer[_index], SPEECH_BUFFER_SIZE)) {
                     speech = SpeechBuffer[_index];

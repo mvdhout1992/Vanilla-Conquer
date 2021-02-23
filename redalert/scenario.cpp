@@ -1571,11 +1571,12 @@ int BGMessageBox(char const* msg, int btn1, int btn2)
     Hide_Mouse();
 
     PaletteClass temp;
-    char* filename = "SOVPAPER.PCX";
-    if (PlayerPtr->Class->SideName != "Soviet") {
+    std::string filename = PlayerPtr->Class->BriefingBackground.c_str();
+    if (filename == "") {
         filename = "ALIPAPER.PCX";
     }
-    Load_Title_Screen(filename, &HidPage, (unsigned char*)temp.Get_Data());
+
+    Load_Title_Screen((char*)filename.c_str(), &HidPage, (unsigned char*)temp.Get_Data());
     HidPage.Blit(SeenPage);
 
     VisiblePage.Blit(seen_buff_save);

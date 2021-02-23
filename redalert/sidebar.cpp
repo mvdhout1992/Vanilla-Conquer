@@ -401,13 +401,16 @@ void SidebarClass::Reload_Sidebar(void)
 
     /*  Don't have write access to the static char array. ST - 5/20/2019 */
 #ifndef REMASTER_BUILD // We do now. OmniBlade
-    char* sidename = sidebarnames[houseloaded];
-    *(sidename + 4) = '1';
-    SidebarShape = (void*)MFCD::Retrieve(sidename);
-    *(sidename + 4) = '2';
-    SidebarMiddleShape = (void*)MFCD::Retrieve(sidename);
-    *(sidename + 4) = '3';
-    SidebarBottomShape = (void*)MFCD::Retrieve(sidename);
+    std::string sidebarname = HouseTypeClass::As_Reference(PlayerPtr->ActLike).SidebarName;
+    if (sidebarname == "") {
+        sidebarname = "SIDE?NA.SHP";
+    }
+    sidebarname[4] = '1';
+    SidebarShape = (void*)MFCD::Retrieve(sidebarname.c_str());
+    sidebarname[4] = '2';
+    SidebarMiddleShape = (void*)MFCD::Retrieve(sidebarname.c_str());
+    sidebarname[4] = '3';
+    SidebarBottomShape = (void*)MFCD::Retrieve(sidebarname.c_str());
 #else
     char sb_name[16];
     strcpy(sb_name, sidebarnames[houseloaded]);
@@ -1294,7 +1297,15 @@ void SidebarClass::StripClass::Reload_LogoShapes(void)
     if (PlayerPtr) {
         houseloaded = PlayerPtr->ActLike;
     }
-    LogoShapes = (void*)MFCD::Retrieve(stripnames[houseloaded]);
+
+    std::string strip = HouseTypeClass::As_Reference(PlayerPtr->ActLike).StripName;
+
+    if (strip == "")
+    {
+        strip = "stripna.shp";
+    }
+
+    LogoShapes = (void*)MFCD::Retrieve(strip.c_str());
 }
 
 /***********************************************************************************************

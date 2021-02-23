@@ -3040,7 +3040,9 @@ void Free_Heaps(void)
     TriggerTypes.Clear();
 
     /*
-    **	Speech holding tank buffer. Since speech does not mix, it can be placed
+    **	
+    
+    holding tank buffer. Since speech does not mix, it can be placed
     **	into a custom holding tank only as large as the largest speech file to
     **	be played.
     */
