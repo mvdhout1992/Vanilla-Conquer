@@ -862,7 +862,7 @@ bool HouseClass::Can_Build(ObjectTypeClass const* type, HousesType house) const
     /*
     **	Special hack to get certain objects to exist for both sides in the game.
     */
-    if (stricmp(type->IniName, "e7") == 0) {
+    if (stricmp(type->IniName, "ITNK") == 0) {
         bool own = type->Get_Ownable(house);
     }
     bool own = type->Get_Ownable(house);

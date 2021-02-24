@@ -549,6 +549,7 @@ bool HouseTypeClass::Read_INI(CCINIClass& ini)
         CostBias = ini.Get_Fixed(Name(), "Cost", CostBias);
         BuildSpeedBias = ini.Get_Fixed(Name(), "BuildTime", BuildSpeedBias);
 
+        SideName = ini.Get_String(Name(), "SideName", SideName);
         IsMultiplayer = ini.Get_Bool(Name(), "IsMultiplayer", IsMultiplayer);
         SideAudioLetter = ini.Get_String(Name(), "SideAudioLetter", SideAudioLetter);
         BriefingBackground = ini.Get_String(Name(), "BriefingBackground", BriefingBackground);
@@ -593,6 +594,8 @@ bool HouseTypeClass::Write_INI(CCINIClass& ini)
     ini.Put_String(Name(), "ScoreScreenBackgroundName", ScoreScreenBackgroundName);
     ini.Put_String(Name(), "RadarName", RadarName);
     ini.Put_String(Name(), "RadarFramesName", RadarFramesName);
+
+    ini.Put_String(Name(), "SideName", SideName);
     return (true);
 }
 

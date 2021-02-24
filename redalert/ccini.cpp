@@ -445,7 +445,7 @@ bool CCINIClass::Put_Owners(char const* section, char const* entry, DynamicVecto
     if (Owners.Count() > 0) {
         str.erase(str.size() - 1); // remove "," at end
     }
- 
+    Put_String(section, entry, str);
     return (true);
 }
 
