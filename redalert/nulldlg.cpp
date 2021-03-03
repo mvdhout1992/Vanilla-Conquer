@@ -382,10 +382,21 @@ int Com_Scenario_Dialog(bool skirmish)
     name_edt.Set_Text(namebuf, MPLAYER_NAME_MAX);
     name_edt.Set_Color(&ColorRemaps[(Session.ColorIdx == PCOLOR_DIALOG_BLUE) ? PCOLOR_REALLY_BLUE : Session.ColorIdx]);
 
-    for (HousesType house = HOUSE_USSR; house <= HOUSE_FRANCE; house++) {
-        housebtn.Add_Item(Text_String(HouseTypeClass::As_Reference(house).Full_Name()));
+    if (Rule.MultiplayerHouses.Count() == 0) {
+        for (HousesType house = HOUSE_USSR; house <= HOUSE_FRANCE; house++) {
+            housebtn.Add_Item(HouseTypeClass::As_Reference(house).Full_Name());
+        }
+        housebtn.Set_Selected_Index(Session.House - HOUSE_USSR);
+    } else {
+        int selected = 0;
+        for (int i = 0; i < Rule.MultiplayerHouses.Count(); i++) {
+            housebtn.Add_Item(HouseTypeClass::As_Reference(Rule.MultiplayerHouses[i]).Full_Name());
+            if (Rule.MultiplayerHouses[i] == Session.House) {
+                selected = i;            
+            }
+        }
+        housebtn.Set_Selected_Index(selected);
     }
-    housebtn.Set_Selected_Index(Session.House - HOUSE_USSR);
     housebtn.Set_Read_Only(true);
 
     /*........................................................................
@@ -731,7 +742,14 @@ int Com_Scenario_Dialog(bool skirmish)
             break;
 
         case (BUTTON_HOUSE | KN_BUTTON):
-            Session.House = HousesType(housebtn.Current_Index() + HOUSE_USSR);
+
+            if (Rule.MultiplayerHouses.Count() == 0) {
+                Session.House = HousesType(housebtn.Current_Index() + HOUSE_USSR);
+            } else {
+                Session.House = Rule.MultiplayerHouses[housebtn.Current_Index()];
+            }
+
+
             strcpy(Session.Handle, namebuf);
             display = REDRAW_BACKGROUND;
             transmit = true;

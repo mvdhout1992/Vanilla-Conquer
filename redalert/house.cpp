@@ -6569,8 +6569,6 @@ int HouseClass::AI_Infantry(void)
 #ifdef FIXIT_CSII //	checked - ajw 9/28/98 This looks like a potential bug. It is prob. for save game format           \
                   //compatibility.
                 int clipindex = index;
-                if (clipindex >= INFANTRY_RA_COUNT)
-                    clipindex -= INFANTRY_RA_COUNT;
                 if ((enemy != NULL && enemy->IQuantity[clipindex] > IQuantity[clipindex])
                     || Available_Money() > Rule.InfantryReserve || CurInfantry < CurBuildings * Rule.InfantryBaseMult) {
 #else

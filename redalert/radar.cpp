@@ -612,7 +612,7 @@ void RadarClass::Draw_It(bool forced)
             **	Display the country name on the cover plate when in multi play only.
             */
             if (Session.Type != GAME_NORMAL) {
-                Fancy_Text_Print(Text_String(HouseTypeClass::As_Reference(PlayerPtr->ActLike).Full_Name()),
+                Fancy_Text_Print(HouseTypeClass::As_Reference(PlayerPtr->ActLike).Full_Name(),
                                  RadX + RadWidth / 2,
                                  RadY + RadHeight - 10 * RESFACTOR,
                                  &ColorRemaps[PlayerPtr->RemapColor],

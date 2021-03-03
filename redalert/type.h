@@ -197,6 +197,7 @@ public:
     static void operator delete(void* ptr);
 
     static HousesType From_Name(char const* name);
+    const char* Full_Name();
     static HouseTypeClass& As_Reference(HousesType house);
     static void One_Time(void);
     static void Init_Heap(CCINIClass& ini);

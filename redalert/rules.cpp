@@ -341,7 +341,6 @@ bool RulesClass::Process(CCINIClass& ini)
     BStart(BENCH_RULES);
 
     General(ini);
-    MPlayer(ini);
     Recharge(ini);
     Heap_Maximums(ini);
     AI(ini);
@@ -351,6 +350,7 @@ bool RulesClass::Process(CCINIClass& ini)
     IQ(ini);
     Objects(ini);
     Difficulty(ini);
+    MPlayer(ini);
 
     BEnd(BENCH_RULES);
 
@@ -541,6 +541,28 @@ bool RulesClass::MPlayer(CCINIClass& ini)
         IsMPTiberiumGrow = ini.Get_Bool(MPLAYER, "OreGrows", IsMPTiberiumGrow);
         IsMPCrates = ini.Get_Bool(MPLAYER, "Crates", IsMPCrates);
         IsMPCaptureTheFlag = ini.Get_Bool(MPLAYER, "CaptureTheFlag", IsMPCaptureTheFlag);
+    
+        {
+            int entries = ini.Entry_Count("MultiplayerHouses");
+            for (int i = 0; i < entries; i++) {
+                std::string entry = ini.Get_Entry("MultiplayerHouses", i);
+                HousesType house = ini.Get_HousesType("MultiplayerHouses", entry.c_str(), HOUSE_NONE);
+
+                MultiplayerHouses.Add(house);
+            }
+        }
+        {
+            int entries = ini.Entry_Count("MultiplayerRandomHouses");
+            for (int i = 0; i < entries; i++) {
+                std::string entry = ini.Get_Entry("MultiplayerRandomHouses", i);
+                HousesType house = ini.Get_HousesType("MultiplayerRandomHouses", entry.c_str(), HOUSE_NONE);
+
+                MultiplayerRandomHouses.Add(house);
+            }
+        }
+
+        
+
         return (true);
     }
     return (false);

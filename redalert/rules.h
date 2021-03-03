@@ -889,6 +889,12 @@ public:
         RB_SELECTED = 0,
         RB_ALWAYS,
     } ResourceBarDisplayMode;
+
+    /* List of selectable houses in the skirmish/LAN game dialogs */
+    DynamicVectorClass<HousesType> MultiplayerHouses;
+
+    /* List of random houses, duplicate houses have a higher chance */
+    DynamicVectorClass<HousesType> MultiplayerRandomHouses;
 };
 
 #endif

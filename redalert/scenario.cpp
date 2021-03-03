@@ -2841,10 +2841,16 @@ void Assign_Houses(void)
     for (i = Session.Players.Count(); i < Session.Players.Count() + Session.Options.AIPlayers; i++) {
         house = (HousesType)(i + HOUSE_MULTI1);
         housep = HouseClass::As_Pointer(house);
-        if (Percent_Chance(50)) {
-            pref_house = HOUSE_GREECE;
+
+        if (Rule.MultiplayerRandomHouses.Count() == 0) {
+            if (Percent_Chance(50)) {
+                pref_house = HOUSE_GREECE;
+            } else {
+                pref_house = HOUSE_USSR;
+            }
         } else {
-            pref_house = HOUSE_USSR;
+            int rnd = Random_Pick(0, Rule.MultiplayerRandomHouses.Count() - 1);
+            pref_house = Rule.MultiplayerRandomHouses[rnd];
         }
 
         //.....................................................................

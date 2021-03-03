@@ -416,7 +416,7 @@ void HouseTypeClass::Init_Heap(CCINIClass& ini)
 
         new HouseTypeClass((HousesType)id,
                            house.c_str(),     //	NAME:			House name.
-                           5, // FULLNAME:	Translated house name.
+                           -1, // FULLNAME:	Translated house name.
                            "MP8",        // SUFFIX:		House file suffix.
                            0,            // LEMON:		Lemon vehicle frequency.
                            PCOLOR_BROWN, // Remap color ID number.
@@ -454,6 +454,14 @@ HousesType HouseTypeClass::From_Name(char const* name)
         }
     }
     return (HOUSE_NONE);
+}
+
+const char* HouseTypeClass::Full_Name()
+{
+    if (AbstractTypeClass ::Full_Name() == -1) {
+        return IniName;
+    }
+    return Text_String(AbstractTypeClass ::Full_Name());
 }
 
 /***********************************************************************************************
