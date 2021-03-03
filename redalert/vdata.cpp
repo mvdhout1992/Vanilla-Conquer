@@ -785,6 +785,11 @@ short const* VesselTypeClass::Overlap_List(void) const
     return (&_ship[0]);
 }
 
+bool VesselTypeClass::Is_Aftermath_Vessel() const
+{
+    return (ID == VESSEL_MISSILESUB || ID == VESSEL_CARRIER);
+}
+
 /***********************************************************************************************
  * VesselTypeClass::From_Name -- Converts a name into a vessel type.                           *
  *                                                                                             *

@@ -1887,6 +1887,11 @@ int InfantryTypeClass::Full_Name(void) const
     return (TXT_CIVILIAN);
 }
 
+bool InfantryTypeClass::Is_Aftermath_Infantry()
+{
+    return ID == INFANTRY_MECHANIC || ID == INFANTRY_SHOCK;
+}
+
 /***********************************************************************************************
  * InfantryTypeClass::As_Reference -- Fetches a reference to the infantry type specified.      *
  *                                                                                             *

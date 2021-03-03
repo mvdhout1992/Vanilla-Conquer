@@ -1606,6 +1606,17 @@ int UnitTypeClass::Max_Pips(void) const
         return (MaxAmmo);
     }
     return (Max_Passengers());
+}       
+
+bool UnitTypeClass::Is_Aftermath_Unit() const
+{
+    bool is = false;
+    is |= ID == UNIT_CHRONOTANK;
+    is |= ID == UNIT_TESLATANK;
+    is |= ID == UNIT_MAD;
+    is |= ID == UNIT_DEMOTRUCK;
+    is |= ID == UNIT_PHASE;
+    return is;
 }
 
 /***********************************************************************************************

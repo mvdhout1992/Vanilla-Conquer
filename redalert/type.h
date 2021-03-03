@@ -1152,6 +1152,7 @@ public:
     virtual bool Create_And_Place(CELL cell, HousesType house) const;
     virtual ObjectClass* Create_One_Of(HouseClass* house) const;
     virtual int Max_Pips(void) const;
+    bool Is_Aftermath_Unit() const;
     static void Debug_Dump_INI();
 
     void Turret_Adjust(DirType dir, int& x, int& y) const;
@@ -1278,6 +1279,7 @@ public:
     virtual ObjectClass* Create_One_Of(HouseClass* house) const;
     virtual int Max_Pips(void) const;
     virtual short const* Overlap_List(void) const;
+    bool Is_Aftermath_Vessel() const;
 
     void Turret_Adjust(DirType dir, int& x, int& y) const;
 
@@ -1470,6 +1472,7 @@ public:
     virtual ObjectClass* Create_One_Of(HouseClass* house) const;
     virtual short const* Occupy_List(bool placement = false) const;
     virtual int Full_Name(void) const;
+    bool Is_Aftermath_Infantry();
 
 #ifdef SCENARIO_EDITOR
     virtual void Display(int x, int y, WindowNumberType window, HousesType house) const;

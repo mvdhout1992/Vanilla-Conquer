@@ -836,15 +836,15 @@ bool HouseClass::Can_Build(ObjectTypeClass const* type, HousesType house) const
     if (!NewUnitsEnabled) {
         switch (type->What_Am_I()) {
         case RTTI_INFANTRYTYPE:
-            if (((InfantryTypeClass*)type)->ID >= INFANTRY_RA_COUNT)
+            if (((InfantryTypeClass*)type)->Is_Aftermath_Infantry())
                 return (false);
             break;
         case RTTI_UNITTYPE:
-            if (((UnitTypeClass*)type)->ID >= UNIT_RA_COUNT)
+            if (((UnitTypeClass*)type)->Is_Aftermath_Unit())
                 return (false);
             break;
         case RTTI_VESSELTYPE:
-            if (((VesselTypeClass*)type)->ID >= VESSEL_RA_COUNT)
+            if (((VesselTypeClass*)type)->Is_Aftermath_Vessel())
                 return (false);
             break;
         default:
