@@ -3270,7 +3270,7 @@ static void Create_Units(bool official)
             */
             scaleval = 1;
             Reserve_Unit();
-            obj = new UnitClass(UNIT_MCV, house);
+            obj = new UnitClass(hptr->Class->MCVUnit, house);
             if (!obj->Unlimbo(Cell_Coord(centroid), DIR_N)) {
                 if (!Scan_Place_Object(obj, centroid)) {
                     delete obj;

@@ -1430,7 +1430,7 @@ bool UnitClass::Goto_Clear_Spot(void)
 
     // STRUCT_CONST needs to be DeploysInto structtype once I had support for that
     if (!Target_Legal(NavCom)
-        && BuildingTypeClass::As_Reference(STRUCT_CONST)
+        && BuildingTypeClass::As_Reference(Class->DeploysInto)
                .Legal_Placement(Adjacent_Cell(Coord_Cell(Center_Coord()), FACING_NW))) {
         Mark(MARK_DOWN);
         return (true);
@@ -1488,8 +1488,7 @@ bool UnitClass::Goto_Clear_Spot(void)
         while (*ptr) {
             CELL cell = Coord_Cell(Coord) + *ptr++;
             CELL check_cell = Adjacent_Cell(cell, FACING_NW);
-            // STRUCT_CONST needs to be DeploysInto structtype once I had support for that
-            if (BuildingTypeClass::As_Reference(STRUCT_CONST).Legal_Placement(check_cell)) {
+            if (BuildingTypeClass::As_Reference(Class->DeploysInto).Legal_Placement(check_cell)) {
                 Assign_Destination(::As_Target(cell));
                 break;
             }
@@ -1533,8 +1532,7 @@ bool UnitClass::Try_To_Deploy(void)
     assert(IsActive);
 
     if (!Target_Legal(NavCom) && !IsRotating) {
-        // IsMCV needs to be DeploysInto structtype once I had support for that
-        if (this->Class->IsMCV) {
+        if (this->Class->DeploysInto != STRUCT_NONE) {
 
             /*
             **	Determine if it is legal to deploy at this location. If not, tell the
@@ -1542,14 +1540,12 @@ bool UnitClass::Try_To_Deploy(void)
             */
             Mark(MARK_UP);
             CELL cell = Coord_Cell(Adjacent_Cell(Center_Coord(), FACING_NW));
-            // STRUCT_CONST needs to be DeploysInto structtype once I had support for that
-            if (!BuildingTypeClass::As_Reference(STRUCT_CONST).Legal_Placement(cell)) {
+            if (!BuildingTypeClass::As_Reference(Class->DeploysInto).Legal_Placement(cell)) {
                 if (PlayerPtr == House) {
                     Speak(VOX_DEPLOY);
                 }
                 if (!House->IsHuman) {
-                    // STRUCT_CONST needs to be DeploysInto structtype once I had support for that
-                    BuildingTypeClass::As_Reference(STRUCT_CONST).Flush_For_Placement(cell, House);
+                    BuildingTypeClass::As_Reference(Class->DeploysInto).Flush_For_Placement(cell, House);
                 }
                 Mark(MARK_DOWN);
                 IsDeploying = false;
@@ -1575,8 +1571,7 @@ bool UnitClass::Try_To_Deploy(void)
             **	unit, just mark it as not deploying.
             */
             Mark(MARK_UP);
-            // STRUCT_CONST needs to be DeploysInto structtype once I had support for that
-            BuildingClass* building = new BuildingClass(STRUCT_CONST, House->Class->House);
+            BuildingClass* building = new BuildingClass(Class->DeploysInto, House->Class->House);
             if (building != NULL) {
                 if (building->Unlimbo(Adjacent_Cell(Coord, FACING_NW))) {
 
@@ -2686,7 +2681,7 @@ int UnitClass::Mission_Unload(void)
         }
     }
 
-    else if (Class->IsMCV) {
+    else if (Class->DeploysInto != STRUCT_NONE) {
         switch (Status) {
         case 0:
             Path[0] = FACING_NONE;
@@ -3102,7 +3097,7 @@ int UnitClass::Mission_Hunt(void)
     assert(Units.ID(this) == ID);
     assert(IsActive);
 
-    if (Class->IsMCV) {
+    if (Class->DeploysInto != STRUCT_NONE) {
         enum
         {
             FIND_SPOT,
@@ -3591,15 +3586,14 @@ ActionType UnitClass::What_Action(ObjectClass const* object) const
     **	Don't allow special deploy action unless there is something to deploy.
     */
     if (action == ACTION_SELF) {
-        // Class->IsMCV needs to be DeploysInto structtype once I had support for that
-        if (Class->IsMCV) {
+        if (Class->DeploysInto != STRUCT_NONE) {
 
             /*
             **	The MCV will get the no-deploy cursor if it couldn't
             **	deploy at its current location.
             */
             ((ObjectClass&)(*this)).Mark(MARK_UP);
-            if (!BuildingTypeClass::As_Reference(STRUCT_CONST)
+            if (!BuildingTypeClass::As_Reference(Class->DeploysInto)
                      .Legal_Placement(Coord_Cell(Adjacent_Cell(Center_Coord(), FACING_NW)))) {
                 action = ACTION_NO_DEPLOY;
             }

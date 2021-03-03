@@ -274,6 +274,7 @@ HouseTypeClass::HouseTypeClass(HousesType house,
 {
     strncpy(Suffix, ext, 3);
     Suffix[3] = '\0';
+    MCVUnit = UNIT_MCV;
 }
 
 /***********************************************************************************************
@@ -569,6 +570,8 @@ bool HouseTypeClass::Read_INI(CCINIClass& ini)
         RadarName = ini.Get_String(Name(), "RadarName", RadarName);
         RadarFramesName = ini.Get_String(Name(), "RadarFramesName", RadarFramesName);
 
+        MCVUnit = ini.Get_UnitType(Name(), "MCVUnit", MCVUnit);
+
         return (true);
     }
     return (false);
@@ -604,6 +607,8 @@ bool HouseTypeClass::Write_INI(CCINIClass& ini)
     ini.Put_String(Name(), "RadarFramesName", RadarFramesName);
 
     ini.Put_String(Name(), "SideName", SideName);
+    ini.Put_UnitType(Name(), "MCVUnit", MCVUnit);
+
     return (true);
 }
 

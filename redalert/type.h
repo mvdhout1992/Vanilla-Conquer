@@ -174,6 +174,8 @@ public:
     std::string RadarName;
     std::string RadarFramesName;
 
+    UnitType MCVUnit;
+
     //------------------------------------------------------------------------
     HouseTypeClass(NoInitClass const& x)
         : AbstractTypeClass(x)
@@ -826,6 +828,8 @@ public:
     std::string AnimSequenceName;
     DynamicVectorClass<AnimControlType*> Anims;
 
+    UnitType UndeploysInto;
+
     /*---------------------------------------------------------------------------
     **	This is the building type explicit constructor.
     */
@@ -1073,6 +1077,9 @@ public:
     // and graphics logic for the rocket they are carrying and isn't visible
     // when they are reloading
     int AmmoImageCount;
+
+    // what building to deploy into, for MCV this is STRUCT_CONST (construction yard)
+    StructType DeploysInto;
 
     /*
     **	This is the explicit unit class constructor.

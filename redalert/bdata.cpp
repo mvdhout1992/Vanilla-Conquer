@@ -2766,6 +2766,7 @@ BuildingTypeClass::BuildingTypeClass(StructType type,
 
     WidthInCells = _width[size];
     HeightInCells = _height[size];
+    UndeploysInto = UNIT_NONE;
 }
 
 /***********************************************************************************************
@@ -2995,6 +2996,8 @@ void BuildingTypeClass::Init_Heap(CCINIClass& ini)
         BuildingTypeClass::As_Reference(STRUCT_BARBWIRE_WALL).ToOverlay = OVERLAY_BARBWIRE_WALL;
         BuildingTypeClass::As_Reference(STRUCT_WOOD_WALL).ToOverlay = OVERLAY_WOOD_WALL;
         BuildingTypeClass::As_Reference(STRUCT_FENCE).ToOverlay = OVERLAY_FENCE;
+
+         BuildingTypeClass::As_Reference(STRUCT_CONST).UndeploysInto = UNIT_MCV;
     }
 
     for (int i = 0; i < entries; i++) {
@@ -3834,6 +3837,8 @@ bool BuildingTypeClass::Read_INI(CCINIClass& ini)
         AnimSequenceName = ini.Get_String(Name(), "AnimSequenceName", AnimSequenceName);
         ini.Get_Building_States_Anim_List(AnimSequenceName.c_str(), Anims);
 
+        UndeploysInto = ini.Get_UnitType(Name(), "UndeploysInto", UndeploysInto);
+
         if (Power < 0) {
             Drain = -Power;
             Power = 0;
@@ -3913,6 +3918,8 @@ bool BuildingTypeClass::Write_INI(CCINIClass& ini)
 
         ini.Put_String(Name(), "AnimSequenceName", AnimSequenceName);
         ini.Put_Building_States_Anim_List(AnimSequenceName.c_str(), Anims);
+
+        ini.Put_UnitType(Name(), "UndeploysInto", UndeploysInto);
 
         return (true);
     }

@@ -1162,6 +1162,7 @@ UnitTypeClass::UnitTypeClass(UnitType type,
     **	Forced unit overrides form the default.
     */
     Speed = SPEED_WHEEL;
+    DeploysInto = STRUCT_NONE;
 }
 
 /***********************************************************************************************
@@ -1254,6 +1255,9 @@ void UnitTypeClass::Init_Heap(CCINIClass& ini)
         new UnitTypeClass(UnitMAD);         // UNIT_MAD
         new UnitTypeClass(UnitDemoTruck);   // UNIT_DEMOTRUCK
         new UnitTypeClass(UnitPhase);       //	UNIT_PHASETRANSPORT
+
+
+        UnitTypeClass::As_Reference(UNIT_MCV).DeploysInto = STRUCT_CONST;
     }
 
     for (int i = 0; i < entries; i++) {
@@ -1707,6 +1711,8 @@ bool UnitTypeClass::Read_INI(CCINIClass& ini)
         IsDemoTruck = ini.Get_Bool(Name(), "IsDemoTruck", IsDemoTruck);
         IsMADTank = ini.Get_Bool(Name(), "IsMADTank", IsMADTank);
 
+        DeploysInto = ini.Get_StructType(Name(), "DeploysInto", DeploysInto);
+
         /*
         **	If this unit can drive over walls, then mark it as recognizing the crusher zone.
         */
@@ -1761,6 +1767,8 @@ bool UnitTypeClass::Write_INI(CCINIClass& ini)
         ini.Put_Bool(Name(), "IsArtillery", IsArtillery);
         ini.Put_Bool(Name(), "IsDemoTruck", IsDemoTruck);
         ini.Put_Bool(Name(), "IsMADTank", IsMADTank);
+
+        ini.Put_StructType(Name(), "DeploysInto", DeploysInto);
         return (true);
     }
     return (false);

@@ -1836,7 +1836,7 @@ void BuildingClass::Active_Click_With(ActionType action, CELL cell)
         Player_Assign_Mission(MISSION_ATTACK, ::As_Target(cell));
     }
 
-    if (action == ACTION_MOVE && Class->IsConstructionYard) {
+    if (action == ACTION_MOVE && Class->UndeploysInto != UNIT_NONE) {
         OutList.Add(EventClass(EventClass::ARCHIVE, TargetClass(this), TargetClass(::As_Target(cell))));
         OutList.Add(EventClass(EventClass::SELL, TargetClass(this)));
 
@@ -2872,7 +2872,7 @@ ActionType BuildingClass::What_Action(CELL cell) const
 
     ActionType action = TechnoClass::What_Action(cell);
 
-    if (action == ACTION_MOVE && (Class->IsConstructionYard == false || !Is_MCV_Deploy())) {
+    if (action == ACTION_MOVE && (Class->UndeploysInto == UNIT_NONE || (Class->IsConstructionYard && !Is_MCV_Deploy()))) {
         action = ACTION_NONE;
     }
 
@@ -3392,7 +3392,8 @@ MoveType BuildingClass::Can_Enter_Cell(CELL cell, FacingType) const
     assert(Buildings.ID(this) == ID);
     assert(IsActive);
 
-    if (Class->IsConstructionYard && IsDown) {
+   // if (Class->IsConstructionYard && IsDown) {
+    if (Class->UndeploysInto != UNIT_NONE && IsDown) {
         return (Map[cell].Is_Clear_To_Build(Class->Speed) ? MOVE_OK : MOVE_NO);
     }
 
@@ -3695,7 +3696,7 @@ int BuildingClass::Mission_Deconstruction(void)
             **	members leaving is equal to the unrecovered cost of the building
             **	divided by 100 (the typical cost of a minigunner infantryman).
             */
-            if (!Target_Legal(ArchiveTarget) || !Is_MCV_Deploy() || Class->IsConstructionYard == false) {
+            if (!Target_Legal(ArchiveTarget) || (!Is_MCV_Deploy() && Class->IsConstructionYard) || Class->UndeploysInto == UNIT_NONE) {
                 int count = How_Many_Survivors();
                 bool engine = false;
 
@@ -3791,9 +3792,9 @@ int BuildingClass::Mission_Deconstruction(void)
             **	Construction yards that deconstruct, really just revert back
             **	to an MCV.
             */
-            if (Target_Legal(ArchiveTarget) && Class->IsConstructionYard && House->IsHuman && Strength > 0) {
+            if (Target_Legal(ArchiveTarget) && Class->UndeploysInto != UNIT_NONE && House->IsHuman && Strength > 0) {
                 ScenarioInit++;
-                UnitClass* unit = new UnitClass(UNIT_MCV, House->Class->House);
+                UnitClass* unit = new UnitClass(Class->UndeploysInto, House->Class->House);
                 ScenarioInit--;
                 if (unit != NULL) {
 
@@ -5184,7 +5185,7 @@ bool BuildingClass::Can_Player_Move(void) const
     assert(Buildings.ID(this) == ID);
     assert(IsActive);
 
-    return (Class->IsConstructionYard && (Mission == MISSION_GUARD) && Special.IsMCVDeploy);
+    return (Mission == MISSION_GUARD && ((Class->IsConstructionYard && Special.IsMCVDeploy) || Class->UndeploysInto != UNIT_NONE));
 }
 
 /***********************************************************************************************
